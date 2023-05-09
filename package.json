@@ -1,0 +1,28 @@
+{
+  "name": "pcd-country-identity",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/vuvoth/pcd-country-identity",
+  "author": "Vu Vo <vu.voth@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "npx tsc",
+    "test": "npx ts-mocha test/**/*.ts"
+  },
+  "dependencies": {
+    "@pcd/pcd-types": "^0.4.2",
+    "axios": "^1.4.0",
+    "snarkjs": "0.1.16",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.3.5",
+    "@types/mocha": "^10.0.1",
+    "@types/uuid": "^9.0.1",
+    "chai": "^4.3.7",
+    "mocha": "^10.2.0",
+    "ts-mocha": "^10.0.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
+  }
+}
