@@ -8,7 +8,7 @@ import {
 } from "@pcd/pcd-types";
 import {
   PCDInitArgs,
-  PCDTypeName,
+  IdentityPCDTypeName,
   IdentityPCDClaim,
   IdentityPCDProof,
   IdentityPCDArgs,
@@ -23,6 +23,7 @@ import snarkjs from "snarkjs";
 
 import { splitToWordsWithName, unpackProof } from "./utils";
 import axios from "axios";
+import { IdentityPCDCardBody } from "./CardBody";
 
 const PUBLIC_ZKEY_PROVE_URL =
   "https://d2ovde7k6pdj39.cloudfront.net/groth16_zkey_prove.json";
@@ -31,7 +32,7 @@ const PUBLIC_ZKEY_VERIFY_URL =
 const PUBLIC_CIRCUIT_URL =
   "https://d2ovde7k6pdj39.cloudfront.net/rsa_sha1_verify.json";
 export class IdentityPCD implements PCD<IdentityPCDClaim, IdentityPCDProof> {
-  type = PCDTypeName;
+  type = IdentityPCDTypeName;
   claim: IdentityPCDClaim;
   proof: IdentityPCDProof;
   id: string;
@@ -133,19 +134,22 @@ export async function verify(pcd: IdentityPCD): Promise<boolean> {
     snarkjs.unstringifyBigInts(pcd.proof.proof),
     snarkjs.unstringifyBigInts(Object.values(exp).concat(Object.values(mod)))
   );
-
 }
 
-export function serialize(pcd: IdentityPCD): string {
-  return JSON.stringify({
-    type: pcd.type,
-    claim: pcd.claim,
-    proof: pcd.proof,
-    id: pcd.id,
-  });
+export function serialize(
+  pcd: IdentityPCD
+): Promise<SerializedPCD<IdentityPCD>> {
+  return Promise.resolve({
+    type: IdentityPCDTypeName,
+    pcd: JSON.stringify({
+      type: pcd.type,
+      id: pcd.id,
+      claim: pcd.claim,
+    }),
+  } as SerializedPCD<IdentityPCD>);
 }
 
-export function deserialize(serialized: string): IdentityPCD {
+export function deserialize(serialized: string): Promise<IdentityPCD> {
   return JSON.parse(serialized);
 }
 
@@ -155,3 +159,17 @@ export function getDisplayOptions(pcd: IdentityPCD): DisplayOptions {
     displayName: "pcd-" + pcd.type,
   };
 }
+
+export const IdentityPCDPackage: PCDPackage<
+  IdentityPCDClaim,
+  IdentityPCDProof,
+  IdentityPCDArgs
+> = {
+  name: IdentityPCDTypeName,
+  renderCardBody: IdentityPCDCardBody,
+  getDisplayOptions,
+  prove,
+  verify,
+  serialize,
+  deserialize,
+};

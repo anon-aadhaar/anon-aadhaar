@@ -13,11 +13,13 @@
     "@pcd/pcd-types": "^0.4.2",
     "axios": "^1.4.0",
     "snarkjs": "0.1.16",
+    "styled-components": "^6.0.0-rc.1",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/chai": "^4.3.5",
     "@types/mocha": "^10.0.1",
+    "@types/styled-components": "^5.1.26",
     "@types/uuid": "^9.0.1",
     "chai": "^4.3.7",
     "mocha": "^10.2.0",
