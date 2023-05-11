@@ -22,6 +22,8 @@ jobs:
           cache: "yarn"
       - name: Check Yarn version
         run: yarn --version
+      - name: Check Node version
+        run: node --version
       - name: Install dependencies
         run: yarn install
       - name: Execute lint
