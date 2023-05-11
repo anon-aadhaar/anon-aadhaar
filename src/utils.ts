@@ -1,7 +1,8 @@
-import { SnarkJSProof, Proof } from "./types";
+import { SnarkJSProof, Proof } from './types'
 
-
-export function extractSignatureFromPDF() {}
+export function extractSignatureFromPDF() {
+  throw new Error('Not implement yet')
+}
 
 export function splitToWordsWithName(
   x: bigint,
@@ -9,20 +10,19 @@ export function splitToWordsWithName(
   n: bigint,
   name: string
 ) {
-  let t = x;
-  const words: { [key: string]: string } = {};
+  let t = x
+  const words: { [key: string]: string } = {}
   for (let i = BigInt(0); i < n; ++i) {
-    const baseTwo: bigint = 2n;
-    const key = `${name}[${i.toString()}]`;
-    words[key] = `${t % baseTwo ** w}`;
-    t = BigInt(t / 2n ** w);
+    const baseTwo = 2n
+    const key = `${name}[${i.toString()}]`
+    words[key] = `${t % baseTwo ** w}`
+    t = BigInt(t / 2n ** w)
   }
   if (!(t == BigInt(0))) {
-    throw `Number ${x} does not fit in ${(w * n).toString()} bits`;
+    throw `Number ${x} does not fit in ${(w * n).toString()} bits`
   }
-  return words;
+  return words
 }
-
 
 /**
  * Packs a proof into a format compatible with Semaphore.
@@ -39,7 +39,7 @@ export function packProof(originalProof: SnarkJSProof): Proof {
     originalProof.pi_b[1][0],
     originalProof.pi_c[0],
     originalProof.pi_c[1],
-  ];
+  ]
 }
 
 /**
@@ -55,8 +55,7 @@ export function unpackProof(proof: Proof): SnarkJSProof {
       [proof[5], proof[4]],
     ],
     pi_c: [proof[6], proof[7]],
-    protocol: "groth16",
-    curve: "bn128",
-  };
+    protocol: 'groth16',
+    curve: 'bn128',
+  }
 }
-
