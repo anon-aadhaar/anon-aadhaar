@@ -4,9 +4,9 @@ import { expect } from "chai";
 
 describe("Utils tests", () => {
     it("splitToWordsWithName succesfully", () => {
-        let number = BigInt("255");
-        let result = splitToWordsWithName(number, 1n, 8n, "bin");
-        let expected = {
+        const number = BigInt("255");
+        const result = splitToWordsWithName(number, 1n, 8n, "bin");
+        const expected = {
             'bin[0]': '1',
             'bin[1]': '1',
             'bin[2]': '1',
@@ -19,7 +19,7 @@ describe("Utils tests", () => {
         expect(result).to.deep.eq(expected);
     })
     it("splitToWordsWithName failed", () => {
-        let fn = () => splitToWordsWithName(256n, 2n, 4n, "bin");
+        const fn = () => splitToWordsWithName(256n, 2n, 4n, "bin");
         expect(fn).to.throw();
     })
 })

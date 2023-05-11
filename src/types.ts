@@ -1,6 +1,6 @@
 export type BigNumberish= string | bigint
 
-export const IdentityPCDTypeName: string = "identity-pcd";
+export const IdentityPCDTypeName = "identity-pcd";
 
 export interface PCDInitArgs {
   // TODO: how do we distribute these in-package, so that consumers

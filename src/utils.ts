@@ -1,7 +1,9 @@
 import { SnarkJSProof, Proof } from "./types";
 
 
-export function extractSignatureFromPDF() {}
+export function extractSignatureFromPDF() {
+  throw new Error("Not implement yet")
+}
 
 export function splitToWordsWithName(
   x: bigint,
@@ -12,7 +14,7 @@ export function splitToWordsWithName(
   let t = x;
   const words: { [key: string]: string } = {};
   for (let i = BigInt(0); i < n; ++i) {
-    const baseTwo: bigint = 2n;
+    const baseTwo = 2n;
     const key = `${name}[${i.toString()}]`;
     words[key] = `${t % baseTwo ** w}`;
     t = BigInt(t / 2n ** w);

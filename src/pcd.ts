@@ -1,10 +1,9 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import {
   DisplayOptions,
   PCD,
-  PCDArgument,
   PCDPackage,
   SerializedPCD,
-  StringArgument,
 } from "@pcd/pcd-types";
 import {
   PCDInitArgs,
@@ -12,16 +11,13 @@ import {
   IdentityPCDClaim,
   IdentityPCDProof,
   IdentityPCDArgs,
-  FullProof,
 } from "./types";
 
 import { v4 as uuidv4 } from "uuid";
 //@ts-ignore
-import { groth16 } from "snarkjs";
-//@ts-ignore
 import snarkjs from "snarkjs";
 
-import { splitToWordsWithName, unpackProof } from "./utils";
+import { splitToWordsWithName } from "./utils";
 import axios from "axios";
 import { IdentityPCDCardBody } from "./CardBody";
 
@@ -79,7 +75,7 @@ async function zkProof(pcdArgs: IdentityPCDArgs): Promise<IdentityPCDProof> {
   );
   const provingKey = await (await axios.get(initArgs?.zkeyProveFilePath as string)).data;
   const wtns = circuit.calculateWitness(input);
-  const { proof, _ } = snarkjs.groth.genProof(
+  const { proof,  } = snarkjs.groth.genProof(
     snarkjs.unstringifyBigInts(provingKey),
     snarkjs.unstringifyBigInts(wtns)
   );
@@ -116,8 +112,8 @@ const downloadVerifier = async (url: string) => {
 export async function verify(pcd: IdentityPCD): Promise<boolean> {
   const vkeyVerifier = await downloadVerifier(initArgs?.zkeyVerifyKeyFilePath as string);
 
-  let exp = splitToWordsWithName(BigInt(65337), BigInt(32), BigInt(64), "exp");
-  let mod = splitToWordsWithName(
+  const exp = splitToWordsWithName(BigInt(65337), BigInt(32), BigInt(64), "exp");
+  const mod = splitToWordsWithName(
     BigInt(pcd.proof.mod),
     BigInt(32),
     BigInt(64),
