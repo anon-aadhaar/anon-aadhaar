@@ -9,9 +9,9 @@ export interface PCDInitArgs {
   // of artifact? eg. this one is parameterized by group size. Should
   // we pre-generate a bunch of artifacts per possible group size?
   // Should we do code-gen?
-  zkeyFilePath: string;
-  wasmFilePath: string;
-  verificationKeyFilePath: string
+  zkeyProveFilePath: string;
+  zkeyVerifyKeyFilePath: string
+  circuitURL: string
 }
 
 

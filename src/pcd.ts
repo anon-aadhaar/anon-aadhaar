@@ -25,12 +25,6 @@ import { splitToWordsWithName, unpackProof } from "./utils";
 import axios from "axios";
 import { IdentityPCDCardBody } from "./CardBody";
 
-const PUBLIC_ZKEY_PROVE_URL =
-  "https://d2ovde7k6pdj39.cloudfront.net/groth16_zkey_prove.json";
-const PUBLIC_ZKEY_VERIFY_URL =
-  "https://d2ovde7k6pdj39.cloudfront.net/groth16_zkey_verify.json";
-const PUBLIC_CIRCUIT_URL =
-  "https://d2ovde7k6pdj39.cloudfront.net/rsa_sha1_verify.json";
 export class IdentityPCD implements PCD<IdentityPCDClaim, IdentityPCDProof> {
   type = IdentityPCDTypeName;
   claim: IdentityPCDClaim;
@@ -80,12 +74,12 @@ async function zkProof(pcdArgs: IdentityPCDArgs): Promise<IdentityPCDProof> {
 
   const circuit = new snarkjs.Circuit(
     await (
-      await axios.get(PUBLIC_CIRCUIT_URL)
+      await axios.get(initArgs?.circuitURL as string)
     ).data
   );
-  const provingKey = await (await axios.get(PUBLIC_ZKEY_PROVE_URL)).data;
+  const provingKey = await (await axios.get(initArgs?.zkeyProveFilePath as string)).data;
   const wtns = circuit.calculateWitness(input);
-  const { proof, publicSignals } = snarkjs.groth.genProof(
+  const { proof, _ } = snarkjs.groth.genProof(
     snarkjs.unstringifyBigInts(provingKey),
     snarkjs.unstringifyBigInts(wtns)
   );
@@ -120,7 +114,7 @@ const downloadVerifier = async (url: string) => {
 };
 
 export async function verify(pcd: IdentityPCD): Promise<boolean> {
-  const vkeyVerifier = await downloadVerifier(PUBLIC_ZKEY_VERIFY_URL);
+  const vkeyVerifier = await downloadVerifier(initArgs?.zkeyVerifyKeyFilePath as string);
 
   let exp = splitToWordsWithName(BigInt(65337), BigInt(32), BigInt(64), "exp");
   let mod = splitToWordsWithName(
