@@ -1,6 +1,6 @@
-export type BigNumberish= string | bigint
+export type BigNumberish = string | bigint
 
-export const IdentityPCDTypeName = "identity-pcd";
+export const IdentityPCDTypeName = 'identity-pcd'
 
 export interface PCDInitArgs {
   // TODO: how do we distribute these in-package, so that consumers
@@ -9,17 +9,16 @@ export interface PCDInitArgs {
   // of artifact? eg. this one is parameterized by group size. Should
   // we pre-generate a bunch of artifacts per possible group size?
   // Should we do code-gen?
-  zkeyProveFilePath: string;
+  zkeyProveFilePath: string
   zkeyVerifyKeyFilePath: string
   circuitURL: string
 }
-
 
 /**
  * @dev claim this public key signed a message
  */
 export interface IdentityPCDClaim {
-  mod: BigNumberish, 
+  mod: BigNumberish
   exp: BigNumberish
 }
 
@@ -27,22 +26,20 @@ export interface IdentityPCDClaim {
  * @dev proof of claim correct
  */
 export interface IdentityPCDProof {
-  mod: BigNumberish 
-	exp: BigNumberish
-	proof: Proof // 3 points on curve if we use groth16
+  mod: BigNumberish
+  exp: BigNumberish
+  proof: Proof // 3 points on curve if we use groth16
 }
 
 /**
  * @dev witness use for create zk proof of IdentityPCD package.
  */
 export interface IdentityPCDArgs {
-	message: BigNumberish, // private witness
-	signature: BigNumberish, // private witness
-	mod: BigNumberish 
-	exp: BigNumberish
+  message: BigNumberish // private witness
+  signature: BigNumberish // private witness
+  mod: BigNumberish
+  exp: BigNumberish
 }
-
-
 
 export type Proof = [
   BigNumberish,
@@ -56,17 +53,16 @@ export type Proof = [
 ]
 
 export interface FullProof {
-  exp: BigNumberish[],
-  mod: BigNumberish[], 
-  proof: Proof 
-}
-
-export interface PCDProof {
-  exp: BigNumberish, 
-  mod: BigNumberish,
+  exp: BigNumberish[]
+  mod: BigNumberish[]
   proof: Proof
 }
 
+export interface PCDProof {
+  exp: BigNumberish
+  mod: BigNumberish
+  proof: Proof
+}
 
 export type SnarkJSProof = {
   pi_a: BigNumberish[]
