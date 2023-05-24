@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "build": "npx tsc",
-    "test": "npx ts-mocha test/**/*.ts",
+    "test": "npx ts-mocha test/**/*.test.ts",
     "lint": "eslint --ext .js,.ts .",
     "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\""
   },

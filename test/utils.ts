@@ -1,25 +1,48 @@
-import { describe } from 'mocha'
-import { splitToWordsWithName } from '../src/utils'
-import { expect } from 'chai'
+import { subtle } from "crypto";
 
-describe('Utils tests', () => {
-  it('splitToWordsWithName succesfully', () => {
-    const number = BigInt('255')
-    const result = splitToWordsWithName(number, 1n, 8n, 'bin')
-    const expected = {
-      'bin[0]': '1',
-      'bin[1]': '1',
-      'bin[2]': '1',
-      'bin[3]': '1',
-      'bin[4]': '1',
-      'bin[5]': '1',
-      'bin[6]': '1',
-      'bin[7]': '1',
-    }
-    expect(result).to.deep.eq(expected)
-  })
-  it('splitToWordsWithName failed', () => {
-    const fn = () => splitToWordsWithName(256n, 2n, 4n, 'bin')
-    expect(fn).to.throw()
-  })
-})
+function buffToBigInt(buff: string): bigint{
+    return BigInt("0x" + Buffer.from(buff, "base64url").toString("hex"));
+}
+
+async function generateRsaKey(hash = "SHA-256") {
+  const publicExponent = new Uint8Array([1, 0, 1]);
+  const modulusLength = 2048;
+  const { publicKey, privateKey } = await subtle.generateKey(
+    {
+      name: "RSASSA-PKCS1-v1_5",
+      modulusLength,
+      publicExponent,
+      hash,
+    },
+    true,
+    ["sign", "verify"]
+  );
+
+  return { publicKey, privateKey };
+}
+
+export async function genData(
+  data: string,
+  HASH_ALGO: string
+): Promise<[bigint, bigint, bigint, bigint]> {
+  const keys = await generateRsaKey(HASH_ALGO);
+
+  const public_key = await subtle.exportKey("jwk", keys.publicKey);
+
+  const enc = new TextEncoder();
+  const text = enc.encode(data);
+  console.log(await subtle.digest(HASH_ALGO, text));
+  const hash = BigInt('0x' + Buffer.from(await subtle.digest(HASH_ALGO, text)).toString('hex'));
+  
+  const sign_buff = await subtle.sign(
+    { name: "RSASSA-PKCS1-v1_5", hash: HASH_ALGO },
+    keys.privateKey,
+    text
+  );
+
+  const e = buffToBigInt(public_key.e as string);
+  const n = buffToBigInt(public_key.n as string);
+  const sign = BigInt('0x' + Buffer.from(sign_buff).toString('hex')); 
+
+  return [e, sign, n, hash];
+}
