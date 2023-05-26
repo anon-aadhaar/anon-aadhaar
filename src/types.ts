@@ -9,9 +9,8 @@ export interface PCDInitArgs {
   // of artifact? eg. this one is parameterized by group size. Should
   // we pre-generate a bunch of artifacts per possible group size?
   // Should we do code-gen?
-  zkeyProveFilePath: string
-  zkeyVerifyKeyFilePath: string
-  circuitURL: string
+  wasmURL: string, 
+  zkeyURL: string
 }
 
 /**
@@ -28,7 +27,7 @@ export interface IdentityPCDClaim {
 export interface IdentityPCDProof {
   mod: BigNumberish
   exp: BigNumberish
-  proof: Proof // 3 points on curve if we use groth16
+  proof: SnarkJSProof // 3 points on curve if we use groth16
 }
 
 /**
@@ -61,7 +60,7 @@ export interface FullProof {
 export interface PCDProof {
   exp: BigNumberish
   mod: BigNumberish
-  proof: Proof
+  proof: SnarkJSProof
 }
 
 export type SnarkJSProof = {

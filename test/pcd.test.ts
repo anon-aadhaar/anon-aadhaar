@@ -2,25 +2,26 @@ import { describe } from 'mocha'
 import { IdentityPCDArgs, PCDInitArgs } from '../src/types'
 import { init, prove, verify } from '../src/pcd'
 import { assert } from 'chai'
+import { genData } from './utils'
 
 describe('PCD tests', function () {
   this.timeout(0)
-  it.skip('PCD flow', async () => {
+  it('PCD flow', async () => {
+    const dirName = __dirname + '/../artifacts';
+    console.log(dirName);
     const pcdInitArgs: PCDInitArgs = {
-      circuitURL: 'https://d2ovde7k6pdj39.cloudfront.net/rsa_sha1_verify.json',
-      zkeyProveFilePath:
-        'https://d2ovde7k6pdj39.cloudfront.net/groth16_zkey_prove.json',
-      zkeyVerifyKeyFilePath:
-        'https://d2ovde7k6pdj39.cloudfront.net/groth16_zkey_verify.json',
+      wasmURL: dirName + '/rsa_verify_sha1_pkcs1v15.wasm',
+      zkeyURL: dirName + '/circuit_final.zkey'
     }
 
     await init(pcdInitArgs)
 
+    const data = await genData("Hello world", 'SHA-1');
     const pcdArgs: IdentityPCDArgs = {
       exp: BigInt(65337),
-      message: BigInt(''),
-      mod: BigInt(''),
-      signature: BigInt(''),
+      signature: data[1], 
+      mod: data[2],
+      message: data[3],
     }
 
     const pcd = await prove(pcdArgs)

@@ -8,14 +8,13 @@ export function splitToWordsWithName(
   x: bigint,
   w: bigint,
   n: bigint,
-  name: string
 ) {
-  let t = x
-  const words: { [key: string]: string } = {}
+  let t = x;
+  const words = [];
   for (let i = BigInt(0); i < n; ++i) {
     const baseTwo = 2n
-    const key = `${name}[${i.toString()}]`
-    words[key] = `${t % baseTwo ** w}`
+  
+    words.push(`${t % baseTwo ** w}`);
     t = BigInt(t / 2n ** w)
   }
   if (!(t == BigInt(0))) {

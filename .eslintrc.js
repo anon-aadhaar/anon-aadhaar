@@ -20,7 +20,7 @@ module.exports = {
   rules: {
     '@typescript-eslint/no-unused-vars': 'error',
   },
-  ignorePatterns: ['build'],
+  ignorePatterns: ['build', 'script/*.mjs'],
   settings: {
     react: {
       version: 'detect',

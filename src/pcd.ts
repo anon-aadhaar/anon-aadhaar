@@ -10,12 +10,14 @@ import {
 
 import { v4 as uuidv4 } from 'uuid'
 //@ts-ignore
-import snarkjs from 'snarkjs'
+import { groth16 } from 'snarkjs'
+//@ts-ignore
+import * as snarkjs from 'snarkjs'
 
 import { splitToWordsWithName } from './utils'
 import axios from 'axios'
 import { IdentityPCDCardBody } from './CardBody'
-
+import { isWebUri } from 'valid-url'
 export class IdentityPCD implements PCD<IdentityPCDClaim, IdentityPCDProof> {
   type = IdentityPCDTypeName
   claim: IdentityPCDClaim
@@ -39,42 +41,28 @@ export async function init(args: PCDInitArgs): Promise<void> {
   initArgs = args
 }
 
-async function zkProof(pcdArgs: IdentityPCDArgs): Promise<IdentityPCDProof> {
-  const input = Object.assign(
-    {},
-    splitToWordsWithName(
-      pcdArgs.signature as bigint,
-      BigInt(32),
-      BigInt(64),
-      'sign'
-    ),
-    splitToWordsWithName(BigInt(65337), BigInt(32), BigInt(64), 'exp'),
-    splitToWordsWithName(
-      BigInt(pcdArgs.mod),
-      BigInt(32),
-      BigInt(64),
-      'modulus'
-    ),
-    splitToWordsWithName(
-      BigInt(pcdArgs.message),
-      BigInt(32),
-      BigInt(5),
-      'hashed'
-    )
-  )
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function fetchKey(keyURL: string): Promise<string | ArrayBuffer> {
+  if (isWebUri(keyURL)) {
+    const keyData = await (await axios.get(keyURL)).data
+    const keyBin = Buffer.from(keyData)
+    return keyBin
+  }
+  return keyURL
+}
 
-  const circuit = new snarkjs.Circuit(
-    await (
-      await axios.get(initArgs?.circuitURL as string)
-    ).data
-  )
-  const provingKey = await (
-    await axios.get(initArgs?.zkeyProveFilePath as string)
-  ).data
-  const wtns = circuit.calculateWitness(input)
-  const { proof } = snarkjs.groth.genProof(
-    snarkjs.unstringifyBigInts(provingKey),
-    snarkjs.unstringifyBigInts(wtns)
+async function zkProof(pcdArgs: IdentityPCDArgs): Promise<IdentityPCDProof> {
+  const input = {
+    sign: splitToWordsWithName(pcdArgs.signature as bigint, 32n, 64n),
+    exp: splitToWordsWithName(BigInt(65337), BigInt(32), BigInt(64)),
+    modulus: splitToWordsWithName(BigInt(pcdArgs.mod), BigInt(32), BigInt(64)),
+    hashed: splitToWordsWithName(pcdArgs.message as bigint, 32n, 5n),
+  }
+
+  const { proof } = await groth16.fullProve(
+    input,
+    initArgs?.wasmURL,
+    initArgs?.zkeyURL
   )
 
   return {
@@ -101,27 +89,20 @@ export async function prove(args: IdentityPCDArgs): Promise<IdentityPCD> {
   return new IdentityPCD(id, pcdClaim, pcdProof)
 }
 
-const downloadVerifier = async (url: string) => {
-  const vkeyVerifier = await (await axios.get(url)).data
-  return vkeyVerifier
+function getVerifyKey() {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const verifyKey = require('../artifacts/verification_key.json')
+  return verifyKey
 }
-
 export async function verify(pcd: IdentityPCD): Promise<boolean> {
-  const vkeyVerifier = await downloadVerifier(
-    initArgs?.zkeyVerifyKeyFilePath as string
-  )
-
-  const exp = splitToWordsWithName(BigInt(65337), BigInt(32), BigInt(64), 'exp')
-  const mod = splitToWordsWithName(
-    BigInt(pcd.proof.mod),
-    BigInt(32),
-    BigInt(64),
-    'modulus'
-  )
-  return snarkjs.groth.isValid(
-    snarkjs.unstringifyBigInts(vkeyVerifier),
-    snarkjs.unstringifyBigInts(pcd.proof.proof),
-    snarkjs.unstringifyBigInts(Object.values(exp).concat(Object.values(mod)))
+  const vk = getVerifyKey()
+  return snarkjs.groth16.verify(
+    vk,
+    [
+      ...splitToWordsWithName(BigInt(65337), BigInt(32), BigInt(64)),
+      ...splitToWordsWithName(BigInt(pcd.proof.mod), BigInt(32), BigInt(64)),
+    ],
+    pcd.proof.proof
   )
 }
 
