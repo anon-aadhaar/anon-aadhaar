@@ -6,22 +6,52 @@ import { genData } from './utils'
 
 describe('PCD tests', function () {
   this.timeout(0)
-  it('PCD flow', async () => {
-    const dirName = __dirname + '/../artifacts';
-    console.log(dirName);
+
+  let testData: [bigint, bigint, bigint, bigint]
+
+  this.beforeAll(async () => {
+    testData = await genData('Hello world', 'SHA-1')
+  })
+
+  it('PCD flow location prover', async function () {
+    const dirName = __dirname + '/../artifacts'
     const pcdInitArgs: PCDInitArgs = {
       wasmURL: dirName + '/rsa_verify_sha1_pkcs1v15.wasm',
-      zkeyURL: dirName + '/circuit_final.zkey'
+      zkeyURL: dirName + '/circuit_final.zkey',
+      isWebEnv: false,
     }
 
     await init(pcdInitArgs)
 
-    const data = await genData("Hello world", 'SHA-1');
     const pcdArgs: IdentityPCDArgs = {
       exp: BigInt(65337),
-      signature: data[1], 
-      mod: data[2],
-      message: data[3],
+      signature: testData[1],
+      mod: testData[2],
+      message: testData[3],
+    }
+
+    const pcd = await prove(pcdArgs)
+
+    const verified = await verify(pcd)
+    assert(verified == true, 'Should verifiable')
+  })
+
+  // TODO: Create utils for test Web Prover
+  it('PCD flow web prover', async function () {
+    const dirName = __dirname + '/../artifacts'
+    const pcdInitArgs: PCDInitArgs = {
+      wasmURL: dirName + '/rsa_verify_sha1_pkcs1v15.wasm',
+      zkeyURL: dirName + '/circuit_final.zkey',
+      isWebEnv: false,
+    }
+
+    await init(pcdInitArgs)
+
+    const pcdArgs: IdentityPCDArgs = {
+      exp: BigInt(65337),
+      signature: testData[1],
+      mod: testData[2],
+      message: testData[3],
     }
 
     const pcd = await prove(pcdArgs)

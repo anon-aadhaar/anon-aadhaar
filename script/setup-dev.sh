@@ -1,10 +1,9 @@
 #!/bin/bash
 
-git submodule update --init --recursive
-
+git submodule update --init --recursive --remote
 cd build 
 
-git clone https://github.com/iden3/circom.git
+# git clone https://github.com/iden3/circom.git
 
 cd circom 
 cargo build --release
@@ -12,7 +11,7 @@ cargo install --path circom
 
 cd ..
 
-wget https://hermez.s3-eu-west-1.amazonaws.com/powersOfTau28_hez_final_20.ptau
+# wget https://hermez.s3-eu-west-1.amazonaws.com/powersOfTau28_hez_final_20.ptau
 
 cd ..
 

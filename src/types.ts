@@ -10,7 +10,8 @@ export interface PCDInitArgs {
   // we pre-generate a bunch of artifacts per possible group size?
   // Should we do code-gen?
   wasmURL: string, 
-  zkeyURL: string
+  zkeyURL: string,
+  isWebEnv: boolean
 }
 
 /**
