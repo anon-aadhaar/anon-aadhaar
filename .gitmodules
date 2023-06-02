@@ -1,0 +1,3 @@
+[submodule "circom-rsa-verify"]
+	path = circom-rsa-verify
+	url = https://github.com/vuvoth/circom-rsa-verify
