@@ -20,7 +20,7 @@ module.exports = {
   rules: {
     '@typescript-eslint/no-unused-vars': 'error',
   },
-  ignorePatterns: ['build', 'script/*.mjs'],
+  ignorePatterns: ['build', 'script/*.mjs', 'circom-rsa-verify'],
   settings: {
     react: {
       version: 'detect',
