@@ -1,44 +1,90 @@
 #!/bin/bash
 
-git submodule update --init --recursive --remote
-cd build 
 
-# git clone https://github.com/iden3/circom.git
+# default dir
+BUILD_DIR=$(pwd)/build
+ARTIFACTS_DIR=$(pwd)/artifacts
+POWERS_OF_TAU=$BUILD_DIR/powersOfTau28_hez_final_20.ptau
+RSA_DIR=$(pwd)/circom-rsa-verify
 
-cd circom 
-cargo build --release
-cargo install --path circom
+CIRCOM_BIN_DIR=$HOME/.cargo/bin/circom
 
-cd ..
+# install circom and depenencies
+function install_deps() {
+    git submodule update --init --recursive --remote
 
-# wget https://hermez.s3-eu-west-1.amazonaws.com/powersOfTau28_hez_final_20.ptau
+    if [ ! -d $BUILD_DIR ]; then
+        mkdir -p $BUILD_DIR
+    fi
 
-cd ..
+    echo "Install circom"
+    cd $BUILD_DIR
+    if [ ! -f $CIRCOM_BIN_DIR ]; then
+        git clone https://github.com/iden3/circom.git
+        cd circom
+        cargo build --release
+        cargo install --path circom
+        echo "Installed circom!"
+    else 
+        echo "Circom already install... Skip this action!"
+    fi 
 
-cd circom-rsa-verify 
-yarn
+    echo "Download power of tau...."
+    cd $BUILD_DIR    
+    if [ ! -f $POWERS_OF_TAU ]; then
+        wget https://hermez.s3-eu-west-1.amazonaws.com/powersOfTau28_hez_final_20.ptau
+        echo "Finished download!"
+    else 
+        echo "Powers of tau file already downloaded... Skip download action!"
+    fi 
 
-cd circom-ecdsa 
-yarn 
-cd ..
+    echo "Finished install deps!!!!"
+}
 
-cd test 
+# trusted setup for development
+# DON'T USE IT IN PRODUCT
+function setup_circuit() {
+    echo "TRUSTED SETUP FOR DEVELOPMENT - PLEASE, DON'T USE IT IN PRODUCT!!!!"
+    
+    cd $RSA_DIR
+    yarn
+    
+    cd $RSA_DIR/circom-ecdsa
+    yarn
+    
+    echo "Starting setup...!"
+    cd $RSA_DIR/test
+    circom circuits/rsa_verify_sha1_pkcs1v15.circom  --r1cs --wasm -o $BUILD_DIR
+    npx snarkjs groth16 setup $BUILD_DIR/rsa_verify_sha1_pkcs1v15.r1cs $POWERS_OF_TAU $BUILD_DIR/circuit_0000.zkey
+    echo "test random" | npx snarkjs zkey contribute $BUILD_DIR/circuit_0000.zkey $BUILD_DIR/circuit_final.zkey
+    npx snarkjs zkey export verificationkey $BUILD_DIR/circuit_final.zkey $BUILD_DIR/verification_key.json
+    
+    echo "Finish setup....!"
 
-circom circuits/rsa_verify_sha1_pkcs1v15.circom  --r1cs --wasm -o ../../build
+    echo "Copy proving key and verify key to artifacts!!!!"
 
-pwd
+    cd $BUILD_DIR
 
-ls  ../../build
+    if [ ! -d $ARTIFACTS_DIR ]; then
+        mkdir -p $ARTIFACTS_DIR
+    fi
 
-npx snarkjs groth16 setup ../../build/rsa_verify_sha1_pkcs1v15.r1cs ../../build/powersOfTau28_hez_final_20.ptau ../../build/circuit_0000.zkey
+    cp rsa_verify_sha1_pkcs1v15_js/rsa_verify_sha1_pkcs1v15.wasm $ARTIFACTS_DIR
+    cp circuit_final.zkey $ARTIFACTS_DIR
+    cp verification_key.json $ARTIFACTS_DIR
+    echo "Setup finished!"
+}
 
-echo "test random" | npx snarkjs zkey contribute ../../build/circuit_0000.zkey ../../build/circuit_final.zkey 
 
-npx snarkjs zkey export verificationkey ../../build/circuit_final.zkey ../../build/verification_key.json
-
-cd ../../
-
-cp build/rsa_verify_sha1_pkcs1v15_js/rsa_verify_sha1_pkcs1v15.wasm ./artifacts
-cp build/circuit_final.zkey ./artifacts
-cp build/verification_key.json ./artifacts
+case "$1" in
+    install)
+        install_deps
+    ;;
+    setup)
+        setup_circuit
+    ;;
+    *)
+        echo "Usage: $0 {install|setup}"
+    ;;
+esac
 
