@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "main": "index.js",
   "repository": "https://github.com/privacy-scaling-explorations/anon-aadhaar",
-"license": "MIT",
+  "license": "MIT",
   "scripts": {
     "build": "npx tsc",
     "test": "npx ts-mocha test/**/*.test.ts --exit",
     "lint": "eslint --ext .js,.ts .",
-    "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\""
+    "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\"",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@pcd/pcd-types": "^0.4.2",
@@ -37,6 +38,7 @@
     "prettier": "^2.8.8",
     "ts-mocha": "^10.0.0",
     "ts-node": "^10.9.1",
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.4",
+    "husky": "^8.0.0"
   }
 }
