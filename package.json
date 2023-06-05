@@ -8,7 +8,7 @@
     "build": "npx tsc",
     "test": "npx ts-mocha test/**/*.test.ts --exit",
     "lint": "eslint --ext .js,.ts .",
-    "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\"",
+    "format": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\"",
     "prepare": "husky install"
   },
   "dependencies": {

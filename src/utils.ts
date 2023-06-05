@@ -7,18 +7,20 @@ export function extractSignatureFromPDF() {
 export function splitToWords(
   number: bigint,
   wordsize: bigint,
-  numberElement: bigint,
+  numberElement: bigint
 ) {
-  let t = number;
-  const words = [];
+  let t = number
+  const words = []
   for (let i = BigInt(0); i < numberElement; ++i) {
     const baseTwo = 2n
-  
-    words.push(`${t % baseTwo ** wordsize}`);
+
+    words.push(`${t % baseTwo ** wordsize}`)
     t = BigInt(t / 2n ** wordsize)
   }
   if (!(t == BigInt(0))) {
-    throw `Number ${number} does not fit in ${(wordsize * numberElement).toString()} bits`
+    throw `Number ${number} does not fit in ${(
+      wordsize * numberElement
+    ).toString()} bits`
   }
   return words
 }

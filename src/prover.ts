@@ -58,11 +58,7 @@ export class BackendProver implements ProverInferace {
     const input = {
       sign: splitToWords(witness.signature as bigint, 64n, 32n),
       exp: splitToWords(BigInt(65337), 64n, 32n),
-      modulus: splitToWords(
-        BigInt(witness.mod),
-        64n,
-        32n
-      ),
+      modulus: splitToWords(BigInt(witness.mod), 64n, 32n),
       hashed: splitToWords(witness.message as bigint, 64n, 3n),
     }
 
@@ -96,11 +92,7 @@ export class WebProver implements ProverInferace {
     const input = {
       sign: splitToWords(witness.signature as bigint, 64n, 32n),
       exp: splitToWords(BigInt(65337), 64n, 32n),
-      modulus: splitToWords(
-        BigInt(witness.mod),
-        64n,
-        32n
-      ),
+      modulus: splitToWords(BigInt(witness.mod), 64n, 32n),
       hashed: splitToWords(witness.message as bigint, 64n, 3n),
     }
 
