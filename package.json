@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "repository": "https://github.com/privacy-scaling-explorations/anon-aadhaar",
-  "author": "PSE Team",
+"license": "MIT",
   "scripts": {
     "build": "npx tsc",
     "test": "npx ts-mocha test/**/*.test.ts --exit",
