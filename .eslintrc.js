@@ -8,7 +8,7 @@ module.exports = {
     'eslint:recommended',
     'plugin:react/recommended',
     'plugin:@typescript-eslint/recommended',
-    'prettier'
+    'prettier',
   ],
   overrides: [],
   parser: '@typescript-eslint/parser',
@@ -16,11 +16,11 @@ module.exports = {
     ecmaVersion: 'latest',
     sourceType: 'module',
   },
-  plugins: ['react', '@typescript-eslint',],
+  plugins: ['react', '@typescript-eslint'],
   rules: {
     '@typescript-eslint/no-unused-vars': 'error',
   },
-  ignorePatterns: ['build', 'script/*.mjs'],
+  ignorePatterns: ['build', 'script/*.mjs', 'circom-rsa-verify'],
   settings: {
     react: {
       version: 'detect',

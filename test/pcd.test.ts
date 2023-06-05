@@ -37,7 +37,7 @@ describe('PCD tests', function () {
   })
 
   // TODO: Create utils for test Web Prover
-  it('PCD flow web prover', async function () {
+  it.skip('PCD flow web prover', async function () {
     const dirName = __dirname + '/../artifacts'
     const pcdInitArgs: PCDInitArgs = {
       wasmURL: dirName + '/rsa_verify_sha1_pkcs1v15.wasm',

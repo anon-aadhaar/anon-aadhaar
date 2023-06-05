@@ -1,0 +1,8 @@
+/node_modules
+/yarn-error.log
+/build
+.hiden
+/src/meta
+/artifacts
+.vscode
+circom-rsa-verify
