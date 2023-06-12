@@ -15,9 +15,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          override: false
       
       - name: Setup Node
         uses: actions/setup-node@v2-beta
@@ -32,6 +29,8 @@ jobs:
         run: yarn install
       - name: Execute lint
         run: yarn lint
+      - name: Setup Rust 
+        uses: dtolnay/rust-toolchain@stable
       - name: Setup 
         run: ./script/setup-dev.sh
       - name: Build packages
