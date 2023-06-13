@@ -6,6 +6,8 @@
   "license": "MIT",
   "scripts": {
     "build": "npx tsc",
+    "dev-setup": "/bin/bash ./script/setup-dev.sh setup",
+    "dev-install": "/bin/bash ./script/setup-dev.sh install",
     "test": "npx ts-mocha test/**/*.test.ts --exit",
     "lint": "eslint --ext .js,.ts .",
     "format": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\"",
