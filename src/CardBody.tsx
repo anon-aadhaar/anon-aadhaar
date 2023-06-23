@@ -14,11 +14,11 @@ export function IdentityPCDCardBody({ pcd }: { pcd: IdentityPCD }) {
 
       <Separator />
 
-      <FieldLabel>Group Root</FieldLabel>
+      <FieldLabel>Exp</FieldLabel>
       <TextContainer>{pcd.claim.exp.toString()}</TextContainer>
       <Spacer h={8} />
 
-      <FieldLabel>Signal</FieldLabel>
+      <FieldLabel>Mod</FieldLabel>
       <TextContainer>{pcd.claim.mod.toString()}</TextContainer>
       <Spacer h={8} />
     </Container>
