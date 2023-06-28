@@ -55,11 +55,27 @@ export class BackendProver implements ProverInferace {
   }
 
   async proving(witness: Witness): Promise<IdentityPCDProof> {
+    if (!witness.mod.value) {
+      throw new Error('Cannot make proof: missing mod')
+    }
+
+    if (!witness.exp.value) {
+      throw new Error('Cannot make proof: missing exp')
+    }
+
+    if (!witness.signature.value) {
+      throw new Error('Cannot make proof: missing signature')
+    }
+
+    if (!witness.message.value) {
+      throw new Error('Cannot make proof: missing message')
+    }
+
     const input = {
-      sign: splitToWords(witness.signature as bigint, 64n, 32n),
+      sign: splitToWords(BigInt(witness.signature.value), 64n, 32n),
       exp: splitToWords(BigInt(65337), 64n, 32n),
-      modulus: splitToWords(BigInt(witness.mod), 64n, 32n),
-      hashed: splitToWords(witness.message as bigint, 64n, 3n),
+      modulus: splitToWords(BigInt(witness.mod.value), 64n, 32n),
+      hashed: splitToWords(BigInt(witness.message.value), 64n, 3n),
     }
 
     const { proof } = await groth16.fullProve(
@@ -69,8 +85,8 @@ export class BackendProver implements ProverInferace {
     )
 
     return {
-      exp: witness.exp,
-      mod: witness.mod,
+      exp: witness.exp.value,
+      mod: witness.mod.value,
       proof,
     }
   }
@@ -89,11 +105,27 @@ export class WebProver implements ProverInferace {
     const wasmBuffer = (await this.wasm.getKey()) as ArrayBuffer
     const zkeyBuffer = (await this.zkey.getKey()) as ArrayBuffer
 
+    if (!witness.mod.value) {
+      throw new Error('Cannot make proof: missing mod')
+    }
+
+    if (!witness.exp.value) {
+      throw new Error('Cannot make proof: missing exp')
+    }
+
+    if (!witness.signature.value) {
+      throw new Error('Cannot make proof: missing signature')
+    }
+
+    if (!witness.message.value) {
+      throw new Error('Cannot make proof: missing message')
+    }
+
     const input = {
-      sign: splitToWords(witness.signature as bigint, 64n, 32n),
+      sign: splitToWords(BigInt(witness.signature.value), 64n, 32n),
       exp: splitToWords(BigInt(65337), 64n, 32n),
-      modulus: splitToWords(BigInt(witness.mod), 64n, 32n),
-      hashed: splitToWords(witness.message as bigint, 64n, 3n),
+      modulus: splitToWords(BigInt(witness.mod.value), 64n, 32n),
+      hashed: splitToWords(BigInt(witness.message.value), 64n, 3n),
     }
 
     const { proof } = await groth16.fullProve(
@@ -102,8 +134,8 @@ export class WebProver implements ProverInferace {
       new Uint8Array(zkeyBuffer)
     )
     return {
-      exp: witness.exp,
-      mod: witness.mod,
+      exp: witness.exp.value,
+      mod: witness.mod.value,
       proof,
     }
   }

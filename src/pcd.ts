@@ -46,11 +46,15 @@ export async function prove(args: IdentityPCDArgs): Promise<IdentityPCD> {
     )
   }
 
+  if (!args.exp.value || !args.mod.value) {
+    throw new Error('Invalid arguments')
+  }
+
   const id = uuidv4()
 
   const pcdClaim: IdentityPCDClaim = {
-    exp: args.exp,
-    mod: args.mod,
+    exp: args.exp.value,
+    mod: args.mod.value,
   }
 
   let prover: ProverInferace

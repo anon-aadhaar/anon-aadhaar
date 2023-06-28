@@ -1,3 +1,5 @@
+import { BigIntArgument } from '@pcd/pcd-types'
+
 export type BigNumberish = string | bigint
 
 export const IdentityPCDTypeName = 'identity-pcd'
@@ -35,10 +37,10 @@ export interface IdentityPCDProof {
  * @dev witness use for create zk proof of IdentityPCD package.
  */
 export interface IdentityPCDArgs {
-  message: BigNumberish // private witness
-  signature: BigNumberish // private witness
-  mod: BigNumberish
-  exp: BigNumberish
+  message: BigIntArgument // private witness
+  signature: BigIntArgument // private witness
+  mod: BigIntArgument
+  exp: BigIntArgument
 }
 
 export type Proof = [
