@@ -3,6 +3,7 @@ import { IdentityPCDArgs, PCDInitArgs } from '../src/types'
 import { init, prove, verify } from '../src/pcd'
 import { assert } from 'chai'
 import { genData } from './utils'
+import { ArgumentTypeName } from '@pcd/pcd-types'
 
 describe('PCD tests', function () {
   this.timeout(0)
@@ -24,10 +25,22 @@ describe('PCD tests', function () {
     await init(pcdInitArgs)
 
     const pcdArgs: IdentityPCDArgs = {
-      exp: BigInt(65337),
-      signature: testData[1],
-      mod: testData[2],
-      message: testData[3],
+      exp: {
+        argumentType: ArgumentTypeName.BigInt,
+        value: BigInt(65337) + '',
+      },
+      signature: {
+        argumentType: ArgumentTypeName.BigInt,
+        value: testData[1] + '',
+      },
+      mod: {
+        argumentType: ArgumentTypeName.BigInt,
+        value: testData[2] + '',
+      },
+      message: {
+        argumentType: ArgumentTypeName.BigInt,
+        value: testData[3] + '',
+      },
     }
 
     const pcd = await prove(pcdArgs)
@@ -48,10 +61,22 @@ describe('PCD tests', function () {
     await init(pcdInitArgs)
 
     const pcdArgs: IdentityPCDArgs = {
-      exp: BigInt(65337),
-      signature: testData[1],
-      mod: testData[2],
-      message: testData[3],
+      exp: {
+        argumentType: ArgumentTypeName.BigInt,
+        value: BigInt(65337) + '',
+      },
+      signature: {
+        argumentType: ArgumentTypeName.BigInt,
+        value: testData[1] + '',
+      },
+      mod: {
+        argumentType: ArgumentTypeName.BigInt,
+        value: testData[2] + '',
+      },
+      message: {
+        argumentType: ArgumentTypeName.BigInt,
+        value: testData[3] + '',
+      },
     }
 
     const pcd = await prove(pcdArgs)
