@@ -90,11 +90,11 @@ case "$1" in
     setup)
         setup_circuit
     ;;
-    pdf_setup) 
+    pdf-setup) 
         gen_cert_and_key
     ;;
     *)
-        echo "Usage: $0 {install|setup|pdf_setup}"
+        echo "Usage: $0 {install|setup|pdf-setup}"
     ;;
 esac
 
