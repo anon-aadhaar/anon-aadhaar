@@ -75,6 +75,13 @@ function setup_circuit() {
     echo "Setup finished!"
 }
 
+function gen_cert_and_key() {
+    cd $BUILD_DIR
+    openssl req -newkey rsa:2048 -x509 -nodes -keyout cakey.pem -out cacert.pem -days 3650 -subj "/C=GB/ST=London/L=London/O=Global Security/OU=IT Department/CN=example.com"  
+    openssl pkcs12 -export -out keyStore.p12 -inkey cakey.pem -in cacert.pem  -passout pass:password
+    openssl x509 -inform PEM -in cacert.pem -outform DER -out certificate.cer   
+    npx node-signpdf-gen $BUILD_DIR/signed.pdf $BUILD_DIR/keyStore.p12
+}
 
 case "$1" in
     install)
@@ -83,8 +90,11 @@ case "$1" in
     setup)
         setup_circuit
     ;;
+    pdf-setup) 
+        gen_cert_and_key
+    ;;
     *)
-        echo "Usage: $0 {install|setup}"
+        echo "Usage: $0 {install|setup|pdf-setup}"
     ;;
 esac
 
