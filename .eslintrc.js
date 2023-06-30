@@ -19,6 +19,8 @@ module.exports = {
   plugins: ['react', '@typescript-eslint'],
   rules: {
     '@typescript-eslint/no-unused-vars': 'error',
+    'react/react-in-jsx-scope': 'off',
+    'react/jsx-filename-extension': [1, { extensions: ['.ts', '.tsx'] }],
   },
   ignorePatterns: ['build', 'script/*.mjs', 'circom-rsa-verify'],
   settings: {

@@ -15,6 +15,7 @@
     "gen-pdf": "/bin/bash ./script/setup-dev.sh pdf-setup"
   },
   "dependencies": {
+    "@pcd/passport-ui": "^0.5.3",
     "@pcd/pcd-types": "^0.4.2",
     "axios": "^1.4.0",
     "react": "^18.2.0",

@@ -16,6 +16,7 @@ import { groth16 } from 'snarkjs'
 import { splitToWords } from './utils'
 import { IdentityPCDCardBody } from './CardBody'
 import { BackendProver, ProverInferace, WebProver } from './prover'
+
 export class IdentityPCD implements PCD<IdentityPCDClaim, IdentityPCDProof> {
   type = IdentityPCDTypeName
   claim: IdentityPCDClaim
@@ -107,7 +108,7 @@ export function deserialize(serialized: string): Promise<IdentityPCD> {
 
 export function getDisplayOptions(pcd: IdentityPCD): DisplayOptions {
   return {
-    header: 'ZK Signature',
+    header: 'Country Identity Signature',
     displayName: 'pcd-' + pcd.type,
   }
 }
@@ -115,12 +116,14 @@ export function getDisplayOptions(pcd: IdentityPCD): DisplayOptions {
 export const IdentityPCDPackage: PCDPackage<
   IdentityPCDClaim,
   IdentityPCDProof,
-  IdentityPCDArgs
+  IdentityPCDArgs,
+  PCDInitArgs
 > = {
   name: IdentityPCDTypeName,
   renderCardBody: IdentityPCDCardBody,
   getDisplayOptions,
   prove,
+  init,
   verify,
   serialize,
   deserialize,
