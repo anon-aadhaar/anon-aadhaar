@@ -1,10 +1,10 @@
 {
   "extends": ["@pcd/tsconfig/ts-library.json"],
-  "compilerOptions": {
-    "outDir": "./build",
-    "target": "es2020",
-    "lib": ["es2020"]
-  },
+  // "compilerOptions": {
+  //   "outDir": "./build",
+  //   "target": "es2020",
+  //   "lib": ["es2020"]
+  // },
   "include": [".", "./test"],
   "exclude": ["dist", "build", "node_modules"]
 }

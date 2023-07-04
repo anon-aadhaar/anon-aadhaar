@@ -12,10 +12,10 @@ export function splitToWords(
   let t = number
   const words = []
   for (let i = BigInt(0); i < numberElement; ++i) {
-    const baseTwo = 2n
+    const baseTwo = BigInt(2)
 
-    words.push(`${t % baseTwo ** wordsize}`)
-    t = BigInt(t / 2n ** wordsize)
+    words.push(`${t % BigInt(Math.pow(Number(baseTwo), Number(wordsize)))}`)
+    t = BigInt(t / BigInt(Math.pow(Number(BigInt(2)), Number(wordsize))))
   }
   if (!(t == BigInt(0))) {
     throw `Number ${number} does not fit in ${(
