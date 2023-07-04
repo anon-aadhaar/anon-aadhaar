@@ -82,7 +82,7 @@ export class BackendProver implements ProverInferace {
       hashed: splitToWords(
         BigInt(witness.message.value),
         BigInt(64),
-        BigInt(32)
+        BigInt(3)
       ),
     }
 
