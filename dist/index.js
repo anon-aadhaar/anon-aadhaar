@@ -29,6 +29,26 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __async = (__this, __arguments, generator) => {
+  return new Promise((resolve, reject) => {
+    var fulfilled = (value) => {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    };
+    var rejected = (value) => {
+      try {
+        step(generator.throw(value));
+      } catch (e) {
+        reject(e);
+      }
+    };
+    var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
+    step((generator = generator.apply(__this, __arguments)).next());
+  });
+};
 
 // artifacts/verification_key.json
 var require_verification_key = __commonJS({
@@ -479,9 +499,9 @@ function splitToWords(number, wordsize, numberElement) {
   let t = number;
   const words = [];
   for (let i = BigInt(0); i < numberElement; ++i) {
-    const baseTwo = 2n;
-    words.push(`${t % baseTwo ** wordsize}`);
-    t = BigInt(t / 2n ** wordsize);
+    const baseTwo = BigInt(2);
+    words.push(`${t % BigInt(Math.pow(Number(baseTwo), Number(wordsize)))}`);
+    t = BigInt(t / BigInt(Math.pow(Number(BigInt(2)), Number(wordsize))));
   }
   if (!(t == BigInt(0))) {
     throw `Number ${number} does not fit in ${(wordsize * numberElement).toString()} bits`;
@@ -539,23 +559,27 @@ var Container = import_styled_components.default.div`
 var import_valid_url = require("valid-url");
 var import_axios = __toESM(require("axios"));
 var import_snarkjs = require("snarkjs");
-async function fetchKey(keyURL) {
-  if ((0, import_valid_url.isWebUri)(keyURL)) {
-    const keyData = await (await import_axios.default.get(keyURL)).data;
-    const keyBin = Buffer.from(keyData);
-    return keyBin;
-  }
-  return keyURL;
+function fetchKey(keyURL) {
+  return __async(this, null, function* () {
+    if ((0, import_valid_url.isWebUri)(keyURL)) {
+      const keyData = yield (yield import_axios.default.get(keyURL)).data;
+      const keyBin = Buffer.from(keyData);
+      return keyBin;
+    }
+    return keyURL;
+  });
 }
 var KeyPath = class {
   constructor(keyURL, isLocation) {
     this.keyURL = keyURL;
     this.isLocation = isLocation;
   }
-  async getKey() {
-    if (this.isLocation)
-      return this.keyURL;
-    return await fetchKey(this.keyURL);
+  getKey() {
+    return __async(this, null, function* () {
+      if (this.isLocation)
+        return this.keyURL;
+      return yield fetchKey(this.keyURL);
+    });
   }
 };
 var BackendProver = class {
@@ -563,35 +587,45 @@ var BackendProver = class {
     this.wasm = new KeyPath(wasmURL, false);
     this.zkey = new KeyPath(zkey, false);
   }
-  async proving(witness) {
-    if (!witness.mod.value) {
-      throw new Error("Cannot make proof: missing mod");
-    }
-    if (!witness.exp.value) {
-      throw new Error("Cannot make proof: missing exp");
-    }
-    if (!witness.signature.value) {
-      throw new Error("Cannot make proof: missing signature");
-    }
-    if (!witness.message.value) {
-      throw new Error("Cannot make proof: missing message");
-    }
-    const input = {
-      sign: splitToWords(BigInt(witness.signature.value), 64n, 32n),
-      exp: splitToWords(BigInt(65337), 64n, 32n),
-      modulus: splitToWords(BigInt(witness.mod.value), 64n, 32n),
-      hashed: splitToWords(BigInt(witness.message.value), 64n, 3n)
-    };
-    const { proof } = await import_snarkjs.groth16.fullProve(
-      input,
-      await this.wasm.getKey(),
-      await this.zkey.getKey()
-    );
-    return {
-      exp: witness.exp.value,
-      mod: witness.mod.value,
-      proof
-    };
+  proving(witness) {
+    return __async(this, null, function* () {
+      if (!witness.mod.value) {
+        throw new Error("Cannot make proof: missing mod");
+      }
+      if (!witness.exp.value) {
+        throw new Error("Cannot make proof: missing exp");
+      }
+      if (!witness.signature.value) {
+        throw new Error("Cannot make proof: missing signature");
+      }
+      if (!witness.message.value) {
+        throw new Error("Cannot make proof: missing message");
+      }
+      const input = {
+        sign: splitToWords(
+          BigInt(witness.signature.value),
+          BigInt(64),
+          BigInt(32)
+        ),
+        exp: splitToWords(BigInt(65337), BigInt(64), BigInt(32)),
+        modulus: splitToWords(BigInt(witness.mod.value), BigInt(64), BigInt(32)),
+        hashed: splitToWords(
+          BigInt(witness.message.value),
+          BigInt(64),
+          BigInt(32)
+        )
+      };
+      const { proof } = yield import_snarkjs.groth16.fullProve(
+        input,
+        yield this.wasm.getKey(),
+        yield this.zkey.getKey()
+      );
+      return {
+        exp: witness.exp.value,
+        mod: witness.mod.value,
+        proof
+      };
+    });
   }
 };
 var WebProver = class {
@@ -599,37 +633,47 @@ var WebProver = class {
     this.wasm = new KeyPath(wasmURL, true);
     this.zkey = new KeyPath(zkey, true);
   }
-  async proving(witness) {
-    const wasmBuffer = await this.wasm.getKey();
-    const zkeyBuffer = await this.zkey.getKey();
-    if (!witness.mod.value) {
-      throw new Error("Cannot make proof: missing mod");
-    }
-    if (!witness.exp.value) {
-      throw new Error("Cannot make proof: missing exp");
-    }
-    if (!witness.signature.value) {
-      throw new Error("Cannot make proof: missing signature");
-    }
-    if (!witness.message.value) {
-      throw new Error("Cannot make proof: missing message");
-    }
-    const input = {
-      sign: splitToWords(BigInt(witness.signature.value), 64n, 32n),
-      exp: splitToWords(BigInt(65337), 64n, 32n),
-      modulus: splitToWords(BigInt(witness.mod.value), 64n, 32n),
-      hashed: splitToWords(BigInt(witness.message.value), 64n, 3n)
-    };
-    const { proof } = await import_snarkjs.groth16.fullProve(
-      input,
-      new Uint8Array(wasmBuffer),
-      new Uint8Array(zkeyBuffer)
-    );
-    return {
-      exp: witness.exp.value,
-      mod: witness.mod.value,
-      proof
-    };
+  proving(witness) {
+    return __async(this, null, function* () {
+      const wasmBuffer = yield this.wasm.getKey();
+      const zkeyBuffer = yield this.zkey.getKey();
+      if (!witness.mod.value) {
+        throw new Error("Cannot make proof: missing mod");
+      }
+      if (!witness.exp.value) {
+        throw new Error("Cannot make proof: missing exp");
+      }
+      if (!witness.signature.value) {
+        throw new Error("Cannot make proof: missing signature");
+      }
+      if (!witness.message.value) {
+        throw new Error("Cannot make proof: missing message");
+      }
+      const input = {
+        sign: splitToWords(
+          BigInt(witness.signature.value),
+          BigInt(64),
+          BigInt(32)
+        ),
+        exp: splitToWords(BigInt(65337), BigInt(64), BigInt(32)),
+        modulus: splitToWords(BigInt(witness.mod.value), BigInt(64), BigInt(32)),
+        hashed: splitToWords(
+          BigInt(witness.message.value),
+          BigInt(64),
+          BigInt(32)
+        )
+      };
+      const { proof } = yield import_snarkjs.groth16.fullProve(
+        input,
+        new Uint8Array(wasmBuffer),
+        new Uint8Array(zkeyBuffer)
+      );
+      return {
+        exp: witness.exp.value,
+        mod: witness.mod.value,
+        proof
+      };
+    });
   }
 };
 
@@ -643,46 +687,52 @@ var IdentityPCD = class {
   }
 };
 var initArgs = void 0;
-async function init(args) {
-  initArgs = args;
+function init(args) {
+  return __async(this, null, function* () {
+    initArgs = args;
+  });
 }
-async function prove(args) {
-  if (!initArgs) {
-    throw new Error(
-      "cannot make semaphore signature proof: init has not been called yet"
-    );
-  }
-  if (!args.exp.value || !args.mod.value) {
-    throw new Error("Invalid arguments");
-  }
-  const id = (0, import_uuid.v4)();
-  const pcdClaim = {
-    exp: args.exp.value,
-    mod: args.mod.value
-  };
-  let prover;
-  if (initArgs.isWebEnv) {
-    prover = new WebProver(initArgs.wasmURL, initArgs.zkeyURL);
-  } else {
-    prover = new BackendProver(initArgs.wasmURL, initArgs.zkeyURL);
-  }
-  const pcdProof = await prover.proving(args);
-  return new IdentityPCD(id, pcdClaim, pcdProof);
+function prove(args) {
+  return __async(this, null, function* () {
+    if (!initArgs) {
+      throw new Error(
+        "cannot make semaphore signature proof: init has not been called yet"
+      );
+    }
+    if (!args.exp.value || !args.mod.value) {
+      throw new Error("Invalid arguments");
+    }
+    const id = (0, import_uuid.v4)();
+    const pcdClaim = {
+      exp: args.exp.value,
+      mod: args.mod.value
+    };
+    let prover;
+    if (initArgs.isWebEnv) {
+      prover = new WebProver(initArgs.wasmURL, initArgs.zkeyURL);
+    } else {
+      prover = new BackendProver(initArgs.wasmURL, initArgs.zkeyURL);
+    }
+    const pcdProof = yield prover.proving(args);
+    return new IdentityPCD(id, pcdClaim, pcdProof);
+  });
 }
 function getVerifyKey() {
   const verifyKey = require_verification_key();
   return verifyKey;
 }
-async function verify(pcd) {
-  const vk = getVerifyKey();
-  return import_snarkjs2.groth16.verify(
-    vk,
-    [
-      ...splitToWords(BigInt(65337), 64n, 32n),
-      ...splitToWords(BigInt(pcd.proof.mod), 64n, 32n)
-    ],
-    pcd.proof.proof
-  );
+function verify(pcd) {
+  return __async(this, null, function* () {
+    const vk = getVerifyKey();
+    return import_snarkjs2.groth16.verify(
+      vk,
+      [
+        ...splitToWords(BigInt(65337), BigInt(64), BigInt(32)),
+        ...splitToWords(BigInt(pcd.proof.mod), BigInt(64), BigInt(32))
+      ],
+      pcd.proof.proof
+    );
+  });
 }
 function serialize(pcd) {
   return Promise.resolve({
