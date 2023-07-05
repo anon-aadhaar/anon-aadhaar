@@ -5,13 +5,13 @@ import { expect } from 'chai'
 describe('Utils tests', function () {
   it('splitToWords succesfully', () => {
     const number = BigInt('255')
-    const result = splitToWords(number, 1n, 8n)
+    const result = splitToWords(number, BigInt(1), BigInt(8))
     const expected = ['1', '1', '1', '1', '1', '1', '1', '1']
     expect(result).to.deep.eq(expected)
   })
 
   it('splitToWords failed', () => {
-    const fn = () => splitToWords(256n, 2n, 4n)
+    const fn = () => splitToWords(BigInt(256), BigInt(2), BigInt(4))
     expect(fn).to.throw()
   })
 })

@@ -72,10 +72,18 @@ export class BackendProver implements ProverInferace {
     }
 
     const input = {
-      sign: splitToWords(BigInt(witness.signature.value), 64n, 32n),
-      exp: splitToWords(BigInt(65337), 64n, 32n),
-      modulus: splitToWords(BigInt(witness.mod.value), 64n, 32n),
-      hashed: splitToWords(BigInt(witness.message.value), 64n, 3n),
+      sign: splitToWords(
+        BigInt(witness.signature.value),
+        BigInt(64),
+        BigInt(32)
+      ),
+      exp: splitToWords(BigInt(65337), BigInt(64), BigInt(32)),
+      modulus: splitToWords(BigInt(witness.mod.value), BigInt(64), BigInt(32)),
+      hashed: splitToWords(
+        BigInt(witness.message.value),
+        BigInt(64),
+        BigInt(3)
+      ),
     }
 
     const { proof } = await groth16.fullProve(
@@ -122,10 +130,18 @@ export class WebProver implements ProverInferace {
     }
 
     const input = {
-      sign: splitToWords(BigInt(witness.signature.value), 64n, 32n),
-      exp: splitToWords(BigInt(65337), 64n, 32n),
-      modulus: splitToWords(BigInt(witness.mod.value), 64n, 32n),
-      hashed: splitToWords(BigInt(witness.message.value), 64n, 3n),
+      sign: splitToWords(
+        BigInt(witness.signature.value),
+        BigInt(64),
+        BigInt(32)
+      ),
+      exp: splitToWords(BigInt(65337), BigInt(64), BigInt(32)),
+      modulus: splitToWords(BigInt(witness.mod.value), BigInt(64), BigInt(32)),
+      hashed: splitToWords(
+        BigInt(witness.message.value),
+        BigInt(64),
+        BigInt(32)
+      ),
     }
 
     const { proof } = await groth16.fullProve(
