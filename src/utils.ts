@@ -56,7 +56,7 @@ export function splitToWords(
   numberElement: bigint
 ) {
   let t = number
-  const words = []
+  const words: string[] = []
   for (let i = BigInt(0); i < numberElement; ++i) {
     const baseTwo = BigInt(2)
 

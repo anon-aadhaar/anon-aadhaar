@@ -14,6 +14,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { groth16 } from 'snarkjs'
 
 import { splitToWords } from './utils'
+import JSONBig from 'json-bigint'
 import { IdentityPCDCardBody } from './CardBody'
 import { BackendProver, ProverInferace, WebProver } from './prover'
 
@@ -94,16 +95,17 @@ export function serialize(
 ): Promise<SerializedPCD<IdentityPCD>> {
   return Promise.resolve({
     type: IdentityPCDTypeName,
-    pcd: JSON.stringify({
+    pcd: JSONBig().stringify({
       type: pcd.type,
       id: pcd.id,
       claim: pcd.claim,
+      proof: pcd.proof,
     }),
   } as SerializedPCD<IdentityPCD>)
 }
 
-export function deserialize(serialized: string): Promise<IdentityPCD> {
-  return JSON.parse(serialized)
+export async function deserialize(serialized: string): Promise<IdentityPCD> {
+  return JSONBig().parse(serialized)
 }
 
 export function getDisplayOptions(pcd: IdentityPCD): DisplayOptions {
