@@ -38,6 +38,11 @@ function install_deps() {
         echo "Powers of tau file already downloaded... Skip download action!"
     fi 
 
+     cd $RSA_DIR
+    yarn
+    
+    cd $RSA_DIR/circom-ecdsa
+    yarn
     echo "Finished install deps!!!!"
 }
 
@@ -46,11 +51,7 @@ function install_deps() {
 function setup_circuit() {
     echo "TRUSTED SETUP FOR DEVELOPMENT - PLEASE, DON'T USE IT IN PRODUCT!!!!"
     
-    cd $RSA_DIR
-    yarn
-    
-    cd $RSA_DIR/circom-ecdsa
-    yarn
+   
     
     echo "Starting setup...!"
     cd $RSA_DIR/test
