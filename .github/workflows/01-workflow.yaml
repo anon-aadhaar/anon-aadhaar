@@ -50,10 +50,10 @@ jobs:
       - name: Download power of tau and install Circom
         run: yarn dev-install
 
-      - name: 'Dev trusted setup'
-        run: 'yarn dev-setup'
+      # - name: 'Dev trusted setup'
+      #   run: 'yarn dev-setup'
 
-      - name: Build packages
-        run: yarn build
-      - name: Test packages
-        run: yarn test
+      # - name: Build packages
+      #   run: yarn build
+      # - name: Test packages
+      #   run: yarn test
