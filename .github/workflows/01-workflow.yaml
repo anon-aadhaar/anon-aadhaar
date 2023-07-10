@@ -27,14 +27,32 @@ jobs:
         run: node --version
       - name: Install dependencies
         run: yarn install
+
       - name: Execute lint
         run: yarn lint
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
+      
+      - name: Cache power of tau
+        id: powersOfTau28_hez_final_20.ptau
+        uses: actions/cache@v3
+        with:
+          path: build/powersOfTau28_hez_final_20.ptau
+          key: powersOfTau28_hez_final_20.ptau
+
+      - name: Cache Circom
+        id: Circom
+        uses: actions/cache@v3
+        with:
+          path: $HOME/.cargo/bin/circom
+          key: circom
+
       - name: Download power of tau and install Circom
         run: yarn dev-install
+
       - name: 'Dev trusted setup'
         run: 'yarn dev-setup'
+
       - name: Build packages
         run: yarn build
       - name: Test packages
