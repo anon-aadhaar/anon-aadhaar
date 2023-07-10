@@ -34,7 +34,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
       
       - name: Cache power of tau
-        id: powersOfTau28_hez_final_20.ptau
+        id: powersOfTau28_hez_final_20
         uses: actions/cache@v3
         with:
           path: build/powersOfTau28_hez_final_20.ptau
