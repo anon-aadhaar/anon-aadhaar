@@ -40,6 +40,9 @@ jobs:
           path: build/powersOfTau28_hez_final_20.ptau
           key: powersOfTau28_hez_final_20.ptau
 
+      - name: Test 
+        run: echo `$HOME/.cargo/bin/circom`
+
       - name: Cache Circom
         id: Circom
         uses: actions/cache@v3
