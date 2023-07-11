@@ -41,13 +41,13 @@ jobs:
           key: powersOfTau28_hez_final_20.ptau
 
       - name: Test 
-        run: echo `$HOME/.cargo/bin/circom`
+        run: echo `~/.cargo/bin/circom`
 
       - name: Cache Circom
         id: Circom
         uses: actions/cache@v3
         with:
-          path: $HOME/.cargo/bin/circom
+          path: ~/.cargo/bin/circom
           key: circom
 
       - name: Download power of tau and install Circom
