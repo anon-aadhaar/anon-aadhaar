@@ -47,7 +47,7 @@ jobs:
         id: Circom
         uses: actions/cache@v3
         with:
-          path: ~/.cargo/bin
+          path: ~/.cargo/bin/circom
           key: circom
 
       - name: Download power of tau and install Circom
