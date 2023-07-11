@@ -14,6 +14,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { groth16 } from 'snarkjs'
 
 import { splitToWords } from './utils'
+import JSONBig from 'json-bigint'
 import { IdentityPCDCardBody } from './CardBody'
 import { BackendProver, ProverInferace, WebProver } from './prover'
 
@@ -82,8 +83,8 @@ export async function verify(pcd: IdentityPCD): Promise<boolean> {
   return groth16.verify(
     vk,
     [
-      ...splitToWords(BigInt(65337), 64n, 32n),
-      ...splitToWords(BigInt(pcd.proof.mod), 64n, 32n),
+      ...splitToWords(BigInt(65337), BigInt(64), BigInt(32)),
+      ...splitToWords(BigInt(pcd.proof.mod), BigInt(64), BigInt(32)),
     ],
     pcd.proof.proof
   )
@@ -94,16 +95,17 @@ export function serialize(
 ): Promise<SerializedPCD<IdentityPCD>> {
   return Promise.resolve({
     type: IdentityPCDTypeName,
-    pcd: JSON.stringify({
+    pcd: JSONBig().stringify({
       type: pcd.type,
       id: pcd.id,
       claim: pcd.claim,
+      proof: pcd.proof,
     }),
   } as SerializedPCD<IdentityPCD>)
 }
 
-export function deserialize(serialized: string): Promise<IdentityPCD> {
-  return JSON.parse(serialized)
+export async function deserialize(serialized: string): Promise<IdentityPCD> {
+  return JSONBig().parse(serialized)
 }
 
 export function getDisplayOptions(pcd: IdentityPCD): DisplayOptions {
