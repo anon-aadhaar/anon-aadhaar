@@ -40,6 +40,13 @@ jobs:
           path: build/powersOfTau28_hez_final_20.ptau
           key: powersOfTau28_hez_final_20.ptau
 
+      - name: Cache proving/verify key 
+        id: zkkeys 
+        uses: actions/cache
+        with: 
+          path: build/circuit
+          key: ${{ hashFiles('build/hash.txt') }}
+
       - name: Test 
         run: echo `~/.cargo/bin/circom`
 
@@ -53,10 +60,10 @@ jobs:
       - name: Download power of tau and install Circom
         run: yarn dev-install
 
-      # - name: 'Dev trusted setup'
-      #   run: 'yarn dev-setup'
+      - name: 'Dev trusted setup'
+        run: 'yarn dev-setup'
 
-      # - name: Build packages
-      #   run: yarn build
-      # - name: Test packages
-      #   run: yarn test
+      - name: Build packages
+        run: yarn build
+      - name: Test packages
+        run: yarn test
