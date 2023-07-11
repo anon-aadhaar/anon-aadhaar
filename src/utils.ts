@@ -106,3 +106,19 @@ export function unpackProof(proof: Proof): SnarkJSProof {
     curve: 'bn128',
   }
 }
+
+/**
+ * Check that the signature extracted from the pdf correspond to the signature.
+ * @param x signature
+ * @param x hash of the signed pdf
+ * @returns boolean to check if the two params are equals or not
+ */
+export const bufferEquals = (x: Buffer, y: Buffer) => {
+  let i = x.length
+  while (i--) {
+    if (x[i] !== y[i]) {
+      return false
+    }
+  }
+  return true
+}
