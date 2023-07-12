@@ -21,17 +21,17 @@ jobs:
         with:
           node-version: '18'
           cache: 'yarn'
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
       - name: Check Yarn version
         run: yarn --version
       - name: Check Node version
         run: node --version
       - name: Install dependencies
         run: yarn install
-
       - name: Execute lint
         run: yarn lint
-      - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
       
       - name: Cache power of tau
         id: powersOfTau28_hez_final_20
@@ -39,7 +39,6 @@ jobs:
         with:
           path: build/powersOfTau28_hez_final_20.ptau
           key: powersOfTau28_hez_final_20.ptau
-
       - name: Cache Circom
         id: Circom
         uses: actions/cache@v3
@@ -55,7 +54,7 @@ jobs:
         run: |
           echo "circuit_hash=`cd circom-rsa-verify && git rev-parse HEAD && cd ..`" >> $GITHUB_OUTPUT
         shell: bash
-  
+          
       - name: Cache proving/verify key 
         id: zkkeys 
         uses: actions/cache@v3

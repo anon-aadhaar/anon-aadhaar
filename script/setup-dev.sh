@@ -52,7 +52,7 @@ function setup_circuit() {
     echo "TRUSTED SETUP FOR DEVELOPMENT - PLEASE, DON'T USE IT IN PRODUCT!!!!"
     cd $BUILD_DIR 
 
-    if [ ! -f $POWERS_OF_TAU ]; then 
+    if [ -f hash.txt ]; then 
         OLD_HASH=`cat hash.txt`
         echo $OLD_HASH 
     else 
