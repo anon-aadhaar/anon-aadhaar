@@ -3,7 +3,7 @@
 ## About project
 
 ## Requirements 
-Install `rust` and `nodejs`, `openssl`(Usually installed in MacOs and Linux).
+Install `rust` and `nodejs v18`, `openssl`(Usually installed in macOS and Linux).
 
 ## Install and test
 
