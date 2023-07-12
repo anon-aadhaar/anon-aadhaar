@@ -50,16 +50,32 @@ function install_deps() {
 # DON'T USE IT IN PRODUCT
 function setup_circuit() {
     echo "TRUSTED SETUP FOR DEVELOPMENT - PLEASE, DON'T USE IT IN PRODUCT!!!!"
+    cd $BUILD_DIR 
+
+    CIRCUIT=circuit
+    if [ -f $CIRCUIT/hash.txt ]; then 
+        OLD_HASH=`cat $CIRCUIT/hash.txt`
+        echo $OLD_HASH 
+    else 
+        OLD_HASH=""
+    fi
     
-   
+    cd $RSA_DIR
+    yarn
     
+    cd $RSA_DIR/circom-ecdsa
+    yarn 
     echo "Starting setup...!"
     cd $RSA_DIR/test
-    circom circuits/rsa_verify_sha1_pkcs1v15.circom  --r1cs --wasm -o $BUILD_DIR
-    npx snarkjs groth16 setup $BUILD_DIR/rsa_verify_sha1_pkcs1v15.r1cs $POWERS_OF_TAU $BUILD_DIR/circuit_0000.zkey
-    echo "test random" | npx snarkjs zkey contribute $BUILD_DIR/circuit_0000.zkey $BUILD_DIR/circuit_final.zkey
-    npx snarkjs zkey export verificationkey $BUILD_DIR/circuit_final.zkey $BUILD_DIR/verification_key.json
-    
+    HASH=`git rev-parse HEAD`
+    if [ "$HASH" != "$OLD_HASH" ]; then 
+        mkdir -p $BUILD_DIR/$CIRCUIT
+        circom circuits/rsa_verify_sha1_pkcs1v15.circom  --r1cs --wasm -o $BUILD_DIR/$CIRCUIT
+        npx snarkjs groth16 setup $BUILD_DIR/$CIRCUIT/rsa_verify_sha1_pkcs1v15.r1cs $POWERS_OF_TAU $BUILD_DIR/$CIRCUIT/circuit_0000.zkey
+        echo "test random" | npx snarkjs zkey contribute $BUILD_DIR/$CIRCUIT/circuit_0000.zkey $BUILD_DIR/$CIRCUIT/circuit_final.zkey
+        npx snarkjs zkey export verificationkey $BUILD_DIR/$CIRCUIT/circuit_final.zkey $BUILD_DIR/$CIRCUIT/verification_key.json
+    fi 
+
     echo "Finish setup....!"
 
     echo "Copy proving key and verify key to artifacts!!!!"
@@ -70,9 +86,10 @@ function setup_circuit() {
         mkdir -p $ARTIFACTS_DIR
     fi
 
-    cp rsa_verify_sha1_pkcs1v15_js/rsa_verify_sha1_pkcs1v15.wasm $ARTIFACTS_DIR
-    cp circuit_final.zkey $ARTIFACTS_DIR
-    cp verification_key.json $ARTIFACTS_DIR
+    cp $CIRCUIT/rsa_verify_sha1_pkcs1v15_js/rsa_verify_sha1_pkcs1v15.wasm $ARTIFACTS_DIR
+    cp $CIRCUIT/circuit_final.zkey $ARTIFACTS_DIR
+    cp $CIRCUIT/verification_key.json $ARTIFACTS_DIR
+    echo $HASH > $CIRCUIT/hash.txt
     echo "Setup finished!"
 }
 
