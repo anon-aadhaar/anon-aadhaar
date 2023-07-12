@@ -52,8 +52,9 @@ function setup_circuit() {
     echo "TRUSTED SETUP FOR DEVELOPMENT - PLEASE, DON'T USE IT IN PRODUCT!!!!"
     cd $BUILD_DIR 
 
-    if [ -f hash.txt ]; then 
-        OLD_HASH=`cat hash.txt`
+    CIRCUIT=circuit
+    if [ -f $CIRCUIT/hash.txt ]; then 
+        OLD_HASH=`cat $CIRCUIT/hash.txt`
         echo $OLD_HASH 
     else 
         OLD_HASH=""
@@ -67,7 +68,6 @@ function setup_circuit() {
     echo "Starting setup...!"
     cd $RSA_DIR/test
     HASH=`git rev-parse HEAD`
-    CIRCUIT=circuit
     if [ "$HASH" != "$OLD_HASH" ]; then 
         mkdir -p $BUILD_DIR/$CIRCUIT
         circom circuits/rsa_verify_sha1_pkcs1v15.circom  --r1cs --wasm -o $BUILD_DIR/$CIRCUIT
@@ -89,7 +89,7 @@ function setup_circuit() {
     cp $CIRCUIT/rsa_verify_sha1_pkcs1v15_js/rsa_verify_sha1_pkcs1v15.wasm $ARTIFACTS_DIR
     cp $CIRCUIT/circuit_final.zkey $ARTIFACTS_DIR
     cp $CIRCUIT/verification_key.json $ARTIFACTS_DIR
-    echo $HASH > hash.txt
+    echo $HASH > $CIRCUIT/hash.txt
     echo "Setup finished!"
 }
 
