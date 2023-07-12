@@ -47,13 +47,19 @@ jobs:
           path: ~/.cargo/bin/circom
           key: circom
 
+      - name: Get Circuit Hash
+        id: get-circuit-hash
+        run: |
+          echo "circuit_hash=`circom-rsa-verify && git rev-parse HEAD && cd ..`" >> $GITHUB_OUTPUT
+        shell: bash
+  
       - name: Cache proving/verify key 
         id: zkkeys 
         uses: actions/cache@v3
         with: 
           path: build/circuit
-          key: ${{ hashFiles('build/hash.txt') }}
-          
+          key: ${{  steps.get-circuit-hash.outputs.circuit_hash }}
+
       - name: Download power of tau and install Circom
         run: yarn dev-install
 
