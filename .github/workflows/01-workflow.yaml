@@ -47,6 +47,9 @@ jobs:
           path: ~/.cargo/bin/circom
           key: circom
 
+      - name: Download power of tau and install Circom
+        run: yarn dev-install
+
       - name: Get Circuit Hash
         id: get-circuit-hash
         run: |
@@ -58,10 +61,8 @@ jobs:
         uses: actions/cache@v3
         with: 
           path: build/circuit
-          key: ${{  steps.get-circuit-hash.outputs.circuit_hash }}
+          key: ${{ steps.get-circuit-hash.outputs.circuit_hash }}
 
-      - name: Download power of tau and install Circom
-        run: yarn dev-install
 
       - name: 'Dev trusted setup'
         run: 'yarn dev-setup'
