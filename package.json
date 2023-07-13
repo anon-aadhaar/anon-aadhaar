@@ -1,6 +1,6 @@
 {
   "name": "pcd-country-identity",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "main": "./dist/index.js",
   "types": "./src/index.ts",
   "repository": "https://github.com/privacy-scaling-explorations/anon-aadhaar",
