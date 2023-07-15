@@ -1,11 +1,11 @@
 .github
 .husky
-circon-rsa-verify/
-script/
+/circon-rsa-verify
+/script
 .eslintrc
 .gitmodules
 .gitignore
 .prettierignore
 .prettierrc
-build/
-node_modules/
+/build
+/node_modules

@@ -15,6 +15,12 @@
     "prepare": "husky install",
     "gen-pdf": "/bin/bash ./script/setup-dev.sh pdf-setup"
   },
+  "files": [
+    "./artifacts/*",
+    "./src/*",
+    "./dist/*",
+    "./README.md"
+  ],
   "dependencies": {
     "@pcd/passport-ui": "^0.5.3",
     "@pcd/pcd-types": "^0.4.2",
