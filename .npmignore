@@ -1,0 +1,11 @@
+.github
+.husky
+circon-rsa-verify/
+script/
+.eslintrc
+.gitmodules
+.gitignore
+.prettierignore
+.prettierrc
+build/
+node_modules/
