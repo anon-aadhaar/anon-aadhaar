@@ -1,8 +1,7 @@
 .github
 .husky
-/circon-rsa-verify
-/script
-.eslintrc
+/circom-rsa-verify
+.eslintrc.js
 .gitmodules
 .gitignore
 .prettierignore
