@@ -13,8 +13,7 @@
     "lint": "eslint --ext .js,.ts .",
     "format": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\"",
     "prepare": "husky install",
-    "gen-pdf": "/bin/bash ./script/setup-dev.sh pdf-setup",
-    "preinstall": "node ./script/fetchFile.js"
+    "gen-pdf": "/bin/bash ./script/setup-dev.sh pdf-setup"
   },
   "files": [
     "./artifacts/*",
