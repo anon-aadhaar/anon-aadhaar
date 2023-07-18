@@ -2,7 +2,6 @@
 import { IdentityPCD } from './pcd'
 import styled from 'styled-components'
 import { FieldLabel, Separator, Spacer, TextContainer } from '@pcd/passport-ui'
-import React from 'react'
 
 export function IdentityPCDCardBody({ pcd }: { pcd: IdentityPCD }) {
   return (
