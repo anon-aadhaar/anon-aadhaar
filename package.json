@@ -1,6 +1,6 @@
 {
   "name": "pcd-country-identity",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "./dist/index.js",
   "types": "./src/index.ts",
   "repository": "https://github.com/privacy-scaling-explorations/anon-aadhaar",
@@ -16,7 +16,7 @@
     "gen-pdf": "/bin/bash ./script/setup-dev.sh pdf-setup"
   },
   "files": [
-    "./artifacts/*",
+    "./artifacts/verification_key.json",
     "./src/*",
     "./dist/*",
     "./README.md"
