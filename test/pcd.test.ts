@@ -4,8 +4,6 @@ import { init, prove, verify } from '../src/pcd'
 import { assert } from 'chai'
 import { genData } from './utils'
 import { ArgumentTypeName } from '@pcd/pcd-types'
-import dotenv from 'dotenv'
-dotenv.config()
 
 describe('PCD tests', function () {
   this.timeout(0)
@@ -54,8 +52,9 @@ describe('PCD tests', function () {
   // TODO: Create utils for test Web Prover
   it('PCD flow web prover', async function () {
     const pcdInitArgs: PCDInitArgs = {
-      wasmURL: process.env.WASM_URL as string,
-      zkeyURL: process.env.ZKEY_URL as string,
+      wasmURL:
+        'https://d3dxq5smiosdl4.cloudfront.net/rsa_verify_sha1_pkcs1v15.wasm',
+      zkeyURL: 'https://d3dxq5smiosdl4.cloudfront.net/circuit_final.zkey',
       isWebEnv: true,
     }
 
