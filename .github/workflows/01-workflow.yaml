@@ -65,6 +65,11 @@ jobs:
       - name: 'Dev trusted setup'
         run: 'yarn dev-setup'
 
+      - name: Set up environment
+        run: |
+          echo "WASM_URL=https://d3dxq5smiosdl4.cloudfront.net/rsa_verify_sha1_pkcs1v15.wasm" >> .env
+          echo "ZKEY_URL=https://d3dxq5smiosdl4.cloudfront.net/circuit_final.zkey" >> .env
+
       - name: Build packages
         run: yarn build
       - name: Test packages
