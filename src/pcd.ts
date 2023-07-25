@@ -81,9 +81,7 @@ export async function verify(pcd: IdentityPCD): Promise<boolean> {
   const vk = getVerifyKey()
   return groth16.verify(
     vk,
-    [
-      ...splitToWords(BigInt(pcd.proof.modulus), BigInt(64), BigInt(32)),
-    ],
+    [...splitToWords(BigInt(pcd.proof.modulus), BigInt(64), BigInt(32))],
     pcd.proof.proof
   )
 }

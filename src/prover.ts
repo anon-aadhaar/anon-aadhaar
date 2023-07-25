@@ -73,7 +73,11 @@ export class BackendProver implements ProverInferace {
         BigInt(64),
         BigInt(32)
       ),
-      modulus: splitToWords(BigInt(witness.modulus.value), BigInt(64), BigInt(32)),
+      modulus: splitToWords(
+        BigInt(witness.modulus.value),
+        BigInt(64),
+        BigInt(32)
+      ),
       base_message: splitToWords(
         BigInt(witness.base_message.value),
         BigInt(64),
@@ -111,7 +115,6 @@ export class WebProver implements ProverInferace {
       throw new Error('Cannot make proof: missing mod')
     }
 
-
     if (!witness.signature.value) {
       throw new Error('Cannot make proof: missing signature')
     }
@@ -126,7 +129,11 @@ export class WebProver implements ProverInferace {
         BigInt(64),
         BigInt(32)
       ),
-      modulus: splitToWords(BigInt(witness.modulus.value), BigInt(64), BigInt(32)),
+      modulus: splitToWords(
+        BigInt(witness.modulus.value),
+        BigInt(64),
+        BigInt(32)
+      ),
       base_message: splitToWords(
         BigInt(witness.base_message.value),
         BigInt(64),
