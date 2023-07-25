@@ -17,7 +17,7 @@ describe('PCD tests', function () {
   it('PCD flow location prover', async function () {
     const dirName = __dirname + '/../artifacts'
     const pcdInitArgs: PCDInitArgs = {
-      wasmURL: dirName + '/rsa_verify_sha1_pkcs1v15.wasm',
+      wasmURL: dirName + '/main.wasm',
       zkeyURL: dirName + '/circuit_final.zkey',
       isWebEnv: false,
     }
@@ -25,19 +25,15 @@ describe('PCD tests', function () {
     await init(pcdInitArgs)
 
     const pcdArgs: IdentityPCDArgs = {
-      exp: {
-        argumentType: ArgumentTypeName.BigInt,
-        value: BigInt(65337) + '',
-      },
       signature: {
         argumentType: ArgumentTypeName.BigInt,
         value: testData[1] + '',
       },
-      mod: {
+      modulus: {
         argumentType: ArgumentTypeName.BigInt,
         value: testData[2] + '',
       },
-      message: {
+      base_message: {
         argumentType: ArgumentTypeName.BigInt,
         value: testData[3] + '',
       },
@@ -53,7 +49,7 @@ describe('PCD tests', function () {
   it.skip('PCD flow web prover', async function () {
     const dirName = __dirname + '/../artifacts'
     const pcdInitArgs: PCDInitArgs = {
-      wasmURL: dirName + '/rsa_verify_sha1_pkcs1v15.wasm',
+      wasmURL: dirName + '/main.wasm',
       zkeyURL: dirName + '/circuit_final.zkey',
       isWebEnv: false,
     }
@@ -61,19 +57,15 @@ describe('PCD tests', function () {
     await init(pcdInitArgs)
 
     const pcdArgs: IdentityPCDArgs = {
-      exp: {
-        argumentType: ArgumentTypeName.BigInt,
-        value: BigInt(65337) + '',
-      },
       signature: {
         argumentType: ArgumentTypeName.BigInt,
         value: testData[1] + '',
       },
-      mod: {
+      modulus: {
         argumentType: ArgumentTypeName.BigInt,
         value: testData[2] + '',
       },
-      message: {
+      base_message: {
         argumentType: ArgumentTypeName.BigInt,
         value: testData[3] + '',
       },

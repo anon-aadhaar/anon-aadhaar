@@ -20,16 +20,14 @@ export interface PCDInitArgs {
  * @dev claim this public key signed a message
  */
 export interface IdentityPCDClaim {
-  mod: BigNumberish
-  exp: BigNumberish
+  modulus: BigNumberish
 }
 
 /**
  * @dev proof of claim correct
  */
 export interface IdentityPCDProof {
-  mod: BigNumberish
-  exp: BigNumberish
+  modulus: BigNumberish
   proof: SnarkJSProof // 3 points on curve if we use groth16
 }
 
@@ -37,10 +35,9 @@ export interface IdentityPCDProof {
  * @dev witness use for create zk proof of IdentityPCD package.
  */
 export interface IdentityPCDArgs {
-  message: BigIntArgument // private witness
+  base_message: BigIntArgument // private witness
   signature: BigIntArgument // private witness
-  mod: BigIntArgument
-  exp: BigIntArgument
+  modulus: BigIntArgument
 }
 
 export type Proof = [
@@ -55,14 +52,12 @@ export type Proof = [
 ]
 
 export interface FullProof {
-  exp: BigNumberish[]
-  mod: BigNumberish[]
+  modulus: BigNumberish[]
   proof: Proof
 }
 
 export interface PCDProof {
-  exp: BigNumberish
-  mod: BigNumberish
+  modulus: BigNumberish
   proof: SnarkJSProof
 }
 

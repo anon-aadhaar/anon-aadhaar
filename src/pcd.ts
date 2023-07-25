@@ -48,15 +48,14 @@ export async function prove(args: IdentityPCDArgs): Promise<IdentityPCD> {
     )
   }
 
-  if (!args.exp.value || !args.mod.value) {
+  if (!args.modulus.value) {
     throw new Error('Invalid arguments')
   }
 
   const id = uuidv4()
 
   const pcdClaim: IdentityPCDClaim = {
-    exp: args.exp.value,
-    mod: args.mod.value,
+    modulus: args.modulus.value,
   }
 
   let prover: ProverInferace
@@ -83,8 +82,7 @@ export async function verify(pcd: IdentityPCD): Promise<boolean> {
   return groth16.verify(
     vk,
     [
-      ...splitToWords(BigInt(65337), BigInt(64), BigInt(32)),
-      ...splitToWords(BigInt(pcd.proof.mod), BigInt(64), BigInt(32)),
+      ...splitToWords(BigInt(pcd.proof.modulus), BigInt(64), BigInt(32)),
     ],
     pcd.proof.proof
   )
