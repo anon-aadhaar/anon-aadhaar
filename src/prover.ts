@@ -9,7 +9,6 @@ import { groth16 } from 'snarkjs'
 
 type Witness = IdentityPCDArgs
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function fetchKey(keyURL: string): Promise<string | ArrayBuffer> {
   if (isWebUri(keyURL)) {
     const keyData = await (

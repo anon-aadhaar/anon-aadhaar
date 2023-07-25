@@ -9,6 +9,10 @@ on:
       - main
 
 jobs:
+  env:
+    WASM_URL: 'https://d3dxq5smiosdl4.cloudfront.net/rsa_verify_sha1_pkcs1v15.wasm'
+    ZKEY_URL: 'https://d3dxq5smiosdl4.cloudfront.net/circuit_final.zkey'
+
   build:
     name: Build and Test
     runs-on: ubuntu-20.04
@@ -32,7 +36,7 @@ jobs:
         run: yarn install
       - name: Execute lint
         run: yarn lint
-      
+
       - name: Cache power of tau
         id: powersOfTau28_hez_final_20
         uses: actions/cache@v3
@@ -54,14 +58,13 @@ jobs:
         run: |
           echo "circuit_hash=`cd circom-rsa-verify && git rev-parse HEAD && cd ..`" >> $GITHUB_OUTPUT
         shell: bash
-          
-      - name: Cache proving/verify key 
-        id: zkkeys 
+
+      - name: Cache proving/verify key
+        id: zkkeys
         uses: actions/cache@v3
-        with: 
+        with:
           path: build/circuit
           key: ${{ steps.get-circuit-hash.outputs.circuit_hash }}
-
 
       - name: 'Dev trusted setup'
         run: 'yarn dev-setup'

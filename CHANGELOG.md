@@ -1,3 +1,10 @@
+## 0.0.4
+
+### Patch Changes
+
+- Web Prover working
+- Fixed minor error
+
 ## 0.0.2
 
 ### Patch Changes
