@@ -4,8 +4,8 @@
 # default dir
 BUILD_DIR=$(pwd)/build
 ARTIFACTS_DIR=$(pwd)/artifacts
-POWERS_OF_TAU=$BUILD_DIR/powersOfTau28_hez_final_20.ptau
-RSA_DIR=$(pwd)/circom-rsa-verify
+POWERS_OF_TAU=$BUILD_DIR/powersOfTau28_hez_final_18.ptau
+RSA_DIR=$(pwd)/circuits
 
 CIRCOM_BIN_DIR=$HOME/.cargo/bin/circom
 
@@ -32,17 +32,12 @@ function install_deps() {
     echo "Download power of tau...."
     cd $BUILD_DIR    
     if [ ! -f $POWERS_OF_TAU ]; then
-        wget https://hermez.s3-eu-west-1.amazonaws.com/powersOfTau28_hez_final_20.ptau
+        wget https://hermez.s3-eu-west-1.amazonaws.com/powersOfTau28_hez_final_18.ptau
         echo "Finished download!"
     else 
         echo "Powers of tau file already downloaded... Skip download action!"
     fi 
 
-     cd $RSA_DIR
-    yarn
-    
-    cd $RSA_DIR/circom-ecdsa
-    yarn
     echo "Finished install deps!!!!"
 }
 
@@ -61,17 +56,12 @@ function setup_circuit() {
     fi
     
     cd $RSA_DIR
-    yarn
-    
-    cd $RSA_DIR/circom-ecdsa
-    yarn 
     echo "Starting setup...!"
-    cd $RSA_DIR/test
     HASH=`git rev-parse HEAD`
     if [ "$HASH" != "$OLD_HASH" ]; then 
         mkdir -p $BUILD_DIR/$CIRCUIT
-        circom circuits/rsa_verify_sha1_pkcs1v15.circom  --r1cs --wasm -o $BUILD_DIR/$CIRCUIT
-        npx snarkjs groth16 setup $BUILD_DIR/$CIRCUIT/rsa_verify_sha1_pkcs1v15.r1cs $POWERS_OF_TAU $BUILD_DIR/$CIRCUIT/circuit_0000.zkey
+        circom main.circom  --r1cs --wasm -o $BUILD_DIR/$CIRCUIT
+        npx snarkjs groth16 setup $BUILD_DIR/$CIRCUIT/main.r1cs $POWERS_OF_TAU $BUILD_DIR/$CIRCUIT/circuit_0000.zkey
         echo "test random" | npx snarkjs zkey contribute $BUILD_DIR/$CIRCUIT/circuit_0000.zkey $BUILD_DIR/$CIRCUIT/circuit_final.zkey
         npx snarkjs zkey export verificationkey $BUILD_DIR/$CIRCUIT/circuit_final.zkey $BUILD_DIR/$CIRCUIT/verification_key.json
     fi 
@@ -86,7 +76,7 @@ function setup_circuit() {
         mkdir -p $ARTIFACTS_DIR
     fi
 
-    cp $CIRCUIT/rsa_verify_sha1_pkcs1v15_js/rsa_verify_sha1_pkcs1v15.wasm $ARTIFACTS_DIR
+    cp $CIRCUIT/main_js/main.wasm $ARTIFACTS_DIR
     cp $CIRCUIT/circuit_final.zkey $ARTIFACTS_DIR
     cp $CIRCUIT/verification_key.json $ARTIFACTS_DIR
     echo $HASH > $CIRCUIT/hash.txt
