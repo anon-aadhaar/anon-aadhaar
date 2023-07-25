@@ -69,7 +69,7 @@ jobs:
         run: yarn build
       - name: Test packages
         run: |
-          npm install dotenv
+          yarn add dotenv
           echo "WASM_URL=https://d3dxq5smiosdl4.cloudfront.net/rsa_verify_sha1_pkcs1v15.wasm" >> .env
           echo "ZKEY_URL=https://d3dxq5smiosdl4.cloudfront.net/circuit_final.zkey" >> .env
-          npx dotenv --node ts-mocha test/**/*.test.ts --exit
+          npx dotenv -- yarn test
