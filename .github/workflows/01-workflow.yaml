@@ -68,8 +68,4 @@ jobs:
       - name: Build packages
         run: yarn build
       - name: Test packages
-        run: |
-          yarn add dotenv
-          echo "WASM_URL=https://d3dxq5smiosdl4.cloudfront.net/rsa_verify_sha1_pkcs1v15.wasm" >> .env
-          echo "ZKEY_URL=https://d3dxq5smiosdl4.cloudfront.net/circuit_final.zkey" >> .env
-          npx dotenv -- yarn test
+        run: npx dotenv -- yarn test
