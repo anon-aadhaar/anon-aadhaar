@@ -13,13 +13,8 @@ export function IdentityPCDCardBody({ pcd }: { pcd: IdentityPCD }) {
       </p>
 
       <Separator />
-
-      <FieldLabel>Exp</FieldLabel>
-      <TextContainer>{pcd.claim.exp.toString()}</TextContainer>
-      <Spacer h={8} />
-
       <FieldLabel>Mod</FieldLabel>
-      <TextContainer>{pcd.claim.mod.toString()}</TextContainer>
+      <TextContainer>{pcd.claim.modulus.toString()}</TextContainer>
       <Spacer h={8} />
     </Container>
   )

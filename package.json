@@ -25,6 +25,7 @@
     "@pcd/passport-ui": "^0.5.3",
     "@pcd/pcd-types": "^0.4.2",
     "axios": "^1.4.0",
+    "circomlib": "^2.0.5",
     "json-bigint": "^1.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

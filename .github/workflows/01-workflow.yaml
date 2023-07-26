@@ -34,11 +34,11 @@ jobs:
         run: yarn lint
       
       - name: Cache power of tau
-        id: powersOfTau28_hez_final_20
+        id: powersOfTau28_hez_final_18
         uses: actions/cache@v3
         with:
-          path: build/powersOfTau28_hez_final_20.ptau
-          key: powersOfTau28_hez_final_20.ptau
+          path: build/powersOfTau28_hez_final_18.ptau
+          key: powersOfTau28_hez_final_18.ptau
       - name: Cache Circom
         id: Circom
         uses: actions/cache@v3
@@ -52,7 +52,7 @@ jobs:
       - name: Get Circuit Hash
         id: get-circuit-hash
         run: |
-          echo "circuit_hash=`cd circom-rsa-verify && git rev-parse HEAD && cd ..`" >> $GITHUB_OUTPUT
+          echo "circuits_hash=`./script/utils.sh`" >> $GITHUB_OUTPUT
         shell: bash
           
       - name: Cache proving/verify key 
@@ -60,7 +60,7 @@ jobs:
         uses: actions/cache@v3
         with: 
           path: build/circuit
-          key: ${{ steps.get-circuit-hash.outputs.circuit_hash }}
+          key: ${{ steps.get-circuit-hash.outputs.circuits_hash }}
 
 
       - name: 'Dev trusted setup'
