@@ -87,9 +87,11 @@ export async function verify(
 ): Promise<boolean> {
   let vk
   if (isWebProver === true) {
-    vk = await axios.get(process.env.VKEY_URL as string).then(response => {
-      return response.data
-    })
+    vk = await axios
+      .get('https://d3dxq5smiosdl4.cloudfront.net/verification_key.json')
+      .then(response => {
+        return response.data
+      })
   } else {
     vk = getVerifyKey()
   }
