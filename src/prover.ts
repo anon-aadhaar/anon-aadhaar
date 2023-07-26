@@ -57,34 +57,33 @@ export class BackendProver implements ProverInferace {
   }
 
   async proving(witness: Witness): Promise<IdentityPCDProof> {
-    if (!witness.mod.value) {
+    if (!witness.modulus.value) {
       throw new Error('Cannot make proof: missing mod')
-    }
-
-    if (!witness.exp.value) {
-      throw new Error('Cannot make proof: missing exp')
     }
 
     if (!witness.signature.value) {
       throw new Error('Cannot make proof: missing signature')
     }
 
-    if (!witness.message.value) {
+    if (!witness.base_message.value) {
       throw new Error('Cannot make proof: missing message')
     }
 
     const input = {
-      sign: splitToWords(
+      signature: splitToWords(
         BigInt(witness.signature.value),
         BigInt(64),
         BigInt(32)
       ),
-      exp: splitToWords(BigInt(65337), BigInt(64), BigInt(32)),
-      modulus: splitToWords(BigInt(witness.mod.value), BigInt(64), BigInt(32)),
-      hashed: splitToWords(
-        BigInt(witness.message.value),
+      modulus: splitToWords(
+        BigInt(witness.modulus.value),
         BigInt(64),
-        BigInt(3)
+        BigInt(32)
+      ),
+      base_message: splitToWords(
+        BigInt(witness.base_message.value),
+        BigInt(64),
+        BigInt(32)
       ),
     }
 
@@ -95,8 +94,7 @@ export class BackendProver implements ProverInferace {
     )
 
     return {
-      exp: witness.exp.value,
-      mod: witness.mod.value,
+      modulus: witness.modulus.value,
       proof,
     }
   }
@@ -115,32 +113,31 @@ export class WebProver implements ProverInferace {
     const wasmBuffer = (await this.wasm.getKey()) as ArrayBuffer
     const zkeyBuffer = (await this.zkey.getKey()) as ArrayBuffer
 
-    if (!witness.mod.value) {
+    if (!witness.modulus.value) {
       throw new Error('Cannot make proof: missing mod')
-    }
-
-    if (!witness.exp.value) {
-      throw new Error('Cannot make proof: missing exp')
     }
 
     if (!witness.signature.value) {
       throw new Error('Cannot make proof: missing signature')
     }
 
-    if (!witness.message.value) {
+    if (!witness.base_message.value) {
       throw new Error('Cannot make proof: missing message')
     }
 
     const input = {
-      sign: splitToWords(
+      signature: splitToWords(
         BigInt(witness.signature.value),
         BigInt(64),
         BigInt(32)
       ),
-      exp: splitToWords(BigInt(65337), BigInt(64), BigInt(32)),
-      modulus: splitToWords(BigInt(witness.mod.value), BigInt(64), BigInt(32)),
-      hashed: splitToWords(
-        BigInt(witness.message.value),
+      modulus: splitToWords(
+        BigInt(witness.modulus.value),
+        BigInt(64),
+        BigInt(32)
+      ),
+      base_message: splitToWords(
+        BigInt(witness.base_message.value),
         BigInt(64),
         BigInt(3)
       ),
@@ -148,8 +145,7 @@ export class WebProver implements ProverInferace {
 
     const { proof } = await groth16.fullProve(input, wasmBuffer, zkeyBuffer)
     return {
-      exp: witness.exp.value,
-      mod: witness.mod.value,
+      modulus: witness.modulus.value,
       proof,
     }
   }
