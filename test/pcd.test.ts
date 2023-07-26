@@ -4,8 +4,6 @@ import { init, prove, verify } from '../src/pcd'
 import { assert } from 'chai'
 import { genData } from './utils'
 import { ArgumentTypeName } from '@pcd/pcd-types'
-import dotenv from 'dotenv'
-dotenv.config()
 
 describe('PCD tests', function () {
   this.timeout(0)
@@ -51,40 +49,38 @@ describe('PCD tests', function () {
     assert(verified == true, 'Should verifiable')
   })
 
-  // it('PCD flow web prover', async function () {
-  //   const pcdInitArgs: PCDInitArgs = {
-  //     // wasmURL: process.env.WASM_URL as string,
-  //     // zkeyURL: process.env.ZKEY_URL as string,
-  //     wasmURL:
-  //       'https://d3dxq5smiosdl4.cloudfront.net/rsa_verify_sha1_pkcs1v15.wasm',
-  //     zkeyURL: 'https://d3dxq5smiosdl4.cloudfront.net/circuit_final.zkey',
-  //     isWebEnv: true,
-  //   }
+  it('PCD flow web prover', async function () {
+    const pcdInitArgs: PCDInitArgs = {
+      wasmURL:
+        'https://d3dxq5smiosdl4.cloudfront.net/rsa_verify_sha1_pkcs1v15.wasm',
+      zkeyURL: 'https://d3dxq5smiosdl4.cloudfront.net/circuit_final.zkey',
+      isWebEnv: true,
+    }
 
-  //   await init(pcdInitArgs)
+    await init(pcdInitArgs)
 
-  //   const pcdArgs: IdentityPCDArgs = {
-  //     exp: {
-  //       argumentType: ArgumentTypeName.BigInt,
-  //       value: BigInt(65337) + '',
-  //     },
-  //     signature: {
-  //       argumentType: ArgumentTypeName.BigInt,
-  //       value: testData[1] + '',
-  //     },
-  //     mod: {
-  //       argumentType: ArgumentTypeName.BigInt,
-  //       value: testData[2] + '',
-  //     },
-  //     message: {
-  //       argumentType: ArgumentTypeName.BigInt,
-  //       value: testData[3] + '',
-  //     },
-  //   }
+    const pcdArgs: IdentityPCDArgs = {
+      exp: {
+        argumentType: ArgumentTypeName.BigInt,
+        value: BigInt(65337) + '',
+      },
+      signature: {
+        argumentType: ArgumentTypeName.BigInt,
+        value: testData[1] + '',
+      },
+      mod: {
+        argumentType: ArgumentTypeName.BigInt,
+        value: testData[2] + '',
+      },
+      message: {
+        argumentType: ArgumentTypeName.BigInt,
+        value: testData[3] + '',
+      },
+    }
 
-  //   const pcd = await prove(pcdArgs)
+    const pcd = await prove(pcdArgs)
 
-  //   const verified = await verify(pcd, true)
-  //   assert(verified == true, 'Should verifiable')
-  // })
+    const verified = await verify(pcd, pcdInitArgs.isWebEnv)
+    assert(verified == true, 'Should verifiable')
+  })
 })

@@ -18,8 +18,6 @@ import JSONBig from 'json-bigint'
 import { IdentityPCDCardBody } from './CardBody'
 import { BackendProver, ProverInferace, WebProver } from './prover'
 import axios from 'axios'
-import dotenv from 'dotenv'
-dotenv.config()
 
 export class IdentityPCD implements PCD<IdentityPCDClaim, IdentityPCDProof> {
   type = IdentityPCDTypeName
@@ -83,10 +81,10 @@ function getVerifyKey() {
 
 export async function verify(
   pcd: IdentityPCD,
-  isWebProver?: boolean
+  isWebEnv?: boolean
 ): Promise<boolean> {
   let vk
-  if (isWebProver === true) {
+  if (isWebEnv === true) {
     vk = await axios
       .get('https://d3dxq5smiosdl4.cloudfront.net/verification_key.json')
       .then(response => {
