@@ -52,7 +52,7 @@ jobs:
       - name: Get Circuit Hash
         id: get-circuit-hash
         run: |
-          echo "circuit_hash=`cd circom-rsa-verify && git rev-parse HEAD && cd ..`" >> $GITHUB_OUTPUT
+          echo "./script/utils.sh" >> $GITHUB_OUTPUT
         shell: bash
           
       - name: Cache proving/verify key 
