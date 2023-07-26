@@ -8,11 +8,6 @@ on:
     branches:
       - main
 
-env:
-  WASM_URL=https://d3dxq5smiosdl4.cloudfront.net/rsa_verify_sha1_pkcs1v15.wasm
-  ZKEY_URL=https://d3dxq5smiosdl4.cloudfront.net/circuit_final.zkey
-  VKEY_URL=https://d3dxq5smiosdl4.cloudfront.net/verification_key.json
-
 jobs:
   build:
     name: Build and Test
@@ -73,4 +68,8 @@ jobs:
       - name: Build packages
         run: yarn build
       - name: Test packages
-        run: yarn test
+        run: |
+          echo "WASM_URL=https://d3dxq5smiosdl4.cloudfront.net/rsa_verify_sha1_pkcs1v15.wasm" >> .env
+          echo "ZKEY_URL=https://d3dxq5smiosdl4.cloudfront.net/circuit_final.zkey" >> .env
+          echo "WASM_URL=VKEY_URL=https://d3dxq5smiosdl4.cloudfront.net/verification_key.json" >> .env
+          npx dotenv -- yarn test
