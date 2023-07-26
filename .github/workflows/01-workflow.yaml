@@ -52,7 +52,7 @@ jobs:
       - name: Get Circuit Hash
         id: get-circuit-hash
         run: |
-          echo "./script/utils.sh" >> $GITHUB_OUTPUT
+          echo "circuits_hash=`'./script/utils.sh`" >> $GITHUB_OUTPUT
         shell: bash
           
       - name: Cache proving/verify key 
@@ -60,7 +60,7 @@ jobs:
         uses: actions/cache@v3
         with: 
           path: build/circuit
-          key: ${{ steps.get-circuit-hash.outputs.circuit_hash }}
+          key: ${{ steps.get-circuit-hash.outputs.circuits_hash }}
 
 
       - name: 'Dev trusted setup'
