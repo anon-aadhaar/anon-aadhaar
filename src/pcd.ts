@@ -17,6 +17,9 @@ import { splitToWords } from './utils'
 import JSONBig from 'json-bigint'
 import { IdentityPCDCardBody } from './CardBody'
 import { BackendProver, ProverInferace, WebProver } from './prover'
+import axios from 'axios'
+import dotenv from 'dotenv'
+dotenv.config()
 
 export class IdentityPCD implements PCD<IdentityPCDClaim, IdentityPCDProof> {
   type = IdentityPCDTypeName
@@ -78,8 +81,18 @@ function getVerifyKey() {
   return verifyKey
 }
 
-export async function verify(pcd: IdentityPCD): Promise<boolean> {
-  const vk = getVerifyKey()
+export async function verify(
+  pcd: IdentityPCD,
+  isWebProver?: boolean
+): Promise<boolean> {
+  let vk
+  if (isWebProver === true) {
+    vk = await axios.get(process.env.VKEY_URL as string).then(response => {
+      return response.data
+    })
+  } else {
+    vk = getVerifyKey()
+  }
   return groth16.verify(
     vk,
     [
