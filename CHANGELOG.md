@@ -1,3 +1,7 @@
+## 0.0.5
+- Replace RSA verify circuits from [circom-rsa-verify](hhttps://github.com/zkp-application/circom-rsa-verify) to [zk-email-verify](https://github.com/zkemail/zk-email-verify) circuit.
+
+
 ## 0.0.2
 
 ### Patch Changes
