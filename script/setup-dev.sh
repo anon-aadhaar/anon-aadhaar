@@ -2,6 +2,7 @@
 
 
 # default dir
+ROOT=$(pwd)
 BUILD_DIR=$(pwd)/build
 ARTIFACTS_DIR=$(pwd)/artifacts
 POWERS_OF_TAU=$BUILD_DIR/powersOfTau28_hez_final_18.ptau
@@ -44,6 +45,10 @@ function install_deps() {
 # trusted setup for development
 # DON'T USE IT IN PRODUCT
 function setup_circuit() {
+    cd $ROOT
+    echo "Starting setup...!"
+    HASH=`$ROOT/script/utils.sh`
+
     echo "TRUSTED SETUP FOR DEVELOPMENT - PLEASE, DON'T USE IT IN PRODUCT!!!!"
     cd $BUILD_DIR 
 
@@ -54,10 +59,8 @@ function setup_circuit() {
     else 
         OLD_HASH=""
     fi
-    
+
     cd $RSA_DIR
-    echo "Starting setup...!"
-    HASH=`git rev-parse HEAD`
     if [ "$HASH" != "$OLD_HASH" ]; then 
         mkdir -p $BUILD_DIR/$CIRCUIT
         circom main.circom  --r1cs --wasm -o $BUILD_DIR/$CIRCUIT
