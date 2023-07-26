@@ -58,7 +58,7 @@ export class BackendProver implements ProverInferace {
 
   async proving(witness: Witness): Promise<IdentityPCDProof> {
     if (!witness.modulus.value) {
-      throw new Error('Cannot make proof: missing mod')
+      throw new Error('Cannot make proof: missing modulus')
     }
 
     if (!witness.signature.value) {
@@ -139,7 +139,7 @@ export class WebProver implements ProverInferace {
       base_message: splitToWords(
         BigInt(witness.base_message.value),
         BigInt(64),
-        BigInt(3)
+        BigInt(32)
       ),
     }
 

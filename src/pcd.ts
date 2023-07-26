@@ -85,7 +85,9 @@ export async function verify(
   let vk
   if (isWebEnv === true) {
     vk = await axios
-      .get('https://d3dxq5smiosdl4.cloudfront.net/verification_key.json')
+      .get(
+        'https://anon-aadhaar-pcd.s3.eu-west-3.amazonaws.com/verification_key.json'
+      )
       .then(response => {
         return response.data
       })
