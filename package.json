@@ -1,6 +1,6 @@
 {
   "name": "pcd-country-identity",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "main": "./dist/index.js",
   "types": "./src/index.ts",
   "repository": "https://github.com/privacy-scaling-explorations/anon-aadhaar",
@@ -13,17 +13,19 @@
     "lint": "eslint --ext .js,.ts .",
     "format": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\"",
     "prepare": "husky install",
-    "gen-pdf": "/bin/bash ./script/setup-dev.sh pdf-setup"
+    "gen-pdf": "/bin/bash ./script/setup-dev.sh pdf-setup",
+    "test-publish": " tsup src/index.ts && npm publish --dry-run"
   },
   "files": [
-    "./artifacts/*",
+    "./artifacts/verification_key.json",
     "./src/*",
     "./dist/*",
     "./README.md"
   ],
   "dependencies": {
     "@pcd/passport-ui": "^0.5.3",
-    "@pcd/pcd-types": "^0.4.2",
+    "@pcd/pcd-types": "^0.6.0",
+    "@pcd/tsconfig": "^0.6.0",
     "axios": "^1.4.0",
     "circomlib": "^2.0.5",
     "json-bigint": "^1.0.0",

@@ -1422,19 +1422,15 @@
   resolved "https://registry.yarnpkg.com/@pcd/pcd-types/-/pcd-types-0.5.3.tgz#e40664b9cc0474767e5a9399c773f98421e2aa4a"
   integrity sha512-5BQ3LCgNMn6gkoqmP4YxceObenkyNWG+bVp0hQSz4eCp2P6hGsHhRtt2oKSp5LnnLaWHss3wyqBaTC6EfuG9ow==
 
-"@pcd/pcd-types@^0.4.2":
-  version "0.4.2"
-  resolved "https://registry.npmjs.org/@pcd/pcd-types/-/pcd-types-0.4.2.tgz"
-  integrity sha512-7H3dDWkaUGdW7muAM4KO+8NYbYx5JoWErMOPfdA5QKG3dGpSDiJf4E+xZjwSCCjZQTM7QXHUyZpmsVQii3iYZQ==
-  dependencies:
-    "@pcd/tsconfig" "0.4.2"
-    "@types/react" "^18.0.22"
-    typescript "^4.9.5"
+"@pcd/pcd-types@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@pcd/pcd-types/-/pcd-types-0.6.0.tgz#ada6a00bb84d5492478d402563883c9bfd83f7f5"
+  integrity sha512-nOSrbxyfxIIcJXeMeGgJdEajomuXyjpFDuAGK3TDoHoopYCapvaNGnbluv5neXjWdQHMbEVT++3ChlL9wS3X2w==
 
-"@pcd/tsconfig@0.4.2":
-  version "0.4.2"
-  resolved "https://registry.npmjs.org/@pcd/tsconfig/-/tsconfig-0.4.2.tgz"
-  integrity sha512-bxeNIxvg+kHvrUn2bT6cnUYxr9lumOol9KUUM6SlHXOFaNylEwNx3h9i089yHCIYx5Pc8NLeU2uHatwWPlstsg==
+"@pcd/tsconfig@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@pcd/tsconfig/-/tsconfig-0.6.0.tgz#364900c673441d0f8fe596d2d895681406244f78"
+  integrity sha512-k1QktuUhse/J8xtjew4OPBUFFU+9NQvoFMThuNwjdyQMEBpT1ovjEFCZr8as2SzHMK3dGbFHDIwuDJ+iv2tLCQ==
 
 "@swc/helpers@^0.3.13":
   version "0.3.17"
@@ -1510,15 +1506,6 @@
   version "18.2.6"
   resolved "https://registry.npmjs.org/@types/react/-/react-18.2.6.tgz"
   integrity sha512-wRZClXn//zxCFW+ye/D2qY65UsYP1Fpex2YXorHc8awoNamkMZSvBxwxdYVInsHOZZd2Ppq8isnSzJL5Mpf8OA==
-  dependencies:
-    "@types/prop-types" "*"
-    "@types/scheduler" "*"
-    csstype "^3.0.2"
-
-"@types/react@^18.0.22":
-  version "18.2.0"
-  resolved "https://registry.npmjs.org/@types/react/-/react-18.2.0.tgz"
-  integrity sha512-0FLj93y5USLHdnhIhABk83rm8XEGA7kH3cr+YUlvxoUGp1xNt/DINUMvqPxLyOQMzLmZe8i4RTHbvb8MC7NmrA==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -4572,11 +4559,6 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.npmjs.org/typedarray/-/typedarray-0.0.6.tgz"
   integrity sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==
-
-typescript@^4.9.5:
-  version "4.9.5"
-  resolved "https://registry.npmjs.org/typescript/-/typescript-4.9.5.tgz"
-  integrity sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==
 
 typescript@^5.0.4:
   version "5.0.4"

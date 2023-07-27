@@ -32,7 +32,7 @@ jobs:
         run: yarn install
       - name: Execute lint
         run: yarn lint
-      
+
       - name: Cache power of tau
         id: powersOfTau28_hez_final_18
         uses: actions/cache@v3
@@ -54,14 +54,13 @@ jobs:
         run: |
           echo "circuits_hash=`./script/utils.sh`" >> $GITHUB_OUTPUT
         shell: bash
-          
-      - name: Cache proving/verify key 
-        id: zkkeys 
+
+      - name: Cache proving/verify key
+        id: zkkeys
         uses: actions/cache@v3
-        with: 
+        with:
           path: build/circuit
           key: ${{ steps.get-circuit-hash.outputs.circuits_hash }}
-
 
       - name: 'Dev trusted setup'
         run: 'yarn dev-setup'

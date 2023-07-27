@@ -9,12 +9,14 @@ import { groth16 } from 'snarkjs'
 
 type Witness = IdentityPCDArgs
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function fetchKey(keyURL: string): Promise<string | ArrayBuffer> {
   if (isWebUri(keyURL)) {
-    const keyData = await (await axios.get(keyURL)).data
-    const keyBin = Buffer.from(keyData)
-    return keyBin
+    const keyData = await (
+      await axios.get(keyURL, {
+        responseType: 'arraybuffer',
+      })
+    ).data
+    return keyData
   }
   return keyURL
 }
@@ -56,7 +58,7 @@ export class BackendProver implements ProverInferace {
 
   async proving(witness: Witness): Promise<IdentityPCDProof> {
     if (!witness.modulus.value) {
-      throw new Error('Cannot make proof: missing mod')
+      throw new Error('Cannot make proof: missing modulus')
     }
 
     if (!witness.signature.value) {
@@ -103,8 +105,8 @@ export class WebProver implements ProverInferace {
   zkey: KeyPathInterface
 
   constructor(wasmURL: string, zkey: string) {
-    this.wasm = new KeyPath(wasmURL, true)
-    this.zkey = new KeyPath(zkey, true)
+    this.wasm = new KeyPath(wasmURL, false)
+    this.zkey = new KeyPath(zkey, false)
   }
 
   async proving(witness: Witness): Promise<IdentityPCDProof> {
@@ -141,11 +143,7 @@ export class WebProver implements ProverInferace {
       ),
     }
 
-    const { proof } = await groth16.fullProve(
-      input,
-      new Uint8Array(wasmBuffer),
-      new Uint8Array(zkeyBuffer)
-    )
+    const { proof } = await groth16.fullProve(input, wasmBuffer, zkeyBuffer)
     return {
       modulus: witness.modulus.value,
       proof,

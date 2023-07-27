@@ -45,13 +45,12 @@ describe('PCD tests', function () {
     assert(verified == true, 'Should verifiable')
   })
 
-  // TODO: Create utils for test Web Prover
-  it.skip('PCD flow web prover', async function () {
-    const dirName = __dirname + '/../artifacts'
+  it('PCD flow web prover', async function () {
     const pcdInitArgs: PCDInitArgs = {
-      wasmURL: dirName + '/main.wasm',
-      zkeyURL: dirName + '/circuit_final.zkey',
-      isWebEnv: false,
+      wasmURL: 'https://anon-aadhaar-pcd.s3.eu-west-3.amazonaws.com/main.wasm',
+      zkeyURL:
+        'https://anon-aadhaar-pcd.s3.eu-west-3.amazonaws.com/circuit_final.zkey',
+      isWebEnv: true,
     }
 
     await init(pcdInitArgs)
@@ -73,7 +72,7 @@ describe('PCD tests', function () {
 
     const pcd = await prove(pcdArgs)
 
-    const verified = await verify(pcd)
+    const verified = await verify(pcd, pcdInitArgs.isWebEnv)
     assert(verified == true, 'Should verifiable')
   })
 })

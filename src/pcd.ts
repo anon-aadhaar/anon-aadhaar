@@ -17,6 +17,7 @@ import { splitToWords } from './utils'
 import JSONBig from 'json-bigint'
 import { IdentityPCDCardBody } from './CardBody'
 import { BackendProver, ProverInferace, WebProver } from './prover'
+import axios from 'axios'
 
 export class IdentityPCD implements PCD<IdentityPCDClaim, IdentityPCDProof> {
   type = IdentityPCDTypeName
@@ -77,8 +78,22 @@ function getVerifyKey() {
   return verifyKey
 }
 
-export async function verify(pcd: IdentityPCD): Promise<boolean> {
-  const vk = getVerifyKey()
+export async function verify(
+  pcd: IdentityPCD,
+  isWebEnv?: boolean
+): Promise<boolean> {
+  let vk
+  if (isWebEnv === true) {
+    vk = await axios
+      .get(
+        'https://anon-aadhaar-pcd.s3.eu-west-3.amazonaws.com/verification_key.json'
+      )
+      .then(response => {
+        return response.data
+      })
+  } else {
+    vk = getVerifyKey()
+  }
   return groth16.verify(
     vk,
     [...splitToWords(BigInt(pcd.proof.modulus), BigInt(64), BigInt(32))],
