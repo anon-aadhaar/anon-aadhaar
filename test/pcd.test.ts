@@ -47,9 +47,8 @@ describe('PCD tests', function () {
 
   it('PCD flow web prover', async function () {
     const pcdInitArgs: PCDInitArgs = {
-      wasmURL: 'https://anon-aadhaar-pcd.s3.eu-west-3.amazonaws.com/main.wasm',
-      zkeyURL:
-        'https://anon-aadhaar-pcd.s3.eu-west-3.amazonaws.com/circuit_final.zkey',
+      wasmURL: 'https://d3dxq5smiosdl4.cloudfront.net/main.wasm',
+      zkeyURL: 'https://d3dxq5smiosdl4.cloudfront.net/circuit_final.zkey',
       isWebEnv: true,
     }
 
