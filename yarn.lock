@@ -1408,21 +1408,18 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@pcd/passport-ui@^0.5.3":
-  version "0.5.3"
-  resolved "https://registry.yarnpkg.com/@pcd/passport-ui/-/passport-ui-0.5.3.tgz#5441afc6dba40e8cfe32ab4da7d026abf3617aab"
-  integrity sha512-Pwq5CIF/JjmbMibQVzYr0laT8KX04tN3AqQgcEkRAij6pBt3HMJw//fD/U4f/184y/lqx+k3zosmhg5+vQ8/yQ==
+"@pcd/passport-ui@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@pcd/passport-ui/-/passport-ui-0.6.0.tgz#689de07d57e0ba356b6304d47660c7383531d3d0"
+  integrity sha512-FxNzILswJlwfupa6iRiaBU2zIu4WzmcBpJKhrFYQlVcSsIfjXcL1xp3NxnucXdDc6chqWHFU/WtUmReZdsZnQg==
   dependencies:
-    "@pcd/pcd-types" "0.5.3"
+    "@pcd/pcd-types" "0.6.0"
+    pako "^2.1.0"
+    qr-image "^3.2.0"
     react "^18.2.0"
     styled-components "^5.3.9"
 
-"@pcd/pcd-types@0.5.3":
-  version "0.5.3"
-  resolved "https://registry.yarnpkg.com/@pcd/pcd-types/-/pcd-types-0.5.3.tgz#e40664b9cc0474767e5a9399c773f98421e2aa4a"
-  integrity sha512-5BQ3LCgNMn6gkoqmP4YxceObenkyNWG+bVp0hQSz4eCp2P6hGsHhRtt2oKSp5LnnLaWHss3wyqBaTC6EfuG9ow==
-
-"@pcd/pcd-types@^0.6.0":
+"@pcd/pcd-types@0.6.0", "@pcd/pcd-types@^0.6.0":
   version "0.6.0"
   resolved "https://registry.yarnpkg.com/@pcd/pcd-types/-/pcd-types-0.6.0.tgz#ada6a00bb84d5492478d402563883c9bfd83f7f5"
   integrity sha512-nOSrbxyfxIIcJXeMeGgJdEajomuXyjpFDuAGK3TDoHoopYCapvaNGnbluv5neXjWdQHMbEVT++3ChlL9wS3X2w==
@@ -3725,6 +3722,11 @@ pako@^0.2.5:
   resolved "https://registry.npmjs.org/pako/-/pako-0.2.9.tgz"
   integrity sha512-NUcwaKxUxWrZLpDG+z/xZaCgQITkA/Dv4V/T6bw7VON6l1Xz/VnrBqrYjZQ12TamKHzITTfOEIYUj48y2KXImA==
 
+pako@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/pako/-/pako-2.1.0.tgz#266cc37f98c7d883545d11335c00fbd4062c9a86"
+  integrity sha512-w+eufiZ1WuJYgPXbV/PO3NCMEc3xqylkKHzp8bxp1uW4qaSNQUkwmLLEc3kKsfz8lpV1F8Ht3U1Cm+9Srog2ug==
+
 parent-module@^1.0.0:
   version "1.0.1"
   resolved "https://registry.npmjs.org/parent-module/-/parent-module-1.0.1.tgz"
@@ -3848,6 +3850,11 @@ punycode@^2.1.0:
   version "2.3.0"
   resolved "https://registry.npmjs.org/punycode/-/punycode-2.3.0.tgz"
   integrity sha512-rRV+zQD8tVFys26lAGR9WUuS4iUAngJScM+ZRSKtvl5tKeZ2t5bvdNFdNHBW9FWR4guGHlgmsZ1G7BSm2wTbuA==
+
+qr-image@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/qr-image/-/qr-image-3.2.0.tgz#9fa8295beae50c4a149cf9f909a1db464a8672e8"
+  integrity sha512-rXKDS5Sx3YipVsqmlMJsJsk6jXylEpiHRC2+nJy66fxA5ExYyGa4PqwteW69SaVmAb2OQ18HbYriT7cGQMbduw==
 
 queue-microtask@^1.2.2:
   version "1.2.3"
