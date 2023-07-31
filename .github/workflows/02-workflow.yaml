@@ -1,0 +1,75 @@
+name: Publish to npm
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: '18' # Use the appropriate Node version for your project
+          cache: 'yarn'
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Check Yarn version
+        run: yarn --version
+      - name: Check Node version
+        run: node --version
+      - name: Install dependencies
+        run: yarn install
+      - name: Execute lint
+        run: yarn lint
+
+      - name: Cache power of tau
+        id: powersOfTau28_hez_final_18
+        uses: actions/cache@v3
+        with:
+          path: build/powersOfTau28_hez_final_18.ptau
+          key: powersOfTau28_hez_final_18.ptau
+      - name: Cache Circom
+        id: Circom
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/bin/circom
+          key: circom
+
+      - name: Download power of tau and install Circom
+        run: yarn dev-install
+
+      - name: Get Circuit Hash
+        id: get-circuit-hash
+        run: |
+          echo "circuits_hash=`./script/utils.sh`" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Cache proving/verify key
+        id: zkkeys
+        uses: actions/cache@v3
+        with:
+          path: build/circuit
+          key: ${{ steps.get-circuit-hash.outputs.circuits_hash }}
+
+      - name: 'Dev trusted setup'
+        run: 'yarn dev-setup'
+
+      - name: Build packages
+        run: yarn build
+      - name: Test packages
+        run: yarn test
+
+      - name: Authenticate with npm
+        run: echo "//registry.npmjs.org/:_authToken=\${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
+
+      - name: Publish to npm
+        run: yarn publish --access public

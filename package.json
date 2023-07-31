@@ -1,6 +1,6 @@
 {
   "name": "pcd-country-identity",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "main": "./dist/index.js",
   "types": "./src/index.ts",
   "repository": "https://github.com/privacy-scaling-explorations/anon-aadhaar",
@@ -23,7 +23,7 @@
     "./README.md"
   ],
   "dependencies": {
-    "@pcd/passport-ui": "^0.5.3",
+    "@pcd/passport-ui": "^0.6.0",
     "@pcd/pcd-types": "^0.6.0",
     "@pcd/tsconfig": "^0.6.0",
     "axios": "^1.4.0",

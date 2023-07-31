@@ -143,7 +143,11 @@ export class WebProver implements ProverInferace {
       ),
     }
 
-    const { proof } = await groth16.fullProve(input, wasmBuffer, zkeyBuffer)
+    const { proof } = await groth16.fullProve(
+      input,
+      new Uint8Array(wasmBuffer),
+      new Uint8Array(zkeyBuffer)
+    )
     return {
       modulus: witness.modulus.value,
       proof,
