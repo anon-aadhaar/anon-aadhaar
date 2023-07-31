@@ -6,3 +6,4 @@
 /artifacts
 .vscode
 circom-rsa-verify
+.npmrc
