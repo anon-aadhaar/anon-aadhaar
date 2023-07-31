@@ -69,10 +69,9 @@ jobs:
       - name: Test packages
         run: yarn test
         
-      - name: Authenticate to npm
-        run: echo "//registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN" >> ~/.npmrc
+      - name: Authenticate and publish to npm
+        run: |
+          echo "//registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN" >> ~/.npmrc
+          yarn publish
         env: 
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-
-      - name: Publish to npm
-        run: yarn publish
