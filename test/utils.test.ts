@@ -2,7 +2,7 @@ import { describe } from 'mocha'
 import { splitToWords } from '../src/utils'
 import { expect } from 'chai'
 import { PDFUtils } from '../src/utils/pdf'
-import fs from "fs";
+import fs from 'fs'
 
 describe('Utils tests', function () {
   it('splitToWords succesfully', () => {
@@ -22,10 +22,10 @@ describe.only('Pdf test', function () {
   let pdfUtils: PDFUtils
   this.beforeEach(() => {
     console.log(__dirname)
-    const pdf = fs.readFileSync(__dirname + "/assets/output.pdf");
-    pdfUtils = new PDFUtils(pdf);
+    const pdf = fs.readFileSync(__dirname + '/assets/output.pdf')
+    pdfUtils = new PDFUtils(pdf)
   })
-  it("Test", () => {
-    pdfUtils.extractCert();
+  it('Test', () => {
+    pdfUtils.extractCert()
   })
 })

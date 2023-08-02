@@ -1,6 +1,10 @@
 import { SnarkJSProof, Proof } from './types'
 
-export const getSubstringIndex = (str: Buffer, substring: string, n: number) => {
+export const getSubstringIndex = (
+  str: Buffer,
+  substring: string,
+  n: number
+) => {
   let times = 0
   let index = 0
 

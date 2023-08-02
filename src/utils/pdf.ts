@@ -10,15 +10,15 @@ export class PDFUtils {
   }
 
   extractSignature() {
-    throw Error("unimplement yet!");
+    throw Error('unimplement yet!')
   }
 
   extractCert() {
-    const begin = getSubstringIndex(this.pdf, "/Cert <", 1);
-    console.log(begin);
-    const end = this.pdf.indexOf(">", begin);
+    const begin = getSubstringIndex(this.pdf, '/Cert <', 1)
+    console.log(begin)
+    const end = this.pdf.indexOf('>', begin)
     const cerRange = this.pdf.subarray(begin, end + 1).toString()
-    console.log(cerRange);
+    console.log(cerRange)
   }
 
   // toPCDArgs(): IdentityPCDArgs {
