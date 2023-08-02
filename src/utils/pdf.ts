@@ -1,5 +1,5 @@
 import { IdentityPCDArgs } from '../types'
-import { extractSignature } from '../utils';
+import { extractSignature } from '../utils'
 
 export class PDFUtils {
   pdf: Buffer
@@ -9,10 +9,8 @@ export class PDFUtils {
   }
 
   toPCDArgs(): IdentityPCDArgs {
-    const { signedData, signature, ByteRange } = extractSignature(this.pdf);
-    
-    return {
-        
-    }
+    const { signedData, signature, ByteRange } = extractSignature(this.pdf)
+
+    return {}
   }
 }
