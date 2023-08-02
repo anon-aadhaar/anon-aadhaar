@@ -65,7 +65,8 @@ function setup_circuit() {
         mkdir -p $BUILD_DIR/$CIRCUIT
         circom main.circom  --r1cs --wasm -o $BUILD_DIR/$CIRCUIT
         npx snarkjs groth16 setup $BUILD_DIR/$CIRCUIT/main.r1cs $POWERS_OF_TAU $BUILD_DIR/$CIRCUIT/circuit_0000.zkey
-        echo "test random" | npx snarkjs zkey contribute $BUILD_DIR/$CIRCUIT/circuit_0000.zkey $BUILD_DIR/$CIRCUIT/circuit_final.zkey
+        echo "test random" | npx snarkjs zkey contribute $BUILD_DIR/$CIRCUIT/circuit_0000.zkey $BUILD_DIR/$CIRCUIT/circuit_0001.zkey
+        echo "another" | npx snarkjs zkey contribute $BUILD_DIR/$CIRCUIT/circuit_0001.zkey $BUILD_DIR/$CIRCUIT/circuit_final.zkey
         npx snarkjs zkey export verificationkey $BUILD_DIR/$CIRCUIT/circuit_final.zkey $BUILD_DIR/$CIRCUIT/verification_key.json
     fi 
 
