@@ -25,7 +25,11 @@ describe.only('Pdf test', function () {
     const pdf = fs.readFileSync(__dirname + '/assets/output.pdf')
     pdfUtils = new PDFUtils(pdf)
   })
-  it('Test', () => {
-    pdfUtils.extractCert()
+  it('Try get cert from pdf', () => {
+    const cert = pdfUtils.extractCert()
+    console.log(cert)
+  })
+  it('to arg', () => {
+    pdfUtils.toPCDArgs()
   })
 })
