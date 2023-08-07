@@ -90,12 +90,18 @@ export class PDFUtils {
       },
       modulus: {
         argumentType: ArgumentTypeName.BigInt,
-        value: publicKey.n + '',
+        value: BigInt('0x' + publicKey.n.toString(16)) + '',
       },
       signature: {
         argumentType: ArgumentTypeName.BigInt,
         value:
-          BigInt('0x' + Buffer.from(signature, 'binary').toString('hex')) + '',
+          BigInt(
+            '0x' +
+              Buffer.from(
+                forge.asn1.fromDer(signature).value as string,
+                'binary'
+              ).toString('hex')
+          ) + '',
       },
     }
     return args
