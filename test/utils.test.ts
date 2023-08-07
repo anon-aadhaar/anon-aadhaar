@@ -1,8 +1,9 @@
 import { describe } from 'mocha'
 import { splitToWords } from '../src/utils'
-import { expect } from 'chai'
+import { assert, expect } from 'chai'
 import { PDFUtils } from '../src/utils/pdf'
 import fs from 'fs'
+import { PCDInitArgs, init, prove, verify } from '../src'
 
 describe('Utils tests', function () {
   it('splitToWords succesfully', () => {
@@ -20,16 +21,31 @@ describe('Utils tests', function () {
 
 describe.only('Pdf test', function () {
   let pdfUtils: PDFUtils
+  const pdfEncrypt = fs.readFileSync(__dirname + '/assets/other.pdf')
+  const pdf = fs.readFileSync(__dirname + '/assets/output.pdf')
+
   this.beforeEach(() => {
     console.log(__dirname)
-    const pdf = fs.readFileSync(__dirname + '/assets/output.pdf')
-    pdfUtils = new PDFUtils(pdf)
+
+    pdfUtils = new PDFUtils()
   })
-  it('Try get cert from pdf', () => {
-    const cert = pdfUtils.extractCert()
-    console.log(cert)
-  })
-  it('to arg', () => {
-    pdfUtils.toPCDArgs()
+  it('Try get cert from pdf', async () => {
+    const cert = pdfUtils.extractCert(pdf)
+    const pcdArgs = pdfUtils.toPCDArgsFromCert(pdfEncrypt, cert);
+    
+    const dirName = __dirname + '/../artifacts'
+    const pcdInitArgs: PCDInitArgs = {
+      wasmURL: dirName + '/main.wasm',
+      zkeyURL: dirName + '/circuit_final.zkey',
+      isWebEnv: false,
+    }
+
+    console.log(pcdArgs);
+    await init(pcdInitArgs)
+
+    const pcd = await prove(pcdArgs)
+
+    const verified = await verify(pcd)
+    assert(verified == true, 'Should verifiable')    
   })
 })
