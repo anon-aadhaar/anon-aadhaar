@@ -31,8 +31,8 @@ describe.only('Pdf test', function () {
   })
   it('Try get cert from pdf', async () => {
     const cert = pdfUtils.extractCert(pdf)
-    const pcdArgs = pdfUtils.toPCDArgsFromCert(pdfEncrypt, cert);
-    
+    const pcdArgs = pdfUtils.toPCDArgsFromCert(pdfEncrypt, cert)
+
     const dirName = __dirname + '/../artifacts'
     const pcdInitArgs: PCDInitArgs = {
       wasmURL: dirName + '/main.wasm',
@@ -40,12 +40,12 @@ describe.only('Pdf test', function () {
       isWebEnv: false,
     }
 
-    console.log(pcdArgs);
+    console.log(pcdArgs)
     await init(pcdInitArgs)
 
     const pcd = await prove(pcdArgs)
 
     const verified = await verify(pcd)
-    assert(verified == true, 'Should verifiable')    
+    assert(verified == true, 'Should verifiable')
   })
 })

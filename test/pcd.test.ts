@@ -36,7 +36,7 @@ describe('PCD tests', function () {
       base_message: {
         argumentType: ArgumentTypeName.BigInt,
         value: testData[3] + '',
-      }
+      },
     }
 
     const pcd = await prove(pcdArgs)
