@@ -81,12 +81,15 @@ export class PDFUtils {
     const publicKey = cert.publicKey as forge.pki.rsa.PublicKey
 
     const md = forge.md.sha1.create()
-    md.update(signedData.toString('hex'))
+    md.update(signedData.toString('binary'))
 
     const args: IdentityPCDArgs = {
       base_message: {
         argumentType: ArgumentTypeName.BigInt,
-        value: BigInt('0x' + md.digest().toHex()) + '',
+        value:
+          BigInt(
+            '0x' + Buffer.from(md.digest().bytes(), 'binary').toString('hex')
+          ) + '',
       },
       modulus: {
         argumentType: ArgumentTypeName.BigInt,

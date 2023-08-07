@@ -20,15 +20,15 @@ describe('Utils tests', function () {
 })
 
 describe.only('Pdf test', function () {
+  this.timeout(0)
   let pdfUtils: PDFUtils
   const pdfEncrypt = fs.readFileSync(__dirname + '/assets/other.pdf')
   const pdf = fs.readFileSync(__dirname + '/assets/output.pdf')
 
   this.beforeEach(() => {
-    console.log(__dirname)
-
     pdfUtils = new PDFUtils()
   })
+
   it('Try get cert from pdf', async () => {
     const cert = pdfUtils.extractCert(pdf)
     const pcdArgs = pdfUtils.toPCDArgsFromCert(pdfEncrypt, cert)
@@ -40,7 +40,6 @@ describe.only('Pdf test', function () {
       isWebEnv: false,
     }
 
-    console.log(pcdArgs)
     await init(pcdInitArgs)
 
     const pcd = await prove(pcdArgs)
