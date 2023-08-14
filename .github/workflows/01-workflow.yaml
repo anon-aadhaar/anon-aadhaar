@@ -1,12 +1,7 @@
 name: packages testing
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
-    branches:
-      - main
 
 jobs:
   build:
@@ -19,8 +14,8 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v2-beta
         with:
-          node-version: '18'
-          cache: 'yarn'
+          node-version: "18"
+          cache: "yarn"
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
@@ -62,8 +57,8 @@ jobs:
           path: build/circuit
           key: ${{ steps.get-circuit-hash.outputs.circuits_hash }}
 
-      - name: 'Dev trusted setup'
-        run: 'yarn dev-setup'
+      - name: "Dev trusted setup"
+        run: "yarn dev-setup"
 
       - name: Build packages
         run: yarn build
