@@ -6,7 +6,7 @@ import {
   IdentityPCDArgs,
   serialize,
   IdentityPCD,
-} from '../../country-identity-pcd/src'
+} from '../../pcd-country-identity/src'
 
 /**
  * proveWithWebProver is a function that generates proofs using the web-based proving system of anon-aadhaar.

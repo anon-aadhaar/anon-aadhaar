@@ -1,5 +1,5 @@
 {
-  "name": "@country-identity/sdk",
+  "name": "country-identity-kit",
   "version": "0.0.1",
   "description": "Frontend component kit for the country identity pcd package",
   "main": "dist/index.js",
