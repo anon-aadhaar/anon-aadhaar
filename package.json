@@ -5,15 +5,19 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build:libraries": "yarn workspaces run build",
+    "test:libraries": "yarn workspaces run test",
+    "dev-setup:pcd": "yarn workspace pcd-country-identity run dev-setup",
+    "dev-install:pcd": "yarn workspace pcd-country-identity run dev-install",
+    "lint": "eslint --ext .js,.ts,.tsx ."
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/privacy-scaling-explorations/anon-aadhaar.git"
   },
   "workspaces": [
-    "pcd-country-identity",
-    "country-identity-kit"
+    "packages/country-identity-kit",
+    "packages/pcd-country-identity"
   ],
   "author": "",
   "license": "MIT",

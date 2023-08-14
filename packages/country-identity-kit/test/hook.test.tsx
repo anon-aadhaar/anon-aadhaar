@@ -17,7 +17,9 @@ describe('useCountryIdentity Hook', () => {
 
   it('returns initial state and startReq function', () => {
     const initialState: CountryIdentityState = { status: 'logged-out' }
-    const startReqFunction = () => {}
+    const startReqFunction = () => {
+      // startReqFunction
+    }
 
     const wrapper: React.FC<{ children: ReactNode }> = ({ children }) => (
       <CountryIdentityContext.Provider
