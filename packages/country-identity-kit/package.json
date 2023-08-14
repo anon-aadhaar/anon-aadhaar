@@ -1,6 +1,6 @@
 {
-  "name": "country-identity-kit",
-  "version": "0.0.3",
+  "name": "@country-identity/sdk",
+  "version": "0.0.1",
   "description": "Frontend component kit for the country identity pcd package",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

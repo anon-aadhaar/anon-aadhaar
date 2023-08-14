@@ -8,6 +8,7 @@
     "build:libraries": "yarn workspaces run build",
     "test:libraries": "yarn workspaces run test",
     "dev-setup:pcd": "yarn workspace pcd-country-identity run dev-setup",
+    "pdf:pcd": "yarn workspace pcd-country-identity run gen-pdf",
     "dev-install:pcd": "yarn workspace pcd-country-identity run dev-install",
     "lint": "eslint --ext .js,.ts,.tsx ."
   },

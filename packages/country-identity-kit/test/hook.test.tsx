@@ -8,7 +8,7 @@ import {
   CountryIdentityState,
 } from '../src/hooks/useCountryIdentity'
 import { genData } from './utils'
-import { IdentityPCDArgs } from 'pcd-country-identity'
+import { IdentityPCDArgs } from '../../country-identity-pcd/src'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import { CountryIdentityProvider } from '../src/provider/CountryIdentityProvider'
 

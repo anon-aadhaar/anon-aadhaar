@@ -1,4 +1,4 @@
-import { IdentityPCDArgs } from 'pcd-country-identity'
+import { IdentityPCDArgs } from '../../../country-identity-pcd/src'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import styled from 'styled-components'
 import { useContext } from 'react'

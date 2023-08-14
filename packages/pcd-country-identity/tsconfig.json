@@ -1,5 +1,9 @@
 {
   "extends": ["@pcd/tsconfig/ts-library.json"],
-  "include": [".", "./test"],
-  "exclude": ["dist", "build", "node_modules"]
+  "include": ["../country-identity-pcd", "../country-identity-pcd/test"],
+  "exclude": [
+    "../country-identity-pcd/dist",
+    "../country-identity-pcd/build",
+    "../country-identity-pcd/node_modules"
+  ]
 }

@@ -4182,6 +4182,24 @@ pathval@^1.1.1:
   resolved "https://registry.yarnpkg.com/pathval/-/pathval-1.1.1.tgz#8534e77a77ce7ac5a2512ea21e0fdb8fcf6c3d8d"
   integrity sha512-Dp6zGqpTdETdR63lehJYPeIOqpiNBNtc7BpWSLrOje7UaIsE5aY92r/AunQA7rsXvet3lrJ3JnZX29UPTKXyKQ==
 
+pcd-country-identity@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/pcd-country-identity/-/pcd-country-identity-0.0.5.tgz#8b76bf4b657d71e93726af8cebdbdc1a3b55fdd2"
+  integrity sha512-yi0lSnRR/2DDVGkyVyzNwna/uw0djfittVSU5d9V5sqX4ttfKlPMakCATISE2q2SggbL6R65VFvMDPFW27GQmQ==
+  dependencies:
+    "@pcd/passport-ui" "^0.6.0"
+    "@pcd/pcd-types" "^0.6.0"
+    "@pcd/tsconfig" "^0.6.0"
+    axios "^1.4.0"
+    circomlib "^2.0.5"
+    json-bigint "^1.0.0"
+    react "^18.2.0"
+    react-dom "^18.2.0"
+    snarkjs "^0.7.0"
+    styled-components "^6.0.0-rc.1"
+    uuid "^9.0.0"
+    valid-url "^1.0.9"
+
 pdfkit@^0.10.0:
   version "0.10.0"
   resolved "https://registry.yarnpkg.com/pdfkit/-/pdfkit-0.10.0.tgz#88f2aa8e3cf9e1cc2caff6447b68dd4e435cb284"
