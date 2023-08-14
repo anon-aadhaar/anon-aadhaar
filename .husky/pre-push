@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-yarn build && yarn lint && yarn test
+yarn workspace pcd-country-identity build && yarn workspace pcd-country-identity lint && yarn workspace pcd-country-identity test && yarn workspace country-identity-kit build && yarn workspace country-identity-kit lint && yarn workspace country-identity-kit test
