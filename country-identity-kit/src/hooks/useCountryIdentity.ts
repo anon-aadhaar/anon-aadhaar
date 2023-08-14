@@ -22,7 +22,9 @@ export function useCountryIdentity(): [
 
 export const CountryIdentityContext = createContext<CountryIdentityContextVal>({
   state: { status: 'logged-out' },
-  startReq: () => {},
+  startReq: () => {
+    // StartReq
+  },
 })
 
 export interface CountryIdentityContextVal {
