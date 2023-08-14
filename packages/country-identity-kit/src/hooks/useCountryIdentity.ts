@@ -1,4 +1,4 @@
-import { IdentityPCD, IdentityPCDArgs } from '../../../country-identity-pcd/src'
+import { IdentityPCD, IdentityPCDArgs } from '../../../pcd-country-identity/src'
 import { createContext, useContext } from 'react'
 import { SerializedPCD } from '@pcd/pcd-types'
 
