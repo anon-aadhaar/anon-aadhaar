@@ -24,32 +24,47 @@ function derToCert(der: string) {
   return asn1Cert
 }
 
-
-
 export class PDFUtils {
   getEncryptObj(pdf: Buffer) {
-    const encryptObjStart = getSubstringIndex(pdf, "/Encrypt", 1);
-    const encryptEnd = pdf.indexOf("R", encryptObjStart);
+    const encryptObjStart = getSubstringIndex(pdf, '/Encrypt', 1)
+    const encryptEnd = pdf.indexOf('R', encryptObjStart)
 
-    const encryptContent = pdf.subarray(encryptObjStart, encryptEnd + 1).toString();
+    const encryptContent = pdf
+      .subarray(encryptObjStart, encryptEnd + 1)
+      .toString()
 
-    const matches = /\/Encrypt (\d+) (\d+) R/.exec(
-      encryptContent
-    )
+    const matches = /\/Encrypt (\d+) (\d+) R/.exec(encryptContent)
 
     if (matches == null) {
-      return null;
+      return null
     } else {
-      const encryptObjId = matches[1];
-      const encryptObjGen = matches[2]; 
+      const encryptObjId = matches[1]
+      const encryptObjGen = matches[2]
 
-      const encryptStart = getSubstringIndex(pdf, `${encryptObjId} ${encryptObjGen} obj`, 1);
-      const encryptEnd = pdf.indexOf("endobj", encryptStart);
-      
-      const encrypt = pdf.subarray(encryptStart, encryptEnd + 6).toString();
-      console.log(encrypt);
+      const start = `${encryptObjId} ${encryptObjGen} obj`;
+      const end = `endobj`;
+      const encryptStart = getSubstringIndex(
+        pdf,
+        start,
+        1
+      )
+      const encryptEnd = pdf.indexOf(end, encryptStart)
+
+    return pdf.subarray(encryptStart + start.length, encryptEnd).filter(v => v !== 0x0a);
+
     }
   }
+
+  getEncryptionKey(encryptObj, password) {
+    console.log(encryptObj);
+    const tmp = encryptObj.subarray(2, encryptObj.length - 2);
+    const dict = tmp.toString().split(
+      "/"
+    ).filter((v:string) => v !== "");
+
+    
+  }
+
 
   extractSignature(pdf: Buffer, signaturePosition = 1) {
     const byteRangePos = getSubstringIndex(
