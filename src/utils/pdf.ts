@@ -24,7 +24,33 @@ function derToCert(der: string) {
   return asn1Cert
 }
 
+
+
 export class PDFUtils {
+  getEncryptObj(pdf: Buffer) {
+    const encryptObjStart = getSubstringIndex(pdf, "/Encrypt", 1);
+    const encryptEnd = pdf.indexOf("R", encryptObjStart);
+
+    const encryptContent = pdf.subarray(encryptObjStart, encryptEnd + 1).toString();
+
+    const matches = /\/Encrypt (\d+) (\d+) R/.exec(
+      encryptContent
+    )
+
+    if (matches == null) {
+      return null;
+    } else {
+      const encryptObjId = matches[1];
+      const encryptObjGen = matches[2]; 
+
+      const encryptStart = getSubstringIndex(pdf, `${encryptObjId} ${encryptObjGen} obj`, 1);
+      const encryptEnd = pdf.indexOf("endobj", encryptStart);
+      
+      const encrypt = pdf.subarray(encryptStart, encryptEnd + 6).toString();
+      console.log(encrypt);
+    }
+  }
+
   extractSignature(pdf: Buffer, signaturePosition = 1) {
     const byteRangePos = getSubstringIndex(
       pdf,

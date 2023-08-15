@@ -29,6 +29,10 @@ describe.only('Pdf test', function () {
     pdfUtils = new PDFUtils()
   })
 
+  it.only("testing", async() => {
+    pdfUtils.getEncryptObj(pdfEncrypt);
+
+  })
   it('Try get cert from pdf', async () => {
     const cert = pdfUtils.extractCert(pdf)
     const pcdArgs = pdfUtils.toPCDArgsFromCert(pdfEncrypt, cert)
