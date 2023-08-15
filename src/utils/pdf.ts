@@ -41,30 +41,25 @@ export class PDFUtils {
       const encryptObjId = matches[1]
       const encryptObjGen = matches[2]
 
-      const start = `${encryptObjId} ${encryptObjGen} obj`;
-      const end = `endobj`;
-      const encryptStart = getSubstringIndex(
-        pdf,
-        start,
-        1
-      )
+      const start = `${encryptObjId} ${encryptObjGen} obj`
+      const end = `endobj`
+      const encryptStart = getSubstringIndex(pdf, start, 1)
       const encryptEnd = pdf.indexOf(end, encryptStart)
 
-    return pdf.subarray(encryptStart + start.length, encryptEnd).filter(v => v !== 0x0a);
-
+      return pdf
+        .subarray(encryptStart + start.length, encryptEnd)
+        .filter(v => v !== 0x0a)
     }
   }
 
   getEncryptionKey(encryptObj, password) {
-    console.log(encryptObj);
-    const tmp = encryptObj.subarray(2, encryptObj.length - 2);
-    const dict = tmp.toString().split(
-      "/"
-    ).filter((v:string) => v !== "");
-
-    
+    console.log(encryptObj)
+    const tmp = encryptObj.subarray(2, encryptObj.length - 2)
+    const dict = tmp
+      .toString()
+      .split('/')
+      .filter((v: string) => v !== '')
   }
-
 
   extractSignature(pdf: Buffer, signaturePosition = 1) {
     const byteRangePos = getSubstringIndex(

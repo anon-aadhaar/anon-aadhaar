@@ -30,8 +30,8 @@ describe.only('Pdf test', function () {
   })
 
   it.only('testing', async () => {
-    const enc = pdfUtils.getEncryptObj(pdfEncrypt);
-    console.log(pdfUtils.getEncryptionKey(enc, ""));
+    const enc = pdfUtils.getEncryptObj(pdfEncrypt)
+    console.log(pdfUtils.getEncryptionKey(enc, ''))
   })
 
   it('Try get cert from pdf', async () => {
