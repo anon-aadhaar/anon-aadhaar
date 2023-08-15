@@ -5,4 +5,4 @@
 /src/meta
 /artifacts
 .vscode
-circom-rsa-verify
+/dist
