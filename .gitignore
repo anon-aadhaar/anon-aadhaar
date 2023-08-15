@@ -10,4 +10,5 @@ pcd-country-identity/src/meta
 pcd-country-identity/artifacts
 pcd-country-identity/.vscode
 
-node_modules
+node_modules/
+node_modules/.yarn-integrity

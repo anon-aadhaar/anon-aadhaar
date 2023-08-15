@@ -16,10 +16,14 @@
     "type": "git",
     "url": "git+https://github.com/privacy-scaling-explorations/anon-aadhaar.git"
   },
-  "workspaces": [
-    "packages/country-identity-kit",
-    "packages/pcd-country-identity"
-  ],
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ],
+    "nohoist": [
+      "**/circomlib"
+    ]
+  },
   "author": "",
   "license": "MIT",
   "bugs": {
