@@ -10,7 +10,7 @@ import {
 import { genData } from './utils'
 import { IdentityPCDArgs } from '../../pcd-country-identity/src'
 import { ArgumentTypeName } from '@pcd/pcd-types'
-import { CountryIdentityProvider } from '../src/provider/CountryIdentityProvider'
+import { CountryIdentityProvider } from '../src/provider/countryIdentityProvider'
 
 describe('useCountryIdentity Hook', () => {
   let testData: [bigint, bigint, bigint, bigint]

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { assert } from 'chai'
-import { CountryIdentityProvider } from '../src/provider/CountryIdentityProvider'
+import { CountryIdentityProvider } from '../src/provider/countryIdentityProvider'
 import { render, screen } from '@testing-library/react'
 
 describe('CountryIdentityProvider', () => {
