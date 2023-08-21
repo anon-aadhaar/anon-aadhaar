@@ -14,7 +14,9 @@
     "format": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\"",
     "prepare": "husky install",
     "gen-pdf": "/bin/bash ./script/setup-dev.sh pdf-setup",
-    "test-publish": " tsup src/index.ts && npm publish --dry-run"
+    "test-publish": " tsup src/index.ts && npm publish --dry-run",
+    "gen-contract": "/bin/bash ./script/setup-dev.sh contract-setup",
+    "gen-proof": "/bin/bash ./script/setup-dev.sh gen-proof"
   },
   "files": [
     "./artifacts/verification_key.json",

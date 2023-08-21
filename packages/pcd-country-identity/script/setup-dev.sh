@@ -94,6 +94,22 @@ function gen_cert_and_key() {
     npx node-signpdf-gen $BUILD_DIR/signed.pdf $BUILD_DIR/keyStore.p12
 }
 
+function setup_contract() {
+    cd $ROOT
+    echo "Building contracts...!"
+    mkdir -p $BUILD_DIR/contracts
+    snarkjs zkey export solidityverifier ./build/circuit/circuit_final.zkey $BUILD_DIR/contracts/verifier.sol
+    echo "Contracts generated!"
+}
+
+function generate_proof() {
+    cd $ROOT
+    echo "Building proof...!"
+    mkdir -p $BUILD_DIR/proofs
+    snarkjs groth16 fullprove ./build/input.json ./build/circuit/main_js/main.wasm ./build/circuit/circuit_final.zkey $BUILD_DIR/proofs/proof.json $BUILD_DIR/proofs/public.json
+    echo "Generated proof...!"
+}
+
 case "$1" in
     install)
         install_deps
@@ -103,6 +119,12 @@ case "$1" in
     ;;
     pdf-setup) 
         gen_cert_and_key
+    ;;
+    contract-setup) 
+        setup_contract
+    ;;
+    gen-proof) 
+        generate_proof
     ;;
     *)
         echo "Usage: $0 {install|setup|pdf-setup}"
