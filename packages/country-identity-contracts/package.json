@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "test": "npx hardhat test",
+    "build": "npx hardhat compile",
     "lint": "eslint --ext .js,.ts .",
     "format": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\""
   },
