@@ -1,0 +1,15 @@
+{
+  "name": "country-identity-contracts",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "test": "npx hardhat test",
+    "lint": "eslint --ext .js,.ts .",
+    "format": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\""
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "hardhat": "^2.17.1"
+  }
+}
