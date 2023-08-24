@@ -1,4 +1,9 @@
 import { subtle } from 'crypto'
+import { IdentityPCD, BigNumberish } from 'pcd-country-identity'
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { groth16 } from 'snarkjs'
 
 function buffToBigInt(buff: string): bigint {
   return BigInt('0x' + Buffer.from(buff, 'base64url').toString('hex'))
@@ -15,7 +20,7 @@ async function generateRsaKey(hash = 'SHA-256') {
       hash,
     },
     true,
-    ['sign', 'verify'],
+    ['sign', 'verify']
   )
 
   return { publicKey, privateKey }
@@ -23,7 +28,7 @@ async function generateRsaKey(hash = 'SHA-256') {
 
 export async function genData(
   data: string,
-  HASH_ALGO: string,
+  HASH_ALGO: string
 ): Promise<[bigint, bigint, bigint, bigint]> {
   const keys = await generateRsaKey(HASH_ALGO)
 
@@ -32,13 +37,13 @@ export async function genData(
   const enc = new TextEncoder()
   const text = enc.encode(data)
   const hash = BigInt(
-    '0x' + Buffer.from(await subtle.digest(HASH_ALGO, text)).toString('hex'),
+    '0x' + Buffer.from(await subtle.digest(HASH_ALGO, text)).toString('hex')
   )
 
   const sign_buff = await subtle.sign(
     { name: 'RSASSA-PKCS1-v1_5', hash: HASH_ALGO },
     keys.privateKey,
-    text,
+    text
   )
 
   const e = buffToBigInt(public_key.e as string)
@@ -46,4 +51,34 @@ export async function genData(
   const sign = BigInt('0x' + Buffer.from(sign_buff).toString('hex'))
 
   return [e, sign, n, hash]
+}
+
+export async function exportCallDataGroth16(
+  proof: IdentityPCD['proof']['proof'],
+  _publicSignals: BigNumberish[]
+): Promise<{
+  a: [BigNumberish, BigNumberish]
+  b: [[BigNumberish, BigNumberish], [BigNumberish, BigNumberish]]
+  c: [BigNumberish, BigNumberish]
+  Input: BigNumberish[]
+}> {
+  const calldata = await groth16.exportSolidityCallData(proof, _publicSignals)
+
+  const argv = calldata
+    .replace(/["[\]\s]/g, '')
+    .split(',')
+    .map((x: string) => BigInt(x).toString())
+
+  const a: [BigNumberish, BigNumberish] = [argv[0], argv[1]]
+  const b: [[BigNumberish, BigNumberish], [BigNumberish, BigNumberish]] = [
+    [argv[2], argv[3]],
+    [argv[4], argv[5]],
+  ]
+  const c: [BigNumberish, BigNumberish] = [argv[6], argv[7]]
+  const Input = []
+
+  for (let i = 8; i < argv.length; i++) {
+    Input.push(argv[i])
+  }
+  return { a, b, c, Input }
 }

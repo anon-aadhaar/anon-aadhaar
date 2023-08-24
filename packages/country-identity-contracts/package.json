@@ -1,13 +1,21 @@
 {
   "name": "country-identity-contracts",
-  "version": "1.0.0",
-  "main": "index.js",
+  "version": "0.0.1",
+  "description": "Verifier smart contract for the anon aadhaar circuit",
   "license": "MIT",
   "scripts": {
     "test": "npx hardhat test",
     "build": "npx hardhat compile",
     "lint": "eslint --ext .js,.ts .",
     "format": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\""
+  },
+  "files": [
+    "./contracts/*",
+    "LICENSE",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^3.0.0",
