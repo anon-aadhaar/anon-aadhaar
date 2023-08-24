@@ -8,7 +8,8 @@
     "build": "npx hardhat compile",
     "lint": "eslint --ext .js,.ts .",
     "format": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\"",
-    "test-publish": "yarn build && yarn lint && yarn test && npm publish --dry-run"
+    "test-publish": "yarn build && yarn lint && yarn test && npm publish --dry-run",
+    "publish": "yarn build && yarn lint && yarn test && npm publish"
   },
   "files": [
     "./contracts/*",
@@ -16,7 +17,8 @@
     "README.md"
   ],
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^3.0.0",
