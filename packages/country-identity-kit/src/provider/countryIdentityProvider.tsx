@@ -62,6 +62,7 @@ export function CountryIdentityProvider(props: { children: ReactNode }) {
           )
       })
       .catch((e: unknown) => {
+        setAndWriteState({ status: 'logged-out' })
         console.error(e)
         console.error(
           `[COUNTRY-IDENTITY] error logging in, ignoring pcd: ${pcdStr}`,
