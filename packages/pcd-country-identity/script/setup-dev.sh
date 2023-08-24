@@ -98,7 +98,9 @@ function setup_contract() {
     cd $ROOT
     echo "Building contracts...!"
     mkdir -p $BUILD_DIR/contracts
-    snarkjs zkey export solidityverifier ./build/circuit/circuit_final.zkey $BUILD_DIR/contracts/verifier.sol
+    snarkjs zkey export solidityverifier ./build/circuit/circuit_final.zkey $BUILD_DIR/contracts/Verifier.sol
+    # Update the contract name in the Solidity verifier
+    sed -i '' -e "s/contract Groth16Verifier/contract Verifier/g" $BUILD_DIR/contracts/Verifier.sol
     echo "Contracts generated!"
 }
 
