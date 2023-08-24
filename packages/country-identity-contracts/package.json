@@ -1,6 +1,6 @@
 {
   "name": "country-identity-contracts",
-  "version": "0.0.1",
+  "version": "0.0.7",
   "description": "Verifier smart contract for the anon aadhaar circuit",
   "license": "MIT",
   "scripts": {
