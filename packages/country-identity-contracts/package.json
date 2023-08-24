@@ -7,7 +7,8 @@
     "test": "npx hardhat test",
     "build": "npx hardhat compile",
     "lint": "eslint --ext .js,.ts .",
-    "format": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\""
+    "format": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\"",
+    "test-publish": "yarn build && yarn lint && yarn test && npm publish --dry-run"
   },
   "files": [
     "./contracts/*",
