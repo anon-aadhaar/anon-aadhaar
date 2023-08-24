@@ -5,7 +5,7 @@ async function main() {
 
   await verifier.waitForDeployment()
 
-  console.log(`Verifier deployed to ${verifier.getAddress()}`)
+  console.log(`Verifier deployed to ${await verifier.getAddress()}`)
 }
 
 // We recommend this pattern to be able to use async/await everywhere
