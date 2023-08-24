@@ -12,7 +12,7 @@
     "test": "npx ts-mocha test/**/*.test.ts --exit",
     "lint": "eslint --ext .js,.ts .",
     "format": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\"",
-    "prepare": "cd ../.. && husky install .husky",
+    "prepare": "cd ../.. && husky install",
     "gen-pdf": "/bin/bash ./script/setup-dev.sh pdf-setup",
     "test-publish": "yarn build && yarn lint && yarn test && npm publish --dry-run",
     "publish": "yarn build && yarn lint && yarn test && npm publish",
