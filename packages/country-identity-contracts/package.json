@@ -1,0 +1,42 @@
+{
+  "name": "country-identity-contracts",
+  "version": "0.0.7",
+  "description": "Verifier smart contract for the anon aadhaar circuit",
+  "license": "MIT",
+  "scripts": {
+    "test": "npx hardhat test",
+    "build": "npx hardhat compile",
+    "lint": "eslint --ext .js,.ts .",
+    "format": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\"",
+    "test-publish": "yarn build && yarn lint && yarn test && npm publish --dry-run",
+    "publish": "yarn build && yarn lint && yarn test && npm publish",
+    "prepare": "cd ../.. && husky install"
+  },
+  "files": [
+    "./contracts/*",
+    "LICENSE",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.0",
+    "@nomicfoundation/hardhat-ethers": "^3.0.0",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.0",
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "@nomicfoundation/hardhat-verify": "^1.0.0",
+    "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers",
+    "@typechain/ethers-v6": "^0.4.0",
+    "@typechain/hardhat": "^8.0.0",
+    "ethers": "^6.7.1",
+    "hardhat": "^2.17.1",
+    "hardhat-gas-reporter": "^1.0.8",
+    "solidity-coverage": "^0.8.1",
+    "typechain": "^8.2.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1"
+  }
+}

@@ -32,7 +32,7 @@ describe('PCD tests', function () {
 
     const result = await proveWithWebProver(pcdArgs)
 
-    const verified = await verify(result.pcd)
+    const verified = await verify(result.pcd, true)
     assert(verified == true, 'Should verifiable')
   })
 })

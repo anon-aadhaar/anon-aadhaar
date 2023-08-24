@@ -1,6 +1,6 @@
 {
   "name": "country-identity-kit",
-  "version": "0.0.1",
+  "version": "0.0.7",
   "description": "Frontend component kit for the country identity pcd package",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -10,9 +10,9 @@
     "lint": "eslint --ext .js,.ts .",
     "format": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\"",
     "test": "TS_NODE_COMPILER_OPTIONS={\\\"module\\\":\\\"commonjs\\\"} npx ts-mocha -p tsconfig.json test/**/*.test.{ts,tsx} --exit",
-    "prepare": "husky install",
-    "pre-publish": "yarn build && yarn lint && yarn test && npm publish --dry-run",
-    "npm-publish": "yarn build && yarn lint && yarn test && npm publish"
+    "prepare": "cd ../.. && husky install",
+    "test-publish": "yarn build && yarn lint && yarn test && npm publish --dry-run",
+    "publish": "yarn build && yarn lint && yarn test && npm publish"
   },
   "files": [
     "./src/*",
