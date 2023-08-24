@@ -1,9 +1,9 @@
 name: Publish to npm
 
 on:
-  push:
-    branches:
-      - main
+  release:
+    types:
+      - created
 
 jobs:
   publish:
@@ -36,7 +36,7 @@ jobs:
         id: powersOfTau28_hez_final_18
         uses: actions/cache@v3
         with:
-          path: build/powersOfTau28_hez_final_18.ptau
+          path: packages/pcd-country-identity/build/powersOfTau28_hez_final_18.ptau
           key: powersOfTau28_hez_final_18.ptau
       - name: Cache Circom
         id: Circom
@@ -46,12 +46,12 @@ jobs:
           key: circom
 
       - name: Download power of tau and install Circom
-        run: yarn dev-install
+        run: yarn dev-install:pcd
 
       - name: Get Circuit Hash
         id: get-circuit-hash
         run: |
-          echo "circuits_hash=`./script/utils.sh`" >> $GITHUB_OUTPUT
+          echo "circuits_hash=`packages/pcd-country-identity/script/utils.sh`" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Cache proving/verify key
@@ -62,16 +62,16 @@ jobs:
           key: ${{ steps.get-circuit-hash.outputs.circuits_hash }}
 
       - name: 'Dev trusted setup'
-        run: 'yarn dev-setup'
+        run: 'yarn dev-setup:pcd'
 
       - name: Build packages
-        run: yarn build
+        run: yarn build:libraries
       - name: Test packages
-        run: yarn test
+        run: yarn test:libraries
 
       - name: Authenticate and publish to npm
         run: |
           echo "//registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN" >> ~/.npmrc
-          yarn publish
+          yarn publish:libraries
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
