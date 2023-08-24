@@ -14,6 +14,7 @@
     "contracts:pcd": "yarn workspace pcd-country-identity run contract",
     "dev-install:pcd": "yarn workspace pcd-country-identity run dev-install",
     "lint": "eslint --ext .js,.ts,.tsx .",
+    "prepare": "husky install",
     "version:pcd-country-identity": "cd packages/pcd-country-identity && yarn version --new-version $npm_package_version",
     "version:country-identity-kit": "cd packages/country-identity-kit && yarn version --new-version $npm_package_version",
     "version:country-identity-contracts": "cd packages/country-identity-contracts && yarn version --new-version $npm_package_version",
