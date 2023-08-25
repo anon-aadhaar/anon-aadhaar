@@ -15,6 +15,7 @@
     "prepare": "cd ../.. && husky install",
     "gen-pdf": "/bin/bash ./script/setup-dev.sh pdf-setup",
     "test-publish": "yarn build && yarn lint && yarn test && npm publish --dry-run",
+    "publishtonpm": "yarn build && yarn lint && yarn test && npm publish",
     "gen-contract": "/bin/bash ./script/setup-dev.sh contract-setup",
     "gen-proof": "/bin/bash ./script/setup-dev.sh gen-proof"
   },

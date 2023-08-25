@@ -9,6 +9,7 @@
     "lint": "eslint --ext .js,.ts .",
     "format": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\"",
     "test-publish": "yarn build && yarn lint && yarn test && npm publish --dry-run",
+    "publishtonpm": "yarn build && yarn lint && yarn test && npm publish",
     "prepare": "cd ../.. && husky install"
   },
   "files": [

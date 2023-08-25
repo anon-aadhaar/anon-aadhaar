@@ -11,7 +11,8 @@
     "format": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\"",
     "test": "TS_NODE_COMPILER_OPTIONS={\\\"module\\\":\\\"commonjs\\\"} npx ts-mocha -p tsconfig.json test/**/*.test.{ts,tsx} --exit",
     "prepare": "cd ../.. && husky install",
-    "test-publish": "yarn build && yarn lint && yarn test && npm publish --dry-run"
+    "test-publish": "yarn build && yarn lint && yarn test && npm publish --dry-run",
+    "publishtonpm": "yarn build && yarn lint && yarn test && npm publish"
   },
   "files": [
     "./src/*",

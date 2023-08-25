@@ -7,7 +7,7 @@
   "scripts": {
     "build:libraries": "yarn workspaces run build",
     "test-publish:libraries": "yarn workspaces run test-publish",
-    "publish:libraries": "yarn workspaces run publish",
+    "publish:libraries": "yarn workspaces run publishtonpm",
     "test:libraries": "yarn workspaces run test",
     "dev-setup:pcd": "yarn workspace anon-aadhaar-pcd run dev-setup",
     "pdf:pcd": "yarn workspace anon-aadhaar-pcd run gen-pdf",
