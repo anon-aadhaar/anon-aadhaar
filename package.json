@@ -1,6 +1,6 @@
 {
   "name": "country-identity-packages",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A set of tools to anonymously prove your identity",
   "main": "index.js",
   "private": true,
