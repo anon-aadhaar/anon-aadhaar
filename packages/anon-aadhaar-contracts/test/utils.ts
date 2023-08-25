@@ -20,7 +20,7 @@ async function generateRsaKey(hash = 'SHA-256') {
       hash,
     },
     true,
-    ['sign', 'verify']
+    ['sign', 'verify'],
   )
 
   return { publicKey, privateKey }
@@ -28,7 +28,7 @@ async function generateRsaKey(hash = 'SHA-256') {
 
 export async function genData(
   data: string,
-  HASH_ALGO: string
+  HASH_ALGO: string,
 ): Promise<[bigint, bigint, bigint, bigint]> {
   const keys = await generateRsaKey(HASH_ALGO)
 
@@ -37,13 +37,13 @@ export async function genData(
   const enc = new TextEncoder()
   const text = enc.encode(data)
   const hash = BigInt(
-    '0x' + Buffer.from(await subtle.digest(HASH_ALGO, text)).toString('hex')
+    '0x' + Buffer.from(await subtle.digest(HASH_ALGO, text)).toString('hex'),
   )
 
   const sign_buff = await subtle.sign(
     { name: 'RSASSA-PKCS1-v1_5', hash: HASH_ALGO },
     keys.privateKey,
-    text
+    text,
   )
 
   const e = buffToBigInt(public_key.e as string)
@@ -55,7 +55,7 @@ export async function genData(
 
 export async function exportCallDataGroth16(
   proof: IdentityPCD['proof']['proof'],
-  _publicSignals: BigNumberish[]
+  _publicSignals: BigNumberish[],
 ): Promise<{
   a: [BigNumberish, BigNumberish]
   b: [[BigNumberish, BigNumberish], [BigNumberish, BigNumberish]]
