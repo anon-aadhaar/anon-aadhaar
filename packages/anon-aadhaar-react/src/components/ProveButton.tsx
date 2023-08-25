@@ -54,7 +54,7 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
               startReq({ type: 'login', args })
             }}
           >
-            Request Identity Proof
+            Request Aadhaar Proof
           </Btn>
         )
       case 'logging-in':
