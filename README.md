@@ -1,12 +1,13 @@
-# Country Identity
+# Anon Aadhaar
 
-Country Identity is a protocol that let users anonymously prove their identity, in a very fast and simple way.
+Anon Aadhaar is a protocol that let users anonymously prove their Aadhaar identity, in a very fast and simple way.
 The core of the procotocol is the circuits, but we also provide a SDK to let any app use our protocol.
 
 ## 📦 Packages
 
-- [pcd-country-identity](packages/pcd-country-identity/)
-- [country-identity-kit](packages/country-identity-kit/)
+- [anon-aadhaar-pcd](packages/anon-aadhaar-pcd/)
+- [anon-aadhaar-react](packages/anon-aadhaar-react/)
+- [anon-aadhaar-contracts](packages/anon-aadhaar-contracts/)
 
 ## Contributing
 
@@ -46,7 +47,7 @@ Run test
 yarn test:libraries
 ```
 
-Generate pdf file with pkcs#1 schema. This action will create pdf file name `signed.pdf` signed by `certificate.cer` in `packages/country-identity-pcd/build` folder.
+Generate pdf file with pkcs#1 schema. This action will create pdf file name `signed.pdf` signed by `certificate.cer` in `packages/anon-aadhaar-pcd/build` folder.
 
 ```bash
 yarn pdf:pcd
