@@ -1,5 +1,5 @@
 import { describe } from 'mocha'
-import { IdentityPCDArgs, verify } from 'pcd-country-identity'
+import { IdentityPCDArgs, verify } from 'anon-aadhaar-pcd'
 import { assert } from 'chai'
 import { genData } from './utils'
 import { ArgumentTypeName } from '@pcd/pcd-types'

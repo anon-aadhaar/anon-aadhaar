@@ -3,33 +3,33 @@ import { renderHook } from '@testing-library/react-hooks'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { expect } from 'chai'
 import {
-  useCountryIdentity,
-  CountryIdentityContext,
-  CountryIdentityState,
-} from '../src/hooks/useCountryIdentity'
+  useAnonAadhaar,
+  AnonAadhaarContext,
+  AnonAadhaarState,
+} from '../src/hooks/useAnonAadhaar'
 import { genData } from './utils'
-import { IdentityPCDArgs } from '../../pcd-country-identity/src'
+import { IdentityPCDArgs } from 'anon-aadhaar-pcd'
 import { ArgumentTypeName } from '@pcd/pcd-types'
-import { CountryIdentityProvider } from '../src/provider/countryIdentityProvider'
+import { AnonAadhaarProvider } from '../src/provider/AnonAadhaarProvider'
 
 describe('useCountryIdentity Hook', () => {
   let testData: [bigint, bigint, bigint, bigint]
 
   it('returns initial state and startReq function', () => {
-    const initialState: CountryIdentityState = { status: 'logged-out' }
+    const initialState: AnonAadhaarState = { status: 'logged-out' }
     const startReqFunction = () => {
       // startReqFunction
     }
 
     const wrapper: React.FC<{ children: ReactNode }> = ({ children }) => (
-      <CountryIdentityContext.Provider
+      <AnonAadhaarContext.Provider
         value={{ state: initialState, startReq: startReqFunction }}
       >
         {children}
-      </CountryIdentityContext.Provider>
+      </AnonAadhaarContext.Provider>
     )
 
-    const { result } = renderHook(() => useCountryIdentity(), { wrapper })
+    const { result } = renderHook(() => useAnonAadhaar(), { wrapper })
 
     const [state, startReq] = result.current
 
@@ -58,9 +58,9 @@ describe('useCountryIdentity Hook', () => {
     }
 
     render(
-      <CountryIdentityProvider>
+      <AnonAadhaarProvider>
         <TestComponent pcdArgs={pcdArgs} />
-      </CountryIdentityProvider>,
+      </AnonAadhaarProvider>,
     )
 
     // Verify initial state
@@ -77,7 +77,7 @@ describe('useCountryIdentity Hook', () => {
 })
 
 function TestComponent({ pcdArgs }: { pcdArgs: IdentityPCDArgs }) {
-  const [state, startReq] = useCountryIdentity()
+  const [state, startReq] = useAnonAadhaar()
 
   return (
     <div>

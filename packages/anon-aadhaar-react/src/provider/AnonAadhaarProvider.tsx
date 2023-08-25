@@ -1,32 +1,32 @@
 import { ReactNode, useEffect, useState } from 'react'
 import {
-  CountryIdentityContext,
-  CountryIdentityRequest,
-  CountryIdentityState,
-} from '../hooks/useCountryIdentity'
-import { IdentityPCD, IdentityPCDPackage } from 'pcd-country-identity'
+  AnonAadhaarContext,
+  AnonAadhaarRequest,
+  AnonAadhaarState,
+} from '../hooks/useAnonAadhaar'
+import { IdentityPCD, IdentityPCDPackage } from 'anon-aadhaar-pcd'
 import React, { Dispatch, SetStateAction } from 'react'
 import { proveWithWebProver } from '../prove'
 import { SerializedPCD } from '@pcd/pcd-types'
 
 /**
- * CountryIdentityProvider is a React component that serves as a provider for the
- * CountryIdentityContext. It manages the authentication state, login requests,
+ * AnonAadhaarProvider is a React component that serves as a provider for the
+ * AnonAadhaarContext. It manages the authentication state, login requests,
  * and communication with the proving component. This provider initializes the
  * authentication state from local storage on page load and handles updates to
  * the state when login requests are made and when new proofs are received.
  *
- * @param props - Props for the CountryIdentityProvider component.
+ * @param props - Props for the AnonAadhaarProvider component.
  *   - children: The child components that will have access to the provided context.
  *
  * @returns A JSX element that wraps the provided child components with the
- * CountryIdentityContext.Provider.
+ * AnonAadhaarContext.Provider.
  */
-export function CountryIdentityProvider(props: { children: ReactNode }) {
+export function AnonAadhaarProvider(props: { children: ReactNode }) {
   // Read state from local storage on page load
   const [pcdStr, setPcdStr] = useState<SerializedPCD<IdentityPCD> | ''>('')
   const [pcd, setPcd] = useState<IdentityPCD | ''>('')
-  const [state, setState] = useState<CountryIdentityState>({
+  const [state, setState] = useState<AnonAadhaarState>({
     status: 'logged-out',
   })
   useEffect(() => {
@@ -34,16 +34,16 @@ export function CountryIdentityProvider(props: { children: ReactNode }) {
   }, [])
 
   // Write state to local storage whenever a login starts, succeeds, or fails
-  const setAndWriteState = (newState: CountryIdentityState) => {
-    console.log(`[COUNTRY-IDENTITY] new state ${shallowToString(newState)}`)
+  const setAndWriteState = (newState: AnonAadhaarState) => {
+    console.log(`[ANON-AADHAAR] new state ${shallowToString(newState)}`)
     setState(newState)
     writeToLocalStorage(newState)
   }
 
   // Send login requests
   const startReq = React.useCallback(
-    (request: CountryIdentityRequest) => {
-      console.log(`[COUNTRY-IDENTITY] startReq ${shallowToString(request)}`)
+    (request: AnonAadhaarRequest) => {
+      console.log(`[ANON-AADHAAR] startReq ${shallowToString(request)}`)
       setAndWriteState(handleLoginReq(request, setPcdStr, setPcd))
     },
     [setAndWriteState, setPcdStr, setPcd],
@@ -52,20 +52,18 @@ export function CountryIdentityProvider(props: { children: ReactNode }) {
   // Receive PCD from proving component
   React.useEffect(() => {
     if (pcdStr === '' || pcd === '') return
-    console.log(`[COUNTRY-IDENTITY] trying to log in with ${pcdStr}`)
+    console.log(`[ANON-AADHAAR] trying to log in with ${pcdStr}`)
     handleLogin(state, pcdStr, pcd)
       .then(newState => {
         if (newState) setAndWriteState(newState)
         else
-          console.log(
-            `[COUNTRY-IDENTITY] ${state.status}, ignoring pcd: ${pcdStr}`,
-          )
+          console.log(`[ANON-AADHAAR] ${state.status}, ignoring pcd: ${pcdStr}`)
       })
       .catch((e: unknown) => {
         setAndWriteState({ status: 'logged-out' })
         console.error(e)
         console.error(
-          `[COUNTRY-IDENTITY] error logging in, ignoring pcd: ${pcdStr}`,
+          `[ANON-AADHAAR] error logging in, ignoring pcd: ${pcdStr}`,
         )
       })
   }, [pcdStr])
@@ -74,34 +72,30 @@ export function CountryIdentityProvider(props: { children: ReactNode }) {
   const val = React.useMemo(() => ({ state, startReq }), [state])
 
   return (
-    <CountryIdentityContext.Provider value={val}>
+    <AnonAadhaarContext.Provider value={val}>
       {props.children}
-    </CountryIdentityContext.Provider>
+    </AnonAadhaarContext.Provider>
   )
 }
 
-export async function readFromLocalStorage(): Promise<CountryIdentityState> {
-  const json = window.localStorage['countryIdentity']
+export async function readFromLocalStorage(): Promise<AnonAadhaarState> {
+  const json = window.localStorage['anonAadhaar']
   try {
     const state = await parseAndValidate(json)
-    console.log(
-      `[COUNTRY-IDENTITY] read stored state: ${shallowToString(state)}`,
-    )
+    console.log(`[ANON-AADHAAR] read stored state: ${shallowToString(state)}`)
     return state
   } catch (e) {
-    console.error(`[COUNTRY-IDENTITY] error parsing stored state: ${e}`)
+    console.error(`[ANON-AADHAAR] error parsing stored state: ${e}`)
     return { status: 'logged-out' }
   }
 }
 
-function writeToLocalStorage(state: CountryIdentityState) {
-  console.log(
-    `[COUNTRY-IDENTITY] writing to local storage, status ${state.status}`,
-  )
-  window.localStorage['countryIdentity'] = serialize(state)
+function writeToLocalStorage(state: AnonAadhaarState) {
+  console.log(`[ANON-AADHAAR] writing to local storage, status ${state.status}`)
+  window.localStorage['anonAadhaar'] = serialize(state)
 }
 
-export function serialize(state: CountryIdentityState): string {
+export function serialize(state: AnonAadhaarState): string {
   const { status } = state
   let serState
   if (status === 'logged-in') {
@@ -120,7 +114,7 @@ export function serialize(state: CountryIdentityState): string {
 
 export async function parseAndValidate(
   json?: string,
-): Promise<CountryIdentityState> {
+): Promise<AnonAadhaarState> {
   if (json == null || json.trim() === '') {
     return { status: 'logged-out' }
   }
@@ -166,10 +160,10 @@ function shallowToString(obj: unknown) {
 
 /** Start a login request. Returns a `logging-in` state */
 function handleLoginReq(
-  request: CountryIdentityRequest,
+  request: AnonAadhaarRequest,
   setPcdStr: Dispatch<SetStateAction<SerializedPCD<IdentityPCD> | ''>>,
   setPcd: Dispatch<SetStateAction<IdentityPCD | ''>>,
-): CountryIdentityState {
+): AnonAadhaarState {
   const { type } = request
   console.log('Type of request received: ', type)
   switch (type) {
@@ -207,18 +201,18 @@ function handleLoginReq(
 
 /** Returns either a `logged-in` state, null to ignore, or throws on error. */
 async function handleLogin(
-  state: CountryIdentityState,
+  state: AnonAadhaarState,
   pcdStr: SerializedPCD<IdentityPCD>,
   _pcd: IdentityPCD,
-): Promise<CountryIdentityState | null> {
+): Promise<AnonAadhaarState | null> {
   if (state.status !== 'logging-in') {
     console.log(
-      `[COUNTRY-IDENTITY] ignoring message. State != logging-in: ${state}`,
+      `[ANON-AADHAAR] ignoring message. State != logging-in: ${state}`,
     )
     return null
   }
 
-  console.log(`[COUNTRY-IDENTITY] verifying ${pcdStr.type}`)
+  console.log(`[ANON-AADHAAR] verifying ${pcdStr.type}`)
 
   if (!(await IdentityPCDPackage.verify(_pcd))) {
     throw new Error('Invalid proof')

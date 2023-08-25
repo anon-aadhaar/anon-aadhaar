@@ -1,5 +1,5 @@
 {
-  "name": "pcd-country-identity",
+  "name": "anon-aadhaar-pcd",
   "version": "0.0.7",
   "main": "./dist/index.js",
   "types": "./src/index.ts",
@@ -15,7 +15,6 @@
     "prepare": "cd ../.. && husky install",
     "gen-pdf": "/bin/bash ./script/setup-dev.sh pdf-setup",
     "test-publish": "yarn build && yarn lint && yarn test && npm publish --dry-run",
-    "publish": "yarn build && yarn lint && yarn test && npm publish",
     "gen-contract": "/bin/bash ./script/setup-dev.sh contract-setup",
     "gen-proof": "/bin/bash ./script/setup-dev.sh gen-proof"
   },
@@ -25,6 +24,10 @@
     "./dist/*",
     "./README.md"
   ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
   "dependencies": {
     "@pcd/passport-ui": "^0.6.0",
     "@pcd/pcd-types": "^0.6.0",

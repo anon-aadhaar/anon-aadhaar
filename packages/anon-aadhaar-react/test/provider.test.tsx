@@ -1,14 +1,14 @@
 import * as React from 'react'
 import { assert } from 'chai'
-import { CountryIdentityProvider } from '../src/provider/countryIdentityProvider'
+import { AnonAadhaarProvider } from '../src/provider/AnonAadhaarProvider'
 import { render, screen } from '@testing-library/react'
 
 describe('CountryIdentityProvider', () => {
   it('renders children', () => {
     render(
-      <CountryIdentityProvider>
+      <AnonAadhaarProvider>
         <div>Test Children</div>
-      </CountryIdentityProvider>,
+      </AnonAadhaarProvider>,
     )
 
     assert(screen.getByText('Test Children') != null, 'Should not be null')

@@ -1,5 +1,0 @@
-{
-  "extends": ["@pcd/tsconfig/ts-library.json"],
-  "include": ["./src/*"],
-  "exclude": ["./dist", "./build", ".//node_modules"]
-}

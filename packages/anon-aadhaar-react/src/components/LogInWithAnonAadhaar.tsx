@@ -3,20 +3,20 @@ import { Modal } from './ProveModal'
 import styled from 'styled-components'
 import { text } from '../util'
 import { useEffect, useContext } from 'react'
-import { CountryIdentityContext } from '../hooks/useCountryIdentity'
+import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
 
 /**
- * LogInWithCountryIdentity is a React component that provides a user interface
- * for logging in and logging out using the CountryIdentityContext. It renders a
+ * LogInWithAnonAadhaar is a React component that provides a user interface
+ * for logging in and logging out using the AnonAadhaarContext. It renders a
  * button that triggers a login modal when clicked, and provides methods to
  * initiate user login using the anon aadhaar zk circuit. The component utilizes
  * the authentication state and login request function from the context.
  *
- * @returns A JSX element representing the LogInWithCountryIdentity component.
+ * @returns A JSX element representing the LogInWithAnonAadhaar component.
  */
-export const LogInWithCountryIdentity = () => {
+export const LogInWithAnonAadhaar = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
-  const { state, startReq } = useContext(CountryIdentityContext)
+  const { state, startReq } = useContext(AnonAadhaarContext)
 
   useEffect(() => {
     if (state.status === 'logged-in') setIsModalOpen(false)

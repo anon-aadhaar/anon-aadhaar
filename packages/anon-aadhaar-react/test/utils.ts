@@ -1,8 +1,8 @@
 import { subtle } from 'crypto'
 import {
-  CountryIdentityState,
-  CountryIdentityRequest,
-} from '../src/hooks/useCountryIdentity'
+  AnonAadhaarState,
+  AnonAadhaarRequest,
+} from '../src/hooks/useAnonAadhaar'
 
 function buffToBigInt(buff: string): bigint {
   return BigInt('0x' + Buffer.from(buff, 'base64url').toString('hex'))
@@ -54,16 +54,16 @@ export async function genData(
 
 // Serialize the context value to a JSON string
 export function serializeContextValue(contextValue: {
-  state: CountryIdentityState
-  startReq: (request: CountryIdentityRequest) => void
+  state: AnonAadhaarState
+  startReq: (request: AnonAadhaarRequest) => void
 }): string {
   return JSON.stringify(contextValue)
 }
 
 // Deserialize the JSON string to the context value object
 export function deserializeContextValue(serializedContextValue: string): {
-  state: CountryIdentityState
-  startReq: (request: CountryIdentityRequest) => void
+  state: AnonAadhaarState
+  startReq: (request: AnonAadhaarRequest) => void
 } {
   return JSON.parse(serializedContextValue)
 }

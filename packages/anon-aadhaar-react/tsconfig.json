@@ -13,6 +13,6 @@
     "jsx": "react-jsx",
     "noUnusedParameters": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/*"],
   "exclude": ["mocha.cjs", "eslintrc.cjs"]
 }

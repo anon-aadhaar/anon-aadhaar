@@ -9,7 +9,13 @@ export const Container = styled.div`
   margin-bottom: 8px;
 `
 
-export const Proof = ({ code, label }: { code: string; label?: string }) => {
+export const AnonAadhaarProof = ({
+  code,
+  label,
+}: {
+  code: string
+  label?: string
+}) => {
   const [collapsed, setCollapsed] = useState(true)
 
   const toggle = useCallback(() => {

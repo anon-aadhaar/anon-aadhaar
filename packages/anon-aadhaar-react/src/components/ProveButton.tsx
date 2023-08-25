@@ -1,8 +1,8 @@
-import { IdentityPCDArgs } from '../../../pcd-country-identity/src'
+import { IdentityPCDArgs } from 'anon-aadhaar-pcd'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import styled from 'styled-components'
 import { useContext } from 'react'
-import { CountryIdentityContext } from '../hooks/useCountryIdentity'
+import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
 import { Spinner } from './LoadingSpinner'
 import { AadhaarSignatureValidition } from '../interface'
 
@@ -19,7 +19,7 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
   sigBigInt,
   signatureValidity,
 }) => {
-  const { state, startReq } = useContext(CountryIdentityContext)
+  const { state, startReq } = useContext(AnonAadhaarContext)
 
   const args: IdentityPCDArgs = {
     base_message: {

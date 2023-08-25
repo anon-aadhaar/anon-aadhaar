@@ -9,7 +9,7 @@ import {
   init,
   PCDInitArgs,
   splitToWords,
-} from 'pcd-country-identity'
+} from 'anon-aadhaar-pcd'
 
 describe('VerifyProof', function () {
   async function deployOneYearLockFixture() {
@@ -37,7 +37,7 @@ describe('VerifyProof', function () {
 
         const testData: [bigint, bigint, bigint, bigint] = await genData(
           'Hello world',
-          'SHA-1',
+          'SHA-1'
         )
 
         const pcdArgs: IdentityPCDArgs = {
@@ -59,12 +59,12 @@ describe('VerifyProof', function () {
 
         const { a, b, c, Input } = await exportCallDataGroth16(
           pcd.proof.proof,
-          [...splitToWords(BigInt(pcd.proof.modulus), BigInt(64), BigInt(32))],
+          [...splitToWords(BigInt(pcd.proof.modulus), BigInt(64), BigInt(32))]
         )
 
         // We use lock.connect() to send a transaction from another account
         await expect(await verifier.verifyProof(a, b, c, Input)).to.be.equal(
-          true,
+          true
         )
       })
     })
