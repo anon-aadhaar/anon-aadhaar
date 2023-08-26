@@ -1,23 +1,23 @@
 {
   "name": "country-identity-packages",
-  "version": "0.0.7",
+  "version": "0.1.1",
   "description": "A set of tools to anonymously prove your identity",
   "main": "index.js",
   "private": true,
   "scripts": {
     "build:libraries": "yarn workspaces run build",
     "test-publish:libraries": "yarn workspaces run test-publish",
-    "publish:libraries": "yarn workspaces run publish",
+    "publish:libraries": "yarn workspaces run publishtonpm",
     "test:libraries": "yarn workspaces run test",
-    "dev-setup:pcd": "yarn workspace pcd-country-identity run dev-setup",
-    "pdf:pcd": "yarn workspace pcd-country-identity run gen-pdf",
-    "contracts:pcd": "yarn workspace pcd-country-identity run contract",
-    "dev-install:pcd": "yarn workspace pcd-country-identity run dev-install",
+    "dev-setup:pcd": "yarn workspace anon-aadhaar-pcd run dev-setup",
+    "pdf:pcd": "yarn workspace anon-aadhaar-pcd run gen-pdf",
+    "contracts:pcd": "yarn workspace anon-aadhaar-pcd run contract",
+    "dev-install:pcd": "yarn workspace anon-aadhaar-pcd run dev-install",
     "lint": "eslint --ext .js,.ts,.tsx .",
-    "version:pcd-country-identity": "cd packages/pcd-country-identity && yarn version --new-version $npm_package_version",
-    "version:country-identity-kit": "cd packages/country-identity-kit && yarn version --new-version $npm_package_version",
-    "version:country-identity-contracts": "cd packages/country-identity-contracts && yarn version --new-version $npm_package_version",
-    "postversion": "yarn version:pcd-country-identity && yarn version:country-identity-kit && yarn version:country-identity-contracts"
+    "version:anon-aadhaar-pcd": "cd packages/anon-aadhaar-pcd && yarn version --new-version $npm_package_version",
+    "version:anon-aadhaar-react": "cd packages/anon-aadhaar-react && yarn version --new-version $npm_package_version",
+    "version:anon-aadhaar-contracts": "cd packages/anon-aadhaar-contracts && yarn version --new-version $npm_package_version",
+    "postversion": "yarn version:anon-aadhaar-pcd && yarn version:anon-aadhaar-react && yarn version:anon-aadhaar-contracts"
   },
   "repository": {
     "type": "git",

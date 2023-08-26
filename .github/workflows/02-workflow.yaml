@@ -36,7 +36,7 @@ jobs:
         id: powersOfTau28_hez_final_18
         uses: actions/cache@v3
         with:
-          path: packages/pcd-country-identity/build/powersOfTau28_hez_final_18.ptau
+          path: packages/anon-aadhaar-pcd/build/powersOfTau28_hez_final_18.ptau
           key: powersOfTau28_hez_final_18.ptau
       - name: Cache Circom
         id: Circom
@@ -51,7 +51,7 @@ jobs:
       - name: Get Circuit Hash
         id: get-circuit-hash
         run: |
-          echo "circuits_hash=`packages/pcd-country-identity/script/utils.sh`" >> $GITHUB_OUTPUT
+          echo "circuits_hash=`packages/anon-aadhaar-pcd/script/utils.sh`" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Cache proving/verify key
