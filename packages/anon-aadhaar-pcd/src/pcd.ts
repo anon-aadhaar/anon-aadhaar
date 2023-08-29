@@ -18,6 +18,7 @@ import JSONBig from 'json-bigint'
 import { IdentityPCDCardBody } from './CardBody'
 import { BackendProver, ProverInferace, WebProver } from './prover'
 import axios from 'axios'
+import { isWebUri } from 'valid-url'
 
 export class IdentityPCD implements PCD<IdentityPCDClaim, IdentityPCDProof> {
   type = IdentityPCDTypeName
@@ -45,7 +46,7 @@ export async function init(args: PCDInitArgs): Promise<void> {
 export async function prove(args: IdentityPCDArgs): Promise<IdentityPCD> {
   if (!initArgs) {
     throw new Error(
-      'cannot make semaphore signature proof: init has not been called yet'
+      'cannot make Country Identity proof for aadhaar card: init has not been called yet'
     )
   }
 
@@ -80,18 +81,17 @@ function getVerifyKey() {
 
 export async function verify(
   pcd: IdentityPCD,
-  isWebEnv?: boolean
+  webURL?: string
 ): Promise<boolean> {
   let vk
-  if (isWebEnv === true) {
-    vk = await axios
-      .get('https://d3dxq5smiosdl4.cloudfront.net/verification_key.json')
-      .then(response => {
-        return response.data
-      })
+  if (webURL !== undefined && isWebUri(webURL)) {
+    vk = await axios.get(webURL).then(response => {
+      return response.data
+    })
   } else {
     vk = getVerifyKey()
   }
+
   return groth16.verify(
     vk,
     [...splitToWords(BigInt(pcd.proof.modulus), BigInt(64), BigInt(32))],

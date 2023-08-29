@@ -71,7 +71,10 @@ describe('PCD tests', function () {
 
     const pcd = await prove(pcdArgs)
 
-    const verified = await verify(pcd, pcdInitArgs.isWebEnv)
+    const verifyKeyURL =
+      'https://d3dxq5smiosdl4.cloudfront.net/verification_key.json'
+    const verified = await verify(pcd, verifyKeyURL)
+
     assert(verified == true, 'Should verifiable')
   })
 })

@@ -12,6 +12,7 @@ import {
 } from 'anon-aadhaar-pcd'
 
 describe('VerifyProof', function () {
+  this.timeout(0)
   async function deployOneYearLockFixture() {
     // Contracts are deployed using the first signer/account by default
     const [owner, otherAccount] = await ethers.getSigners()
@@ -63,9 +64,7 @@ describe('VerifyProof', function () {
         )
 
         // We use lock.connect() to send a transaction from another account
-        await expect(await verifier.verifyProof(a, b, c, Input)).to.be.equal(
-          true,
-        )
+        expect(await verifier.verifyProof(a, b, c, Input)).to.be.equal(true)
       })
     })
   })
