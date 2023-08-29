@@ -19,6 +19,7 @@ describe('PCD tests', function () {
     const pcdInitArgs: PCDInitArgs = {
       wasmURL: dirName + '/main.wasm',
       zkeyURL: dirName + '/circuit_final.zkey',
+      vkeyURL: dirName + '/verification_key.json',
       isWebEnv: false,
     }
 
@@ -49,6 +50,7 @@ describe('PCD tests', function () {
     const pcdInitArgs: PCDInitArgs = {
       wasmURL: 'https://d3dxq5smiosdl4.cloudfront.net/main.wasm',
       zkeyURL: 'https://d3dxq5smiosdl4.cloudfront.net/circuit_final.zkey',
+      vkeyURL: 'https://d3dxq5smiosdl4.cloudfront.net/verification_key.json',
       isWebEnv: true,
     }
 
@@ -71,9 +73,7 @@ describe('PCD tests', function () {
 
     const pcd = await prove(pcdArgs)
 
-    const verifyKeyURL =
-      'https://d3dxq5smiosdl4.cloudfront.net/verification_key.json'
-    const verified = await verify(pcd, verifyKeyURL)
+    const verified = await verify(pcd)
 
     assert(verified == true, 'Should verifiable')
   })

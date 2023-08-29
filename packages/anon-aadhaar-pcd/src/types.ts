@@ -13,6 +13,7 @@ export interface PCDInitArgs {
   // Should we do code-gen?
   wasmURL: string
   zkeyURL: string
+  vkeyURL: string
   isWebEnv: boolean
 }
 
