@@ -35,7 +35,7 @@ export const LogInWithAnonAadhaar = () => {
       {(state.status === 'logged-out' || state.status === 'logging-in') && (
         <div>
           <Btn onClick={openModal}>
-            {text('🌏', 'Log In with Country Identity')}
+            {text('🌏', 'Log In with Anon Aadhaar')}
           </Btn>
           <Modal isOpen={isModalOpen} onClose={closeModal}></Modal>
         </div>

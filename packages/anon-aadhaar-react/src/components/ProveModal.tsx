@@ -75,7 +75,16 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
           </UploadFile>
 
           <UploadFile>
-            <Label>Upload your Aadhaar card certification</Label>
+            <Label>
+              Upload your Aadhaar card certification{' '}
+              <LabelTooltip
+                href="https://anon-aadhaar-doc.vercel.app/docs/manage-docs-versions"
+                target="_blank"
+                rel="noreferrer"
+              >
+                (How?)
+              </LabelTooltip>
+            </Label>
             <FileInput onChange={handleCerUpload} />
             <DocumentResult>{certificateOrSignatureStatus}</DocumentResult>
           </UploadFile>
@@ -162,8 +171,11 @@ const UploadSection = styled.div`
 `
 
 const Label = styled.div`
-  margin-bottom: 0.5rem;
-  line-height: 1.25rem;
   font-weight: 500;
   color: #111827;
+`
+
+const LabelTooltip = styled.a`
+  font-weight: 500;
+  color: #76777a;
 `
