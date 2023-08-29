@@ -46,7 +46,7 @@ export async function init(args: PCDInitArgs): Promise<void> {
 export async function prove(args: IdentityPCDArgs): Promise<IdentityPCD> {
   if (!initArgs) {
     throw new Error(
-      'cannot make Country Identity proof for aadhaar card: init has not been called yet'
+      'cannot make Anon Aadhaar proof: init has not been called yet'
     )
   }
 
