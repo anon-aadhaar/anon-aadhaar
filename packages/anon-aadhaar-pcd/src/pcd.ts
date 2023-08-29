@@ -79,7 +79,6 @@ async function getVerifyKey() {
       'cannot make Anon Aadhaar proof: init has not been called yet'
     )
   }
-  console.log(vk)
   if (initArgs.isWebEnv) {
     vk = await axios.get(initArgs.vkeyURL).then(response => {
       return response.data
