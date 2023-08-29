@@ -25,7 +25,6 @@ module.exports = {
   ignorePatterns: [
     'build',
     'script/*.mjs',
-    'circom-rsa-verify',
     'dist',
     'mocha.cjs',
   ],

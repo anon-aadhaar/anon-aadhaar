@@ -45,7 +45,7 @@ export async function init(args: PCDInitArgs): Promise<void> {
 export async function prove(args: IdentityPCDArgs): Promise<IdentityPCD> {
   if (!initArgs) {
     throw new Error(
-      'cannot make semaphore signature proof: init has not been called yet'
+      'cannot make Anon Aadhaar proof: init has not been called yet'
     )
   }
 
@@ -72,26 +72,27 @@ export async function prove(args: IdentityPCDArgs): Promise<IdentityPCD> {
   return new IdentityPCD(id, pcdClaim, pcdProof)
 }
 
-function getVerifyKey() {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const verifyKey = require('../artifacts/verification_key.json')
-  return verifyKey
+async function getVerifyKey() {
+  let vk
+  if (!initArgs) {
+    throw new Error(
+      'cannot make Anon Aadhaar proof: init has not been called yet'
+    )
+  }
+  if (initArgs.isWebEnv) {
+    vk = await axios.get(initArgs.vkeyURL).then(response => {
+      return response.data
+    })
+  } else {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    vk = require(initArgs.vkeyURL)
+  }
+  return vk
 }
 
-export async function verify(
-  pcd: IdentityPCD,
-  isWebEnv?: boolean
-): Promise<boolean> {
-  let vk
-  if (isWebEnv === true) {
-    vk = await axios
-      .get('https://d3dxq5smiosdl4.cloudfront.net/verification_key.json')
-      .then(response => {
-        return response.data
-      })
-  } else {
-    vk = getVerifyKey()
-  }
+export async function verify(pcd: IdentityPCD): Promise<boolean> {
+  const vk = await getVerifyKey()
+
   return groth16.verify(
     vk,
     [...splitToWords(BigInt(pcd.proof.modulus), BigInt(64), BigInt(32))],

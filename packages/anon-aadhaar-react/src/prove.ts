@@ -25,6 +25,7 @@ export const proveWithWebProver = async (
   const pcdInitArgs: PCDInitArgs = {
     wasmURL: 'https://d3dxq5smiosdl4.cloudfront.net/main.wasm',
     zkeyURL: 'https://d3dxq5smiosdl4.cloudfront.net/circuit_final.zkey',
+    vkeyURL: 'https://d3dxq5smiosdl4.cloudfront.net/verification_key.json',
     isWebEnv: true,
   }
 
