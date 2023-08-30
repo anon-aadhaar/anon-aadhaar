@@ -40,6 +40,7 @@
     "typechain": "^8.2.0"
   },
   "dependencies": {
-    "dotenv": "^16.3.1"
+    "dotenv": "^16.3.1",
+    "husky": "^8.0.3"
   }
 }

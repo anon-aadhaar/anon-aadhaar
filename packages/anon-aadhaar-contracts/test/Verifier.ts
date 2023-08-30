@@ -15,13 +15,10 @@ import { WASM_URL, ZKEY_URL, VK_URL } from '../../common/constants'
 describe('VerifyProof', function () {
   this.timeout(0)
   async function deployOneYearLockFixture() {
-    // Contracts are deployed using the first signer/account by default
-    const [owner, otherAccount] = await ethers.getSigners()
-
     const Verifier = await ethers.getContractFactory('Verifier')
     const verifier = await Verifier.deploy()
 
-    return { verifier, owner, otherAccount }
+    return { verifier }
   }
 
   describe('Verify', function () {
