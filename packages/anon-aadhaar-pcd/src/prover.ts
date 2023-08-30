@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { isWebUri } from 'valid-url'
-import { IdentityPCDArgs, IdentityPCDProof } from './types'
+import { AnonAadhaarPCDArgs, AnonAadhaarPCDProof } from './types'
 import axios from 'axios'
 import { splitToWords } from './utils'
 
 // @ts-ignore
 import { groth16 } from 'snarkjs'
 
-type Witness = IdentityPCDArgs
+type Witness = AnonAadhaarPCDArgs
 
 async function fetchKey(keyURL: string): Promise<string | ArrayBuffer> {
   if (isWebUri(keyURL)) {
@@ -44,7 +44,7 @@ export class KeyPath implements KeyPathInterface {
 export interface ProverInferace {
   wasm: KeyPath
   zkey: KeyPath
-  proving: (witness: Witness) => Promise<IdentityPCDProof>
+  proving: (witness: Witness) => Promise<AnonAadhaarPCDProof>
 }
 
 export class BackendProver implements ProverInferace {
@@ -56,7 +56,7 @@ export class BackendProver implements ProverInferace {
     this.zkey = new KeyPath(zkey, false)
   }
 
-  async proving(witness: Witness): Promise<IdentityPCDProof> {
+  async proving(witness: Witness): Promise<AnonAadhaarPCDProof> {
     if (!witness.modulus.value) {
       throw new Error('Cannot make proof: missing modulus')
     }
@@ -109,7 +109,7 @@ export class WebProver implements ProverInferace {
     this.zkey = new KeyPath(zkey, false)
   }
 
-  async proving(witness: Witness): Promise<IdentityPCDProof> {
+  async proving(witness: Witness): Promise<AnonAadhaarPCDProof> {
     const wasmBuffer = (await this.wasm.getKey()) as ArrayBuffer
     const zkeyBuffer = (await this.zkey.getKey()) as ArrayBuffer
 

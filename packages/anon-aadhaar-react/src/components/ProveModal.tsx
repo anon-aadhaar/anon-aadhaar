@@ -8,7 +8,7 @@ import {
   AadhaarSignatureValidition,
   AadhaarCertificateValidation,
 } from '../interface'
-import { CERTIFICATION_TUTORIAL_URL } from '../../../common/constants'
+import { CERTIFICATION_TUTO_URL } from '../constants'
 
 interface ModalProps {
   isOpen: boolean
@@ -18,7 +18,7 @@ interface ModalProps {
 const Tooltip = () => {
   return (
     <LabelTooltip
-      href={CERTIFICATION_TUTORIAL_URL}
+      href={CERTIFICATION_TUTO_URL}
       target="_blank"
       rel="noreferrer"
     >

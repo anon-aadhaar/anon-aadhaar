@@ -9,8 +9,10 @@ import {
   init,
   PCDInitArgs,
   splitToWords,
+  WASM_URL,
+  ZKEY_URL,
+  VK_URL,
 } from 'anon-aadhaar-pcd'
-import { WASM_URL, ZKEY_URL, VK_URL } from '../../common/constants'
 
 describe('VerifyProof', function () {
   this.timeout(0)

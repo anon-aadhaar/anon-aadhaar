@@ -6,8 +6,10 @@ import {
   AnonAadhaarPCDArgs,
   serialize,
   AnonAadhaarPCD,
+  VK_URL,
+  ZKEY_URL,
+  WASM_URL,
 } from 'anon-aadhaar-pcd'
-import { VK_URL, ZKEY_URL, WASM_URL } from '../../common/constants'
 
 /**
  * proveWithWebProver is a function that generates proofs using the web-based proving system of anon-aadhaar.
