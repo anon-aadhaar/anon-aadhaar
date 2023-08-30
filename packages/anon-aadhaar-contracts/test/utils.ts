@@ -1,5 +1,5 @@
 import { subtle } from 'crypto'
-import { IdentityPCD, BigNumberish } from 'anon-aadhaar-pcd'
+import { AnonAadhaarPCD, BigNumberish } from 'anon-aadhaar-pcd'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -54,7 +54,7 @@ export async function genData(
 }
 
 export async function exportCallDataGroth16(
-  proof: IdentityPCD['proof']['proof'],
+  proof: AnonAadhaarPCD['proof']['proof'],
   _publicSignals: BigNumberish[],
 ): Promise<{
   a: [BigNumberish, BigNumberish]

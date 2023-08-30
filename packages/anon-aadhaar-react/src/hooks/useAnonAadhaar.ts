@@ -1,4 +1,4 @@
-import { IdentityPCD, IdentityPCDArgs } from 'anon-aadhaar-pcd'
+import { AnonAadhaarPCD, AnonAadhaarPCDArgs } from 'anon-aadhaar-pcd'
 import { createContext, useContext } from 'react'
 import { SerializedPCD } from '@pcd/pcd-types'
 
@@ -33,7 +33,7 @@ export interface AnonAadhaarContextVal {
 }
 
 export type AnonAadhaarRequest =
-  | { type: 'login'; args: IdentityPCDArgs }
+  | { type: 'login'; args: AnonAadhaarPCDArgs }
   | { type: 'logout' }
 
 export type AnonAadhaarState = {
@@ -48,7 +48,7 @@ export type AnonAadhaarState = {
     }
   | {
       status: 'logged-in'
-      serializedPCD: SerializedPCD<IdentityPCD>
-      pcd: IdentityPCD
+      serializedPCD: SerializedPCD<AnonAadhaarPCD>
+      pcd: AnonAadhaarPCD
     }
 )

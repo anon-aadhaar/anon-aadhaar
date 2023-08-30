@@ -4,23 +4,23 @@ import { ethers } from 'hardhat'
 import { genData, exportCallDataGroth16 } from './utils'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import {
-  IdentityPCDArgs,
+  AnonAadhaarPCDArgs,
   prove,
   init,
   PCDInitArgs,
   splitToWords,
+  WASM_URL,
+  ZKEY_URL,
+  VK_URL,
 } from 'anon-aadhaar-pcd'
 
 describe('VerifyProof', function () {
   this.timeout(0)
   async function deployOneYearLockFixture() {
-    // Contracts are deployed using the first signer/account by default
-    const [owner, otherAccount] = await ethers.getSigners()
-
     const Verifier = await ethers.getContractFactory('Verifier')
     const verifier = await Verifier.deploy()
 
-    return { verifier, owner, otherAccount }
+    return { verifier }
   }
 
   describe('Verify', function () {
@@ -29,8 +29,9 @@ describe('VerifyProof', function () {
         const { verifier } = await loadFixture(deployOneYearLockFixture)
 
         const pcdInitArgs: PCDInitArgs = {
-          wasmURL: 'https://d3dxq5smiosdl4.cloudfront.net/main.wasm',
-          zkeyURL: 'https://d3dxq5smiosdl4.cloudfront.net/circuit_final.zkey',
+          wasmURL: WASM_URL,
+          zkeyURL: ZKEY_URL,
+          vkeyURL: VK_URL,
           isWebEnv: true,
         }
 
@@ -41,7 +42,7 @@ describe('VerifyProof', function () {
           'SHA-1',
         )
 
-        const pcdArgs: IdentityPCDArgs = {
+        const pcdArgs: AnonAadhaarPCDArgs = {
           signature: {
             argumentType: ArgumentTypeName.BigInt,
             value: testData[1] + '',

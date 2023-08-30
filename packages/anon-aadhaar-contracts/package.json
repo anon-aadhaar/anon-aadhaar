@@ -36,6 +36,8 @@
     "ethers": "^6.7.1",
     "hardhat": "^2.17.1",
     "hardhat-gas-reporter": "^1.0.8",
+    "husky": "^8.0.3",
+    "prettier": "^3.0.3",
     "solidity-coverage": "^0.8.1",
     "typechain": "^8.2.0"
   },

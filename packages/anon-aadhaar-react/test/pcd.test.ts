@@ -1,5 +1,5 @@
 import { describe } from 'mocha'
-import { IdentityPCDArgs, verify } from 'anon-aadhaar-pcd'
+import { AnonAadhaarPCDArgs, verify } from 'anon-aadhaar-pcd'
 import { assert } from 'chai'
 import { genData } from './utils'
 import { ArgumentTypeName } from '@pcd/pcd-types'
@@ -15,7 +15,7 @@ describe('PCD tests', function () {
   })
 
   it('PCD flow web prover', async function () {
-    const pcdArgs: IdentityPCDArgs = {
+    const pcdArgs: AnonAadhaarPCDArgs = {
       signature: {
         argumentType: ArgumentTypeName.BigInt,
         value: testData[1] + '',

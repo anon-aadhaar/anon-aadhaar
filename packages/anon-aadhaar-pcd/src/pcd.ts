@@ -2,10 +2,10 @@
 import { DisplayOptions, PCD, PCDPackage, SerializedPCD } from '@pcd/pcd-types'
 import {
   PCDInitArgs,
-  IdentityPCDTypeName,
-  IdentityPCDClaim,
-  IdentityPCDProof,
-  IdentityPCDArgs,
+  AnonAadhaarPCDTypeName,
+  AnonAadhaarPCDClaim,
+  AnonAadhaarPCDProof,
+  AnonAadhaarPCDArgs,
 } from './types'
 
 import { v4 as uuidv4 } from 'uuid'
@@ -15,20 +15,22 @@ import { groth16 } from 'snarkjs'
 
 import { splitToWords } from './utils'
 import JSONBig from 'json-bigint'
-import { IdentityPCDCardBody } from './CardBody'
+import { AnonAadhaarPCDCardBody } from './CardBody'
 import { BackendProver, ProverInferace, WebProver } from './prover'
 import axios from 'axios'
 
-export class IdentityPCD implements PCD<IdentityPCDClaim, IdentityPCDProof> {
-  type = IdentityPCDTypeName
-  claim: IdentityPCDClaim
-  proof: IdentityPCDProof
+export class AnonAadhaarPCD
+  implements PCD<AnonAadhaarPCDClaim, AnonAadhaarPCDProof>
+{
+  type = AnonAadhaarPCDTypeName
+  claim: AnonAadhaarPCDClaim
+  proof: AnonAadhaarPCDProof
   id: string
 
   public constructor(
     id: string,
-    claim: IdentityPCDClaim,
-    proof: IdentityPCDProof
+    claim: AnonAadhaarPCDClaim,
+    proof: AnonAadhaarPCDProof
   ) {
     this.id = id
     this.claim = claim
@@ -42,7 +44,7 @@ export async function init(args: PCDInitArgs): Promise<void> {
   initArgs = args
 }
 
-export async function prove(args: IdentityPCDArgs): Promise<IdentityPCD> {
+export async function prove(args: AnonAadhaarPCDArgs): Promise<AnonAadhaarPCD> {
   if (!initArgs) {
     throw new Error(
       'cannot make Anon Aadhaar proof: init has not been called yet'
@@ -55,7 +57,7 @@ export async function prove(args: IdentityPCDArgs): Promise<IdentityPCD> {
 
   const id = uuidv4()
 
-  const pcdClaim: IdentityPCDClaim = {
+  const pcdClaim: AnonAadhaarPCDClaim = {
     modulus: args.modulus.value,
   }
 
@@ -69,7 +71,7 @@ export async function prove(args: IdentityPCDArgs): Promise<IdentityPCD> {
 
   const pcdProof = await prover.proving(args)
 
-  return new IdentityPCD(id, pcdClaim, pcdProof)
+  return new AnonAadhaarPCD(id, pcdClaim, pcdProof)
 }
 
 async function getVerifyKey() {
@@ -90,7 +92,7 @@ async function getVerifyKey() {
   return vk
 }
 
-export async function verify(pcd: IdentityPCD): Promise<boolean> {
+export async function verify(pcd: AnonAadhaarPCD): Promise<boolean> {
   const vk = await getVerifyKey()
 
   return groth16.verify(
@@ -101,38 +103,38 @@ export async function verify(pcd: IdentityPCD): Promise<boolean> {
 }
 
 export function serialize(
-  pcd: IdentityPCD
-): Promise<SerializedPCD<IdentityPCD>> {
+  pcd: AnonAadhaarPCD
+): Promise<SerializedPCD<AnonAadhaarPCD>> {
   return Promise.resolve({
-    type: IdentityPCDTypeName,
+    type: AnonAadhaarPCDTypeName,
     pcd: JSONBig().stringify({
       type: pcd.type,
       id: pcd.id,
       claim: pcd.claim,
       proof: pcd.proof,
     }),
-  } as SerializedPCD<IdentityPCD>)
+  } as SerializedPCD<AnonAadhaarPCD>)
 }
 
-export async function deserialize(serialized: string): Promise<IdentityPCD> {
+export async function deserialize(serialized: string): Promise<AnonAadhaarPCD> {
   return JSONBig().parse(serialized)
 }
 
-export function getDisplayOptions(pcd: IdentityPCD): DisplayOptions {
+export function getDisplayOptions(pcd: AnonAadhaarPCD): DisplayOptions {
   return {
-    header: 'Country Identity Signature',
+    header: 'Anon Aadhaar Signature',
     displayName: 'pcd-' + pcd.type,
   }
 }
 
-export const IdentityPCDPackage: PCDPackage<
-  IdentityPCDClaim,
-  IdentityPCDProof,
-  IdentityPCDArgs,
+export const AnonAadhaarPCDPackage: PCDPackage<
+  AnonAadhaarPCDClaim,
+  AnonAadhaarPCDProof,
+  AnonAadhaarPCDArgs,
   PCDInitArgs
 > = {
-  name: IdentityPCDTypeName,
-  renderCardBody: IdentityPCDCardBody,
+  name: AnonAadhaarPCDTypeName,
+  renderCardBody: AnonAadhaarPCDCardBody,
   getDisplayOptions,
   prove,
   init,

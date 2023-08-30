@@ -3,9 +3,12 @@ import {
   prove,
   PCDInitArgs,
   init,
-  IdentityPCDArgs,
+  AnonAadhaarPCDArgs,
   serialize,
-  IdentityPCD,
+  AnonAadhaarPCD,
+  VK_URL,
+  ZKEY_URL,
+  WASM_URL,
 } from 'anon-aadhaar-pcd'
 
 /**
@@ -20,12 +23,15 @@ import {
  *   For more information about the underlying circuit and proving system.
  */
 export const proveWithWebProver = async (
-  pcdArgs: IdentityPCDArgs,
-): Promise<{ pcd: IdentityPCD; serialized: SerializedPCD<IdentityPCD> }> => {
+  pcdArgs: AnonAadhaarPCDArgs,
+): Promise<{
+  pcd: AnonAadhaarPCD
+  serialized: SerializedPCD<AnonAadhaarPCD>
+}> => {
   const pcdInitArgs: PCDInitArgs = {
-    wasmURL: 'https://d3dxq5smiosdl4.cloudfront.net/main.wasm',
-    zkeyURL: 'https://d3dxq5smiosdl4.cloudfront.net/circuit_final.zkey',
-    vkeyURL: 'https://d3dxq5smiosdl4.cloudfront.net/verification_key.json',
+    wasmURL: WASM_URL,
+    zkeyURL: ZKEY_URL,
+    vkeyURL: VK_URL,
     isWebEnv: true,
   }
 
