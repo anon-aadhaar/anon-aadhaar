@@ -3,9 +3,9 @@ import {
   prove,
   PCDInitArgs,
   init,
-  IdentityPCDArgs,
+  AnonAadhaarPCDArgs,
   serialize,
-  IdentityPCD,
+  AnonAadhaarPCD,
 } from 'anon-aadhaar-pcd'
 import { VK_URL, ZKEY_URL, WASM_URL } from '../../common/constants'
 
@@ -21,8 +21,11 @@ import { VK_URL, ZKEY_URL, WASM_URL } from '../../common/constants'
  *   For more information about the underlying circuit and proving system.
  */
 export const proveWithWebProver = async (
-  pcdArgs: IdentityPCDArgs,
-): Promise<{ pcd: IdentityPCD; serialized: SerializedPCD<IdentityPCD> }> => {
+  pcdArgs: AnonAadhaarPCDArgs,
+): Promise<{
+  pcd: AnonAadhaarPCD
+  serialized: SerializedPCD<AnonAadhaarPCD>
+}> => {
   const pcdInitArgs: PCDInitArgs = {
     wasmURL: WASM_URL,
     zkeyURL: ZKEY_URL,

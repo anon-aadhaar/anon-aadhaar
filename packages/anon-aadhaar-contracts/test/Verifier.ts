@@ -4,7 +4,7 @@ import { ethers } from 'hardhat'
 import { genData, exportCallDataGroth16 } from './utils'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import {
-  IdentityPCDArgs,
+  AnonAadhaarPCDArgs,
   prove,
   init,
   PCDInitArgs,
@@ -40,7 +40,7 @@ describe('VerifyProof', function () {
           'SHA-1',
         )
 
-        const pcdArgs: IdentityPCDArgs = {
+        const pcdArgs: AnonAadhaarPCDArgs = {
           signature: {
             argumentType: ArgumentTypeName.BigInt,
             value: testData[1] + '',

@@ -2,7 +2,7 @@ import { BigIntArgument } from '@pcd/pcd-types'
 
 export type BigNumberish = string | bigint
 
-export const IdentityPCDTypeName = 'identity-pcd'
+export const AnonAadhaarPCDTypeName = 'anon-aadhaar-pcd'
 
 export interface PCDInitArgs {
   // TODO: how do we distribute these in-package, so that consumers
@@ -20,22 +20,22 @@ export interface PCDInitArgs {
 /**
  * @dev claim this public key signed a message
  */
-export interface IdentityPCDClaim {
+export interface AnonAadhaarPCDClaim {
   modulus: BigNumberish
 }
 
 /**
  * @dev proof of claim correct
  */
-export interface IdentityPCDProof {
+export interface AnonAadhaarPCDProof {
   modulus: BigNumberish
   proof: SnarkJSProof // 3 points on curve if we use groth16
 }
 
 /**
- * @dev witness use for create zk proof of IdentityPCD package.
+ * @dev witness use for create zk proof of AnonAadhaarPCD package.
  */
-export interface IdentityPCDArgs {
+export interface AnonAadhaarPCDArgs {
   base_message: BigIntArgument // private witness
   signature: BigIntArgument // private witness
   modulus: BigIntArgument

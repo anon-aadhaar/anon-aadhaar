@@ -4,7 +4,7 @@ import {
   AnonAadhaarRequest,
   AnonAadhaarState,
 } from '../hooks/useAnonAadhaar'
-import { IdentityPCD, IdentityPCDPackage } from 'anon-aadhaar-pcd'
+import { AnonAadhaarPCD, AnonAadhaarPCDPackage } from 'anon-aadhaar-pcd'
 import React, { Dispatch, SetStateAction } from 'react'
 import { proveWithWebProver } from '../prove'
 import { SerializedPCD } from '@pcd/pcd-types'
@@ -24,8 +24,8 @@ import { SerializedPCD } from '@pcd/pcd-types'
  */
 export function AnonAadhaarProvider(props: { children: ReactNode }) {
   // Read state from local storage on page load
-  const [pcdStr, setPcdStr] = useState<SerializedPCD<IdentityPCD> | ''>('')
-  const [pcd, setPcd] = useState<IdentityPCD | ''>('')
+  const [pcdStr, setPcdStr] = useState<SerializedPCD<AnonAadhaarPCD> | ''>('')
+  const [pcd, setPcd] = useState<AnonAadhaarPCD | ''>('')
   const [state, setState] = useState<AnonAadhaarState>({
     status: 'logged-out',
   })
@@ -136,13 +136,13 @@ export async function parseAndValidate(
     throw new Error(`Missing serialized PCD`)
   } else if (pcd == null) {
     throw new Error(`Missing PCD`)
-  } else if (serializedPCD.type !== IdentityPCDPackage.name) {
+  } else if (serializedPCD.type !== AnonAadhaarPCDPackage.name) {
     throw new Error(`Invalid PCD type ${serializedPCD.type}`)
   }
 
   return {
     status,
-    pcd: await IdentityPCDPackage.deserialize(serializedPCD.pcd),
+    pcd: await AnonAadhaarPCDPackage.deserialize(serializedPCD.pcd),
     serializedPCD: serializedPCD,
   }
 }
@@ -161,8 +161,8 @@ function shallowToString(obj: unknown) {
 /** Start a login request. Returns a `logging-in` state */
 function handleLoginReq(
   request: AnonAadhaarRequest,
-  setPcdStr: Dispatch<SetStateAction<SerializedPCD<IdentityPCD> | ''>>,
-  setPcd: Dispatch<SetStateAction<IdentityPCD | ''>>,
+  setPcdStr: Dispatch<SetStateAction<SerializedPCD<AnonAadhaarPCD> | ''>>,
+  setPcd: Dispatch<SetStateAction<AnonAadhaarPCD | ''>>,
 ): AnonAadhaarState {
   const { type } = request
   console.log('Type of request received: ', type)
@@ -175,8 +175,8 @@ function handleLoginReq(
             pcd,
             serialized,
           }: {
-            pcd: IdentityPCD
-            serialized: SerializedPCD<IdentityPCD>
+            pcd: AnonAadhaarPCD
+            serialized: SerializedPCD<AnonAadhaarPCD>
           }) => {
             if (typeof setPcdStr === 'function') {
               setPcdStr(serialized)
@@ -202,8 +202,8 @@ function handleLoginReq(
 /** Returns either a `logged-in` state, null to ignore, or throws on error. */
 async function handleLogin(
   state: AnonAadhaarState,
-  pcdStr: SerializedPCD<IdentityPCD>,
-  _pcd: IdentityPCD,
+  pcdStr: SerializedPCD<AnonAadhaarPCD>,
+  _pcd: AnonAadhaarPCD,
 ): Promise<AnonAadhaarState | null> {
   if (state.status !== 'logging-in') {
     console.log(
@@ -214,7 +214,7 @@ async function handleLogin(
 
   console.log(`[ANON-AADHAAR] verifying ${pcdStr.type}`)
 
-  if (!(await IdentityPCDPackage.verify(_pcd))) {
+  if (!(await AnonAadhaarPCDPackage.verify(_pcd))) {
     throw new Error('Invalid proof')
   }
 

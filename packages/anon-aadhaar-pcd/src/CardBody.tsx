@@ -1,9 +1,9 @@
 /* eslint-disable react/no-unescaped-entities */
-import { IdentityPCD } from './pcd'
+import { AnonAadhaarPCD } from './pcd'
 import styled from 'styled-components'
 import { FieldLabel, Separator, Spacer, TextContainer } from '@pcd/passport-ui'
 
-export function IdentityPCDCardBody({ pcd }: { pcd: IdentityPCD }) {
+export function AnonAadhaarPCDCardBody({ pcd }: { pcd: AnonAadhaarPCD }) {
   return (
     <Container>
       <p>

@@ -1,4 +1,4 @@
-import { IdentityPCDArgs } from 'anon-aadhaar-pcd'
+import { AnonAadhaarPCDArgs } from 'anon-aadhaar-pcd'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import styled from 'styled-components'
 import { useContext } from 'react'
@@ -21,7 +21,7 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
 }) => {
   const { state, startReq } = useContext(AnonAadhaarContext)
 
-  const args: IdentityPCDArgs = {
+  const args: AnonAadhaarPCDArgs = {
     base_message: {
       argumentType: ArgumentTypeName.BigInt,
       userProvided: false,

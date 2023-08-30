@@ -8,7 +8,7 @@ import {
   AnonAadhaarState,
 } from '../src/hooks/useAnonAadhaar'
 import { genData } from './utils'
-import { IdentityPCDArgs } from 'anon-aadhaar-pcd'
+import { AnonAadhaarPCDArgs } from 'anon-aadhaar-pcd'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import { AnonAadhaarProvider } from '../src/provider/AnonAadhaarProvider'
 
@@ -42,7 +42,7 @@ describe('useCountryIdentity Hook', () => {
   })
 
   it('returns updated state when request sent', () => {
-    const pcdArgs: IdentityPCDArgs = {
+    const pcdArgs: AnonAadhaarPCDArgs = {
       signature: {
         argumentType: ArgumentTypeName.BigInt,
         value: testData[1] + '',
@@ -76,7 +76,7 @@ describe('useCountryIdentity Hook', () => {
   })
 })
 
-function TestComponent({ pcdArgs }: { pcdArgs: IdentityPCDArgs }) {
+function TestComponent({ pcdArgs }: { pcdArgs: AnonAadhaarPCDArgs }) {
   const [state, startReq] = useAnonAadhaar()
 
   return (

@@ -1,5 +1,5 @@
 import { describe } from 'mocha'
-import { IdentityPCDArgs, PCDInitArgs } from '../src/types'
+import { AnonAadhaarPCDArgs, PCDInitArgs } from '../src/types'
 import { init, prove, verify } from '../src/pcd'
 import { assert } from 'chai'
 import { genData } from './utils'
@@ -26,7 +26,7 @@ describe('PCD tests', function () {
 
     await init(pcdInitArgs)
 
-    const pcdArgs: IdentityPCDArgs = {
+    const pcdArgs: AnonAadhaarPCDArgs = {
       signature: {
         argumentType: ArgumentTypeName.BigInt,
         value: testData[1] + '',
@@ -57,7 +57,7 @@ describe('PCD tests', function () {
 
     await init(pcdInitArgs)
 
-    const pcdArgs: IdentityPCDArgs = {
+    const pcdArgs: AnonAadhaarPCDArgs = {
       signature: {
         argumentType: ArgumentTypeName.BigInt,
         value: testData[1] + '',
