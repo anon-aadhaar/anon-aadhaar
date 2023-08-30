@@ -10,6 +10,7 @@ import {
   PCDInitArgs,
   splitToWords,
 } from 'anon-aadhaar-pcd'
+import { WASM_URL, ZKEY_URL, VK_URL } from '../../common/constants'
 
 describe('VerifyProof', function () {
   this.timeout(0)
@@ -29,8 +30,9 @@ describe('VerifyProof', function () {
         const { verifier } = await loadFixture(deployOneYearLockFixture)
 
         const pcdInitArgs: PCDInitArgs = {
-          wasmURL: 'https://d3dxq5smiosdl4.cloudfront.net/main.wasm',
-          zkeyURL: 'https://d3dxq5smiosdl4.cloudfront.net/circuit_final.zkey',
+          wasmURL: WASM_URL,
+          zkeyURL: ZKEY_URL,
+          vkeyURL: VK_URL,
           isWebEnv: true,
         }
 
@@ -38,7 +40,7 @@ describe('VerifyProof', function () {
 
         const testData: [bigint, bigint, bigint, bigint] = await genData(
           'Hello world',
-          'SHA-1',
+          'SHA-1'
         )
 
         const pcdArgs: IdentityPCDArgs = {
@@ -60,7 +62,7 @@ describe('VerifyProof', function () {
 
         const { a, b, c, Input } = await exportCallDataGroth16(
           pcd.proof.proof,
-          [...splitToWords(BigInt(pcd.proof.modulus), BigInt(64), BigInt(32))],
+          [...splitToWords(BigInt(pcd.proof.modulus), BigInt(64), BigInt(32))]
         )
 
         // We use lock.connect() to send a transaction from another account

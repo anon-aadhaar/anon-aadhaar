@@ -7,6 +7,7 @@ import {
   serialize,
   IdentityPCD,
 } from 'anon-aadhaar-pcd'
+import { VK_URL, ZKEY_URL, WASM_URL } from '../../common/constants'
 
 /**
  * proveWithWebProver is a function that generates proofs using the web-based proving system of anon-aadhaar.
@@ -23,9 +24,9 @@ export const proveWithWebProver = async (
   pcdArgs: IdentityPCDArgs,
 ): Promise<{ pcd: IdentityPCD; serialized: SerializedPCD<IdentityPCD> }> => {
   const pcdInitArgs: PCDInitArgs = {
-    wasmURL: 'https://d3dxq5smiosdl4.cloudfront.net/main.wasm',
-    zkeyURL: 'https://d3dxq5smiosdl4.cloudfront.net/circuit_final.zkey',
-    vkeyURL: 'https://d3dxq5smiosdl4.cloudfront.net/verification_key.json',
+    wasmURL: WASM_URL,
+    zkeyURL: ZKEY_URL,
+    vkeyURL: VK_URL,
     isWebEnv: true,
   }
 

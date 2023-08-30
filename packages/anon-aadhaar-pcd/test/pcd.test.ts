@@ -4,6 +4,7 @@ import { init, prove, verify } from '../src/pcd'
 import { assert } from 'chai'
 import { genData } from './utils'
 import { ArgumentTypeName } from '@pcd/pcd-types'
+import { WASM_URL, ZKEY_URL, VK_URL } from '../../common/constants'
 
 describe('PCD tests', function () {
   this.timeout(0)
@@ -48,9 +49,9 @@ describe('PCD tests', function () {
 
   it('PCD flow web prover', async function () {
     const pcdInitArgs: PCDInitArgs = {
-      wasmURL: 'https://d3dxq5smiosdl4.cloudfront.net/main.wasm',
-      zkeyURL: 'https://d3dxq5smiosdl4.cloudfront.net/circuit_final.zkey',
-      vkeyURL: 'https://d3dxq5smiosdl4.cloudfront.net/verification_key.json',
+      wasmURL: WASM_URL,
+      zkeyURL: ZKEY_URL,
+      vkeyURL: VK_URL,
       isWebEnv: true,
     }
 

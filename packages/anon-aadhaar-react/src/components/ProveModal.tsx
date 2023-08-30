@@ -8,10 +8,23 @@ import {
   AadhaarSignatureValidition,
   AadhaarCertificateValidation,
 } from '../interface'
+import { CERTIFICATION_TUTORIAL_URL } from '../../../common/constants'
 
 interface ModalProps {
   isOpen: boolean
   onClose: () => void
+}
+
+const Tooltip = () => {
+  return (
+    <LabelTooltip
+      href={CERTIFICATION_TUTORIAL_URL}
+      target="_blank"
+      rel="noreferrer"
+    >
+      (How?)
+    </LabelTooltip>
+  )
 }
 
 export const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
@@ -76,14 +89,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
           <UploadFile>
             <Label>
-              Upload your Aadhaar card certification{' '}
-              <LabelTooltip
-                href="https://anon-aadhaar-doc.vercel.app/docs/manage-docs-versions"
-                target="_blank"
-                rel="noreferrer"
-              >
-                (How?)
-              </LabelTooltip>
+              Upload your Aadhaar card certification <Tooltip />
             </Label>
             <FileInput onChange={handleCerUpload} />
             <DocumentResult>{certificateOrSignatureStatus}</DocumentResult>
