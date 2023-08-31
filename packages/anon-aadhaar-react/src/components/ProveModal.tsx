@@ -158,12 +158,14 @@ const UploadFile = styled.div`
 `
 
 const DocumentResult = styled.div`
+  color: #111827;
   position: absolute;
   font-size: 0.875rem;
   margin-top: 4px;
 `
 
 const TitleSection = styled.div`
+  color: #111827;
   flex-shrink: 0;
   margin-left: auto;
   margin-right: auto;
