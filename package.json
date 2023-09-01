@@ -14,10 +14,7 @@
     "contracts:pcd": "yarn workspace anon-aadhaar-pcd run contract",
     "dev-install:pcd": "yarn workspace anon-aadhaar-pcd run dev-install",
     "lint": "eslint --ext .js,.ts,.tsx .",
-    "version:anon-aadhaar-pcd": "cd packages/anon-aadhaar-pcd && yarn version --new-version $npm_package_version",
-    "version:anon-aadhaar-react": "cd packages/anon-aadhaar-react && yarn version --new-version $npm_package_version",
-    "version:anon-aadhaar-contracts": "cd packages/anon-aadhaar-contracts && yarn version --new-version $npm_package_version",
-    "postversion": "yarn version:anon-aadhaar-pcd && yarn version:anon-aadhaar-react && yarn version:anon-aadhaar-contracts"
+    "postversion": "yarn workspace anon-aadhaar-pcd version --new-version $npm_package_version --no-git-tag-version && yarn workspace anon-aadhaar-react version --new-version $npm_package_version --no-git-tag-version && yarn workspace anon-aadhaar-contracts version --new-version $npm_package_version"
   },
   "repository": {
     "type": "git",
