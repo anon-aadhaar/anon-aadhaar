@@ -77,13 +77,18 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     <ModalOverlay onClick={onClose}>
       <ModalContent onClick={e => e.stopPropagation()}>
         <TitleSection>
-          <p>Prove your Identity with your Aadhar card</p>
+          <Title>Prove your Identity with your Aadhar card</Title>
+          <Disclaimer>
+            Anon Aadhaar lets you prove your identity by generating a ZK Proof
+            verifying your Aadhaar card was signed with the Indian government
+            public key.
+          </Disclaimer>
         </TitleSection>
 
         <UploadSection>
           <UploadFile>
             <Label>Upload your Aadhaar card pdf</Label>
-            <FileInput onChange={handlePdfChange} />
+            <FileInput onChange={handlePdfChange} id={'handlePdfChange'} />
             <DocumentResult>{pdfStatus}</DocumentResult>
           </UploadFile>
 
@@ -91,7 +96,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             <Label>
               Upload your Aadhaar card certification <Tooltip />
             </Label>
-            <FileInput onChange={handleCerUpload} />
+            <FileInput onChange={handleCerUpload} id={'handleCerUpload'} />
             <DocumentResult>{certificateOrSignatureStatus}</DocumentResult>
           </UploadFile>
         </UploadSection>
@@ -130,7 +135,7 @@ const ModalContent = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: #ffffff;
-  border-radius: 8px;
+  border-radius: 1rem;
   padding: 20px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   justify-content: space-between;
@@ -169,8 +174,23 @@ const TitleSection = styled.div`
   flex-shrink: 0;
   margin-left: auto;
   margin-right: auto;
+  display: flex;
+  flex-flow: column;
+`
+
+const Title = styled.h3`
+  flex-shrink: 0;
+  margin-left: auto;
+  margin-right: auto;
   font-size: medium;
   font-weight: bold;
+`
+
+const Disclaimer = styled.p`
+  color: #6d6d6d;
+  margin-top: 0.3rem;
+  font-size: small;
+  font-weight: normal;
 `
 
 const UploadSection = styled.div`

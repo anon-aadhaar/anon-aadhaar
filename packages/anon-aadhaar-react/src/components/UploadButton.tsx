@@ -3,16 +3,20 @@ import styled from 'styled-components'
 
 interface FileInputProps {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void
+  id: string
 }
 
-export const FileInput: FunctionComponent<FileInputProps> = ({ onChange }) => {
+export const FileInput: FunctionComponent<FileInputProps> = ({
+  onChange,
+  id,
+}) => {
   const [fileName, setFileName] = useState<string>('No file selected')
   return (
     <InputFile>
-      <UploadButton htmlFor="upload">Choose file</UploadButton>
+      <UploadButton htmlFor={id}>Choose file</UploadButton>
       <input
         type="file"
-        id="upload"
+        id={id}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
           if (!e.target.files) return
           setFileName(e.target.files[0].name)
@@ -41,6 +45,7 @@ const InputFile = styled.div`
   cursor: pointer;
   padding-top: 6px;
   padding-bottom: 6px;
+  margin-top: 0.3rem;
 `
 
 const UploadButton = styled.label`
