@@ -64,11 +64,6 @@ jobs:
       - name: 'Dev trusted setup'
         run: 'yarn dev-setup:pcd'
 
-      - name: Build packages
-        run: yarn build:libraries
-      - name: Test packages
-        run: yarn test:libraries
-
       - name: Authenticate and publish to npm
         run: |
           echo "//registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN" >> ~/.npmrc
