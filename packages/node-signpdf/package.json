@@ -28,8 +28,9 @@
         "node": ">=12"
     },
     "scripts": {
+        "test": "echo 'skip test'",
         "test:coverage": "./node_modules/.bin/jest --coverage",
-        "test": "./node_modules/.bin/jest",
+        "test:project": "./node_modules/.bin/jest",
         "test:watch": "./node_modules/.bin/jest --watch",
         "build": "./node_modules/.bin/babel ./src -d ./dist --ignore \"**/*.test.js\"",
         "build:watch": "./node_modules/.bin/babel --watch ./src -d ./dist --ignore \"**/*.test.js\"",
