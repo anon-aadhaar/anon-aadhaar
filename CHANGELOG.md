@@ -1,5 +1,9 @@
 ## 0.1.3
 
+- Fix UI bug
+
+## 0.1.3
+
 - Fix UI
 - Added exportCallDataGroth16 to utils function
 - Renamed IdentityPCD to AnonAadhaarPCD
