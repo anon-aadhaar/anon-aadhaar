@@ -84,6 +84,7 @@ const Btn = styled.button`
   min-height: 3rem;
   border-radius: 0.5rem;
   background: linear-gradient(345deg, #10fe53 0%, #09d3ff 100%);
+  margin-top: 1rem;
 
   &:hover {
     opacity: 70%;
