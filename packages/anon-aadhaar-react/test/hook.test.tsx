@@ -7,8 +7,7 @@ import {
   AnonAadhaarContext,
   AnonAadhaarState,
 } from '../src/hooks/useAnonAadhaar'
-import { genData } from './utils'
-import { AnonAadhaarPCDArgs } from 'anon-aadhaar-pcd'
+import { AnonAadhaarPCDArgs, genData } from 'anon-aadhaar-pcd'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import { AnonAadhaarProvider } from '../src/provider/AnonAadhaarProvider'
 
