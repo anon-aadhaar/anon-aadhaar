@@ -11,6 +11,7 @@
     "test:libraries": "yarn workspaces run test",
     "dev-setup:pcd": "yarn workspace anon-aadhaar-pcd run dev-setup",
     "pdf:pcd": "yarn workspace anon-aadhaar-pcd run gen-pdf",
+    "proof:pcd": "yarn workspace anon-aadhaar-pcd run gen-proof",
     "contracts:pcd": "yarn workspace anon-aadhaar-pcd run contract",
     "dev-install:pcd": "yarn workspace anon-aadhaar-pcd run dev-install",
     "lint": "eslint --ext .js,.ts,.tsx .",

@@ -1,3 +1,13 @@
+## 0.1.3
+
+- Fix UI
+- Added exportCallDataGroth16 to utils function
+- Renamed IdentityPCD to AnonAadhaarPCD
+
+## 0.1.@
+
+- Minor fixes
+
 ## 0.1.1
 
 - Fix dependencies issues of anon-aadhaar-react

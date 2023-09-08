@@ -47,8 +47,14 @@ Run test
 yarn test:libraries
 ```
 
-Generate pdf file with pkcs#1 schema. This action will create pdf file name `signed.pdf` signed by `certificate.cer` in `packages/anon-aadhaar-pcd/build` folder.
+Generate pdf file with pkcs#1 schema. This action will create a pdf file name `signed.pdf` signed by `certificate.cer` in `packages/anon-aadhaar-pcd/build` folder.
 
 ```bash
 yarn pdf:pcd
+```
+
+Generate a proof. This action will create a proof and its public scheme in `proofs/` in `packages/anon-aadhaar-pcd/build` folder.
+
+```bash
+yarn proof:pcd
 ```

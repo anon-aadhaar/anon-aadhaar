@@ -1,7 +1,6 @@
 import { describe } from 'mocha'
-import { AnonAadhaarPCDArgs, verify } from 'anon-aadhaar-pcd'
+import { AnonAadhaarPCDArgs, verify, genData } from 'anon-aadhaar-pcd'
 import { assert } from 'chai'
-import { genData } from './utils'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import { proveWithWebProver } from '../src/prove'
 

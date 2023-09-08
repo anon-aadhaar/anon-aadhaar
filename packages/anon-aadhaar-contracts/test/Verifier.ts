@@ -1,17 +1,17 @@
 import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers'
 import { expect } from 'chai'
 import { ethers } from 'hardhat'
-import { genData, exportCallDataGroth16 } from './utils'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import {
   AnonAadhaarPCDArgs,
   prove,
   init,
   PCDInitArgs,
-  splitToWords,
   WASM_URL,
   ZKEY_URL,
   VK_URL,
+  genData,
+  exportCallDataGroth16,
 } from 'anon-aadhaar-pcd'
 
 describe('VerifyProof', function () {
@@ -61,7 +61,7 @@ describe('VerifyProof', function () {
 
         const { a, b, c, Input } = await exportCallDataGroth16(
           pcd.proof.proof,
-          [...splitToWords(BigInt(pcd.proof.modulus), BigInt(64), BigInt(32))],
+          pcd.proof.modulus,
         )
 
         // We use lock.connect() to send a transaction from another account
