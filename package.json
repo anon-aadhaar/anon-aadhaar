@@ -1,13 +1,13 @@
 {
   "name": "country-identity-packages",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "A set of tools to anonymously prove your identity",
   "main": "index.js",
   "private": true,
   "scripts": {
     "build:libraries": "yarn workspaces run build",
     "test-publish:libraries": "yarn workspaces run test-publish",
-    "publish:libraries": "yarn workspaces run publishtonpm",
+    "publish:libraries": "yarn workspace anon-aadhaar-pcd run publishtonpm && yarn workspace anon-aadhaar-react run publishtonpm && yarn workspace anon-aadhaar-contracts run publishtonpm",
     "test:libraries": "yarn workspaces run test",
     "dev-setup:pcd": "yarn workspace anon-aadhaar-pcd run dev-setup",
     "pdf:pcd": "yarn workspace anon-aadhaar-pcd run gen-pdf",
@@ -15,7 +15,7 @@
     "contracts:pcd": "yarn workspace anon-aadhaar-pcd run contract",
     "dev-install:pcd": "yarn workspace anon-aadhaar-pcd run dev-install",
     "lint": "eslint --ext .js,.ts,.tsx .",
-    "postversion": "yarn workspace anon-aadhaar-pcd version --new-version $npm_package_version --no-git-tag-version && yarn workspace anon-aadhaar-react version --new-version $npm_package_version --no-git-tag-version && yarn workspace anon-aadhaar-contracts version --new-version $npm_package_version"
+    "postversion": "yarn workspace anon-aadhaar-pcd version --new-version $npm_package_version --no-git-tag-version && yarn workspace anon-aadhaar-react version --new-version $npm_package_version --no-git-tag-version && yarn workspace anon-aadhaar-contracts version --new-version $npm_package_version --no-git-tag-version"
   },
   "repository": {
     "type": "git",
