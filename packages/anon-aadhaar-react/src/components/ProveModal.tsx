@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { FileInput } from './UploadButton'
+import { FileInput } from './FileInput'
 import { ProveButton } from './ProveButton'
 import { pdfUpload, cerUpload } from '../util'
 import {
@@ -100,6 +100,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             <DocumentResult>{certificateOrSignatureStatus}</DocumentResult>
           </UploadFile>
         </UploadSection>
+
         <ProveButton
           sigBigInt={sigBigInt}
           modulusBigInt={modulusBigInt}
@@ -158,8 +159,8 @@ const ModalContent = styled.div`
 `
 
 const UploadFile = styled.div`
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: 30px;
+  margin-bottom: 30px;
 `
 
 const DocumentResult = styled.div`
@@ -194,8 +195,8 @@ const Disclaimer = styled.p`
 `
 
 const UploadSection = styled.div`
-  display: grid;
   row-gap: 20px;
+  max-width: 100%;
 `
 
 const Label = styled.div`
