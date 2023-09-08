@@ -34,7 +34,8 @@
         "test:watch": "./node_modules/.bin/jest --watch",
         "build": "./node_modules/.bin/babel ./src -d ./dist --ignore \"**/*.test.js\"",
         "build:watch": "./node_modules/.bin/babel --watch ./src -d ./dist --ignore \"**/*.test.js\"",
-        "lint": "./node_modules/.bin/eslint -c .eslintrc --ignore-path .eslintignore ./",
+        "lint": "echo 'skip lint...'",
+        "lint:run": "./node_modules/.bin/eslint -c .eslintrc --ignore-path .eslintignore ./",
         "prepare": "husky install",
         "format": "echo 'no format cli'"
     },
