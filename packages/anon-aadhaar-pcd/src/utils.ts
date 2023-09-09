@@ -4,6 +4,7 @@ import { SnarkJSProof, Proof } from './types'
 import { groth16 } from 'snarkjs'
 import { AnonAadhaarPCD } from '../src/pcd'
 import { BigNumberish } from '../src/types'
+import { subtle } from 'crypto'
 
 const getSubstringIndex = (str: Buffer, substring: string, n: number) => {
   let times = 0
@@ -151,8 +152,6 @@ export async function exportCallDataGroth16(
   }
   return { a, b, c, Input }
 }
-
-import { subtle } from 'crypto'
 
 function buffToBigInt(buff: string): bigint {
   return BigInt('0x' + Buffer.from(buff, 'base64url').toString('hex'))
