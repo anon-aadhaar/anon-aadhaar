@@ -1,5 +1,7 @@
 # Anon Aadhaar
 
+![Anon Aadhaar card lite](https://github.com/privacy-scaling-explorations/anon-aadhaar/assets/67648863/b29d784b-610a-4222-8fa5-4a2972e492fd)
+
 Anon Aadhaar is a protocol that let users anonymously prove their Aadhaar identity, in a very fast and simple way.
 The core of the procotocol is the circuits, but we also provide a SDK to let any app use our protocol.
 
@@ -8,6 +10,16 @@ The core of the procotocol is the circuits, but we also provide a SDK to let any
 - [anon-aadhaar-pcd](packages/anon-aadhaar-pcd/)
 - [anon-aadhaar-react](packages/anon-aadhaar-react/)
 - [anon-aadhaar-contracts](packages/anon-aadhaar-contracts/)
+
+## Documentation
+
+- [Anon Aadhaar Documentation](https://anon-aadhaar-documentation.vercel.app/docs/intro)
+
+## Examples
+Link to an example website or repository that showcases the SDK's capabilities in a real-world scenario. This can help users understand how to implement it in their own projects.
+
+- [Example Website](https://anon-aadhaar-example.vercel.app/)
+- [Example Repository](https://github.com/anon-aadhaar-private/anon-aadhaar-example)
 
 ## Contributing
 
