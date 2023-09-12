@@ -16,7 +16,7 @@ The core of the procotocol is the circuits, but we also provide a SDK to let any
 - [Anon Aadhaar Documentation](https://anon-aadhaar-documentation.vercel.app/docs/intro)
 
 ## Examples
-Link to an example website or repository that showcases the SDK's capabilities in a real-world scenario. This can help users understand how to implement it in their own projects.
+Explore our SDK in action by visiting our example website and repository, where you can see how it's implemented in a real-world scenario. Get inspired and learn how to integrate it into your own projects!
 
 - [Example Website](https://anon-aadhaar-example.vercel.app/)
 - [Example Repository](https://github.com/anon-aadhaar-private/anon-aadhaar-example)
