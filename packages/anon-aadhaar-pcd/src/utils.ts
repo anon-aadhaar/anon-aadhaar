@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const spdf = require('spdf')
 import { SnarkJSProof, Proof } from './types'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -5,7 +7,7 @@ import { groth16 } from 'snarkjs'
 import { AnonAadhaarPCD } from '../src/pcd'
 import { BigNumberish } from '../src/types'
 import { subtle } from 'crypto'
-import { writeFileSync } from 'fs'
+import * as x509 from '@peculiar/x509'
 
 const getSubstringIndex = (str: Buffer, substring: string, n: number) => {
   let times = 0
@@ -202,16 +204,35 @@ export async function genData(
   return [e, sign, n, hash]
 }
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const spdf = require('spdf')
+const decryptPdfWithPassword = async (pdf: Buffer, pwd: string) => {
+  const pdfData = await spdf.PDFDocument.load(pdf, {
+    password: pwd,
+  })
+
+  return await pdfData.save({ useObjectStreams: false })
+}
+
+export const extractDecryptedCert = (
+  pdfFile: Buffer,
+  signaturePosition = 1
+) => {
+  const certPos = getSubstringIndex(pdfFile, '/Cert (', signaturePosition)
+
+  const certEnd = pdfFile.indexOf('/Type', certPos)
+  const byteRange = pdfFile.subarray(certPos, certEnd - 2).toString()
+
+  const decryptedCert = Buffer.from(byteRange.slice(7))
+
+  return { decryptedCert }
+}
 
 /**
  * extract Cert from anon aadhaar card
  * @param pdf the encrypted pdf buffer
  * @returns certificate in pdf
  */
-export async function extractCert(pdf: Buffer, password?: string) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const pdf_data = password ? await spdf.decryptPDF(pdf, password) : pdf
-  // extract cert here
+export async function extractCert(pdf: Buffer, password: string) {
+  const decryptedPdf = await decryptPdfWithPassword(pdf, password)
+  const { decryptedCert } = extractDecryptedCert(Buffer.from(decryptedPdf))
+  return new x509.X509Certificate(decryptedCert)
 }
