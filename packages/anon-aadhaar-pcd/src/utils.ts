@@ -204,22 +204,14 @@ export async function genData(
   return [e, sign, n, hash]
 }
 
-const decryptPdfWithPassword = async (pdf: Buffer, pwd: string) => {
-  const pdfData = await spdf.PDFDocument.load(pdf, {
-    password: pwd,
-  })
-
-  return await pdfData.save({ useObjectStreams: false })
-}
-
 export const extractDecryptedCert = (
   pdfFile: Buffer,
   signaturePosition = 1
 ) => {
-  const certPos = getSubstringIndex(pdfFile, '/Cert (', signaturePosition)
+  const certPos = getSubstringIndex(pdfFile, '/Cert <', signaturePosition)
 
-  const certEnd = pdfFile.indexOf('/Type', certPos)
-  const byteRange = pdfFile.subarray(certPos, certEnd - 2).toString()
+  const certEnd = pdfFile.indexOf('>', certPos)
+  const byteRange = pdfFile.subarray(certPos, certEnd).toString()
 
   const decryptedCert = Buffer.from(byteRange.slice(7))
 
@@ -232,7 +224,7 @@ export const extractDecryptedCert = (
  * @returns certificate in pdf
  */
 export async function extractCert(pdf: Buffer, password: string) {
-  const decryptedPdf = await decryptPdfWithPassword(pdf, password)
+  const decryptedPdf: Uint8Array = await spdf.decryptPDF(pdf, password)
   const { decryptedCert } = extractDecryptedCert(Buffer.from(decryptedPdf))
   return new x509.X509Certificate(decryptedCert)
 }

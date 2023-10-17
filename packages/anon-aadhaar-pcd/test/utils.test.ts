@@ -16,9 +16,19 @@ describe('Utils tests', function () {
     expect(fn).to.throw()
   })
 
-  it.only('something', async () => {
+  it.only('Extract RSA public key from encrypted PDF certificate', async () => {
     const pdf = readFileSync(__dirname + '/assets/encrypted.pdf')
     const password = ''
-    await extractCert(pdf, password)
+
+    const cert = await extractCert(pdf, password)
+
+    const publicKeyPem = readFileSync(
+      __dirname + '/assets/AadhaarPublicKey.pem',
+      {
+        encoding: 'utf8',
+      }
+    )
+
+    expect(cert.publicKey.toString()).to.equal(publicKeyPem)
   })
 })
