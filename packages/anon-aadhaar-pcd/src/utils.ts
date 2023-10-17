@@ -5,6 +5,7 @@ import { groth16 } from 'snarkjs'
 import { AnonAadhaarPCD } from '../src/pcd'
 import { BigNumberish } from '../src/types'
 import { subtle } from 'crypto'
+import { writeFileSync } from 'fs'
 
 const getSubstringIndex = (str: Buffer, substring: string, n: number) => {
   let times = 0
@@ -199,4 +200,18 @@ export async function genData(
   const sign = BigInt('0x' + Buffer.from(sign_buff).toString('hex'))
 
   return [e, sign, n, hash]
+}
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const spdf = require('spdf')
+
+/**
+ * extract Cert from anon aadhaar card
+ * @param pdf the encrypted pdf buffer
+ * @returns certificate in pdf
+ */
+export async function extractCert(pdf: Buffer, password?: string) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const pdf_data = password ? await spdf.decryptPDF(pdf, password) : pdf
+  // extract cert here
 }

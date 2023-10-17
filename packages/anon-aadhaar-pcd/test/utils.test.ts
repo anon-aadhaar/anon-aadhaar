@@ -1,6 +1,7 @@
 import { describe } from 'mocha'
-import { splitToWords } from '../src/utils'
+import { extractCert, splitToWords } from '../src/utils'
 import { expect } from 'chai'
+import { readFileSync } from 'fs'
 
 describe('Utils tests', function () {
   it('splitToWords succesfully', () => {
@@ -13,5 +14,11 @@ describe('Utils tests', function () {
   it('splitToWords failed', () => {
     const fn = () => splitToWords(BigInt(256), BigInt(2), BigInt(4))
     expect(fn).to.throw()
+  })
+
+  it.only('something', async () => {
+    const pdf = readFileSync(__dirname + '/assets/encrypted.pdf')
+    const password = ''
+    await extractCert(pdf, password)
   })
 })
