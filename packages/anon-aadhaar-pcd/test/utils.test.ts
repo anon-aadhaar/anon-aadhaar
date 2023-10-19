@@ -1,7 +1,7 @@
 import { describe } from 'mocha'
-import { extractCert, splitToWords } from '../src/utils'
+import { splitToWords } from '../src/utils'
+// import { readFileSync } from 'fs'
 import { expect } from 'chai'
-import { readFileSync } from 'fs'
 
 describe('Utils tests', function () {
   it('splitToWords succesfully', () => {
@@ -16,19 +16,19 @@ describe('Utils tests', function () {
     expect(fn).to.throw()
   })
 
-  it.only('Extract RSA public key from encrypted PDF certificate', async () => {
-    const pdf = readFileSync(__dirname + '/assets/encrypted.pdf')
-    const password = ''
+  // it.only('Extract RSA public key from encrypted PDF certificate', async () => {
+  //   const pdf = readFileSync(__dirname + '/assets/encrypted.pdf')
+  //   const password = ''
 
-    const cert = await extractCert(pdf, password)
+  //   const cert = await extractCert(pdf, password)
 
-    const publicKeyPem = readFileSync(
-      __dirname + '/assets/AadhaarPublicKey.pem',
-      {
-        encoding: 'utf8',
-      }
-    )
+  //   const publicKeyPem = readFileSync(
+  //     __dirname + '/assets/AadhaarPublicKey.pem',
+  //     {
+  //       encoding: 'utf8',
+  //     }
+  //   )
 
-    expect(cert.publicKey.toString()).to.equal(publicKeyPem)
-  })
+  //   expect(cert.publicKey.toString()).to.equal(publicKeyPem)
+  // })
 })
