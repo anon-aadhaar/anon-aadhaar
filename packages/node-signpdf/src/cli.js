@@ -2,7 +2,8 @@
 
 import PDFDocument from 'pdfkit'
 
-import { SignPdf, pdfkitAddPlaceholder } from './signpdf'
+import { SignPdf } from './signpdf'
+import { pdfkitAddPlaceholderForPKCS1 } from './helpers'
 
 import fs from 'node:fs'
 
@@ -50,13 +51,17 @@ const createPdf = params =>
       resolve(Buffer.concat(pdfChunks))
     })
 
+    const certBuffer = fs.readFileSync(requestParams.certFilePath)
+    const cert = certBuffer.toString('hex')
+
     if (requestParams.addSignaturePlaceholder) {
       console.log({ ...requestParams.placeholder })
       // Externally (to PDFKit) add the signature placeholder.
-      const refs = pdfkitAddPlaceholder({
+      const refs = pdfkitAddPlaceholderForPKCS1({
         pdf,
         pdfBuffer: Buffer.from([pdf]),
         reason: 'I am the author',
+        cert: cert,
         ...requestParams.placeholder,
       })
 
@@ -71,12 +76,18 @@ const createPdf = params =>
     pdf.end()
   })
 
-function signPDF({ pdfPath, keyFilePath, passphrase = 'password' }) {
+function signPDF({
+  pdfPath,
+  keyFilePath,
+  certFilePath,
+  passphrase = 'password',
+}) {
   createPdf({
     placeholder: {
       signatureLength: 260,
     },
     text: 'This is a document',
+    certFilePath: certFilePath,
   }).then(pdfBuffer => {
     console.log(pdfBuffer)
     let signer = new SignPdf()
@@ -89,13 +100,14 @@ function signPDF({ pdfPath, keyFilePath, passphrase = 'password' }) {
 try {
   const pdfPath = process.argv[2]
   const keyFilePath = process.argv[3]
-  const passphrase = process.argv[4] || undefined
+  const certFilePath = process.argv[4]
+  const passphrase = process.argv[5] || undefined
 
-  console.log(passphrase)
   signPDF({
     pdfPath,
     keyFilePath,
     passphrase,
+    certFilePath,
   })
 } catch (e) {
   console.log(e)
