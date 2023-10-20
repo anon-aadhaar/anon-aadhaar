@@ -1,3 +1,7 @@
+## 0.1.5
+
+- Adding certificate extraction from the pdf
+
 ## 0.1.4
 
 - Fix UI bug

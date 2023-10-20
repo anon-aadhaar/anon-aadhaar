@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const spdf = require('spdf')
 import { SnarkJSProof, Proof } from './types'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -5,6 +7,7 @@ import { groth16 } from 'snarkjs'
 import { AnonAadhaarPCD } from '../src/pcd'
 import { BigNumberish } from '../src/types'
 import { subtle } from 'crypto'
+import * as x509 from '@peculiar/x509'
 
 const getSubstringIndex = (str: Buffer, substring: string, n: number) => {
   let times = 0
@@ -199,4 +202,29 @@ export async function genData(
   const sign = BigInt('0x' + Buffer.from(sign_buff).toString('hex'))
 
   return [e, sign, n, hash]
+}
+
+export const extractDecryptedCert = (
+  pdfFile: Buffer,
+  signaturePosition = 1
+) => {
+  const certPos = getSubstringIndex(pdfFile, '/Cert <', signaturePosition)
+
+  const certEnd = pdfFile.indexOf('>', certPos)
+  const byteRange = pdfFile.subarray(certPos, certEnd).toString()
+
+  const decryptedCert = Buffer.from(byteRange.slice(7))
+
+  return { decryptedCert }
+}
+
+/**
+ * extract Cert from anon aadhaar card
+ * @param pdf the encrypted pdf buffer
+ * @returns certificate in pdf
+ */
+export async function extractCert(pdf: Buffer, password: string) {
+  const decryptedPdf: Uint8Array = await spdf.decryptPDF(pdf, password)
+  const { decryptedCert } = extractDecryptedCert(Buffer.from(decryptedPdf))
+  return new x509.X509Certificate(decryptedCert)
 }

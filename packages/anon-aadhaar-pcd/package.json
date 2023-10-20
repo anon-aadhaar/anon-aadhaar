@@ -6,7 +6,7 @@
   "repository": "https://github.com/privacy-scaling-explorations/anon-aadhaar",
   "license": "MIT",
   "scripts": {
-    "build": "tsup src/index.ts",
+    "build": "cd ../../node_modules/spdf && yarn build && cd ../../packages/anon-aadhaar-pcd && tsup src/index.ts",
     "dev-setup": "/bin/bash ./script/setup-dev.sh setup",
     "dev-install": "/bin/bash ./script/setup-dev.sh install",
     "test": "npx ts-mocha test/**/*.test.ts --exit",
@@ -38,6 +38,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "snarkjs": "^0.7.0",
+    "spdf": "https://github.com/anon-aadhaar-private/sPDF.js#main",
     "styled-components": "^6.0.0-rc.1",
     "uuid": "^9.0.0",
     "valid-url": "^1.0.9"
