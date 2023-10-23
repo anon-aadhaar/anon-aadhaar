@@ -16,6 +16,12 @@ export enum AadhaarSignatureValidition {
   ERROR_VERIFYING_SIGNATURE = 'An error occurred when verifying signature ❌',
 }
 
+export type Witness = {
+  msgBigInt: bigint
+  modulusBigInt: bigint
+  sigBigInt: bigint
+}
+
 // export enum AadhaarProofFile {
 //   PROOF_FILE_VALID = 'Proof file looks valid ✅',
 //   PROOF_FILE_INVALID = 'Proof file looks invalid ❌',

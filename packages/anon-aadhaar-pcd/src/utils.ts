@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const spdf = require('spdf')
+import { decryptPDF } from 'spdf'
 import { SnarkJSProof, Proof } from './types'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -224,7 +224,7 @@ export const extractDecryptedCert = (
  * @returns certificate in pdf
  */
 export async function extractCert(pdf: Buffer, password: string) {
-  const decryptedPdf: Uint8Array = await spdf.decryptPDF(pdf, password)
+  const decryptedPdf: Uint8Array = await decryptPDF(pdf, password)
   const { decryptedCert } = extractDecryptedCert(Buffer.from(decryptedPdf))
   return new x509.X509Certificate(decryptedCert)
 }
