@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { FileInput } from '../FileInput'
 import { ProveButtonV2 } from './ProveButtonV2'
 import { pdfCheck } from '../../util'
+import { PasswordInput } from './PasswordInput'
 import {
   AadhaarPdfValidation,
   AadhaarSignatureValidition,
@@ -50,18 +51,7 @@ export const ProveModalV2: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
           <UploadFile>
             <Label>Enter your Aadhaar pdf password</Label>
-            <input
-              onChange={e => {
-                console.log(e.target.value)
-                setPassword(e.target.value)
-              }}
-              id="password"
-            />
-            {/* <FileInput
-              onChange={handleWitnessGeneration}
-              id={'handleCerUpload'}
-            /> */}
-            {/* <DocumentResult>{certificateOrSignatureStatus}</DocumentResult> */}
+            <PasswordInput setPassword={setPassword} id={'password'} />
           </UploadFile>
         </UploadSection>
 
