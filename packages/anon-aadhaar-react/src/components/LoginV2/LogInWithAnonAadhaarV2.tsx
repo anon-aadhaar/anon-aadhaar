@@ -1,10 +1,9 @@
 import { useState } from 'react'
-import { ProveWithPdfPwd } from './ProveWithPdfPwd'
+import { ProveModalV2 } from './ProveModalV2'
 import styled from 'styled-components'
-import { text } from '../util'
+import { text } from '../../util'
 import { useEffect, useContext } from 'react'
-import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
-import React from 'react'
+import { AnonAadhaarContext } from '../../hooks/useAnonAadhaar'
 
 /**
  * LogInWithAnonAadhaar is a React component that provides a user interface
@@ -38,10 +37,10 @@ export const LogInWithAnonAadhaarV2 = () => {
           <Btn onClick={openModal}>
             {text('🌏', 'Log In with Anon Aadhaar')}
           </Btn>
-          <ProveWithPdfPwd
+          <ProveModalV2
             isOpen={isModalOpen}
             onClose={closeModal}
-          ></ProveWithPdfPwd>
+          ></ProveModalV2>
         </div>
       )}
       {state.status === 'logged-in' && (

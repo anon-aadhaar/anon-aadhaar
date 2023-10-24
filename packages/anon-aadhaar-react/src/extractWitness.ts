@@ -1,5 +1,5 @@
 import { extractCert, extractSignature } from 'anon-aadhaar-pcd'
-import * as forge from 'node-forge'
+import { pki, md, asn1 } from 'node-forge'
 
 /**
  * Extract all the information needed to generate the witness from the pdf.
@@ -14,48 +14,56 @@ export const extractWitness = async (
   msgBigInt: bigint
   sigBigInt: bigint
   modulusBigInt: bigint
-} | void> => {
+}> => {
+  let msgBigInt = BigInt(0)
+  let sigBigInt = BigInt(0)
+  let modulusBigInt = BigInt(0)
   try {
-    const { signature } = extractSignature(pdfData)
+    // Extractiong the Pdf Data that have to be hashed and the RSA signature of the hash
+    const { signedData, signature } = extractSignature(pdfData)
 
     if (signature === '') throw Error('Missing pdf signature')
 
-    const asn1sig = forge.asn1.fromDer(signature).value as string
+    // RSA signature ASN1 encoded
+    const asn1sig = asn1.fromDer(signature).value as string
 
-    const cer = await extractCert(pdfData, password)
+    // Extracting the x509 certificate from PDF
+    const x509Certificate = await extractCert(pdfData, password)
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const cert = (forge as any).pki.certificateFromPem(cer.toString('pem'))
+    // Load RSA publicKey from x509 cert in PEM format
+    const RSAPublicKey = pki.certificateFromPem(
+      x509Certificate.toString('pem'),
+    ).publicKey
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const md = (forge as any).md.sha1.create()
-    md.update(pdfData.toString('binary')) // defaults to raw encoding
+    // Initiate sha1 hash algo
+    const sha1 = md.sha1.create()
 
+    // Hash PDF data with sha1
+    sha1.update(signedData.toString('binary')) // defaults to raw encoding
+
+    // Recover the signed hash from RSA signature
     const decryptData = Buffer.from(
-      cert.publicKey.encrypt(asn1sig, 'RAW'),
+      (RSAPublicKey as pki.rsa.PublicKey).encrypt(asn1sig, 'RAW'),
       'binary',
     )
-    const hash = Buffer.from(md.digest().bytes(), 'binary')
 
+    // Convert sha1 hash from PDF Data to bytes
+    const hash = Buffer.from(sha1.digest().bytes(), 'binary')
+
+    // Compare hash from signature and hash computed from PDF Data
     const isValid = Buffer.compare(decryptData.subarray(236, 256), hash) === 0
 
-    if (isValid) {
-      const msgBigInt = BigInt('0x' + hash.toString('hex'))
-      const sigBigInt = BigInt(
-        '0x' + Buffer.from(asn1sig, 'binary').toString('hex'),
-      )
-      const modulusBigInt = BigInt('0x' + cert.publicKey.n.toString(16))
-      // setsignatureValidity(AadhaarSignatureValidition.SIGNATURE_VALID)
-      // setcertificateStatus(
-      //   AadhaarCertificateValidation.CERTIFICATE_CORRECTLY_FORMATTED,
-      // )
-      return { msgBigInt, sigBigInt, modulusBigInt }
-    }
+    if (!isValid) throw Error('Signature not valid')
+
+    msgBigInt = BigInt('0x' + hash.toString('hex'))
+    sigBigInt = BigInt('0x' + Buffer.from(asn1sig, 'binary').toString('hex'))
+    modulusBigInt = BigInt(
+      '0x' + (RSAPublicKey as pki.rsa.PublicKey).n.toString(16),
+    )
+
+    return { msgBigInt, sigBigInt, modulusBigInt }
   } catch (error) {
-    //   setsignatureValidity(AadhaarSignatureValidition.SIGNATURE_INVALID)
-    //   setcertificateStatus(
-    //     AadhaarCertificateValidation.ERROR_PARSING_CERTIFICATE,
-    //   )
     console.log(error)
+    return { msgBigInt, sigBigInt, modulusBigInt }
   }
 }

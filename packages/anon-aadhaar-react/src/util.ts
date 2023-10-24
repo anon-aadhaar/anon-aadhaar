@@ -233,6 +233,7 @@ export const pdfCheck = (
                   pdf: Buffer.from(e.target.result as string, 'binary'),
                 })
                 setpdfStatus(AadhaarPdfValidation.SIGNATURE_PRESENT)
+                setsignatureValidity(AadhaarSignatureValidition.SIGNATURE_VALID)
               } else {
                 setpdfStatus(AadhaarPdfValidation.SIGNATURE_NOT_PRESENT)
               }

@@ -1,23 +1,21 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { FileInput } from './FileInput'
-import { ProveButton } from './ProveButton'
-import { pdfCheck } from '../util'
-import { extractWitness } from '../extractWitness'
+import { FileInput } from '../FileInput'
+import { ProveButtonV2 } from './ProveButtonV2'
+import { pdfCheck } from '../../util'
 import {
   AadhaarPdfValidation,
   AadhaarSignatureValidition,
-  Witness,
-} from '../interface'
+} from '../../interface'
 
 interface ModalProps {
   isOpen: boolean
   onClose: () => void
 }
 
-export const ProveWithPdfPwd: React.FC<ModalProps> = ({ isOpen, onClose }) => {
+export const ProveModalV2: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const [pdfData, setPdfData] = useState(Buffer.from([]))
-  const [witness, setWitness] = useState<Witness>()
+  const [password, setPassword] = useState<string>('')
   const [pdfStatus, setpdfStatus] = useState<'' | AadhaarPdfValidation>('')
   const [signatureValidity, setsignatureValidity] = useState<
     '' | AadhaarSignatureValidition
@@ -29,13 +27,6 @@ export const ProveWithPdfPwd: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const handlePdfChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const { pdf } = await pdfCheck(e, setpdfStatus, setsignatureValidity)
     setPdfData(pdf)
-  }
-
-  const handleWitnessGeneration = async (
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const wit = await extractWitness(pdfData, e.target.value)
-    if (wit !== undefined) setWitness(wit)
   }
 
   return isOpen ? (
@@ -59,7 +50,13 @@ export const ProveWithPdfPwd: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
           <UploadFile>
             <Label>Enter your Aadhaar pdf password</Label>
-            <input onChange={handleWitnessGeneration} id="password"></input>
+            <input
+              onChange={e => {
+                console.log(e.target.value)
+                setPassword(e.target.value)
+              }}
+              id="password"
+            />
             {/* <FileInput
               onChange={handleWitnessGeneration}
               id={'handleCerUpload'}
@@ -68,10 +65,9 @@ export const ProveWithPdfPwd: React.FC<ModalProps> = ({ isOpen, onClose }) => {
           </UploadFile>
         </UploadSection>
 
-        <ProveButton
-          sigBigInt={witness?.sigBigInt}
-          modulusBigInt={witness?.modulusBigInt}
-          msgBigInt={witness?.msgBigInt}
+        <ProveButtonV2
+          pdfData={pdfData}
+          password={password}
           signatureValidity={signatureValidity}
         />
       </ModalContent>
@@ -79,7 +75,7 @@ export const ProveWithPdfPwd: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   ) : null
 }
 
-export default ProveWithPdfPwd
+export default ProveModalV2
 
 const ModalOverlay = styled.div`
   position: fixed;
