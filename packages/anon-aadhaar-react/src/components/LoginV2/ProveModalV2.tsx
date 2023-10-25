@@ -101,7 +101,7 @@ const ModalContent = styled.div`
   @media (max-width: 768px) {
     /* For screens <= 768px (e.g., mobile devices) */
     width: 100%;
-    height: 60%;
+    height: 50%;
     max-width: 100%;
     max-height: 100%;
   }
@@ -129,6 +129,7 @@ const DocumentResult = styled.div`
 const TitleSection = styled.div`
   color: #111827;
   flex-shrink: 0;
+  row-gap: 1rem;
   margin-left: auto;
   margin-right: auto;
   display: flex;
@@ -151,7 +152,7 @@ const Disclaimer = styled.p`
 `
 
 const UploadSection = styled.div`
-  row-gap: 20px;
+  row-gap: 1rem;
   max-width: 100%;
 `
 
