@@ -1,13 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { FileInput } from '../FileInput'
 import { ProveButtonV2 } from './ProveButtonV2'
 import { pdfCheck } from '../../util'
 import { PasswordInput } from './PasswordInput'
-import {
-  AadhaarPdfValidation,
-  AadhaarSignatureValidition,
-} from '../../interface'
+import { AadhaarPdfValidation } from '../../interface'
 
 interface ModalProps {
   isOpen: boolean
@@ -18,17 +15,23 @@ export const ProveModalV2: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const [pdfData, setPdfData] = useState(Buffer.from([]))
   const [password, setPassword] = useState<string>('')
   const [pdfStatus, setpdfStatus] = useState<'' | AadhaarPdfValidation>('')
-  const [signatureValidity, setsignatureValidity] = useState<
-    '' | AadhaarSignatureValidition
-  >('')
-  //   const [certificateStatus, setcertificateStatus] = useState<
-  //     '' | AadhaarCertificateValidation
-  //   >('')
+  const [provingEnabled, setProvingEnabled] = useState<boolean>(false)
 
   const handlePdfChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { pdf } = await pdfCheck(e, setpdfStatus, setsignatureValidity)
+    const { pdf } = await pdfCheck(e, setpdfStatus)
     setPdfData(pdf)
   }
+
+  useEffect(() => {
+    if (
+      pdfStatus === AadhaarPdfValidation.SIGNATURE_PRESENT &&
+      password !== ''
+    ) {
+      setProvingEnabled(true)
+    } else {
+      setProvingEnabled(false)
+    }
+  }, [pdfStatus, password, pdfData])
 
   return isOpen ? (
     <ModalOverlay onClick={onClose}>
@@ -58,7 +61,7 @@ export const ProveModalV2: React.FC<ModalProps> = ({ isOpen, onClose }) => {
         <ProveButtonV2
           pdfData={pdfData}
           password={password}
-          signatureValidity={signatureValidity}
+          provingEnabled={provingEnabled}
         />
       </ModalContent>
     </ModalOverlay>

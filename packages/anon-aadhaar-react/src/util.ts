@@ -212,9 +212,6 @@ export function text(emoji: string, text: string) {
 export const pdfCheck = (
   e: ChangeEvent<HTMLInputElement>,
   setpdfStatus: Dispatch<SetStateAction<'' | AadhaarPdfValidation>>,
-  setsignatureValidity: Dispatch<
-    SetStateAction<'' | AadhaarSignatureValidition>
-  >,
 ): Promise<{ pdf: Buffer }> => {
   return new Promise((resolve, reject) => {
     if (e.target.files) {
@@ -233,7 +230,6 @@ export const pdfCheck = (
                   pdf: Buffer.from(e.target.result as string, 'binary'),
                 })
                 setpdfStatus(AadhaarPdfValidation.SIGNATURE_PRESENT)
-                setsignatureValidity(AadhaarSignatureValidition.SIGNATURE_VALID)
               } else {
                 setpdfStatus(AadhaarPdfValidation.SIGNATURE_NOT_PRESENT)
               }
@@ -245,7 +241,6 @@ export const pdfCheck = (
         }
       } catch {
         setpdfStatus('')
-        setsignatureValidity('')
         reject()
       }
     }

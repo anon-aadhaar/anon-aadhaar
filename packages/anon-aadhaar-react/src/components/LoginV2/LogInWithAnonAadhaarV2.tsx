@@ -12,7 +12,7 @@ import { AnonAadhaarContext } from '../../hooks/useAnonAadhaar'
  * initiate user login using the anon aadhaar zk circuit. The component utilizes
  * the authentication state and login request function from the context.
  *
- * @returns A JSX element representing the LogInWithAnonAadhaar component.
+ * @returns A JSX element representing the LogInWithAnonAadhaarV2 component.
  */
 export const LogInWithAnonAadhaarV2 = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)

@@ -4,33 +4,27 @@ import styled from 'styled-components'
 import { useContext } from 'react'
 import { AnonAadhaarContext } from '../../hooks/useAnonAadhaar'
 import { Spinner } from '../LoadingSpinner'
-import { AadhaarSignatureValidition, Witness } from '../../interface'
 import React from 'react'
 import { extractWitness } from '../../extractWitness'
 
 interface ProveButtonProps {
   pdfData: Buffer
   password: string
-  signatureValidity: AadhaarSignatureValidition | ''
+  provingEnabled: boolean
 }
 
 export const ProveButtonV2: React.FC<ProveButtonProps> = ({
   pdfData,
   password,
-  signatureValidity,
+  provingEnabled,
 }) => {
   const { state, startReq } = useContext(AnonAadhaarContext)
 
   const startProving = async () => {
     try {
-      const witness: Witness = await extractWitness(pdfData, password)
+      const witness = await extractWitness(pdfData, password)
 
-      if (
-        witness.modulusBigInt === BigInt(0) &&
-        witness.msgBigInt === BigInt(0) &&
-        witness.sigBigInt === BigInt(0)
-      )
-        throw new Error('Error while generating the witness')
+      if (witness instanceof Error) throw new Error(witness.message)
 
       const args: AnonAadhaarPCDArgs = {
         base_message: {
@@ -63,12 +57,7 @@ export const ProveButtonV2: React.FC<ProveButtonProps> = ({
     switch (state.status) {
       case 'logged-out':
         return (
-          <Btn
-            disabled={
-              !(signatureValidity == AadhaarSignatureValidition.SIGNATURE_VALID)
-            }
-            onClick={startProving}
-          >
+          <Btn disabled={!provingEnabled} onClick={startProving}>
             Request Aadhaar Proof
           </Btn>
         )

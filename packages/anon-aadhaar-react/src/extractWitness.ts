@@ -10,14 +10,14 @@ import { pki, md, asn1 } from 'node-forge'
 export const extractWitness = async (
   pdfData: Buffer,
   password: string,
-): Promise<{
-  msgBigInt: bigint
-  sigBigInt: bigint
-  modulusBigInt: bigint
-}> => {
-  let msgBigInt = BigInt(0)
-  let sigBigInt = BigInt(0)
-  let modulusBigInt = BigInt(0)
+): Promise<
+  | {
+      msgBigInt: bigint
+      sigBigInt: bigint
+      modulusBigInt: bigint
+    }
+  | Error
+> => {
   try {
     // Extractiong the Pdf Data that have to be hashed and the RSA signature of the hash
     const { signedData, signature } = extractSignature(pdfData)
@@ -55,15 +55,27 @@ export const extractWitness = async (
 
     if (!isValid) throw Error('Signature not valid')
 
-    msgBigInt = BigInt('0x' + hash.toString('hex'))
-    sigBigInt = BigInt('0x' + Buffer.from(asn1sig, 'binary').toString('hex'))
-    modulusBigInt = BigInt(
+    const msgBigInt = BigInt('0x' + hash.toString('hex'))
+    const sigBigInt = BigInt(
+      '0x' + Buffer.from(asn1sig, 'binary').toString('hex'),
+    )
+    const modulusBigInt = BigInt(
       '0x' + (RSAPublicKey as pki.rsa.PublicKey).n.toString(16),
     )
 
     return { msgBigInt, sigBigInt, modulusBigInt }
   } catch (error) {
-    console.log(error)
-    return { msgBigInt, sigBigInt, modulusBigInt }
+    if (error instanceof Error) return error
+
+    let stringified = '[Unable to extract the witness from the pdf]'
+    try {
+      stringified = JSON.stringify(error)
+      // eslint-disable-next-line no-empty
+    } catch {}
+
+    const err = new Error(
+      `This value was thrown as is, not through an Error: ${stringified}`,
+    )
+    return err
   }
 }
