@@ -9,7 +9,7 @@ import { pki, md, asn1 } from 'node-forge'
  */
 export const extractWitness = async (
   pdfData: Buffer,
-  password: string,
+  password: string
 ): Promise<
   | {
       msgBigInt: bigint
@@ -32,7 +32,7 @@ export const extractWitness = async (
 
     // Load RSA publicKey from x509 cert in PEM format
     const RSAPublicKey = pki.certificateFromPem(
-      x509Certificate.toString('pem'),
+      x509Certificate.toString('pem')
     ).publicKey
 
     // Initiate sha1 hash algo
@@ -44,7 +44,7 @@ export const extractWitness = async (
     // Recover the signed hash from RSA signature
     const decryptData = Buffer.from(
       (RSAPublicKey as pki.rsa.PublicKey).encrypt(asn1sig, 'RAW'),
-      'binary',
+      'binary'
     )
 
     // Convert sha1 hash from PDF Data to bytes
@@ -57,10 +57,10 @@ export const extractWitness = async (
 
     const msgBigInt = BigInt('0x' + hash.toString('hex'))
     const sigBigInt = BigInt(
-      '0x' + Buffer.from(asn1sig, 'binary').toString('hex'),
+      '0x' + Buffer.from(asn1sig, 'binary').toString('hex')
     )
     const modulusBigInt = BigInt(
-      '0x' + (RSAPublicKey as pki.rsa.PublicKey).n.toString(16),
+      '0x' + (RSAPublicKey as pki.rsa.PublicKey).n.toString(16)
     )
 
     return { msgBigInt, sigBigInt, modulusBigInt }
@@ -74,7 +74,7 @@ export const extractWitness = async (
     } catch {}
 
     const err = new Error(
-      `This value was thrown as is, not through an Error: ${stringified}`,
+      `This value was thrown as is, not through an Error: ${stringified}`
     )
     return err
   }
