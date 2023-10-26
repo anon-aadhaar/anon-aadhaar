@@ -17,7 +17,7 @@ export const ProveModalV2: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const [password, setPassword] = useState<string>('')
   const [pdfStatus, setpdfStatus] = useState<'' | AadhaarPdfValidation>('')
   const [provingEnabled, setProvingEnabled] = useState<boolean>(false)
-  const [errorMessage, setErrorMessage] = useState<string>('')
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const handlePdfChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const { pdf } = await pdfCheck(e, setpdfStatus)
@@ -57,7 +57,9 @@ export const ProveModalV2: React.FC<ModalProps> = ({ isOpen, onClose }) => {
           <UploadFile>
             <Label>Enter your Aadhaar pdf password</Label>
             <PasswordInput setPassword={setPassword} id={'password'} />
-            {errorMessage === '' ? null : <ErrorToast message={errorMessage} />}
+            {errorMessage === null ? null : (
+              <ErrorToast message={errorMessage} />
+            )}
           </UploadFile>
         </UploadSection>
 

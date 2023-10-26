@@ -5,13 +5,13 @@ import { Dispatch, useContext, SetStateAction } from 'react'
 import { AnonAadhaarContext } from '../../hooks/useAnonAadhaar'
 import { Spinner } from '../LoadingSpinner'
 import React from 'react'
-import { extractWitness } from '../../extractWitness'
+import { extractWitness } from 'anon-aadhaar-pcd'
 
 interface ProveButtonProps {
   pdfData: Buffer
   password: string
   provingEnabled: boolean
-  setErrorMessage: Dispatch<SetStateAction<string>>
+  setErrorMessage: Dispatch<SetStateAction<string | null>>
 }
 
 export const ProveButtonV2: React.FC<ProveButtonProps> = ({
