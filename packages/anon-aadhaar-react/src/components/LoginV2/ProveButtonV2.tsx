@@ -1,7 +1,7 @@
 import { AnonAadhaarPCDArgs } from 'anon-aadhaar-pcd'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import styled from 'styled-components'
-import { useContext } from 'react'
+import { Dispatch, useContext, SetStateAction } from 'react'
 import { AnonAadhaarContext } from '../../hooks/useAnonAadhaar'
 import { Spinner } from '../LoadingSpinner'
 import React from 'react'
@@ -11,12 +11,14 @@ interface ProveButtonProps {
   pdfData: Buffer
   password: string
   provingEnabled: boolean
+  setErrorMessage: Dispatch<SetStateAction<string>>
 }
 
 export const ProveButtonV2: React.FC<ProveButtonProps> = ({
   pdfData,
   password,
   provingEnabled,
+  setErrorMessage,
 }) => {
   const { state, startReq } = useContext(AnonAadhaarContext)
 
@@ -50,6 +52,7 @@ export const ProveButtonV2: React.FC<ProveButtonProps> = ({
       startReq({ type: 'login', args })
     } catch (error) {
       console.log(error)
+      if (error instanceof Error) setErrorMessage(error.message)
     }
   }
 
@@ -89,6 +92,7 @@ const Btn = styled.button`
   border-radius: 0.5rem;
   background: linear-gradient(345deg, #10fe53 0%, #09d3ff 100%);
   margin-top: 1rem;
+  margin-bottom: 1rem;
 
   &:hover {
     opacity: 70%;
