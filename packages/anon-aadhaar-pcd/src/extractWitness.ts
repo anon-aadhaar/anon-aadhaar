@@ -1,5 +1,6 @@
-import { extractCert, extractSignature } from 'anon-aadhaar-pcd'
 import { pki, md, asn1 } from 'node-forge'
+import { extractCert, extractSignature } from './utils'
+import { Witness } from './types'
 
 /**
  * Extract all the information needed to generate the witness from the pdf.
@@ -10,14 +11,7 @@ import { pki, md, asn1 } from 'node-forge'
 export const extractWitness = async (
   pdfData: Buffer,
   password: string
-): Promise<
-  | {
-      msgBigInt: bigint
-      sigBigInt: bigint
-      modulusBigInt: bigint
-    }
-  | Error
-> => {
+): Promise<Witness | Error> => {
   try {
     // Extractiong the Pdf Data that have to be hashed and the RSA signature of the hash
     const { signedData, signature } = extractSignature(pdfData)
