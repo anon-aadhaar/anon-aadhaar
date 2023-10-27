@@ -13,6 +13,6 @@
     "jsx": "react-jsx",
     "noUnusedParameters": true
   },
-  "include": ["src/*"],
+  "include": ["src/*", "../anon-aadhaar-pcd/src/extractWitness.ts"],
   "exclude": ["mocha.cjs", "eslintrc.cjs"]
 }

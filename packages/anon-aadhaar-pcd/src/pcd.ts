@@ -15,7 +15,6 @@ import { groth16 } from 'snarkjs'
 
 import { splitToWords } from './utils'
 import JSONBig from 'json-bigint'
-import { AnonAadhaarPCDCardBody } from './CardBody'
 import { BackendProver, ProverInferace, WebProver } from './prover'
 import axios from 'axios'
 
@@ -134,7 +133,6 @@ export const AnonAadhaarPCDPackage: PCDPackage<
   PCDInitArgs
 > = {
   name: AnonAadhaarPCDTypeName,
-  renderCardBody: AnonAadhaarPCDCardBody,
   getDisplayOptions,
   prove,
   init,

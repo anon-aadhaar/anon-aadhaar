@@ -8,35 +8,35 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 const createPdf = params => new Promise(resolve => {
   const requestParams = {
     placeholder: {},
-    text: "node-signpdf",
+    text: 'node-signpdf',
     addSignaturePlaceholder: true,
     pages: 1,
-    layout: "portrait",
+    layout: 'portrait',
     ...params
   };
   const pdf = new _pdfkit.default({
     autoFirstPage: false,
-    size: "A4",
+    size: 'A4',
     layout: requestParams.layout,
     bufferPages: true
   });
-  pdf.info.CreationDate = "";
+  pdf.info.CreationDate = '';
   if (requestParams.pages < 1) {
     requestParams.pages = 1;
   }
 
   // Add some content to the page(s)
   for (let i = 0; i < requestParams.pages; i += 1) {
-    pdf.addPage().fillColor("#333").fontSize(25).moveDown().text(requestParams.text).save();
+    pdf.addPage().fillColor('#333').fontSize(25).moveDown().text(requestParams.text).save();
   }
 
   // Collect the ouput PDF
   // and, when done, resolve with it stored in a Buffer
   const pdfChunks = [];
-  pdf.on("data", data => {
+  pdf.on('data', data => {
     pdfChunks.push(data);
   });
-  pdf.on("end", () => {
+  pdf.on('end', () => {
     resolve(Buffer.concat(pdfChunks));
   });
   if (requestParams.addSignaturePlaceholder) {
@@ -47,7 +47,7 @@ const createPdf = params => new Promise(resolve => {
     const refs = (0, _signpdf.pdfkitAddPlaceholder)({
       pdf,
       pdfBuffer: Buffer.from([pdf]),
-      reason: "I am the author",
+      reason: 'I am the author',
       ...requestParams.placeholder
     });
 
@@ -64,13 +64,13 @@ const createPdf = params => new Promise(resolve => {
 function signPDF({
   pdfPath,
   keyFilePath,
-  passphrase = "password"
+  passphrase = 'password'
 }) {
   createPdf({
     placeholder: {
       signatureLength: 260
     },
-    text: "This is a document"
+    text: 'This is a document'
   }).then(pdfBuffer => {
     console.log(pdfBuffer);
     let signer = new _signpdf.SignPdf();

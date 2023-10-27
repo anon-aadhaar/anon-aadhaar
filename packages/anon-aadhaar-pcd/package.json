@@ -1,12 +1,12 @@
 {
   "name": "anon-aadhaar-pcd",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "main": "./dist/index.js",
   "types": "./src/index.ts",
   "repository": "https://github.com/privacy-scaling-explorations/anon-aadhaar",
   "license": "MIT",
   "scripts": {
-    "build": "cd ../../node_modules/spdf && yarn build && cd ../../packages/anon-aadhaar-pcd && tsup src/index.ts",
+    "build": "tsup src/index.ts",
     "dev-setup": "/bin/bash ./script/setup-dev.sh setup",
     "dev-install": "/bin/bash ./script/setup-dev.sh install",
     "test": "npx ts-mocha test/**/*.test.ts --exit",
@@ -30,7 +30,6 @@
     "registry": "https://registry.npmjs.org"
   },
   "dependencies": {
-    "@pcd/passport-ui": "^0.6.0",
     "@pcd/pcd-types": "^0.6.0",
     "@pcd/tsconfig": "^0.6.0",
     "axios": "^1.4.0",
@@ -38,7 +37,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "snarkjs": "^0.7.0",
-    "spdf": "https://github.com/anon-aadhaar-private/sPDF.js#main",
+    "spdf": "git+https://github.com/anon-aadhaar-private/sPDF.js.git#lite_pkg",
     "styled-components": "^6.0.0-rc.1",
     "uuid": "^9.0.0",
     "valid-url": "^1.0.9"

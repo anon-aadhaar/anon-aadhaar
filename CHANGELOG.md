@@ -1,6 +1,9 @@
 ## 0.1.5
 
 - Adding certificate extraction from the pdf
+- Adding new V2 Login flow for proving with the Aadhaar pdf only
+- New component {LogInWithAnonAadhaarV2}
+- New error handler component
 
 ## 0.1.4
 

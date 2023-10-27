@@ -69,3 +69,9 @@ export type SnarkJSProof = {
   protocol: string
   curve: string
 }
+
+export type Witness = {
+  msgBigInt: bigint
+  modulusBigInt: bigint
+  sigBigInt: bigint
+}
