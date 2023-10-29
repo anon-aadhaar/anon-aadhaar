@@ -1,3 +1,8 @@
+## 0.1.6
+
+- Adding snarkjs types
+- Fix dependences issues in anon-aadhaar-pcd
+
 ## 0.1.5
 
 - Adding certificate extraction from the pdf

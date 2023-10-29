@@ -1,9 +1,6 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 import { decryptPDF } from 'spdf'
-import { SnarkJSProof, Proof } from './types'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { groth16 } from 'snarkjs'
+import { Proof } from './types'
+import { groth16, Groth16Proof } from 'snarkjs'
 import { AnonAadhaarPCD } from '../src/pcd'
 import { BigNumberish } from '../src/types'
 import { subtle } from 'crypto'
@@ -85,7 +82,7 @@ export function splitToWords(
  * @param originalProof The proof generated with SnarkJS.
  * @returns The proof compatible with Semaphore.
  */
-export function packProof(originalProof: SnarkJSProof): Proof {
+export function packProof(originalProof: Groth16Proof): Proof {
   return [
     originalProof.pi_a[0],
     originalProof.pi_a[1],
@@ -96,24 +93,6 @@ export function packProof(originalProof: SnarkJSProof): Proof {
     originalProof.pi_c[0],
     originalProof.pi_c[1],
   ]
-}
-
-/**
- * Unpacks a proof into its original form.
- * @param proof The proof compatible with Semaphore.
- * @returns The proof compatible with SnarkJS.
- */
-export function unpackProof(proof: Proof): SnarkJSProof {
-  return {
-    pi_a: [proof[0], proof[1]],
-    pi_b: [
-      [proof[3], proof[2]],
-      [proof[5], proof[4]],
-    ],
-    pi_c: [proof[6], proof[7]],
-    protocol: 'groth16',
-    curve: 'bn128',
-  }
 }
 
 /**

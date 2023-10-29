@@ -3230,6 +3230,11 @@
   resolved "https://registry.yarnpkg.com/@types/semver/-/semver-7.5.0.tgz#591c1ce3a702c45ee15f47a42ade72c2fd78978a"
   integrity sha512-G8hZ6XJiHnuhQKR7ZmysCeJWE08o8T0AXtk5darsCaTVsYZhhgUrq53jizaR2FvsoeCwJhlmwTjkXBY5Pn/ZHw==
 
+"@types/snarkjs@^0.7.6":
+  version "0.7.6"
+  resolved "https://registry.yarnpkg.com/@types/snarkjs/-/snarkjs-0.7.6.tgz#d15f755bb5de6fafc80fe65671f69e52be2c5afd"
+  integrity sha512-1GVira8XuoCqqOJTKT6UQVMrPRBtylA6OjRgRuwkZFUUy4R8ZrwchNn7yr+XjQ1aXPAv/Q/jua8e+HezKeZjyg==
+
 "@types/stack-utils@^2.0.0":
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-2.0.1.tgz#20f18294f797f2209b5f65c8e3b5c8e8261d127c"

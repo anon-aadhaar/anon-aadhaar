@@ -1,15 +1,12 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { isWebUri } from 'valid-url'
 import { AnonAadhaarPCDArgs, AnonAadhaarPCDProof } from './types'
 import axios from 'axios'
 import { splitToWords } from './utils'
-
-// @ts-ignore
-import { groth16 } from 'snarkjs'
+import { ZKArtifact, groth16 } from 'snarkjs'
 
 type Witness = AnonAadhaarPCDArgs
 
-async function fetchKey(keyURL: string): Promise<string | ArrayBuffer> {
+async function fetchKey(keyURL: string): Promise<ZKArtifact> {
   if (isWebUri(keyURL)) {
     const keyData = await (
       await axios.get(keyURL, {
@@ -24,7 +21,7 @@ async function fetchKey(keyURL: string): Promise<string | ArrayBuffer> {
 interface KeyPathInterface {
   keyURL: string
   isLocation: boolean
-  getKey: () => Promise<ArrayBuffer | string>
+  getKey: () => Promise<ZKArtifact>
 }
 
 export class KeyPath implements KeyPathInterface {
@@ -35,7 +32,7 @@ export class KeyPath implements KeyPathInterface {
     this.keyURL = keyURL
     this.isLocation = isLocation
   }
-  async getKey(): Promise<ArrayBuffer | string> {
+  async getKey(): Promise<ZKArtifact> {
     if (this.isLocation) return this.keyURL
     return await fetchKey(this.keyURL)
   }
