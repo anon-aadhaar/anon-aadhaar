@@ -1,7 +1,11 @@
+## 0.1.7
+
+- Fix dependencies issues in anon-aadhaar-pcd
+
 ## 0.1.6
 
 - Adding snarkjs types
-- Fix dependences issues in anon-aadhaar-pcd
+- Fix dependencies issues in anon-aadhaar-pcd
 
 ## 0.1.5
 
