@@ -104,15 +104,15 @@ const ModalContent = styled.div`
   justify-content: space-between;
 
   /* Responsive styles */
-  @media (max-width: 768px) {
+  @media (max-width: 425px) {
     /* For screens <= 768px (e.g., mobile devices) */
     width: 100%;
-    height: 50%;
+    height: 60%;
     max-width: 100%;
     max-height: 100%;
   }
 
-  @media (min-width: 769px) {
+  @media (min-width: 426px) {
     /* For screens > 768px (e.g., desktop) */
     min-height: 400px;
     width: 80%; /* Adjust the percentage as needed */
@@ -148,6 +148,11 @@ const Title = styled.h3`
   margin-right: auto;
   font-size: medium;
   font-weight: bold;
+
+  @media (max-width: 425px) {
+    /* For screens <= 768px (e.g., mobile devices) */
+    font-size: small;
+  }
 `
 
 const Disclaimer = styled.p`
