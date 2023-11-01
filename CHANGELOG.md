@@ -1,3 +1,7 @@
+## 0.1.8
+
+- Fix LoginV2 modal component responsivness
+
 ## 0.1.7
 
 - Fix dependencies issues in anon-aadhaar-pcd
