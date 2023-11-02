@@ -4,6 +4,7 @@
 # default dir
 ROOT=$(pwd)
 BUILD_DIR=$(pwd)/build
+PDF_DIR=$(pwd)/build/pdf
 ARTIFACTS_DIR=$(pwd)/artifacts
 POWERS_OF_TAU=$BUILD_DIR/powersOfTau28_hez_final_18.ptau
 RSA_DIR=$(pwd)/circuits
@@ -87,13 +88,18 @@ function setup_circuit() {
 }
 
 function gen_cert_and_key() {
-    cd $BUILD_DIR
+    if [ ! -d $PDF_DIR ]; then
+        mkdir -p $PDF_DIR
+    fi
+    cd $PDF_DIR
     openssl req -newkey rsa:2048 -x509 -nodes -keyout cakey.pem -out cacert.pem -days 3650 -subj "/C=GB/ST=London/L=London/O=Global Security/OU=IT Department/CN=example.com"  
     openssl pkcs12 -export -out keyStore.p12 -inkey cakey.pem -in cacert.pem  -passout pass:password
     openssl x509 -inform PEM -in cacert.pem -outform DER -out certificate.cer   
-    npx node-signpdf-gen create $BUILD_DIR/certificate.cer $BUILD_DIR/temp.pdf
-    qpdf --encrypt test123 test123 128 -- $BUILD_DIR/temp.pdf $BUILD_DIR/encrypted.pdf --allow-weak-crypto
-    npx node-signpdf-gen sign $BUILD_DIR/encrypted.pdf $BUILD_DIR/keyStore.p12 $BUILD_DIR/signed.pdf
+    npx node-signpdf-gen create $PDF_DIR/certificate.cer $PDF_DIR/temp.pdf
+    qpdf --encrypt test123 test123 128 -- $PDF_DIR/temp.pdf $PDF_DIR/encrypted.pdf --allow-weak-crypto
+    npx node-signpdf-gen sign $PDF_DIR/encrypted.pdf $PDF_DIR/keyStore.p12 $PDF_DIR/signed.pdf
+    rm $PDF_DIR/temp.pdf $PDF_DIR/encrypted.pdf $PDF_DIR/keyStore.p12 $PDF_DIR/cacert.pem $PDF_DIR/cakey.pem
+    echo "PDFs generated!!!"
 }
 
 function setup_contract() {

@@ -43,9 +43,6 @@ const createPdf = params => new Promise(resolve => {
   });
   const certBuffer = _nodeFs.default.readFileSync(requestParams.certFilePath);
   if (requestParams.addSignaturePlaceholder) {
-    console.log({
-      ...requestParams.placeholder
-    });
     // Externally (to PDFKit) add the signature placeholder.
     const refs = (0, _helpers.pdfkitAddPlaceholderForPKCS1)({
       pdf,
@@ -65,28 +62,6 @@ const createPdf = params => new Promise(resolve => {
   // See pdf.on('end'... on how it is then converted to Buffer.
   pdf.end();
 });
-
-// function signPDF({
-//   pdfPath,
-//   keyFilePath,
-//   certFilePath,
-//   passphrase = 'password',
-// }) {
-//   createPdf({
-//     placeholder: {
-//       signatureLength: 260,
-//     },
-//     text: 'This is a document',
-//     certFilePath: certFilePath,
-//   }).then(pdfBuffer => {
-//     console.log(pdfBuffer)
-//     let signer = new SignPdf()
-//     let key = fs.readFileSync(keyFilePath)
-//     const signedPdf = signer.sign_pkcs1(pdfBuffer, key, { passphrase })
-//     fs.writeFileSync(pdfPath, signedPdf)
-//   })
-// }
-
 const command = process.argv[2];
 try {
   if (command === 'create') {
@@ -107,7 +82,6 @@ try {
     const outputPdf = process.argv[5];
     const passphrase = 'password';
     const pdfBuffer = _nodeFs.default.readFileSync(pdfPath);
-    console.log(pdfBuffer);
     let signer = new _signpdf.SignPdf();
     let key = _nodeFs.default.readFileSync(keyFilePath);
     const signedPdf = signer.sign_pkcs1(pdfBuffer, key, {
@@ -115,18 +89,6 @@ try {
     });
     _nodeFs.default.writeFileSync(outputPdf, signedPdf);
   }
-
-  // const pdfPath = process.argv[2]
-  // const keyFilePath = process.argv[3]
-  // const certFilePath = process.argv[4]
-  // const passphrase = process.argv[5] || undefined
-
-  // signPDF({
-  //   pdfPath,
-  //   keyFilePath,
-  //   passphrase,
-  //   certFilePath,
-  // })
 } catch (e) {
   console.log(e);
 }
