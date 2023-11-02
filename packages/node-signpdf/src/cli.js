@@ -2,7 +2,8 @@
 
 import PDFDocument from 'pdfkit'
 
-import { SignPdf, pdfkitAddPlaceholder } from './signpdf'
+import { SignPdf } from './signpdf'
+import { pdfkitAddPlaceholderForPKCS1 } from './helpers'
 
 import fs from 'node:fs'
 
@@ -22,6 +23,7 @@ const createPdf = params =>
       size: 'A4',
       layout: requestParams.layout,
       bufferPages: true,
+      pdfVersion: '1.4',
     })
     pdf.info.CreationDate = ''
 
@@ -50,13 +52,15 @@ const createPdf = params =>
       resolve(Buffer.concat(pdfChunks))
     })
 
+    const certBuffer = fs.readFileSync(requestParams.certFilePath)
+
     if (requestParams.addSignaturePlaceholder) {
-      console.log({ ...requestParams.placeholder })
       // Externally (to PDFKit) add the signature placeholder.
-      const refs = pdfkitAddPlaceholder({
+      const refs = pdfkitAddPlaceholderForPKCS1({
         pdf,
         pdfBuffer: Buffer.from([pdf]),
         reason: 'I am the author',
+        cert: certBuffer,
         ...requestParams.placeholder,
       })
 
@@ -71,32 +75,32 @@ const createPdf = params =>
     pdf.end()
   })
 
-function signPDF({ pdfPath, keyFilePath, passphrase = 'password' }) {
-  createPdf({
-    placeholder: {
-      signatureLength: 260,
-    },
-    text: 'This is a document',
-  }).then(pdfBuffer => {
-    console.log(pdfBuffer)
+const command = process.argv[2]
+
+try {
+  if (command === 'create') {
+    const certFilePath = process.argv[3]
+    const outputFilePath = process.argv[4]
+    createPdf({
+      placeholder: {
+        signatureLength: 260,
+      },
+      text: 'This is a document',
+      certFilePath: certFilePath,
+    }).then(tempsPdf => {
+      fs.writeFileSync(outputFilePath, tempsPdf)
+    })
+  } else if (command === 'sign') {
+    const pdfPath = process.argv[3]
+    const keyFilePath = process.argv[4]
+    const outputPdf = process.argv[5]
+    const passphrase = 'password'
+    const pdfBuffer = fs.readFileSync(pdfPath)
     let signer = new SignPdf()
     let key = fs.readFileSync(keyFilePath)
     const signedPdf = signer.sign_pkcs1(pdfBuffer, key, { passphrase })
-    fs.writeFileSync(pdfPath, signedPdf)
-  })
-}
-
-try {
-  const pdfPath = process.argv[2]
-  const keyFilePath = process.argv[3]
-  const passphrase = process.argv[4] || undefined
-
-  console.log(passphrase)
-  signPDF({
-    pdfPath,
-    keyFilePath,
-    passphrase,
-  })
+    fs.writeFileSync(outputPdf, signedPdf)
+  }
 } catch (e) {
   console.log(e)
 }
