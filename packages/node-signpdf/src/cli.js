@@ -23,9 +23,7 @@ const createPdf = params =>
       size: 'A4',
       layout: requestParams.layout,
       bufferPages: true,
-      // userPassword: 'test',
-      // ownerPassword: 'test',
-      // pdfVersion: '1.4',
+      pdfVersion: '1.4',
     })
     pdf.info.CreationDate = ''
 
@@ -78,39 +76,66 @@ const createPdf = params =>
     pdf.end()
   })
 
-function signPDF({
-  pdfPath,
-  keyFilePath,
-  certFilePath,
-  passphrase = 'password',
-}) {
-  createPdf({
-    placeholder: {
-      signatureLength: 260,
-    },
-    text: 'This is a document',
-    certFilePath: certFilePath,
-  }).then(pdfBuffer => {
+// function signPDF({
+//   pdfPath,
+//   keyFilePath,
+//   certFilePath,
+//   passphrase = 'password',
+// }) {
+//   createPdf({
+//     placeholder: {
+//       signatureLength: 260,
+//     },
+//     text: 'This is a document',
+//     certFilePath: certFilePath,
+//   }).then(pdfBuffer => {
+//     console.log(pdfBuffer)
+//     let signer = new SignPdf()
+//     let key = fs.readFileSync(keyFilePath)
+//     const signedPdf = signer.sign_pkcs1(pdfBuffer, key, { passphrase })
+//     fs.writeFileSync(pdfPath, signedPdf)
+//   })
+// }
+
+const command = process.argv[2]
+
+try {
+  if (command === 'create') {
+    const certFilePath = process.argv[3]
+    const outputFilePath = process.argv[4]
+    createPdf({
+      placeholder: {
+        signatureLength: 260,
+      },
+      text: 'This is a document',
+      certFilePath: certFilePath,
+    }).then(tempsPdf => {
+      fs.writeFileSync(outputFilePath, tempsPdf)
+    })
+  } else if (command === 'sign') {
+    const pdfPath = process.argv[3]
+    const keyFilePath = process.argv[4]
+    const outputPdf = process.argv[5]
+    const passphrase = 'password'
+    const pdfBuffer = fs.readFileSync(pdfPath)
     console.log(pdfBuffer)
     let signer = new SignPdf()
     let key = fs.readFileSync(keyFilePath)
     const signedPdf = signer.sign_pkcs1(pdfBuffer, key, { passphrase })
-    fs.writeFileSync(pdfPath, signedPdf)
-  })
-}
+    fs.writeFileSync(outputPdf, signedPdf)
+  }
 
-try {
-  const pdfPath = process.argv[2]
-  const keyFilePath = process.argv[3]
-  const certFilePath = process.argv[4]
-  const passphrase = process.argv[5] || undefined
+  // const pdfPath = process.argv[2]
+  // const keyFilePath = process.argv[3]
+  // const certFilePath = process.argv[4]
+  // const passphrase = process.argv[5] || undefined
 
-  signPDF({
-    pdfPath,
-    keyFilePath,
-    passphrase,
-    certFilePath,
-  })
+  // signPDF({
+  //   pdfPath,
+  //   keyFilePath,
+  //   passphrase,
+  //   certFilePath,
+  // })
 } catch (e) {
   console.log(e)
 }

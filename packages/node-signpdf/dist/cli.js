@@ -19,12 +19,9 @@ const createPdf = params => new Promise(resolve => {
     autoFirstPage: false,
     size: 'A4',
     layout: requestParams.layout,
-    bufferPages: true
-    // userPassword: 'test',
-    // ownerPassword: 'test',
-    // pdfVersion: '1.4',
+    bufferPages: true,
+    pdfVersion: '1.4'
   });
-
   pdf.info.CreationDate = '';
   if (requestParams.pages < 1) {
     requestParams.pages = 1;
@@ -68,39 +65,68 @@ const createPdf = params => new Promise(resolve => {
   // See pdf.on('end'... on how it is then converted to Buffer.
   pdf.end();
 });
-function signPDF({
-  pdfPath,
-  keyFilePath,
-  certFilePath,
-  passphrase = 'password'
-}) {
-  createPdf({
-    placeholder: {
-      signatureLength: 260
-    },
-    text: 'This is a document',
-    certFilePath: certFilePath
-  }).then(pdfBuffer => {
+
+// function signPDF({
+//   pdfPath,
+//   keyFilePath,
+//   certFilePath,
+//   passphrase = 'password',
+// }) {
+//   createPdf({
+//     placeholder: {
+//       signatureLength: 260,
+//     },
+//     text: 'This is a document',
+//     certFilePath: certFilePath,
+//   }).then(pdfBuffer => {
+//     console.log(pdfBuffer)
+//     let signer = new SignPdf()
+//     let key = fs.readFileSync(keyFilePath)
+//     const signedPdf = signer.sign_pkcs1(pdfBuffer, key, { passphrase })
+//     fs.writeFileSync(pdfPath, signedPdf)
+//   })
+// }
+
+const command = process.argv[2];
+try {
+  if (command === 'create') {
+    const certFilePath = process.argv[3];
+    const outputFilePath = process.argv[4];
+    createPdf({
+      placeholder: {
+        signatureLength: 260
+      },
+      text: 'This is a document',
+      certFilePath: certFilePath
+    }).then(tempsPdf => {
+      _nodeFs.default.writeFileSync(outputFilePath, tempsPdf);
+    });
+  } else if (command === 'sign') {
+    const pdfPath = process.argv[3];
+    const keyFilePath = process.argv[4];
+    const outputPdf = process.argv[5];
+    const passphrase = 'password';
+    const pdfBuffer = _nodeFs.default.readFileSync(pdfPath);
     console.log(pdfBuffer);
     let signer = new _signpdf.SignPdf();
     let key = _nodeFs.default.readFileSync(keyFilePath);
     const signedPdf = signer.sign_pkcs1(pdfBuffer, key, {
       passphrase
     });
-    _nodeFs.default.writeFileSync(pdfPath, signedPdf);
-  });
-}
-try {
-  const pdfPath = process.argv[2];
-  const keyFilePath = process.argv[3];
-  const certFilePath = process.argv[4];
-  const passphrase = process.argv[5] || undefined;
-  signPDF({
-    pdfPath,
-    keyFilePath,
-    passphrase,
-    certFilePath
-  });
+    _nodeFs.default.writeFileSync(outputPdf, signedPdf);
+  }
+
+  // const pdfPath = process.argv[2]
+  // const keyFilePath = process.argv[3]
+  // const certFilePath = process.argv[4]
+  // const passphrase = process.argv[5] || undefined
+
+  // signPDF({
+  //   pdfPath,
+  //   keyFilePath,
+  //   passphrase,
+  //   certFilePath,
+  // })
 } catch (e) {
   console.log(e);
 }
