@@ -1,6 +1,22 @@
+## 0.1.8
+
+- Fix LoginV2 modal component responsivness
+
+## 0.1.7
+
+- Fix dependencies issues in anon-aadhaar-pcd
+
+## 0.1.6
+
+- Adding snarkjs types
+- Fix dependencies issues in anon-aadhaar-pcd
+
 ## 0.1.5
 
 - Adding certificate extraction from the pdf
+- Adding new V2 Login flow for proving with the Aadhaar pdf only
+- New component {LogInWithAnonAadhaarV2}
+- New error handler component
 
 ## 0.1.4
 

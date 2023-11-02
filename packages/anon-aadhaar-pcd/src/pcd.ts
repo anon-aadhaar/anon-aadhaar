@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { DisplayOptions, PCD, PCDPackage, SerializedPCD } from '@pcd/pcd-types'
 import {
   PCDInitArgs,
@@ -9,13 +8,9 @@ import {
 } from './types'
 
 import { v4 as uuidv4 } from 'uuid'
-
-// @ts-ignore
 import { groth16 } from 'snarkjs'
-
 import { splitToWords } from './utils'
 import JSONBig from 'json-bigint'
-import { AnonAadhaarPCDCardBody } from './CardBody'
 import { BackendProver, ProverInferace, WebProver } from './prover'
 import axios from 'axios'
 
@@ -134,7 +129,6 @@ export const AnonAadhaarPCDPackage: PCDPackage<
   PCDInitArgs
 > = {
   name: AnonAadhaarPCDTypeName,
-  renderCardBody: AnonAadhaarPCDCardBody,
   getDisplayOptions,
   prove,
   init,

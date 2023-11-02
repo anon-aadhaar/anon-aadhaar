@@ -1,4 +1,5 @@
 import { BigIntArgument } from '@pcd/pcd-types'
+import { Groth16Proof } from 'snarkjs'
 
 export type BigNumberish = string | bigint
 
@@ -29,7 +30,7 @@ export interface AnonAadhaarPCDClaim {
  */
 export interface AnonAadhaarPCDProof {
   modulus: BigNumberish
-  proof: SnarkJSProof // 3 points on curve if we use groth16
+  proof: Groth16Proof // 3 points on curve if we use groth16
 }
 
 /**
@@ -59,13 +60,11 @@ export interface FullProof {
 
 export interface PCDProof {
   modulus: BigNumberish
-  proof: SnarkJSProof
+  proof: Groth16Proof
 }
 
-export type SnarkJSProof = {
-  pi_a: BigNumberish[]
-  pi_b: BigNumberish[][]
-  pi_c: BigNumberish[]
-  protocol: string
-  curve: string
+export type Witness = {
+  msgBigInt: bigint
+  modulusBigInt: bigint
+  sigBigInt: bigint
 }
