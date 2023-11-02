@@ -146,7 +146,7 @@ const pdfkitAddPlaceholderForPKCS1 = ({
     SubFilter: subFilter,
     ByteRange: [0, byteRangePlaceholder, byteRangePlaceholder, byteRangePlaceholder],
     Contents: Buffer.from(String.fromCharCode(0).repeat(signatureLength)),
-    Cert: new String(cert),
+    Cert: Buffer.from(cert),
     Reason: new String(reason),
     // eslint-disable-line no-new-wrappers
     M: new Date(),

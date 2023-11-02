@@ -23,6 +23,9 @@ const createPdf = params =>
       size: 'A4',
       layout: requestParams.layout,
       bufferPages: true,
+      // userPassword: 'test',
+      // ownerPassword: 'test',
+      // pdfVersion: '1.4',
     })
     pdf.info.CreationDate = ''
 
@@ -52,7 +55,6 @@ const createPdf = params =>
     })
 
     const certBuffer = fs.readFileSync(requestParams.certFilePath)
-    const cert = certBuffer.toString('hex')
 
     if (requestParams.addSignaturePlaceholder) {
       console.log({ ...requestParams.placeholder })
@@ -61,7 +63,7 @@ const createPdf = params =>
         pdf,
         pdfBuffer: Buffer.from([pdf]),
         reason: 'I am the author',
-        cert: cert,
+        cert: certBuffer,
         ...requestParams.placeholder,
       })
 

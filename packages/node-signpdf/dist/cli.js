@@ -20,7 +20,11 @@ const createPdf = params => new Promise(resolve => {
     size: 'A4',
     layout: requestParams.layout,
     bufferPages: true
+    // userPassword: 'test',
+    // ownerPassword: 'test',
+    // pdfVersion: '1.4',
   });
+
   pdf.info.CreationDate = '';
   if (requestParams.pages < 1) {
     requestParams.pages = 1;
@@ -41,7 +45,6 @@ const createPdf = params => new Promise(resolve => {
     resolve(Buffer.concat(pdfChunks));
   });
   const certBuffer = _nodeFs.default.readFileSync(requestParams.certFilePath);
-  const cert = certBuffer.toString('hex');
   if (requestParams.addSignaturePlaceholder) {
     console.log({
       ...requestParams.placeholder
@@ -51,7 +54,7 @@ const createPdf = params => new Promise(resolve => {
       pdf,
       pdfBuffer: Buffer.from([pdf]),
       reason: 'I am the author',
-      cert: cert,
+      cert: certBuffer,
       ...requestParams.placeholder
     });
 
