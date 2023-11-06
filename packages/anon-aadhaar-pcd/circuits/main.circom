@@ -1,5 +1,5 @@
 pragma circom 2.1.5;
 
-include "./rsa.circom";
+include "./hash.circom";
 
-component main{public [modulus]} = RSAVerify65537(64, 32);
+component main{public [modulus]} = ProcessProof(64, 32);
