@@ -16,7 +16,7 @@ describe('PCD tests', function () {
   })
 
   it('PCD flow location prover', async function () {
-    const dirName = __dirname + '/../artifacts'
+    const dirName = __dirname + '/../artifacts/RSA'
     const pcdInitArgs: PCDInitArgs = {
       wasmURL: dirName + '/main.wasm',
       zkeyURL: dirName + '/circuit_final.zkey',

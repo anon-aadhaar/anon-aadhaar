@@ -29,6 +29,7 @@ export interface AnonAadhaarPCDClaim {
  * @dev proof of claim correct
  */
 export interface AnonAadhaarPCDProof {
+  hash?: BigNumberish
   modulus: BigNumberish
   proof: Groth16Proof // 3 points on curve if we use groth16
 }

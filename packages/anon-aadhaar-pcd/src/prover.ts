@@ -84,13 +84,17 @@ export class BackendProver implements ProverInferace {
       ),
     }
 
-    const { proof } = await groth16.fullProve(
+    const { proof, publicSignals } = await groth16.fullProve(
       input,
       await this.wasm.getKey(),
       await this.zkey.getKey()
     )
 
+    if (publicSignals === undefined)
+      throw new Error('Cannot make proof: something went wrong!')
+
     return {
+      hash: publicSignals[0],
       modulus: witness.modulus.value,
       proof,
     }
