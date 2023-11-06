@@ -21,11 +21,11 @@ template ProcessProof(n, k) {
     component base_message2 = Poseidon(k/2);
 
     for (var i = 0; i < k/2; i++) {
-        base_message1.inputs[i] <== signature[i];
+        base_message1.inputs[i] <== base_message[i];
     }
 
     for (var i = 0; i < k/2; i++) {
-        base_message2.inputs[i] <== signature[i+16];
+        base_message2.inputs[i] <== base_message[i+16];
     }
 
     component message_hash = Poseidon(2);
