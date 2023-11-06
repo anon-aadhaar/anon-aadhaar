@@ -3,7 +3,7 @@ pragma circom 2.1.5;
 include "../node_modules/circomlib/circuits/poseidon.circom";
 include "./rsa.circom";
 
-template ProcessProof(n, k) {
+template HashMessage(n, k) {
     signal input signature[k];
     signal input modulus[k];
     signal input base_message[k];
