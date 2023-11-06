@@ -1,6 +1,6 @@
 pragma circom 2.1.5;
 
-include "../node_modules/circomlib/circuits/poseidon.circom";
+include "../../node_modules/circomlib/circuits/poseidon.circom";
 
 template Nullifier() {
     signal input private_key;
