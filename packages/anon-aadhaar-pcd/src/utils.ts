@@ -6,6 +6,21 @@ import { BigNumberish } from '../src/types'
 import { subtle } from 'crypto'
 import * as x509 from '@peculiar/x509'
 
+export const handleError = (error: unknown, defaultMessage: string): Error => {
+  if (error instanceof Error) return error
+
+  let stringified = defaultMessage
+  try {
+    stringified = JSON.stringify(error)
+    // eslint-disable-next-line no-empty
+  } catch {}
+
+  const err = new Error(
+    `This value was thrown as is, not through an Error: ${stringified}`
+  )
+  return err
+}
+
 const getSubstringIndex = (str: Buffer, substring: string, n: number) => {
   let times = 0
   let index = 0

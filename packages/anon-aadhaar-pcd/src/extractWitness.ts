@@ -1,5 +1,5 @@
 import { pki, md, asn1 } from 'node-forge'
-import { extractCert, extractSignature } from './utils'
+import { extractCert, extractSignature, handleError } from './utils'
 import { Witness } from './types'
 
 /**
@@ -59,17 +59,6 @@ export const extractWitness = async (
 
     return { msgBigInt, sigBigInt, modulusBigInt }
   } catch (error) {
-    if (error instanceof Error) return error
-
-    let stringified = '[Unable to extract the witness from the pdf]'
-    try {
-      stringified = JSON.stringify(error)
-      // eslint-disable-next-line no-empty
-    } catch {}
-
-    const err = new Error(
-      `This value was thrown as is, not through an Error: ${stringified}`
-    )
-    return err
+    return handleError(error, '[Unable to extract the witness from the pdf]')
   }
 }
