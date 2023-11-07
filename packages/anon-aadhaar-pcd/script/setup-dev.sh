@@ -116,7 +116,8 @@ function generate_proof() {
     cd $ROOT
     echo "Building proof...!"
     mkdir -p $BUILD_DIR/proofs
-    snarkjs groth16 fullprove $RSA_DIR/input.json $BUILD_DIR/circuit/main_js/main.wasm $BUILD_DIR/circuit/circuit_final.zkey $BUILD_DIR/proofs/proof.json $BUILD_DIR/proofs/public.json
+    npx ts-node ./script/generateInput.ts
+    snarkjs groth16 fullprove $BUILD_DIR/input.json $BUILD_DIR/circuit/main_js/main.wasm $BUILD_DIR/circuit/circuit_final.zkey $BUILD_DIR/proofs/proof.json $BUILD_DIR/proofs/public.json
     echo "Generated proof...!"
 }
 
