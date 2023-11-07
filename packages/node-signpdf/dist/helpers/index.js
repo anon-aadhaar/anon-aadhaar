@@ -15,7 +15,7 @@ Object.defineProperty(exports, "findByteRange", {
     return _findByteRange.default;
   }
 });
-Object.defineProperty(exports, "pdfkitAddPlaceholder", {
+Object.defineProperty(exports, "pdfkitAddPlaceholderForPKCS1", {
   enumerable: true,
   get: function () {
     return _pdfkitAddPlaceholder.default;

@@ -4,6 +4,7 @@
 # default dir
 ROOT=$(pwd)
 BUILD_DIR=$(pwd)/build
+PDF_DIR=$(pwd)/build/pdf
 ARTIFACTS_DIR=$(pwd)/artifacts
 POWERS_OF_TAU=$BUILD_DIR/powersOfTau28_hez_final_18.ptau
 RSA_DIR=$(pwd)/circuits
@@ -87,11 +88,18 @@ function setup_circuit() {
 }
 
 function gen_cert_and_key() {
-    cd $BUILD_DIR
+    if [ ! -d $PDF_DIR ]; then
+        mkdir -p $PDF_DIR
+    fi
+    cd $PDF_DIR
     openssl req -newkey rsa:2048 -x509 -nodes -keyout cakey.pem -out cacert.pem -days 3650 -subj "/C=GB/ST=London/L=London/O=Global Security/OU=IT Department/CN=example.com"  
     openssl pkcs12 -export -out keyStore.p12 -inkey cakey.pem -in cacert.pem  -passout pass:password
     openssl x509 -inform PEM -in cacert.pem -outform DER -out certificate.cer   
-    npx node-signpdf-gen $BUILD_DIR/signed.pdf $BUILD_DIR/keyStore.p12
+    npx node-signpdf-gen create $PDF_DIR/certificate.cer $PDF_DIR/temp.pdf
+    qpdf --encrypt test123 test123 128 -- $PDF_DIR/temp.pdf $PDF_DIR/encrypted.pdf --allow-weak-crypto
+    npx node-signpdf-gen sign $PDF_DIR/encrypted.pdf $PDF_DIR/keyStore.p12 $PDF_DIR/signed.pdf
+    rm $PDF_DIR/temp.pdf $PDF_DIR/encrypted.pdf $PDF_DIR/keyStore.p12 $PDF_DIR/cacert.pem $PDF_DIR/cakey.pem
+    echo "PDFs generated!!!"
 }
 
 function setup_contract() {
@@ -108,7 +116,8 @@ function generate_proof() {
     cd $ROOT
     echo "Building proof...!"
     mkdir -p $BUILD_DIR/proofs
-    snarkjs groth16 fullprove ./build/input.json ./build/circuit/main_js/main.wasm ./build/circuit/circuit_final.zkey $BUILD_DIR/proofs/proof.json $BUILD_DIR/proofs/public.json
+    npx ts-node ./script/generateInput.ts
+    snarkjs groth16 fullprove $BUILD_DIR/input.json $BUILD_DIR/circuit/main_js/main.wasm $BUILD_DIR/circuit/circuit_final.zkey $BUILD_DIR/proofs/proof.json $BUILD_DIR/proofs/public.json
     echo "Generated proof...!"
 }
 
