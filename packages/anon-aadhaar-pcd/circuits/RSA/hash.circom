@@ -7,7 +7,7 @@ template HashMessage(n, k) {
     signal input signature[k];
     signal input modulus[k];
     signal input base_message[k];
-    signal output out;
+    signal output hash;
 
     component RSAVerifier = RSAVerify65537(n, k);
 
@@ -33,5 +33,5 @@ template HashMessage(n, k) {
     message_hash.inputs[0] <== base_message1.out;
     message_hash.inputs[1] <== base_message2.out;
 
-    out <== message_hash.out;
+    hash <== message_hash.out;
 }

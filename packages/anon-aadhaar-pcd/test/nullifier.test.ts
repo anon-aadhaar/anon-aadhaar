@@ -16,8 +16,8 @@ describe('PCD tests', function () {
     const dirName = __dirname + '/../artifacts/Nullifier'
 
     const input = {
-      private_key: testData[2] + '',
-      pdf_hash: testData[3] + '',
+      secret_key: testData[2] + '',
+      base_message: testData[3] + '',
     }
 
     const { proof, publicSignals } = await groth16.fullProve(
