@@ -1,36 +1,75 @@
 import { describe } from 'mocha'
-import { assert } from 'chai'
-import { genData } from '../src/utils'
-import { groth16 } from 'snarkjs'
+import { genData, splitToWords } from '../src/utils'
+import path from 'path'
+import { buildPoseidon } from 'circomlibjs'
+import { poseidon } from 'circomlibjs' // v0.0.8
 
-describe('PCD tests', function () {
+import { IncrementalMerkleTree } from '@zk-kit/incremental-merkle-tree'
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires
+const wasm_tester = require('circom_tester/wasm/tester')
+
+describe.only('PCD tests', function () {
   this.timeout(0)
 
   let testData: [bigint, bigint, bigint, bigint]
 
-  this.beforeAll(async () => {
+  this.beforeEach(async () => {
     testData = await genData('Hello world', 'SHA-1')
   })
 
-  it('Nullifier flow location prover', async function () {
-    const dirName = __dirname + '/../artifacts/Nullifier'
-
-    const input = {
-      secret_key: testData[2] + '',
-      base_message: testData[3] + '',
-    }
-
-    const { proof, publicSignals } = await groth16.fullProve(
-      input,
-      dirName + '/nullifier.wasm',
-      dirName + '/circuit_final.zkey'
+  it('Nullifier workflow', async function () {
+    const client_hasher = await wasm_tester(
+      path.join(__dirname, 'circuits/hash_test.circom')
     )
 
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const vk = require(dirName + '/verification_key.json')
+    const input = {
+      signature: splitToWords(testData[1], BigInt(64), BigInt(32)),
+      modulus: splitToWords(testData[2], BigInt(64), BigInt(32)),
+      base_message: splitToWords(testData[3], BigInt(64), BigInt(32)),
+    }
 
-    const verified = await groth16.verify(vk, publicSignals, proof)
+    const client_outputs = await client_hasher.calculateWitness(input)
 
-    assert(verified == true, 'Should verifiable')
+    const m = client_outputs[1]
+
+    // server side update merkle tree and sent client secret sk
+
+    const sk = BigInt(1234555) // random value.
+
+    const poseidon = await buildPoseidon()
+
+    const compute_leaf = poseidon([sk, m])
+
+    const leaf_num = BigInt(poseidon.F.toString(compute_leaf))
+
+    const tree = new IncrementalMerkleTree(poseidon, 16, BigInt(0), 2) // Binary tree.
+
+    tree.insert(leaf_num)
+
+    const merkle_proof = tree.createProof(0)
+
+    // client side proving nullifer
+
+    const nullifer_circuit = await wasm_tester(
+      path.join(__dirname, '../circuits/Nullifier/nullifier.circom')
+    )
+
+    const nullifer_input = {
+      sk,
+      pdf_hash: testData[3],
+      path_index: merkle_proof.pathIndices,
+      path_elements: merkle_proof.siblings.map((h, index) => {
+          if (index === 0) return h[0];
+          return poseidon.F.toString(h[0])
+      })
+    }
+
+    console.log(nullifer_input)
+    const nullifer_witness = await nullifer_circuit.calculateWitness(
+      nullifer_input
+    )
+
+    console.log(nullifer_witness)
   })
 })

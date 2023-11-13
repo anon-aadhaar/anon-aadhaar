@@ -72,4 +72,4 @@ template Nullifier(n_levels) {
 }
 
 
-component main = Nullifier(15);
+component main = Nullifier(16);
