@@ -2,7 +2,6 @@ import { describe } from 'mocha'
 import { genData, splitToWords } from '../src/utils'
 import path from 'path'
 import { buildPoseidon } from 'circomlibjs'
-import { poseidon } from 'circomlibjs' // v0.0.8
 
 import { IncrementalMerkleTree } from '@zk-kit/incremental-merkle-tree'
 

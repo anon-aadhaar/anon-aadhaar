@@ -3,6 +3,27 @@ pragma circom 2.1.5;
 include "../../node_modules/circomlib/circuits/poseidon.circom";
 include "./rsa.circom";
 
+template BigintStringsHashToBigInt(k) {
+    signal input base_message[k];
+    signal output sha1hash;
+
+    signal accum[3];
+
+    for (var i = 0; i < 3; i++) {
+        var exponent = 64*i;
+        var multiplicator = 2**exponent;
+        accum[i] <== base_message[i] * multiplicator;
+    }
+
+    var temp;
+
+    for (var i = 0; i < 3; i++) {
+        temp = temp + accum[i];
+    }
+
+    sha1hash <== temp;
+}
+
 template HashMessage(n, k) {
     signal input signature[k];
     signal input modulus[k];
@@ -17,21 +38,15 @@ template HashMessage(n, k) {
         RSAVerifier.signature[i] <== signature[i];
     }
 
-    component base_message1 = Poseidon(k/2);
-    component base_message2 = Poseidon(k/2);
+    component Compress = BigintStringsHashToBigInt(k);
 
-    for (var i = 0; i < k/2; i++) {
-        base_message1.inputs[i] <== base_message[i];
+    for (var i = 0; i < k; i++) {
+        Compress.base_message[i] <== base_message[i];
     }
 
-    for (var i = 0; i < k/2; i++) {
-        base_message2.inputs[i] <== base_message[i+16];
-    }
+    component base_message_hash = Poseidon(1);
 
-    component message_hash = Poseidon(2);
+    base_message_hash.inputs[0] <== Compress.sha1hash;
 
-    message_hash.inputs[0] <== base_message1.out;
-    message_hash.inputs[1] <== base_message2.out;
-
-    hash <== message_hash.out;
+    hash <== base_message_hash.out;
 }

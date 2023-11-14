@@ -26,7 +26,7 @@ template Nullifier(n_levels) {
     signal input pdf_hash; // private
 
     signal input path_index[n_levels]; // private
-    signal input path_elements[n_levels]; //privatew
+    signal input path_elements[n_levels]; //private
     signal output root; //public
     signal output nullifier; //public
 
