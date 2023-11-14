@@ -33,11 +33,13 @@ template Nullifier(n_levels) {
     signal leaf;
 
     component pdf_hasher = Poseidon(1);
-
     pdf_hasher.inputs[0] <== pdf_hash;
 
+    component sk_hasher = Poseidon(1);
+    sk_hasher.inputs[0] <== sk;
+
     component leaf_hasher = Poseidon(2);
-    leaf_hasher.inputs[0] <== sk;
+    leaf_hasher.inputs[0] <== sk_hasher.out;
     leaf_hasher.inputs[1] <== pdf_hasher.out; // m value
 
     leaf <== leaf_hasher.out;

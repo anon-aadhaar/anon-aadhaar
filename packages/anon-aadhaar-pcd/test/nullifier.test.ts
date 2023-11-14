@@ -4,6 +4,7 @@ import path from 'path'
 import { buildPoseidon } from 'circomlibjs'
 
 import { IncrementalMerkleTree } from '@zk-kit/incremental-merkle-tree'
+import assert from 'assert'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires
 const wasm_tester = require('circom_tester/wasm/tester')
@@ -32,13 +33,12 @@ describe.only('PCD tests', function () {
 
     const m = client_outputs[1]
 
-    // server side update merkle tree and sent client secret sk
-
-    const sk = BigInt(1234555) // random value.
-
     const poseidon = await buildPoseidon()
 
-    const compute_leaf = poseidon([sk, m])
+    const sk = BigInt(1234555) // random value.
+    const hash_sk = poseidon.F.toString(poseidon([sk]))
+
+    const compute_leaf = poseidon([hash_sk, m])
 
     const leaf_num = BigInt(poseidon.F.toString(compute_leaf))
 
@@ -59,16 +59,15 @@ describe.only('PCD tests', function () {
       pdf_hash: testData[3],
       path_index: merkle_proof.pathIndices,
       path_elements: merkle_proof.siblings.map((h, index) => {
-          if (index === 0) return h[0];
-          return poseidon.F.toString(h[0])
-      })
+        if (index === 0) return h[0]
+        return poseidon.F.toString(h[0])
+      }),
     }
 
-    console.log(nullifer_input)
     const nullifer_witness = await nullifer_circuit.calculateWitness(
       nullifer_input
     )
 
-    console.log(nullifer_witness)
+    assert(nullifer_witness[1] == poseidon.F.toString(merkle_proof.root))
   })
 })
