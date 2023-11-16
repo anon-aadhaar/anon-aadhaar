@@ -3,7 +3,6 @@ import { genData, splitToWords } from '../src/utils'
 import path from 'path'
 import { buildPoseidon } from 'circomlibjs'
 
-import { IncrementalMerkleTree } from '@zk-kit/incremental-merkle-tree'
 import assert from 'assert'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires
@@ -23,51 +22,23 @@ describe.only('PCD tests', function () {
       path.join(__dirname, 'circuits/hash_test.circom')
     )
 
+    const app_id = BigInt(1234555) // random value.
+
     const input = {
       signature: splitToWords(testData[1], BigInt(64), BigInt(32)),
       modulus: splitToWords(testData[2], BigInt(64), BigInt(32)),
       base_message: splitToWords(testData[3], BigInt(64), BigInt(32)),
+      app_id: BigInt(1234555).toString(),
     }
 
     const client_outputs = await client_hasher.calculateWitness(input)
 
-    const m = client_outputs[1]
+    const nullifier = client_outputs[1]
 
     const poseidon = await buildPoseidon()
 
-    const sk = BigInt(1234555) // random value.
-    const hash_sk = poseidon.F.toString(poseidon([sk]))
+    const compute_nullifier = poseidon([testData[3], app_id])
 
-    const compute_leaf = poseidon([hash_sk, m])
-
-    const leaf_num = BigInt(poseidon.F.toString(compute_leaf))
-
-    const tree = new IncrementalMerkleTree(poseidon, 16, BigInt(0), 2) // Binary tree.
-
-    tree.insert(leaf_num)
-
-    const merkle_proof = tree.createProof(0)
-
-    // client side proving nullifer
-
-    const nullifer_circuit = await wasm_tester(
-      path.join(__dirname, '../circuits/Nullifier/nullifier.circom')
-    )
-
-    const nullifer_input = {
-      sk,
-      pdf_hash: testData[3],
-      path_index: merkle_proof.pathIndices,
-      path_elements: merkle_proof.siblings.map((h, index) => {
-        if (index === 0) return h[0]
-        return poseidon.F.toString(h[0])
-      }),
-    }
-
-    const nullifer_witness = await nullifer_circuit.calculateWitness(
-      nullifer_input
-    )
-
-    assert(nullifer_witness[1] == poseidon.F.toString(merkle_proof.root))
+    assert(nullifier == poseidon.F.toString(compute_nullifier))
   })
 })

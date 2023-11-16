@@ -25,10 +25,11 @@ template BigintStringsHashToBigInt(k) {
 }
 
 template HashMessage(n, k) {
-    signal input signature[k];
-    signal input modulus[k];
-    signal input base_message[k];
-    signal output hash;
+    signal input signature[k]; //private
+    signal input base_message[k]; //private
+    signal input modulus[k]; //public
+    signal input app_id; //public
+    signal output nullifier;
 
     component RSAVerifier = RSAVerify65537(n, k);
 
@@ -44,9 +45,10 @@ template HashMessage(n, k) {
         Compress.base_message[i] <== base_message[i];
     }
 
-    component base_message_hash = Poseidon(1);
+    component nullify = Poseidon(2);
 
-    base_message_hash.inputs[0] <== Compress.sha1hash;
+    nullify.inputs[0] <== Compress.sha1hash;
+    nullify.inputs[1] <== app_id;
 
-    hash <== base_message_hash.out;
+    nullifier <== nullify.out;
 }
