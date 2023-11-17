@@ -95,8 +95,6 @@ export class BackendProver implements ProverInferace {
       await this.zkey.getKey()
     )
 
-    console.log('Public signals form the prover: ', publicSignals)
-
     if (publicSignals === undefined)
       throw new Error('Cannot make proof: something went wrong!')
 

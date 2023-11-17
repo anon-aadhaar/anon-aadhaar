@@ -6,6 +6,7 @@ import { AnonAadhaarContext } from '../../hooks/useAnonAadhaar'
 import { Spinner } from '../LoadingSpinner'
 import React from 'react'
 import { extractWitness } from 'anon-aadhaar-pcd'
+import { APP_ID } from '../../constants'
 
 interface ProveButtonProps {
   pdfData: Buffer
@@ -24,7 +25,7 @@ export const ProveButtonV2: React.FC<ProveButtonProps> = ({
 
   const startProving = async () => {
     try {
-      const witness = await extractWitness(pdfData, password)
+      const witness = await extractWitness(pdfData, password, BigInt(APP_ID))
 
       if (witness instanceof Error) throw new Error(witness.message)
 
@@ -45,6 +46,12 @@ export const ProveButtonV2: React.FC<ProveButtonProps> = ({
           argumentType: ArgumentTypeName.BigInt,
           userProvided: false,
           value: witness?.modulusBigInt.toString(),
+          description: '',
+        },
+        app_id: {
+          argumentType: ArgumentTypeName.BigInt,
+          userProvided: false,
+          value: witness?.app_id.toString(),
           description: '',
         },
       }

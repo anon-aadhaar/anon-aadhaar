@@ -47,8 +47,6 @@ describe('PCD tests', function () {
 
     const pcd = await prove(pcdArgs)
 
-    console.log(pcd)
-
     const verified = await verify(pcd)
     assert(verified == true, 'Should verifiable')
   })
