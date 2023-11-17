@@ -12,3 +12,4 @@ pcd-country-identity/.vscode
 
 node_modules/
 node_modules/.yarn-integrity
+.DS_Store

@@ -1,6 +1,7 @@
 ## 0.1.8
 
 - Fix LoginV2 modal component responsivness
+- Release of the new circuit with nullifier as output
 
 ## 0.1.7
 

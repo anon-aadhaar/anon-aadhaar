@@ -92,7 +92,11 @@ export async function verify(pcd: AnonAadhaarPCD): Promise<boolean> {
 
   return groth16.verify(
     vk,
-    [...splitToWords(BigInt(pcd.proof.modulus), BigInt(64), BigInt(32))],
+    [
+      pcd.proof.nullifier.toString(),
+      ...splitToWords(BigInt(pcd.proof.modulus), BigInt(64), BigInt(32)),
+      pcd.proof.app_id.toString(),
+    ],
     pcd.proof.proof
   )
 }

@@ -16,7 +16,7 @@ describe('PCD tests', function () {
   })
 
   it('PCD flow location prover', async function () {
-    const dirName = __dirname + '/../artifacts'
+    const dirName = __dirname + '/../artifacts/RSA'
     const pcdInitArgs: PCDInitArgs = {
       wasmURL: dirName + '/main.wasm',
       zkeyURL: dirName + '/circuit_final.zkey',
@@ -38,6 +38,10 @@ describe('PCD tests', function () {
       base_message: {
         argumentType: ArgumentTypeName.BigInt,
         value: testData[3] + '',
+      },
+      app_id: {
+        argumentType: ArgumentTypeName.BigInt,
+        value: BigInt(1234555).toString(),
       },
     }
 
@@ -69,6 +73,10 @@ describe('PCD tests', function () {
       base_message: {
         argumentType: ArgumentTypeName.BigInt,
         value: testData[3] + '',
+      },
+      app_id: {
+        argumentType: ArgumentTypeName.BigInt,
+        value: BigInt(1234555).toString(),
       },
     }
 

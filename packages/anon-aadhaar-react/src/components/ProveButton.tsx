@@ -5,6 +5,7 @@ import { useContext } from 'react'
 import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
 import { Spinner } from './LoadingSpinner'
 import { AadhaarSignatureValidition } from '../interface'
+import { APP_ID } from '../constants'
 
 interface ProveButtonProps {
   msgBigInt?: bigint
@@ -38,6 +39,12 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
       argumentType: ArgumentTypeName.BigInt,
       userProvided: false,
       value: modulusBigInt?.toString(),
+      description: '',
+    },
+    app_id: {
+      argumentType: ArgumentTypeName.BigInt,
+      userProvided: false,
+      value: APP_ID,
       description: '',
     },
   }

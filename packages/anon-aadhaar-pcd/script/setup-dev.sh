@@ -6,8 +6,11 @@ ROOT=$(pwd)
 BUILD_DIR=$(pwd)/build
 PDF_DIR=$(pwd)/build/pdf
 ARTIFACTS_DIR=$(pwd)/artifacts
+RSA_ARTIFACTS_DIR=$(pwd)/artifacts/RSA
+NULLIFIER_ARTIFACTS_DIR=$(pwd)/artifacts/Nullifier
 POWERS_OF_TAU=$BUILD_DIR/powersOfTau28_hez_final_18.ptau
-RSA_DIR=$(pwd)/circuits
+RSA_DIR=RSA
+NULLIFIER_DIR=Nullifier
 
 CIRCOM_BIN_DIR=$HOME/.cargo/bin/circom
 
@@ -61,15 +64,19 @@ function setup_circuit() {
         OLD_HASH=""
     fi
 
-    cd $RSA_DIR
     if [ "$HASH" != "$OLD_HASH" ]; then 
-        mkdir -p $BUILD_DIR/$CIRCUIT
-        circom main.circom  --r1cs --wasm -o $BUILD_DIR/$CIRCUIT
-        npx snarkjs groth16 setup $BUILD_DIR/$CIRCUIT/main.r1cs $POWERS_OF_TAU $BUILD_DIR/$CIRCUIT/circuit_0000.zkey
-        echo "test random" | npx snarkjs zkey contribute $BUILD_DIR/$CIRCUIT/circuit_0000.zkey $BUILD_DIR/$CIRCUIT/circuit_final.zkey
-        npx snarkjs zkey export verificationkey $BUILD_DIR/$CIRCUIT/circuit_final.zkey $BUILD_DIR/$CIRCUIT/verification_key.json
-    fi 
 
+        rm -r $BUILD_DIR/$CIRCUIT
+        mkdir -p $BUILD_DIR/$CIRCUIT
+
+        cd $ROOT/circuits/RSA
+        mkdir -p $BUILD_DIR/$CIRCUIT/$RSA_DIR
+        circom main.circom  --r1cs --wasm -o $BUILD_DIR/$CIRCUIT/$RSA_DIR
+        npx snarkjs groth16 setup $BUILD_DIR/$CIRCUIT/$RSA_DIR/main.r1cs $POWERS_OF_TAU $BUILD_DIR/$CIRCUIT/$RSA_DIR/circuit_0000.zkey
+        echo "test random" | npx snarkjs zkey contribute $BUILD_DIR/$CIRCUIT/$RSA_DIR/circuit_0000.zkey $BUILD_DIR/$CIRCUIT/$RSA_DIR/circuit_final.zkey
+        npx snarkjs zkey export verificationkey $BUILD_DIR/$CIRCUIT/$RSA_DIR/circuit_final.zkey $BUILD_DIR/$CIRCUIT/$RSA_DIR/verification_key.json
+    fi 
+    
     echo "Finish setup....!"
 
     echo "Copy proving key and verify key to artifacts!!!!"
@@ -77,12 +84,13 @@ function setup_circuit() {
     cd $BUILD_DIR
 
     if [ ! -d $ARTIFACTS_DIR ]; then
-        mkdir -p $ARTIFACTS_DIR
+        mkdir -p $ARTIFACTS_DIR/$RSA_DIR
     fi
 
-    cp $CIRCUIT/main_js/main.wasm $ARTIFACTS_DIR
-    cp $CIRCUIT/circuit_final.zkey $ARTIFACTS_DIR
-    cp $CIRCUIT/verification_key.json $ARTIFACTS_DIR
+    cp $CIRCUIT/$RSA_DIR/main_js/main.wasm $ARTIFACTS_DIR/$RSA_DIR
+    cp $CIRCUIT/$RSA_DIR/circuit_final.zkey $ARTIFACTS_DIR/$RSA_DIR
+    cp $CIRCUIT/$RSA_DIR/verification_key.json $ARTIFACTS_DIR/$RSA_DIR
+
     echo $HASH > $CIRCUIT/hash.txt
     echo "Setup finished!"
 }

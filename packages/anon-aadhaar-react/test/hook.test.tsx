@@ -10,6 +10,7 @@ import {
 import { AnonAadhaarPCDArgs, genData } from 'anon-aadhaar-pcd'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import { AnonAadhaarProvider } from '../src/provider/AnonAadhaarProvider'
+import { APP_ID } from '../src/constants'
 
 describe('useCountryIdentity Hook', () => {
   let testData: [bigint, bigint, bigint, bigint]
@@ -53,6 +54,10 @@ describe('useCountryIdentity Hook', () => {
       base_message: {
         argumentType: ArgumentTypeName.BigInt,
         value: testData[3] + '',
+      },
+      app_id: {
+        argumentType: ArgumentTypeName.BigInt,
+        value: APP_ID,
       },
     }
 

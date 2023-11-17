@@ -66,6 +66,10 @@ export class BackendProver implements ProverInferace {
       throw new Error('Cannot make proof: missing message')
     }
 
+    if (!witness.app_id.value) {
+      throw new Error('Cannot make proof: missing application id')
+    }
+
     const input = {
       signature: splitToWords(
         BigInt(witness.signature.value),
@@ -82,16 +86,22 @@ export class BackendProver implements ProverInferace {
         BigInt(64),
         BigInt(32)
       ),
+      app_id: witness.app_id.value.toString(),
     }
 
-    const { proof } = await groth16.fullProve(
+    const { proof, publicSignals } = await groth16.fullProve(
       input,
       await this.wasm.getKey(),
       await this.zkey.getKey()
     )
 
+    if (publicSignals === undefined)
+      throw new Error('Cannot make proof: something went wrong!')
+
     return {
       modulus: witness.modulus.value,
+      nullifier: publicSignals[0],
+      app_id: witness.app_id.value.toString(),
       proof,
     }
   }
@@ -122,6 +132,10 @@ export class WebProver implements ProverInferace {
       throw new Error('Cannot make proof: missing message')
     }
 
+    if (!witness.app_id.value) {
+      throw new Error('Cannot make proof: missing application id')
+    }
+
     const input = {
       signature: splitToWords(
         BigInt(witness.signature.value),
@@ -138,15 +152,19 @@ export class WebProver implements ProverInferace {
         BigInt(64),
         BigInt(32)
       ),
+      app_id: witness.app_id.value.toString(),
     }
 
-    const { proof } = await groth16.fullProve(
+    const { proof, publicSignals } = await groth16.fullProve(
       input,
       new Uint8Array(wasmBuffer),
       new Uint8Array(zkeyBuffer)
     )
+
     return {
       modulus: witness.modulus.value,
+      nullifier: publicSignals[0],
+      app_id: witness.app_id.value.toString(),
       proof,
     }
   }
