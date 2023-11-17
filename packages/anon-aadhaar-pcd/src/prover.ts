@@ -101,7 +101,7 @@ export class BackendProver implements ProverInferace {
     return {
       modulus: witness.modulus.value,
       nullifier: publicSignals[0],
-      app_id: publicSignals[publicSignals.length - 1],
+      app_id: witness.app_id.value.toString(),
       proof,
     }
   }
@@ -164,7 +164,7 @@ export class WebProver implements ProverInferace {
     return {
       modulus: witness.modulus.value,
       nullifier: publicSignals[0],
-      app_id: publicSignals[publicSignals.length - 1],
+      app_id: witness.app_id.value.toString(),
       proof,
     }
   }
