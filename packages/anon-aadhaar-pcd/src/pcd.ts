@@ -90,12 +90,17 @@ async function getVerifyKey() {
 export async function verify(pcd: AnonAadhaarPCD): Promise<boolean> {
   const vk = await getVerifyKey()
 
-  if (pcd.proof.hash) {
+  if (pcd.proof.nullifier) {
+    // console.log('received from verifier: ', [
+    //   ...splitToWords(BigInt(pcd.proof.modulus), BigInt(64), BigInt(32)),
+    //   pcd.proof.nullifier.toString(),
+    // ])
     return groth16.verify(
       vk,
       [
-        pcd.proof.hash.toString(),
+        pcd.proof.nullifier.toString(),
         ...splitToWords(BigInt(pcd.proof.modulus), BigInt(64), BigInt(32)),
+        pcd.proof.app_id.toString(),
       ],
       pcd.proof.proof
     )

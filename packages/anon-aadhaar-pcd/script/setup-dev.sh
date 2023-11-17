@@ -64,6 +64,8 @@ function setup_circuit() {
     fi
 
     if [ "$HASH" != "$OLD_HASH" ]; then 
+
+        rm -r $BUILD_DIR/$CIRCUIT
         mkdir -p $BUILD_DIR/$CIRCUIT
 
         cd $ROOT/circuits/RSA
@@ -72,14 +74,6 @@ function setup_circuit() {
         npx snarkjs groth16 setup $BUILD_DIR/$CIRCUIT/$RSA_DIR/main.r1cs $POWERS_OF_TAU $BUILD_DIR/$CIRCUIT/$RSA_DIR/circuit_0000.zkey
         echo "test random" | npx snarkjs zkey contribute $BUILD_DIR/$CIRCUIT/$RSA_DIR/circuit_0000.zkey $BUILD_DIR/$CIRCUIT/$RSA_DIR/circuit_final.zkey
         npx snarkjs zkey export verificationkey $BUILD_DIR/$CIRCUIT/$RSA_DIR/circuit_final.zkey $BUILD_DIR/$CIRCUIT/$RSA_DIR/verification_key.json
-
-        cd ..
-        cd $ROOT/circuits/Nullifier
-        mkdir -p $BUILD_DIR/$CIRCUIT/$NULLIFIER_DIR
-        circom nullifier.circom  --r1cs --wasm -o $BUILD_DIR/$CIRCUIT/$NULLIFIER_DIR
-        npx snarkjs groth16 setup $BUILD_DIR/$CIRCUIT/$NULLIFIER_DIR/nullifier.r1cs $POWERS_OF_TAU $BUILD_DIR/$CIRCUIT/$NULLIFIER_DIR/circuit_0000.zkey
-        echo "test random" | npx snarkjs zkey contribute $BUILD_DIR/$CIRCUIT/$NULLIFIER_DIR/circuit_0000.zkey $BUILD_DIR/$CIRCUIT/$NULLIFIER_DIR/circuit_final.zkey
-        npx snarkjs zkey export verificationkey $BUILD_DIR/$CIRCUIT/$NULLIFIER_DIR/circuit_final.zkey $BUILD_DIR/$CIRCUIT/$NULLIFIER_DIR/verification_key.json
     fi 
     
     echo "Finish setup....!"
@@ -90,16 +84,11 @@ function setup_circuit() {
 
     if [ ! -d $ARTIFACTS_DIR ]; then
         mkdir -p $ARTIFACTS_DIR/$RSA_DIR
-        mkdir -p $ARTIFACTS_DIR/$NULLIFIER_DIR
     fi
 
     cp $CIRCUIT/$RSA_DIR/main_js/main.wasm $ARTIFACTS_DIR/$RSA_DIR
     cp $CIRCUIT/$RSA_DIR/circuit_final.zkey $ARTIFACTS_DIR/$RSA_DIR
     cp $CIRCUIT/$RSA_DIR/verification_key.json $ARTIFACTS_DIR/$RSA_DIR
-
-    cp $CIRCUIT/$NULLIFIER_DIR/nullifier_js/nullifier.wasm $ARTIFACTS_DIR/$NULLIFIER_DIR
-    cp $CIRCUIT/$NULLIFIER_DIR/circuit_final.zkey $ARTIFACTS_DIR/$NULLIFIER_DIR
-    cp $CIRCUIT/$NULLIFIER_DIR/verification_key.json $ARTIFACTS_DIR/$NULLIFIER_DIR
 
     echo $HASH > $CIRCUIT/hash.txt
     echo "Setup finished!"

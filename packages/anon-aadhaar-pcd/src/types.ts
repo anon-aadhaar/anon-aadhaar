@@ -29,9 +29,10 @@ export interface AnonAadhaarPCDClaim {
  * @dev proof of claim correct
  */
 export interface AnonAadhaarPCDProof {
-  hash?: BigNumberish
+  nullifier: BigNumberish
   modulus: BigNumberish
   proof: Groth16Proof // 3 points on curve if we use groth16
+  app_id: BigNumberish
 }
 
 /**
@@ -40,7 +41,8 @@ export interface AnonAadhaarPCDProof {
 export interface AnonAadhaarPCDArgs {
   base_message: BigIntArgument // private witness
   signature: BigIntArgument // private witness
-  modulus: BigIntArgument
+  modulus: BigIntArgument // public witness
+  app_id: BigIntArgument // public witness
 }
 
 export type Proof = [
@@ -56,16 +58,19 @@ export type Proof = [
 
 export interface FullProof {
   modulus: BigNumberish[]
+  nullifier: BigNumberish
   proof: Proof
 }
 
 export interface PCDProof {
   modulus: BigNumberish
+  nullifier: BigNumberish
   proof: Groth16Proof
 }
 
-export type Witness = {
+export type WitnessInputs = {
   msgBigInt: bigint
   modulusBigInt: bigint
   sigBigInt: bigint
+  app_id: bigint
 }

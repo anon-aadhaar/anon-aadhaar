@@ -8,7 +8,7 @@ import assert from 'assert'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires
 const wasm_tester = require('circom_tester/wasm/tester')
 
-describe.only('PCD tests', function () {
+describe('PCD tests', function () {
   this.timeout(0)
 
   let testData: [bigint, bigint, bigint, bigint]
@@ -34,6 +34,9 @@ describe.only('PCD tests', function () {
     const client_outputs = await client_hasher.calculateWitness(input)
 
     const nullifier = client_outputs[1]
+
+    console.log(client_outputs[1])
+    console.log(client_outputs[2])
 
     const poseidon = await buildPoseidon()
 

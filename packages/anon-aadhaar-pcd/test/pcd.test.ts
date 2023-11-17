@@ -39,9 +39,15 @@ describe('PCD tests', function () {
         argumentType: ArgumentTypeName.BigInt,
         value: testData[3] + '',
       },
+      app_id: {
+        argumentType: ArgumentTypeName.BigInt,
+        value: BigInt(1234555).toString(),
+      },
     }
 
     const pcd = await prove(pcdArgs)
+
+    console.log(pcd)
 
     const verified = await verify(pcd)
     assert(verified == true, 'Should verifiable')
@@ -69,6 +75,10 @@ describe('PCD tests', function () {
       base_message: {
         argumentType: ArgumentTypeName.BigInt,
         value: testData[3] + '',
+      },
+      app_id: {
+        argumentType: ArgumentTypeName.BigInt,
+        value: BigInt(1234555).toString(),
       },
     }
 

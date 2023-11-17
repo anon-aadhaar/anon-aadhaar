@@ -1,6 +1,6 @@
 import { pki, md, asn1 } from 'node-forge'
 import { extractCert, extractSignature, handleError } from './utils'
-import { Witness } from './types'
+import { WitnessInputs } from './types'
 
 /**
  * Extract all the information needed to generate the witness from the pdf.
@@ -10,8 +10,9 @@ import { Witness } from './types'
  */
 export const extractWitness = async (
   pdfData: Buffer,
-  password: string
-): Promise<Witness | Error> => {
+  password: string,
+  app_id: bigint
+): Promise<WitnessInputs | Error> => {
   try {
     // Extractiong the Pdf Data that have to be hashed and the RSA signature of the hash
     const { signedData, signature } = extractSignature(pdfData)
@@ -57,7 +58,7 @@ export const extractWitness = async (
       '0x' + (RSAPublicKey as pki.rsa.PublicKey).n.toString(16)
     )
 
-    return { msgBigInt, sigBigInt, modulusBigInt }
+    return { msgBigInt, sigBigInt, modulusBigInt, app_id }
   } catch (error) {
     return handleError(error, '[Unable to extract the witness from the pdf]')
   }
