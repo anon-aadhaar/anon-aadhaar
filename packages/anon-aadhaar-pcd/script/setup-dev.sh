@@ -114,7 +114,7 @@ function setup_contract() {
     cd $ROOT
     echo "Building contracts...!"
     mkdir -p $BUILD_DIR/contracts
-    snarkjs zkey export solidityverifier ./build/circuit/circuit_final.zkey $BUILD_DIR/contracts/Verifier.sol
+    snarkjs zkey export solidityverifier ./build/circuit/RSA/circuit_final.zkey $BUILD_DIR/contracts/Verifier.sol
     # Update the contract name in the Solidity verifier
     sed -i '' -e "s/contract Groth16Verifier/contract Verifier/g" $BUILD_DIR/contracts/Verifier.sol
     echo "Contracts generated!"
@@ -125,7 +125,7 @@ function generate_proof() {
     echo "Building proof...!"
     mkdir -p $BUILD_DIR/proofs
     npx ts-node ./script/generateInput.ts
-    snarkjs groth16 fullprove $BUILD_DIR/input.json $BUILD_DIR/circuit/main_js/main.wasm $BUILD_DIR/circuit/circuit_final.zkey $BUILD_DIR/proofs/proof.json $BUILD_DIR/proofs/public.json
+    snarkjs groth16 fullprove $BUILD_DIR/input.json $BUILD_DIR/circuit/RSA/main_js/main.wasm $BUILD_DIR/circuit/RSA/circuit_final.zkey $BUILD_DIR/proofs/proof.json $BUILD_DIR/proofs/public.json
     echo "Generated proof...!"
 }
 
