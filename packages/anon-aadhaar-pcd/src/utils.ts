@@ -1,7 +1,6 @@
 import { decryptPDF } from 'spdf'
 import { Proof } from './types'
 import { groth16, Groth16Proof } from 'snarkjs'
-import { AnonAadhaarPCD } from '../src/pcd'
 import { BigNumberish } from '../src/types'
 import { subtle } from 'crypto'
 import * as x509 from '@peculiar/x509'
@@ -117,19 +116,23 @@ export function packProof(originalProof: Groth16Proof): Proof {
  * @returns {a, b, c, Input} which are the input needed to verify a proof in the Verifier smart contract.
  */
 export async function exportCallDataGroth16(
-  proof: AnonAadhaarPCD['proof']['proof'],
-  _publicSignals: BigNumberish
+  input: {
+    signature: string[]
+    modulus: string[]
+    base_message: string[]
+    app_id: string
+  },
+  wasmPath: string,
+  zkeyPath: string
 ): Promise<{
   a: [BigNumberish, BigNumberish]
   b: [[BigNumberish, BigNumberish], [BigNumberish, BigNumberish]]
   c: [BigNumberish, BigNumberish]
   Input: BigNumberish[]
 }> {
-  const input = [
-    ...splitToWords(BigInt(_publicSignals), BigInt(64), BigInt(32)),
-  ]
-
-  const calldata = await groth16.exportSolidityCallData(proof, input)
+  const { proof: _proof, publicSignals: _publicSignals } =
+    await groth16.fullProve(input, wasmPath, zkeyPath)
+  const calldata = await groth16.exportSolidityCallData(_proof, _publicSignals)
 
   const argv = calldata
     .replace(/["[\]\s]/g, '')
