@@ -7,10 +7,8 @@ BUILD_DIR=$(pwd)/build
 PDF_DIR=$(pwd)/build/pdf
 ARTIFACTS_DIR=$(pwd)/artifacts
 RSA_ARTIFACTS_DIR=$(pwd)/artifacts/RSA
-NULLIFIER_ARTIFACTS_DIR=$(pwd)/artifacts/Nullifier
 POWERS_OF_TAU=$BUILD_DIR/powersOfTau28_hez_final_18.ptau
 RSA_DIR=RSA
-NULLIFIER_DIR=Nullifier
 
 CIRCOM_BIN_DIR=$HOME/.cargo/bin/circom
 
