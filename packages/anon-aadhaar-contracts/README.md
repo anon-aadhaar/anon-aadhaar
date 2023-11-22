@@ -8,5 +8,5 @@ Try running some of the following tasks:
 yarn build
 yarn test
 REPORT_GAS=true npx hardhat test
-npx hardhat run scripts/deploy.ts
+npx hardhat run scripts/deploy.ts --network goerli | mumbai
 ```
