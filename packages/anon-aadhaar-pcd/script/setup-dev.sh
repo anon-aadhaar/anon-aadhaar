@@ -9,6 +9,7 @@ ARTIFACTS_DIR=$(pwd)/artifacts
 RSA_ARTIFACTS_DIR=$(pwd)/artifacts/RSA
 POWERS_OF_TAU=$BUILD_DIR/powersOfTau28_hez_final_18.ptau
 RSA_DIR=RSA
+CONTRACTS_DIR=$(pwd)/../anon-aadhaar-contracts
 
 CIRCOM_BIN_DIR=$HOME/.cargo/bin/circom
 
@@ -63,8 +64,6 @@ function setup_circuit() {
     fi
 
     if [ "$HASH" != "$OLD_HASH" ]; then 
-
-        rm -r $BUILD_DIR/$CIRCUIT
         mkdir -p $BUILD_DIR/$CIRCUIT
 
         cd $ROOT/circuits/RSA
@@ -90,6 +89,9 @@ function setup_circuit() {
     cp $CIRCUIT/$RSA_DIR/verification_key.json $ARTIFACTS_DIR/$RSA_DIR
 
     echo $HASH > $CIRCUIT/hash.txt
+
+    setup_contract
+    
     echo "Setup finished!"
 }
 
@@ -115,6 +117,7 @@ function setup_contract() {
     snarkjs zkey export solidityverifier ./build/circuit/RSA/circuit_final.zkey $BUILD_DIR/contracts/Verifier.sol
     # Update the contract name in the Solidity verifier
     sed -i '' -e "s/contract Groth16Verifier/contract Verifier/g" $BUILD_DIR/contracts/Verifier.sol
+    cp $BUILD_DIR/contracts/Verifier.sol $CONTRACTS_DIR/contracts
     echo "Contracts generated!"
 }
 
