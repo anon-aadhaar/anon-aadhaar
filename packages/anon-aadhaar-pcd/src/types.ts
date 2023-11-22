@@ -72,5 +72,5 @@ export type WitnessInputs = {
   msgBigInt: bigint
   modulusBigInt: bigint
   sigBigInt: bigint
-  app_id: bigint
+  appIdBigInt: bigint
 }

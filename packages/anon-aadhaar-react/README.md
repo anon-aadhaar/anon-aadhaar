@@ -26,15 +26,15 @@ import { AnonAadhaarProvider } from 'anon-aadhaar-react'
 export default function App({ Component, pageProps }: AppProps) {
   return (
     // Add the Anon Aadhaar Provider at the root of your app
-    <AnonAadhaarProvider>
+    <AnonAadhaarProvider appId={YOUR APP ID}>
       <Component {...pageProps} />
     </AnonAadhaarProvider>
   )
 }
 ```
 
-`AnonAadhaarProvider` for the `AnonAadhaarContext`. It manages the authentication state, login requests, and communication with the proving component. This provider initializes the
-authentication state from local storage on page load and handles updates to the state when login requests are made and when new proofs are received.
+`AnonAadhaarProvider` for the `AnonAadhaarContext`. It manages the authentication state, login requests, and communication with the proving component. This provider initializes the authentication state from local storage on page load and handles updates to the state when login requests are made and when new proofs are received.
+You'll need to provide an app Id to the SDK, and all the generated proofs will be linked to this same appId.
 
 --
 

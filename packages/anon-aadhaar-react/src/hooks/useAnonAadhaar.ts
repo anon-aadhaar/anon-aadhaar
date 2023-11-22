@@ -25,11 +25,13 @@ export const AnonAadhaarContext = createContext<AnonAadhaarContextVal>({
   startReq: () => {
     // StartReq
   },
+  appId: '',
 })
 
 export interface AnonAadhaarContextVal {
   state: AnonAadhaarState
   startReq: (request: AnonAadhaarRequest) => void
+  appId: string | null
 }
 
 export type AnonAadhaarRequest =

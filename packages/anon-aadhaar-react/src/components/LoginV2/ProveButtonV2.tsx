@@ -6,7 +6,6 @@ import { AnonAadhaarContext } from '../../hooks/useAnonAadhaar'
 import { Spinner } from '../LoadingSpinner'
 import React from 'react'
 import { extractWitness } from 'anon-aadhaar-pcd'
-import { APP_ID } from '../../constants'
 
 interface ProveButtonProps {
   pdfData: Buffer
@@ -21,11 +20,13 @@ export const ProveButtonV2: React.FC<ProveButtonProps> = ({
   provingEnabled,
   setErrorMessage,
 }) => {
-  const { state, startReq } = useContext(AnonAadhaarContext)
+  const { state, startReq, appId } = useContext(AnonAadhaarContext)
 
   const startProving = async () => {
     try {
-      const witness = await extractWitness(pdfData, password, BigInt(APP_ID))
+      if (appId === null) throw new Error('Missing application Id!')
+
+      const witness = await extractWitness(pdfData, password, appId)
 
       if (witness instanceof Error) throw new Error(witness.message)
 
@@ -51,7 +52,7 @@ export const ProveButtonV2: React.FC<ProveButtonProps> = ({
         app_id: {
           argumentType: ArgumentTypeName.BigInt,
           userProvided: false,
-          value: witness?.app_id.toString(),
+          value: witness?.appIdBigInt.toString(),
           description: '',
         },
       }

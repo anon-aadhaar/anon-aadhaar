@@ -38,6 +38,7 @@ export function AnonAadhaarProvider(props: {
   useEffect(() => {
     readFromLocalStorage().then(setAndWriteState)
     setAppId(props._appId)
+    console.log(props._appId)
   }, [props._appId])
 
   // Write state to local storage whenever a login starts, succeeds, or fails

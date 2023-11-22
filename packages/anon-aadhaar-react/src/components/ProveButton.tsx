@@ -5,7 +5,6 @@ import { useContext } from 'react'
 import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
 import { Spinner } from './LoadingSpinner'
 import { AadhaarSignatureValidition } from '../interface'
-import { APP_ID } from '../constants'
 
 interface ProveButtonProps {
   msgBigInt?: bigint
@@ -20,7 +19,9 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
   sigBigInt,
   signatureValidity,
 }) => {
-  const { state, startReq } = useContext(AnonAadhaarContext)
+  const { state, startReq, appId } = useContext(AnonAadhaarContext)
+
+  if (appId === null) throw new Error('Missing application Id!')
 
   const args: AnonAadhaarPCDArgs = {
     base_message: {
@@ -44,7 +45,7 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
     app_id: {
       argumentType: ArgumentTypeName.BigInt,
       userProvided: false,
-      value: APP_ID,
+      value: appId,
       description: '',
     },
   }

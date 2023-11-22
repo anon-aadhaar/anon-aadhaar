@@ -11,7 +11,7 @@ import { WitnessInputs } from './types'
 export const extractWitness = async (
   pdfData: Buffer,
   password: string,
-  app_id: bigint
+  app_id: string
 ): Promise<WitnessInputs | Error> => {
   try {
     // Extractiong the Pdf Data that have to be hashed and the RSA signature of the hash
@@ -58,7 +58,9 @@ export const extractWitness = async (
       '0x' + (RSAPublicKey as pki.rsa.PublicKey).n.toString(16)
     )
 
-    return { msgBigInt, sigBigInt, modulusBigInt, app_id }
+    const appIdBigInt = BigInt(app_id)
+
+    return { msgBigInt, sigBigInt, modulusBigInt, appIdBigInt }
   } catch (error) {
     return handleError(error, '[Unable to extract the witness from the pdf]')
   }
