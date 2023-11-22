@@ -3,7 +3,6 @@ import { AnonAadhaarPCDArgs, verify, genData } from 'anon-aadhaar-pcd'
 import { assert } from 'chai'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import { proveWithWebProver } from '../src/prove'
-import { APP_ID } from '../src/constants'
 
 describe('PCD tests', function () {
   this.timeout(0)
@@ -30,7 +29,7 @@ describe('PCD tests', function () {
       },
       app_id: {
         argumentType: ArgumentTypeName.BigInt,
-        value: APP_ID,
+        value: BigInt(1234555).toString(),
       },
     }
 
