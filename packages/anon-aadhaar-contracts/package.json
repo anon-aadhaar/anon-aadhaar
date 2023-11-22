@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "@types/snarkjs": "^0.7.6",
-    "dotenv": "^16.3.1"
+    "dotenv": "^16.3.1",
+    "snarkjs": "^0.7.2"
   }
 }
