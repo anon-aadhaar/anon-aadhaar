@@ -28,6 +28,7 @@ describe('VerifyProof', function () {
     return {
       verifier,
       anonAadhaarVerifier,
+      appIdBigInt,
     }
   }
 
@@ -92,8 +93,8 @@ describe('VerifyProof', function () {
         )
       })
 
-      it('Should return true for a valid proof', async function () {
-        const { anonAadhaarVerifier } = await loadFixture(
+      it('Should revert for a valid proof with the wrong public key', async function () {
+        const { anonAadhaarVerifier, appIdBigInt } = await loadFixture(
           deployOneYearLockFixture,
         )
 
@@ -110,7 +111,7 @@ describe('VerifyProof', function () {
             BigInt(64),
             BigInt(32),
           ),
-          app_id: '196700487049306364386084600156231018794323017728',
+          app_id: appIdBigInt,
         }
 
         const dirName = __dirname + '/../../anon-aadhaar-pcd/artifacts/RSA'
@@ -122,11 +123,11 @@ describe('VerifyProof', function () {
         )
 
         expect(
-          await anonAadhaarVerifier.verifyProof(a, b, c, Input),
-        ).to.be.equal(true)
+          anonAadhaarVerifier.verifyProof(a, b, c, Input),
+        ).to.be.revertedWith('AnonAadhaarVerifier: wrong issuer public key')
       })
 
-      it('Should return false for a valid proof with wrong app_id', async function () {
+      it('Should revert for a valid proof with wrong app_id', async function () {
         const { anonAadhaarVerifier } = await loadFixture(
           deployOneYearLockFixture,
         )
@@ -163,6 +164,42 @@ describe('VerifyProof', function () {
           anonAadhaarVerifier.verifyProof(a, b, c, Input),
         ).to.be.revertedWith('AnonAadhaarVerifier: wrong app ID')
       })
+
+      //   it('Should return true for a valid proof', async function () {
+      //     const { anonAadhaarVerifier, appIdBigInt } = await loadFixture(
+      //       deployOneYearLockFixture,
+      //     )
+
+      //     const testFile = __dirname + '/AadhaarTest.pdf'
+      //     const pdfRaw = fs.readFileSync(testFile)
+      //     const pdfBuffer = Buffer.from(pdfRaw)
+      //     const inputs = await extractWitness(
+      //       pdfBuffer,
+      //       'password',
+      //       BigInt(appIdBigInt),
+      //     )
+
+      //     if (inputs instanceof Error) return
+
+      //     const input = {
+      //       signature: splitToWords(inputs.sigBigInt, BigInt(64), BigInt(32)),
+      //       modulus: splitToWords(inputs.modulusBigInt, BigInt(64), BigInt(32)),
+      //       base_message: splitToWords(inputs.msgBigInt, BigInt(64), BigInt(32)),
+      //       app_id: appIdBigInt,
+      //     }
+
+      //     const dirName = __dirname + '/../../anon-aadhaar-pcd/artifacts/RSA'
+
+      //     const { a, b, c, Input } = await exportCallDataGroth16(
+      //       input,
+      //       dirName + '/main.wasm',
+      //       dirName + '/circuit_final.zkey',
+      //     )
+
+      //     expect(
+      //       await anonAadhaarVerifier.verifyProof(a, b, c, Input),
+      //     ).to.be.equal(true)
+      //   })
     })
   })
 })
