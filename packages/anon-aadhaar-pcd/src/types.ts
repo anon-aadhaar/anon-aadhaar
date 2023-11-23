@@ -68,9 +68,8 @@ export interface PCDProof {
   proof: Groth16Proof
 }
 
-export type WitnessInputs = {
+export type WitnessPDFInputs = {
   msgBigInt: bigint
   modulusBigInt: bigint
   sigBigInt: bigint
-  appIdBigInt: bigint
 }

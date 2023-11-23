@@ -26,7 +26,7 @@ export const ProveButtonV2: React.FC<ProveButtonProps> = ({
     try {
       if (appId === null) throw new Error('Missing application Id!')
 
-      const witness = await extractWitness(pdfData, password, appId)
+      const witness = await extractWitness(pdfData, password)
 
       if (witness instanceof Error) throw new Error(witness.message)
 
@@ -52,7 +52,7 @@ export const ProveButtonV2: React.FC<ProveButtonProps> = ({
         app_id: {
           argumentType: ArgumentTypeName.BigInt,
           userProvided: false,
-          value: witness?.appIdBigInt.toString(),
+          value: appId,
           description: '',
         },
       }
