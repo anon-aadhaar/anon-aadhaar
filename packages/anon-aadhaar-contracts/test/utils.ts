@@ -1,49 +1,47 @@
-import { subtle } from 'crypto'
+import { BigNumberish } from 'anon-aadhaar-pcd'
+import { groth16 } from 'snarkjs'
 
-function buffToBigInt(buff: string): bigint {
-  return BigInt('0x' + Buffer.from(buff, 'base64url').toString('hex'))
-}
+/**
+ * Turn a groth16 proof into a call data format to use it as a transaction input.
+ * @param input Inputs needed to generate the witness.
+ * @param wasmPath Path to the wasm file.
+ * @param zkeyPath Path to the zkey file.
+ * @returns {a, b, c, Input} which are the input needed to verify a proof in the Verifier smart contract.
+ */
+export async function exportCallDataGroth16(
+  input: {
+    signature: string[]
+    modulus: string[]
+    base_message: string[]
+    app_id: string
+  },
+  wasmPath: string,
+  zkeyPath: string,
+): Promise<{
+  a: [BigNumberish, BigNumberish]
+  b: [[BigNumberish, BigNumberish], [BigNumberish, BigNumberish]]
+  c: [BigNumberish, BigNumberish]
+  Input: BigNumberish[]
+}> {
+  const { proof: _proof, publicSignals: _publicSignals } =
+    await groth16.fullProve(input, wasmPath, zkeyPath)
+  const calldata = await groth16.exportSolidityCallData(_proof, _publicSignals)
 
-async function generateRsaKey(hash = 'SHA-256') {
-  const publicExponent = new Uint8Array([1, 0, 1])
-  const modulusLength = 2048
-  const { publicKey, privateKey } = await subtle.generateKey(
-    {
-      name: 'RSASSA-PKCS1-v1_5',
-      modulusLength,
-      publicExponent,
-      hash,
-    },
-    true,
-    ['sign', 'verify'],
-  )
+  const argv = calldata
+    .replace(/["[\]\s]/g, '')
+    .split(',')
+    .map((x: string) => BigInt(x).toString())
 
-  return { publicKey, privateKey }
-}
+  const a: [BigNumberish, BigNumberish] = [argv[0], argv[1]]
+  const b: [[BigNumberish, BigNumberish], [BigNumberish, BigNumberish]] = [
+    [argv[2], argv[3]],
+    [argv[4], argv[5]],
+  ]
+  const c: [BigNumberish, BigNumberish] = [argv[6], argv[7]]
+  const Input = []
 
-export async function genData(
-  data: string,
-  HASH_ALGO: string,
-): Promise<[bigint, bigint, bigint, bigint]> {
-  const keys = await generateRsaKey(HASH_ALGO)
-
-  const public_key = await subtle.exportKey('jwk', keys.publicKey)
-
-  const enc = new TextEncoder()
-  const text = enc.encode(data)
-  const hash = BigInt(
-    '0x' + Buffer.from(await subtle.digest(HASH_ALGO, text)).toString('hex'),
-  )
-
-  const sign_buff = await subtle.sign(
-    { name: 'RSASSA-PKCS1-v1_5', hash: HASH_ALGO },
-    keys.privateKey,
-    text,
-  )
-
-  const e = buffToBigInt(public_key.e as string)
-  const n = buffToBigInt(public_key.n as string)
-  const sign = BigInt('0x' + Buffer.from(sign_buff).toString('hex'))
-
-  return [e, sign, n, hash]
+  for (let i = 8; i < argv.length; i++) {
+    Input.push(argv[i])
+  }
+  return { a, b, c, Input }
 }

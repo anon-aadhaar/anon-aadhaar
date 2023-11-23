@@ -12,7 +12,7 @@
     "dev-setup:pcd": "yarn workspace anon-aadhaar-pcd run dev-setup",
     "pdf:pcd": "yarn workspace anon-aadhaar-pcd run gen-pdf",
     "proof:pcd": "yarn workspace anon-aadhaar-pcd run gen-proof",
-    "contracts:pcd": "yarn workspace anon-aadhaar-pcd run contract",
+    "contracts:pcd": "yarn workspace anon-aadhaar-pcd run gen-contract",
     "dev-install:pcd": "yarn workspace anon-aadhaar-pcd run dev-install",
     "postversion": "yarn workspace anon-aadhaar-pcd version --new-version $npm_package_version --no-git-tag-version && yarn workspace anon-aadhaar-react version --new-version $npm_package_version --no-git-tag-version && yarn workspace anon-aadhaar-contracts version --new-version $npm_package_version --no-git-tag-version",
     "lint": "yarn workspaces run lint"

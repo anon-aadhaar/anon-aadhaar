@@ -1,3 +1,8 @@
+## 0.1.9
+
+- Fix the contracts package
+- Add AnonAadhaarVerifier contract
+
 ## 0.1.8
 
 - Fix LoginV2 modal component responsivness

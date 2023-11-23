@@ -1,8 +1,6 @@
 import { decryptPDF } from 'spdf'
 import { Proof } from './types'
-import { groth16, Groth16Proof } from 'snarkjs'
-import { AnonAadhaarPCD } from '../src/pcd'
-import { BigNumberish } from '../src/types'
+import { Groth16Proof } from 'snarkjs'
 import { subtle } from 'crypto'
 import * as x509 from '@peculiar/x509'
 
@@ -108,46 +106,6 @@ export function packProof(originalProof: Groth16Proof): Proof {
     originalProof.pi_c[0],
     originalProof.pi_c[1],
   ]
-}
-
-/**
- * Turn a groth16 proof into a call data format to use it as a transaction input.
- * @param proof The proof compatible with Semaphore.
- * @param _publicSignals Public signal from the proof.
- * @returns {a, b, c, Input} which are the input needed to verify a proof in the Verifier smart contract.
- */
-export async function exportCallDataGroth16(
-  proof: AnonAadhaarPCD['proof']['proof'],
-  _publicSignals: BigNumberish
-): Promise<{
-  a: [BigNumberish, BigNumberish]
-  b: [[BigNumberish, BigNumberish], [BigNumberish, BigNumberish]]
-  c: [BigNumberish, BigNumberish]
-  Input: BigNumberish[]
-}> {
-  const input = [
-    ...splitToWords(BigInt(_publicSignals), BigInt(64), BigInt(32)),
-  ]
-
-  const calldata = await groth16.exportSolidityCallData(proof, input)
-
-  const argv = calldata
-    .replace(/["[\]\s]/g, '')
-    .split(',')
-    .map((x: string) => BigInt(x).toString())
-
-  const a: [BigNumberish, BigNumberish] = [argv[0], argv[1]]
-  const b: [[BigNumberish, BigNumberish], [BigNumberish, BigNumberish]] = [
-    [argv[2], argv[3]],
-    [argv[4], argv[5]],
-  ]
-  const c: [BigNumberish, BigNumberish] = [argv[6], argv[7]]
-  const Input = []
-
-  for (let i = 8; i < argv.length; i++) {
-    Input.push(argv[i])
-  }
-  return { a, b, c, Input }
 }
 
 function buffToBigInt(buff: string): bigint {
