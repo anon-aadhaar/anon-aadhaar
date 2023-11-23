@@ -25,7 +25,10 @@ describe('VerifyProof', function () {
       appIdBigInt,
     )
 
-    return { verifier, anonAadhaarVerifier }
+    return {
+      verifier,
+      anonAadhaarVerifier,
+    }
   }
 
   describe('Verify', function () {
@@ -67,6 +70,28 @@ describe('VerifyProof', function () {
     })
 
     describe('AnonAadhaarVerifier', function () {
+      it('Should not create an appId greater than the snark scalar field', async () => {
+        const { verifier } = await loadFixture(deployOneYearLockFixture)
+
+        const _verifierAddress = await verifier.getAddress()
+        const AnonAadhaarVerifier = await ethers.getContractFactory(
+          'AnonAadhaarVerifier',
+        )
+
+        const wrongAppId = BigInt(
+          '21888242871839275222246405745257275088548364400416034343698204186575808495618',
+        ).toString()
+
+        const wrongAnonAadhaarVerifier = AnonAadhaarVerifier.deploy(
+          _verifierAddress,
+          wrongAppId,
+        )
+
+        await expect(wrongAnonAadhaarVerifier).to.be.revertedWith(
+          'AnonAadhaarVerifier: group id must be < SNARK_SCALAR_FIELD',
+        )
+      })
+
       it('Should return true for a valid proof', async function () {
         const { anonAadhaarVerifier } = await loadFixture(
           deployOneYearLockFixture,
@@ -134,8 +159,9 @@ describe('VerifyProof', function () {
           dirName + '/circuit_final.zkey',
         )
 
-        await expect(anonAadhaarVerifier.verifyProof(a, b, c, Input)).to.be
-          .reverted
+        await expect(
+          anonAadhaarVerifier.verifyProof(a, b, c, Input),
+        ).to.be.revertedWith('AnonAadhaarVerifier: wrong app ID')
       })
     })
   })
