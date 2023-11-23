@@ -7,10 +7,9 @@ BUILD_DIR=$(pwd)/build
 PDF_DIR=$(pwd)/build/pdf
 ARTIFACTS_DIR=$(pwd)/artifacts
 RSA_ARTIFACTS_DIR=$(pwd)/artifacts/RSA
-NULLIFIER_ARTIFACTS_DIR=$(pwd)/artifacts/Nullifier
 POWERS_OF_TAU=$BUILD_DIR/powersOfTau28_hez_final_18.ptau
 RSA_DIR=RSA
-NULLIFIER_DIR=Nullifier
+CONTRACTS_DIR=$(pwd)/../anon-aadhaar-contracts
 
 CIRCOM_BIN_DIR=$HOME/.cargo/bin/circom
 
@@ -65,8 +64,6 @@ function setup_circuit() {
     fi
 
     if [ "$HASH" != "$OLD_HASH" ]; then 
-
-        rm -r $BUILD_DIR/$CIRCUIT
         mkdir -p $BUILD_DIR/$CIRCUIT
 
         cd $ROOT/circuits/RSA
@@ -92,6 +89,9 @@ function setup_circuit() {
     cp $CIRCUIT/$RSA_DIR/verification_key.json $ARTIFACTS_DIR/$RSA_DIR
 
     echo $HASH > $CIRCUIT/hash.txt
+
+    setup_contract
+    
     echo "Setup finished!"
 }
 
@@ -114,9 +114,10 @@ function setup_contract() {
     cd $ROOT
     echo "Building contracts...!"
     mkdir -p $BUILD_DIR/contracts
-    snarkjs zkey export solidityverifier ./build/circuit/circuit_final.zkey $BUILD_DIR/contracts/Verifier.sol
+    snarkjs zkey export solidityverifier ./build/circuit/RSA/circuit_final.zkey $BUILD_DIR/contracts/Verifier.sol
     # Update the contract name in the Solidity verifier
     sed -i '' -e "s/contract Groth16Verifier/contract Verifier/g" $BUILD_DIR/contracts/Verifier.sol
+    cp $BUILD_DIR/contracts/Verifier.sol $CONTRACTS_DIR/contracts
     echo "Contracts generated!"
 }
 
@@ -125,7 +126,7 @@ function generate_proof() {
     echo "Building proof...!"
     mkdir -p $BUILD_DIR/proofs
     npx ts-node ./script/generateInput.ts
-    snarkjs groth16 fullprove $BUILD_DIR/input.json $BUILD_DIR/circuit/main_js/main.wasm $BUILD_DIR/circuit/circuit_final.zkey $BUILD_DIR/proofs/proof.json $BUILD_DIR/proofs/public.json
+    snarkjs groth16 fullprove $BUILD_DIR/input.json $BUILD_DIR/circuit/RSA/main_js/main.wasm $BUILD_DIR/circuit/RSA/circuit_final.zkey $BUILD_DIR/proofs/proof.json $BUILD_DIR/proofs/public.json
     echo "Generated proof...!"
 }
 
