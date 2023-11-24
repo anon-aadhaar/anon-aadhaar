@@ -22,7 +22,7 @@ export const AnonAadhaarProof = ({
     setCollapsed(collapsed => !collapsed)
   }, [])
 
-  let buttonText = collapsed ? 'Expand' : 'Collapse'
+  let buttonText = collapsed ? 'Show proof' : 'Hide proof'
   if (label !== undefined) {
     buttonText += ' ' + label
   }
@@ -50,7 +50,6 @@ const ProofContainer = styled.div`
 `
 
 const RevealProofBtn = styled.button`
-  padding: 0.5rem 1rem;
   font-size: 1rem;
   cursor: pointer;
   color: #000000;
@@ -59,7 +58,7 @@ const RevealProofBtn = styled.button`
   background: #fff;
   box-shadow: 0px 3px 8px 1px rgba(0, 0, 0, 0.25);
   border: none;
-  min-width: 12rem;
-  min-height: 3rem;
+  min-width: 8rem;
+  min-height: 2rem;
   border-radius: 0.5rem;
 `

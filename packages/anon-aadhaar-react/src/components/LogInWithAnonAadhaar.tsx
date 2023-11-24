@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Modal } from './ProveModal'
+import { ProveModal } from './ProveModal'
 import styled from 'styled-components'
 import { text } from '../util'
 import { useEffect, useContext } from 'react'
@@ -12,7 +12,7 @@ import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
  * initiate user login using the anon aadhaar zk circuit. The component utilizes
  * the authentication state and login request function from the context.
  *
- * @returns A JSX element representing the LogInWithAnonAadhaar component.
+ * @returns A JSX element representing the LogInWithAnonAadhaarV2 component.
  */
 export const LogInWithAnonAadhaar = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
@@ -37,7 +37,7 @@ export const LogInWithAnonAadhaar = () => {
           <Btn onClick={openModal}>
             {text('🌏', 'Log In with Anon Aadhaar')}
           </Btn>
-          <Modal isOpen={isModalOpen} onClose={closeModal}></Modal>
+          <ProveModal isOpen={isModalOpen} onClose={closeModal}></ProveModal>
         </div>
       )}
       {state.status === 'logged-in' && (
