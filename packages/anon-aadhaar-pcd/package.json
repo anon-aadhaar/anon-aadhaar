@@ -42,7 +42,7 @@
     "json-bigint": "^1.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "snarkjs": "^0.7.0",
+    "snarkjs": "^0.7.2",
     "spdf": "git+https://github.com/anon-aadhaar-private/sPDF.js.git#lite_pkg",
     "styled-components": "^6.0.0-rc.1",
     "uuid": "^9.0.0",

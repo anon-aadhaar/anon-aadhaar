@@ -22,16 +22,23 @@ import { SerializedPCD } from '@pcd/pcd-types'
  * @returns A JSX element that wraps the provided child components with the
  * AnonAadhaarContext.Provider.
  */
-export function AnonAadhaarProvider(props: { children: ReactNode }) {
+export function AnonAadhaarProvider(props: {
+  children: ReactNode
+  _appId: string
+}) {
   // Read state from local storage on page load
-  const [pcdStr, setPcdStr] = useState<SerializedPCD<AnonAadhaarPCD> | ''>('')
-  const [pcd, setPcd] = useState<AnonAadhaarPCD | ''>('')
+  const [pcdStr, setPcdStr] = useState<SerializedPCD<AnonAadhaarPCD> | null>(
+    null,
+  )
+  const [pcd, setPcd] = useState<AnonAadhaarPCD | null>(null)
+  const [appId, setAppId] = useState<string | null>(null)
   const [state, setState] = useState<AnonAadhaarState>({
     status: 'logged-out',
   })
   useEffect(() => {
     readFromLocalStorage().then(setAndWriteState)
-  }, [])
+    setAppId(props._appId)
+  }, [props._appId])
 
   // Write state to local storage whenever a login starts, succeeds, or fails
   const setAndWriteState = (newState: AnonAadhaarState) => {
@@ -51,7 +58,7 @@ export function AnonAadhaarProvider(props: { children: ReactNode }) {
 
   // Receive PCD from proving component
   React.useEffect(() => {
-    if (pcdStr === '' || pcd === '') return
+    if (pcdStr === null || pcd === null) return
     console.log(`[ANON-AADHAAR] trying to log in with ${pcdStr}`)
     handleLogin(state, pcdStr, pcd)
       .then(newState => {
@@ -69,7 +76,7 @@ export function AnonAadhaarProvider(props: { children: ReactNode }) {
   }, [pcdStr])
 
   // Provide context
-  const val = React.useMemo(() => ({ state, startReq }), [state])
+  const val = React.useMemo(() => ({ state, startReq, appId }), [state, appId])
 
   return (
     <AnonAadhaarContext.Provider value={val}>
@@ -161,8 +168,8 @@ function shallowToString(obj: unknown) {
 /** Start a login request. Returns a `logging-in` state */
 function handleLoginReq(
   request: AnonAadhaarRequest,
-  setPcdStr: Dispatch<SetStateAction<SerializedPCD<AnonAadhaarPCD> | ''>>,
-  setPcd: Dispatch<SetStateAction<AnonAadhaarPCD | ''>>,
+  setPcdStr: Dispatch<SetStateAction<SerializedPCD<AnonAadhaarPCD> | null>>,
+  setPcd: Dispatch<SetStateAction<AnonAadhaarPCD | null>>,
 ): AnonAadhaarState {
   const { type } = request
   console.log('Type of request received: ', type)

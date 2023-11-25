@@ -1,78 +1,40 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { FileInput } from './FileInput'
 import { ProveButton } from './ProveButton'
-import { pdfUpload, cerUpload } from '../util'
-import {
-  AadhaarPdfValidation,
-  AadhaarSignatureValidition,
-  AadhaarCertificateValidation,
-} from '../interface'
-import { CERTIFICATION_TUTO_URL } from '../constants'
+import { pdfCheck } from '../util'
+import { PasswordInput } from './PasswordInput'
+import { AadhaarPdfValidation } from '../interface'
+import { ErrorToast } from './ErrorToast'
 
 interface ModalProps {
   isOpen: boolean
   onClose: () => void
 }
 
-const Tooltip = () => {
-  return (
-    <LabelTooltip
-      href={CERTIFICATION_TUTO_URL}
-      target="_blank"
-      rel="noreferrer"
-    >
-      (How?)
-    </LabelTooltip>
-  )
-}
-
-export const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
-  const [signedPdfData, setSignedPdfData] = useState(Buffer.from([]))
-  const [signature, setSignature] = useState('')
-  const [msgBigInt, setMsgBigInt] = useState<bigint>()
-  const [sigBigInt, setSigBigInt] = useState<bigint>()
-  const [modulusBigInt, setModulusBigInt] = useState<bigint>()
+export const ProveModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
+  const [pdfData, setPdfData] = useState(Buffer.from([]))
+  const [password, setPassword] = useState<string>('')
   const [pdfStatus, setpdfStatus] = useState<'' | AadhaarPdfValidation>('')
-  const [signatureValidity, setsignatureValidity] = useState<
-    '' | AadhaarSignatureValidition
-  >('')
-  const [certificateStatus, setcertificateStatus] = useState<
-    '' | AadhaarCertificateValidation
-  >('')
-
-  const certificateOrSignatureStatus =
-    certificateStatus ==
-      AadhaarCertificateValidation.ERROR_PARSING_CERTIFICATE ||
-    certificateStatus == '' ||
-    certificateStatus == AadhaarCertificateValidation.NO_PDF_UPLOADED
-      ? certificateStatus
-      : signatureValidity
+  const [provingEnabled, setProvingEnabled] = useState<boolean>(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const handlePdfChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { signature, signedData } = await pdfUpload(
-      e,
-      setpdfStatus,
-      setsignatureValidity,
-    )
-    setSignature(signature)
-    setSignedPdfData(signedData)
+    const { pdf } = await pdfCheck(e, setpdfStatus)
+    setPdfData(pdf)
   }
 
-  const handleCerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { msgBigInt, sigBigInt, modulusBigInt } = await cerUpload(
-      e,
-      signedPdfData,
-      signature,
-      pdfStatus,
-      setcertificateStatus,
-      setsignatureValidity,
-    )
+  useEffect(() => {
+    if (
+      pdfStatus === AadhaarPdfValidation.SIGNATURE_PRESENT &&
+      password !== ''
+    ) {
+      setProvingEnabled(true)
+    } else {
+      setProvingEnabled(false)
+    }
+  }, [pdfStatus, password, pdfData])
 
-    setMsgBigInt(msgBigInt)
-    setSigBigInt(sigBigInt)
-    setModulusBigInt(modulusBigInt)
-  }
   return isOpen ? (
     <ModalOverlay onClick={onClose}>
       <ModalContent onClick={e => e.stopPropagation()}>
@@ -87,32 +49,30 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
         <UploadSection>
           <UploadFile>
-            <Label>Upload your Aadhaar card pdf</Label>
+            <Label>Upload your Masked Aadhaar PDF</Label>
             <FileInput onChange={handlePdfChange} id={'handlePdfChange'} />
             <DocumentResult>{pdfStatus}</DocumentResult>
           </UploadFile>
 
           <UploadFile>
-            <Label>
-              Upload your Aadhaar card certification <Tooltip />
-            </Label>
-            <FileInput onChange={handleCerUpload} id={'handleCerUpload'} />
-            <DocumentResult>{certificateOrSignatureStatus}</DocumentResult>
+            <Label>Enter your Aadhaar pdf password</Label>
+            <PasswordInput setPassword={setPassword} id={'password'} />
+            {errorMessage === null ? null : (
+              <ErrorToast message={errorMessage} />
+            )}
           </UploadFile>
         </UploadSection>
 
         <ProveButton
-          sigBigInt={sigBigInt}
-          modulusBigInt={modulusBigInt}
-          msgBigInt={msgBigInt}
-          signatureValidity={signatureValidity}
+          pdfData={pdfData}
+          password={password}
+          provingEnabled={provingEnabled}
+          setErrorMessage={setErrorMessage}
         />
       </ModalContent>
     </ModalOverlay>
   ) : null
 }
-
-export default Modal
 
 const ModalOverlay = styled.div`
   position: fixed;
@@ -142,7 +102,7 @@ const ModalContent = styled.div`
   justify-content: space-between;
 
   /* Responsive styles */
-  @media (max-width: 768px) {
+  @media (max-width: 425px) {
     /* For screens <= 768px (e.g., mobile devices) */
     width: 100%;
     height: 60%;
@@ -150,7 +110,7 @@ const ModalContent = styled.div`
     max-height: 100%;
   }
 
-  @media (min-width: 769px) {
+  @media (min-width: 426px) {
     /* For screens > 768px (e.g., desktop) */
     min-height: 400px;
     width: 80%; /* Adjust the percentage as needed */
@@ -173,6 +133,7 @@ const DocumentResult = styled.div`
 const TitleSection = styled.div`
   color: #111827;
   flex-shrink: 0;
+  row-gap: 1rem;
   margin-left: auto;
   margin-right: auto;
   display: flex;
@@ -185,6 +146,11 @@ const Title = styled.h3`
   margin-right: auto;
   font-size: medium;
   font-weight: bold;
+
+  @media (max-width: 425px) {
+    /* For screens <= 768px (e.g., mobile devices) */
+    font-size: small;
+  }
 `
 
 const Disclaimer = styled.p`
@@ -195,16 +161,11 @@ const Disclaimer = styled.p`
 `
 
 const UploadSection = styled.div`
-  row-gap: 20px;
+  row-gap: 1rem;
   max-width: 100%;
 `
 
 const Label = styled.div`
   font-weight: 500;
   color: #111827;
-`
-
-const LabelTooltip = styled.a`
-  font-weight: 500;
-  color: #76777a;
 `

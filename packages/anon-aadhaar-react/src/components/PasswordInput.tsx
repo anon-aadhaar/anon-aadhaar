@@ -28,7 +28,7 @@ const InputPass = styled.input`
   border-radius: 0.5rem;
   border-width: 1px;
   border-color: #d1d5db;
-  font-size: 0.875rem;
+  font-size: 18px;
   line-height: 1.75rem;
   color: #111827;
   background-color: #f9fafb;

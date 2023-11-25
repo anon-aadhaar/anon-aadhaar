@@ -2,6 +2,8 @@
 
 - Fix the contracts package
 - Add AnonAadhaarVerifier contract
+- Removed v1 components
+- Add appId in Provider context
 
 ## 0.1.8
 

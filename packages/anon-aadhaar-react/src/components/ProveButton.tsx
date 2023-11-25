@@ -1,66 +1,74 @@
 import { AnonAadhaarPCDArgs } from 'anon-aadhaar-pcd'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import styled from 'styled-components'
-import { useContext } from 'react'
+import { Dispatch, useContext, SetStateAction } from 'react'
 import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
 import { Spinner } from './LoadingSpinner'
-import { AadhaarSignatureValidition } from '../interface'
-import { APP_ID } from '../constants'
+import React from 'react'
+import { extractWitness } from 'anon-aadhaar-pcd'
 
 interface ProveButtonProps {
-  msgBigInt?: bigint
-  modulusBigInt?: bigint
-  sigBigInt?: bigint
-  signatureValidity: '' | AadhaarSignatureValidition
+  pdfData: Buffer
+  password: string
+  provingEnabled: boolean
+  setErrorMessage: Dispatch<SetStateAction<string | null>>
 }
 
 export const ProveButton: React.FC<ProveButtonProps> = ({
-  msgBigInt,
-  modulusBigInt,
-  sigBigInt,
-  signatureValidity,
+  pdfData,
+  password,
+  provingEnabled,
+  setErrorMessage,
 }) => {
-  const { state, startReq } = useContext(AnonAadhaarContext)
+  const { state, startReq, appId } = useContext(AnonAadhaarContext)
 
-  const args: AnonAadhaarPCDArgs = {
-    base_message: {
-      argumentType: ArgumentTypeName.BigInt,
-      userProvided: false,
-      value: msgBigInt?.toString(),
-      description: '',
-    },
-    signature: {
-      argumentType: ArgumentTypeName.BigInt,
-      userProvided: false,
-      value: sigBigInt?.toString(),
-      description: '',
-    },
-    modulus: {
-      argumentType: ArgumentTypeName.BigInt,
-      userProvided: false,
-      value: modulusBigInt?.toString(),
-      description: '',
-    },
-    app_id: {
-      argumentType: ArgumentTypeName.BigInt,
-      userProvided: false,
-      value: APP_ID,
-      description: '',
-    },
+  const startProving = async () => {
+    try {
+      if (appId === null) throw new Error('Missing application Id!')
+
+      const witness = await extractWitness(pdfData, password)
+
+      if (witness instanceof Error) throw new Error(witness.message)
+
+      const args: AnonAadhaarPCDArgs = {
+        base_message: {
+          argumentType: ArgumentTypeName.BigInt,
+          userProvided: false,
+          value: witness?.msgBigInt.toString(),
+          description: '',
+        },
+        signature: {
+          argumentType: ArgumentTypeName.BigInt,
+          userProvided: false,
+          value: witness?.sigBigInt.toString(),
+          description: '',
+        },
+        modulus: {
+          argumentType: ArgumentTypeName.BigInt,
+          userProvided: false,
+          value: witness?.modulusBigInt.toString(),
+          description: '',
+        },
+        app_id: {
+          argumentType: ArgumentTypeName.BigInt,
+          userProvided: false,
+          value: appId,
+          description: '',
+        },
+      }
+
+      startReq({ type: 'login', args })
+    } catch (error) {
+      console.log(error)
+      if (error instanceof Error) setErrorMessage(error.message)
+    }
   }
 
   return (() => {
     switch (state.status) {
       case 'logged-out':
         return (
-          <Btn
-            disabled={
-              !(signatureValidity == AadhaarSignatureValidition.SIGNATURE_VALID)
-            }
-            onClick={() => {
-              startReq({ type: 'login', args })
-            }}
-          >
+          <Btn disabled={!provingEnabled} onClick={startProving}>
             Request Aadhaar Proof
           </Btn>
         )
@@ -92,6 +100,7 @@ const Btn = styled.button`
   border-radius: 0.5rem;
   background: linear-gradient(345deg, #10fe53 0%, #09d3ff 100%);
   margin-top: 1rem;
+  margin-bottom: 1rem;
 
   &:hover {
     opacity: 70%;

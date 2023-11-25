@@ -10,7 +10,6 @@ import {
 import { AnonAadhaarPCDArgs, genData } from 'anon-aadhaar-pcd'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import { AnonAadhaarProvider } from '../src/provider/AnonAadhaarProvider'
-import { APP_ID } from '../src/constants'
 
 describe('useCountryIdentity Hook', () => {
   let testData: [bigint, bigint, bigint, bigint]
@@ -23,7 +22,11 @@ describe('useCountryIdentity Hook', () => {
 
     const wrapper: React.FC<{ children: ReactNode }> = ({ children }) => (
       <AnonAadhaarContext.Provider
-        value={{ state: initialState, startReq: startReqFunction }}
+        value={{
+          state: initialState,
+          startReq: startReqFunction,
+          appId: BigInt(1234555).toString(),
+        }}
       >
         {children}
       </AnonAadhaarContext.Provider>
@@ -57,12 +60,12 @@ describe('useCountryIdentity Hook', () => {
       },
       app_id: {
         argumentType: ArgumentTypeName.BigInt,
-        value: APP_ID,
+        value: BigInt(1234555).toString(),
       },
     }
 
     render(
-      <AnonAadhaarProvider>
+      <AnonAadhaarProvider _appId={BigInt(1234555).toString()}>
         <TestComponent pcdArgs={pcdArgs} />
       </AnonAadhaarProvider>,
     )
