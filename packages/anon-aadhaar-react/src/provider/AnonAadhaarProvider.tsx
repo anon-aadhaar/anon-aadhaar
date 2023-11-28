@@ -36,6 +36,8 @@ export function AnonAadhaarProvider(props: {
     status: 'logged-out',
   })
   useEffect(() => {
+    if (props._appId === '')
+      console.warn('[ANON-AADHAAR]: Please provide a valid appId')
     readFromLocalStorage().then(setAndWriteState)
     setAppId(props._appId)
   }, [props._appId])

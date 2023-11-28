@@ -38,6 +38,7 @@ export const ProveModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   return isOpen ? (
     <ModalOverlay onClick={onClose}>
       <ModalContent onClick={e => e.stopPropagation()}>
+        <ErrorToast message={errorMessage} setErrorMessage={setErrorMessage} />
         <TitleSection>
           <Title>Prove your Identity with your Aadhar card</Title>
           <Disclaimer>
@@ -57,9 +58,6 @@ export const ProveModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
           <UploadFile>
             <Label>Enter your Aadhaar pdf password</Label>
             <PasswordInput setPassword={setPassword} id={'password'} />
-            {errorMessage === null ? null : (
-              <ErrorToast message={errorMessage} />
-            )}
           </UploadFile>
         </UploadSection>
 
