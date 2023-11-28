@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { FileInput } from './FileInput'
 import { ProveButton } from './ProveButton'
-import { pdfCheck } from '../util'
+import { uploadPdf } from '../util'
 import { PasswordInput } from './PasswordInput'
 import { AadhaarPdfValidation } from '../interface'
 import { ErrorToast } from './ErrorToast'
@@ -20,7 +20,7 @@ export const ProveModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const handlePdfChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { pdf } = await pdfCheck(e, setpdfStatus)
+    const { pdf } = await uploadPdf(e, setpdfStatus)
     setPdfData(pdf)
   }
 
