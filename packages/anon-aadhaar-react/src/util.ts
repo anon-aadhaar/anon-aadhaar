@@ -1,11 +1,6 @@
 import { ChangeEvent, Dispatch, SetStateAction } from 'react'
-import * as peculiarX509 from '@peculiar/x509'
 import * as forge from 'node-forge'
-import {
-  AadhaarPdfValidation,
-  AadhaarSignatureValidition,
-  AadhaarCertificateValidation,
-} from './interface'
+import { AadhaarPdfValidation, AadhaarSignatureValidition } from './interface'
 
 /**
  * Handle the upload of the pdf, extract the signature and the signed data.
@@ -105,98 +100,6 @@ const getSubstringIndex = (str: Buffer, substring: string, n: number) => {
   }
 
   return index
-}
-
-/**
- * Handle the upload of the certification, extract the message, the signature and the modulus.
- * @param pdf pdf buffer
- * @param signedPdfData signed data attached to the pdf
- * @param signature the signature attached to the aadhaar card
- * @returns {msgBigInt, sigBigInt, modulusBigInt}
- */
-export const cerUpload = async (
-  e: ChangeEvent<HTMLInputElement>,
-  signedPdfData: Buffer,
-  signature: string,
-  pdfStatus: '' | AadhaarPdfValidation,
-  setcertificateStatus: Dispatch<
-    SetStateAction<'' | AadhaarCertificateValidation>
-  >,
-  setsignatureValidity: Dispatch<
-    SetStateAction<'' | AadhaarSignatureValidition>
-  >,
-): Promise<{ msgBigInt: bigint; sigBigInt: bigint; modulusBigInt: bigint }> => {
-  return new Promise((resolve, reject) => {
-    if (e.target.files) {
-      try {
-        const fileReader = new FileReader()
-        fileReader.readAsArrayBuffer(e.target.files[0])
-        fileReader.onload = e => {
-          if (e.target && pdfStatus == AadhaarPdfValidation.SIGNATURE_PRESENT) {
-            try {
-              const cer = new peculiarX509.X509Certificate(
-                e.target.result as Buffer,
-              )
-
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const cert = (forge as any).pki.certificateFromPem(
-                cer.toString('pem'),
-              )
-
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const md = (forge as any).md.sha1.create()
-              md.update(signedPdfData.toString('binary')) // defaults to raw encoding
-
-              const decryptData = Buffer.from(
-                cert.publicKey.encrypt(signature, 'RAW'),
-                'binary',
-              )
-              const hash = Buffer.from(md.digest().bytes(), 'binary')
-
-              const isValid =
-                Buffer.compare(decryptData.subarray(236, 256), hash) === 0
-
-              if (isValid) {
-                const msgBigInt = BigInt('0x' + hash.toString('hex'))
-                const sigBigInt = BigInt(
-                  '0x' + Buffer.from(signature, 'binary').toString('hex'),
-                )
-                const modulusBigInt = BigInt(
-                  '0x' + cert.publicKey.n.toString(16),
-                )
-                setsignatureValidity(AadhaarSignatureValidition.SIGNATURE_VALID)
-                setcertificateStatus(
-                  AadhaarCertificateValidation.CERTIFICATE_CORRECTLY_FORMATTED,
-                )
-                resolve({ msgBigInt, sigBigInt, modulusBigInt })
-              } else {
-                setsignatureValidity(
-                  AadhaarSignatureValidition.SIGNATURE_INVALID,
-                )
-                setcertificateStatus(
-                  AadhaarCertificateValidation.CERTIFICATE_CORRECTLY_FORMATTED,
-                )
-                reject()
-              }
-            } catch (error) {
-              setsignatureValidity(AadhaarSignatureValidition.SIGNATURE_INVALID)
-              setcertificateStatus(
-                AadhaarCertificateValidation.ERROR_PARSING_CERTIFICATE,
-              )
-              reject()
-            }
-          } else {
-            setcertificateStatus(AadhaarCertificateValidation.NO_PDF_UPLOADED)
-            reject()
-          }
-        }
-      } catch (error) {
-        setsignatureValidity(AadhaarSignatureValidition.SIGNATURE_INVALID)
-        setcertificateStatus('')
-        reject()
-      }
-    }
-  })
 }
 
 export function text(emoji: string, text: string) {

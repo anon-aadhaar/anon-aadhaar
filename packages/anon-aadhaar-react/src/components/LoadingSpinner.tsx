@@ -21,7 +21,7 @@ export const Spinner = () => {
 }
 
 const SpinnerStyle = styled.div`
-  font-size: 1rem; /* Adjust the font size to make the emoji bigger */
+  font-size: 1rem;
   display: flex;
   justify-content: center;
   align-items: center;

@@ -50,18 +50,18 @@ const Box = styled.div`
   border-radius: 5px;
   background-color: #efc8c8;
   padding: 4px;
-  align-items: flex-start; /* Align items to the top */
+  align-items: flex-start;
 `
 
 const Message = styled.div`
   margin-left: 3px;
   font-size: 0.875rem;
   color: #a00f0f;
-  flex: 1; /* Allow message to expand */
-  width: fit-content; /* Adjust to fit your layout */
-  max-width: 92%; /* Maximum width for the message */
-  overflow: hidden; /* Hide overflow content */
-  text-overflow: ellipsis; /* Show ellipsis for overflow */
+  flex: 1;
+  width: fit-content;
+  max-width: 92%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `
 
 const CloseButton = styled.button`
@@ -69,8 +69,8 @@ const CloseButton = styled.button`
   background: none;
   color: #a00f0f;
   cursor: pointer;
-  width: 24px; /* Fixed width */
-  height: 24px; /* Fixed height */
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
