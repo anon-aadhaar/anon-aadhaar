@@ -1,6 +1,6 @@
 {
   "name": "anon-aadhaar-react",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Frontend component kit for the country identity pcd package",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -29,7 +29,6 @@
   },
   "dependencies": {
     "@pcd/pcd-types": "^0.6.0",
-    "@peculiar/x509": "^1.9.3",
     "@types/json-bigint": "^1.0.1",
     "@types/pako": "^2.0.0",
     "@types/qr-image": "^3.2.6",

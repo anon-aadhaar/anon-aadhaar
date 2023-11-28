@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { FileInput } from './FileInput'
 import { ProveButton } from './ProveButton'
-import { pdfCheck } from '../util'
+import { uploadPdf } from '../util'
 import { PasswordInput } from './PasswordInput'
 import { AadhaarPdfValidation } from '../interface'
 import { ErrorToast } from './ErrorToast'
@@ -20,7 +20,7 @@ export const ProveModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const handlePdfChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { pdf } = await pdfCheck(e, setpdfStatus)
+    const { pdf } = await uploadPdf(e, setpdfStatus)
     setPdfData(pdf)
   }
 
@@ -38,6 +38,7 @@ export const ProveModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   return isOpen ? (
     <ModalOverlay onClick={onClose}>
       <ModalContent onClick={e => e.stopPropagation()}>
+        <ErrorToast message={errorMessage} setErrorMessage={setErrorMessage} />
         <TitleSection>
           <Title>Prove your Identity with your Aadhar card</Title>
           <Disclaimer>
@@ -57,9 +58,6 @@ export const ProveModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
           <UploadFile>
             <Label>Enter your Aadhaar pdf password</Label>
             <PasswordInput setPassword={setPassword} id={'password'} />
-            {errorMessage === null ? null : (
-              <ErrorToast message={errorMessage} />
-            )}
           </UploadFile>
         </UploadSection>
 
@@ -80,15 +78,14 @@ const ModalOverlay = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.2); /* Low opacity gray */
+  background-color: rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999; /* Ensure the modal appears on top of other elements */
+  z-index: 9999;
 `
 
 const ModalContent = styled.div`
-  /* Modal styles common to both desktop and mobile */
   position: fixed;
   display: flex;
   flex-direction: column;
@@ -101,9 +98,8 @@ const ModalContent = styled.div`
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   justify-content: space-between;
 
-  /* Responsive styles */
   @media (max-width: 425px) {
-    /* For screens <= 768px (e.g., mobile devices) */
+    /* For screens <= 425px (e.g., mobile devices) */
     width: 100%;
     height: 60%;
     max-width: 100%;
@@ -111,10 +107,10 @@ const ModalContent = styled.div`
   }
 
   @media (min-width: 426px) {
-    /* For screens > 768px (e.g., desktop) */
+    /* For screens > 426px (e.g., desktop) */
     min-height: 400px;
-    width: 80%; /* Adjust the percentage as needed */
-    max-width: 400px; /* Set a maximum width for desktop */
+    max-width: 400px;
+    width: 80%;
   }
 `
 
@@ -148,7 +144,7 @@ const Title = styled.h3`
   font-weight: bold;
 
   @media (max-width: 425px) {
-    /* For screens <= 768px (e.g., mobile devices) */
+    /* For screens <= 425px (e.g., mobile devices) */
     font-size: small;
   }
 `

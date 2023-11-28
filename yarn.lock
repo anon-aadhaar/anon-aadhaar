@@ -2729,7 +2729,7 @@
     pvtsutils "^1.3.2"
     tslib "^2.4.0"
 
-"@peculiar/x509@^1.9.3", "@peculiar/x509@^1.9.5":
+"@peculiar/x509@^1.9.5":
   version "1.9.5"
   resolved "https://registry.yarnpkg.com/@peculiar/x509/-/x509-1.9.5.tgz#1784e3629b197e6fc8ce34a8f74b786a901e800b"
   integrity sha512-6HBrlgoyH8sod0PTjQ8hzOL4/f5L94s5lwiL9Gr0P5HiSO8eeNgKoiB+s7VhDczE2aaloAgDXFjoQHVEcTg4mg==
