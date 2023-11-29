@@ -1,8 +1,10 @@
 import { decryptPDF } from 'spdf'
 import { Proof } from './types'
-import { Groth16Proof } from 'snarkjs'
+import { groth16, Groth16Proof, ZKArtifact } from 'snarkjs'
 import { subtle } from 'crypto'
 import * as x509 from '@peculiar/x509'
+import { BigNumberish } from './types'
+import { AnonAadhaarPCD } from './pcd'
 
 export const handleError = (error: unknown, defaultMessage: string): Error => {
   if (error instanceof Error) return error
@@ -179,4 +181,87 @@ export async function extractCert(pdf: Buffer, password: string) {
   const decryptedPdf: Uint8Array = await decryptPDF(pdf, password)
   const { decryptedCert } = extractDecryptedCert(Buffer.from(decryptedPdf))
   return new x509.X509Certificate(decryptedCert)
+}
+
+/**
+ * Turn a groth16 proof into a call data format to use it as a transaction input.
+ * @param input Inputs needed to generate the witness.
+ * @param wasmPath Path to the wasm file.
+ * @param zkeyPath Path to the zkey file.
+ * @returns {a, b, c, Input} which are the input needed to verify a proof in the Verifier smart contract.
+ */
+export async function exportCallDataGroth16(
+  input: {
+    signature: string[]
+    modulus: string[]
+    base_message: string[]
+    app_id: string
+  },
+  wasmPath: ZKArtifact,
+  zkeyPath: ZKArtifact
+): Promise<{
+  a: [BigNumberish, BigNumberish]
+  b: [[BigNumberish, BigNumberish], [BigNumberish, BigNumberish]]
+  c: [BigNumberish, BigNumberish]
+  Input: BigNumberish[]
+}> {
+  const { proof: _proof, publicSignals: _publicSignals } =
+    await groth16.fullProve(input, wasmPath, zkeyPath)
+  const calldata = await groth16.exportSolidityCallData(_proof, _publicSignals)
+
+  const argv = calldata
+    .replace(/["[\]\s]/g, '')
+    .split(',')
+    .map((x: string) => BigInt(x).toString())
+
+  const a: [BigNumberish, BigNumberish] = [argv[0], argv[1]]
+  const b: [[BigNumberish, BigNumberish], [BigNumberish, BigNumberish]] = [
+    [argv[2], argv[3]],
+    [argv[4], argv[5]],
+  ]
+  const c: [BigNumberish, BigNumberish] = [argv[6], argv[7]]
+  const Input = []
+
+  for (let i = 8; i < argv.length; i++) {
+    Input.push(argv[i])
+  }
+  return { a, b, c, Input }
+}
+
+/**
+ * Turn a PCD into a call data format to use it as a transaction input.
+ * @param _pcd The PCD you want to verify on-chain.
+ * @returns {a, b, c, Input} which are the input needed to verify a proof in the Verifier smart contract.
+ */
+export async function exportCallDataGroth16FromPCD(
+  _pcd: AnonAadhaarPCD
+): Promise<{
+  a: [BigNumberish, BigNumberish]
+  b: [[BigNumberish, BigNumberish], [BigNumberish, BigNumberish]]
+  c: [BigNumberish, BigNumberish]
+  Input: BigNumberish[]
+}> {
+  const calldata = await groth16.exportSolidityCallData(_pcd.proof.proof, [
+    _pcd.proof.nullifier.toString(),
+    ...splitToWords(BigInt(_pcd.proof.modulus), BigInt(64), BigInt(32)),
+    _pcd.proof.app_id.toString(),
+  ])
+
+  const argv = calldata
+    .replace(/["[\]\s]/g, '')
+    .split(',')
+    .map((x: string) => BigInt(x).toString())
+
+  const a: [BigNumberish, BigNumberish] = [argv[0], argv[1]]
+  const b: [[BigNumberish, BigNumberish], [BigNumberish, BigNumberish]] = [
+    [argv[2], argv[3]],
+    [argv[4], argv[5]],
+  ]
+  const c: [BigNumberish, BigNumberish] = [argv[6], argv[7]]
+  const Input = []
+
+  for (let i = 8; i < argv.length; i++) {
+    Input.push(argv[i])
+  }
+  return { a, b, c, Input }
 }

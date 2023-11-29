@@ -1,9 +1,17 @@
 import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers'
 import { expect } from 'chai'
 import { ethers } from 'hardhat'
-import { exportCallDataGroth16 } from './utils'
-import { genData, splitToWords } from 'anon-aadhaar-pcd'
+import {
+  genData,
+  splitToWords,
+  exportCallDataGroth16,
+  extractWitness,
+  WASM_URL,
+  ZKEY_URL,
+} from 'anon-aadhaar-pcd'
 import crypto from 'crypto'
+import fs from 'fs'
+import { fetchKey } from './util'
 
 describe('VerifyProof', function () {
   this.timeout(0)
@@ -36,16 +44,13 @@ describe('VerifyProof', function () {
     describe('Verifier', function () {
       it('Should return true for a valid proof', async function () {
         const { verifier } = await loadFixture(deployOneYearLockFixture)
-
         const testData: [bigint, bigint, bigint, bigint] = await genData(
           'Hello world',
           'SHA-1',
         )
-
         const app_id = BigInt(
           parseInt(crypto.randomBytes(20).toString('hex'), 16),
         ) // random value.
-
         const input = {
           signature: splitToWords(BigInt(testData[1]), BigInt(64), BigInt(32)),
           modulus: splitToWords(BigInt(testData[2]), BigInt(64), BigInt(32)),
@@ -56,15 +61,12 @@ describe('VerifyProof', function () {
           ),
           app_id: app_id.toString(),
         }
-
         const dirName = __dirname + '/../../anon-aadhaar-pcd/artifacts/RSA'
-
         const { a, b, c, Input } = await exportCallDataGroth16(
           input,
           dirName + '/main.wasm',
           dirName + '/circuit_final.zkey',
         )
-
         // We use lock.connect() to send a transaction from another account
         expect(await verifier.verifyProof(a, b, c, Input)).to.be.equal(true)
       })
@@ -165,41 +167,37 @@ describe('VerifyProof', function () {
         ).to.be.revertedWith('AnonAadhaarVerifier: wrong app ID')
       })
 
-      //   it('Should return true for a valid proof', async function () {
-      //     const { anonAadhaarVerifier, appIdBigInt } = await loadFixture(
-      //       deployOneYearLockFixture,
-      //     )
+      it('Should return true for a valid proof with webProver', async function () {
+        const { anonAadhaarVerifier, appIdBigInt } = await loadFixture(
+          deployOneYearLockFixture,
+        )
 
-      //     const testFile = __dirname + '/AadhaarTest.pdf'
-      //     const pdfRaw = fs.readFileSync(testFile)
-      //     const pdfBuffer = Buffer.from(pdfRaw)
-      //     const inputs = await extractWitness(
-      //       pdfBuffer,
-      //       'password',
-      //       BigInt(appIdBigInt),
-      //     )
+        const dirName = __dirname + '/../../anon-aadhaar-pcd/build/pdf'
 
-      //     if (inputs instanceof Error) return
+        const testFile = dirName + '/signed.pdf'
+        const pdfRaw = fs.readFileSync(testFile)
+        const pdfBuffer = Buffer.from(pdfRaw)
+        const inputs = await extractWitness(pdfBuffer, 'test123')
 
-      //     const input = {
-      //       signature: splitToWords(inputs.sigBigInt, BigInt(64), BigInt(32)),
-      //       modulus: splitToWords(inputs.modulusBigInt, BigInt(64), BigInt(32)),
-      //       base_message: splitToWords(inputs.msgBigInt, BigInt(64), BigInt(32)),
-      //       app_id: appIdBigInt,
-      //     }
+        if (inputs instanceof Error) throw new Error(inputs.message)
 
-      //     const dirName = __dirname + '/../../anon-aadhaar-pcd/artifacts/RSA'
+        const input = {
+          signature: splitToWords(inputs.sigBigInt, BigInt(64), BigInt(32)),
+          modulus: splitToWords(inputs.modulusBigInt, BigInt(64), BigInt(32)),
+          base_message: splitToWords(inputs.msgBigInt, BigInt(64), BigInt(32)),
+          app_id: appIdBigInt,
+        }
 
-      //     const { a, b, c, Input } = await exportCallDataGroth16(
-      //       input,
-      //       dirName + '/main.wasm',
-      //       dirName + '/circuit_final.zkey',
-      //     )
+        const { a, b, c, Input } = await exportCallDataGroth16(
+          input,
+          await fetchKey(WASM_URL),
+          await fetchKey(ZKEY_URL),
+        )
 
-      //     expect(
-      //       await anonAadhaarVerifier.verifyProof(a, b, c, Input),
-      //     ).to.be.equal(true)
-      //   })
+        expect(
+          await anonAadhaarVerifier.verifyProof(a, b, c, Input),
+        ).to.be.equal(true)
+      })
     })
   })
 })
