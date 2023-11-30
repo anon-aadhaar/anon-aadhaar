@@ -19,10 +19,6 @@ export const ErrorToast: FunctionComponent<ErrorToastProps> = ({
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
-    console.log('Rendering Erreur Component')
-  })
-
-  useEffect(() => {
     if (message) setIsVisible(true)
   }, [message])
 

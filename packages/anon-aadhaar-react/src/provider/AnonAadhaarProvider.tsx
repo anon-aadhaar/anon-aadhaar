@@ -174,7 +174,6 @@ function handleLoginReq(
   setPcd: Dispatch<SetStateAction<AnonAadhaarPCD | null>>,
 ): AnonAadhaarState {
   const { type } = request
-  console.log('Type of request received: ', type)
   switch (type) {
     case 'login':
       try {
@@ -220,8 +219,6 @@ async function handleLogin(
     )
     return null
   }
-
-  console.log(`[ANON-AADHAAR] verifying ${pcdStr.type}`)
 
   if (!(await AnonAadhaarPCDPackage.verify(_pcd))) {
     throw new Error('Invalid proof')
