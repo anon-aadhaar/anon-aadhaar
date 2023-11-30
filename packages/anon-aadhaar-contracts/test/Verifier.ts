@@ -5,13 +5,13 @@ import {
   genData,
   splitToWords,
   exportCallDataGroth16,
-  //   extractWitness,
-  //   WASM_URL,
-  //   ZKEY_URL,
+  extractWitness,
+  WASM_URL,
+  ZKEY_URL,
 } from 'anon-aadhaar-pcd'
 import crypto from 'crypto'
-// import { fetchKey } from './util'
-// import fs from 'fs'
+import { fetchKey } from './util'
+import fs from 'fs'
 
 describe('VerifyProof', function () {
   this.timeout(0)
@@ -61,35 +61,35 @@ describe('VerifyProof', function () {
         expect(await verifier.verifyProof(a, b, c, Input)).to.be.equal(true)
       })
 
-      //   it('Should return true for a valid proof with webProver', async function () {
-      //     const { verifier, appIdBigInt } = await loadFixture(
-      //       deployOneYearLockFixture,
-      //     )
+      it.skip('Should return true for a valid proof with webProver', async function () {
+        const { verifier, appIdBigInt } = await loadFixture(
+          deployOneYearLockFixture,
+        )
 
-      //     const dirName = __dirname + '/../../anon-aadhaar-pcd/build/pdf'
+        const dirName = __dirname + '/../../anon-aadhaar-pcd/build/pdf'
 
-      //     const testFile = dirName + '/signed.pdf'
-      //     const pdfRaw = fs.readFileSync(testFile)
-      //     const pdfBuffer = Buffer.from(pdfRaw)
-      //     const inputs = await extractWitness(pdfBuffer, 'test123')
+        const testFile = dirName + '/signed.pdf'
+        const pdfRaw = fs.readFileSync(testFile)
+        const pdfBuffer = Buffer.from(pdfRaw)
+        const inputs = await extractWitness(pdfBuffer, 'test123')
 
-      //     if (inputs instanceof Error) throw new Error(inputs.message)
+        if (inputs instanceof Error) throw new Error(inputs.message)
 
-      //     const input = {
-      //       signature: splitToWords(inputs.sigBigInt, BigInt(64), BigInt(32)),
-      //       modulus: splitToWords(inputs.modulusBigInt, BigInt(64), BigInt(32)),
-      //       base_message: splitToWords(inputs.msgBigInt, BigInt(64), BigInt(32)),
-      //       app_id: appIdBigInt,
-      //     }
+        const input = {
+          signature: splitToWords(inputs.sigBigInt, BigInt(64), BigInt(32)),
+          modulus: splitToWords(inputs.modulusBigInt, BigInt(64), BigInt(32)),
+          base_message: splitToWords(inputs.msgBigInt, BigInt(64), BigInt(32)),
+          app_id: appIdBigInt,
+        }
 
-      //     const { a, b, c, Input } = await exportCallDataGroth16(
-      //       input,
-      //       await fetchKey(WASM_URL),
-      //       await fetchKey(ZKEY_URL),
-      //     )
+        const { a, b, c, Input } = await exportCallDataGroth16(
+          input,
+          await fetchKey(WASM_URL),
+          await fetchKey(ZKEY_URL),
+        )
 
-      //     expect(await verifier.verifyProof(a, b, c, Input)).to.be.equal(true)
-      //   })
+        expect(await verifier.verifyProof(a, b, c, Input)).to.be.equal(true)
+      })
     })
   })
 })
