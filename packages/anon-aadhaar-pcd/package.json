@@ -1,6 +1,6 @@
 {
   "name": "anon-aadhaar-pcd",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "main": "./dist/index.js",
   "types": "./src/index.ts",
   "repository": "https://github.com/privacy-scaling-explorations/anon-aadhaar",

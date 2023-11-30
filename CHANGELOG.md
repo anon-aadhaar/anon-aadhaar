@@ -1,3 +1,9 @@
+## 0.1.10
+
+- Fix bug in react lib
+- Remove AnonAadhaarVerifier from contracts package
+- Add new util function for on-chain verification
+
 ## 0.1.9
 
 - Fix the contracts package
