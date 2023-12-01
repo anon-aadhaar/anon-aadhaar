@@ -31,69 +31,44 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
 
       if (witness instanceof Error) throw new Error(witness.message)
 
-      let args: AnonAadhaarPCDArgs
+      let publicKey = ''
 
-      if (testing === false) {
-        const publicKey = await fetchPublicKey(
+      if (!testing) {
+        const result = await fetchPublicKey(
           'https://www.uidai.gov.in/images/authDoc/uidai_offline_publickey_26022021.cer',
         )
-
-        if (publicKey === null)
+        if (result === null) {
           throw new Error('Error while fetching the public key!')
+        } else {
+          publicKey = result
+        }
+      }
 
-        args = {
-          base_message: {
-            argumentType: ArgumentTypeName.BigInt,
-            userProvided: false,
-            value: witness?.msgBigInt.toString(),
-            description: '',
-          },
-          signature: {
-            argumentType: ArgumentTypeName.BigInt,
-            userProvided: false,
-            value: witness?.sigBigInt.toString(),
-            description: '',
-          },
-          modulus: {
-            argumentType: ArgumentTypeName.BigInt,
-            userProvided: false,
-            value: '0x' + publicKey,
-            description: '',
-          },
-          app_id: {
-            argumentType: ArgumentTypeName.BigInt,
-            userProvided: false,
-            value: appId,
-            description: '',
-          },
-        }
-      } else {
-        args = {
-          base_message: {
-            argumentType: ArgumentTypeName.BigInt,
-            userProvided: false,
-            value: witness?.msgBigInt.toString(),
-            description: '',
-          },
-          signature: {
-            argumentType: ArgumentTypeName.BigInt,
-            userProvided: false,
-            value: witness?.sigBigInt.toString(),
-            description: '',
-          },
-          modulus: {
-            argumentType: ArgumentTypeName.BigInt,
-            userProvided: false,
-            value: witness?.modulusBigInt.toString(),
-            description: '',
-          },
-          app_id: {
-            argumentType: ArgumentTypeName.BigInt,
-            userProvided: false,
-            value: appId,
-            description: '',
-          },
-        }
+      const args: AnonAadhaarPCDArgs = {
+        base_message: {
+          argumentType: ArgumentTypeName.BigInt,
+          userProvided: false,
+          value: witness?.msgBigInt.toString(),
+          description: '',
+        },
+        signature: {
+          argumentType: ArgumentTypeName.BigInt,
+          userProvided: false,
+          value: witness?.sigBigInt.toString(),
+          description: '',
+        },
+        modulus: {
+          argumentType: ArgumentTypeName.BigInt,
+          userProvided: false,
+          value: testing ? witness.modulusBigInt.toString() : '0x' + publicKey,
+          description: '',
+        },
+        app_id: {
+          argumentType: ArgumentTypeName.BigInt,
+          userProvided: false,
+          value: appId,
+          description: '',
+        },
       }
 
       startReq({ type: 'login', args })
