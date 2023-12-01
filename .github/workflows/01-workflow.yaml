@@ -52,7 +52,6 @@ jobs:
       - name: Get Circuit Hash
         id: get-circuit-hash
         run: |
-          echo "$(pwd)" 
           echo "circuits_hash=`cd packages/anon-aadhaar-pcd && ./script/utils.sh`" >> $GITHUB_OUTPUT
         shell: bash
 
