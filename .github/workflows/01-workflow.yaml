@@ -68,5 +68,6 @@ jobs:
 
       - name: Build packages
         run: yarn build:libraries
+
       - name: Test packages
         run: yarn test:libraries
