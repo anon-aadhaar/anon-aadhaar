@@ -16,6 +16,7 @@ import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
  */
 export const LogInWithAnonAadhaar = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const { state, startReq } = useContext(AnonAadhaarContext)
 
   useEffect(() => {
@@ -28,6 +29,7 @@ export const LogInWithAnonAadhaar = () => {
 
   const closeModal = () => {
     setIsModalOpen(false)
+    setErrorMessage(null)
   }
 
   return (
@@ -37,7 +39,12 @@ export const LogInWithAnonAadhaar = () => {
           <Btn onClick={openModal}>
             {text('🌏', 'Log In with Anon Aadhaar')}
           </Btn>
-          <ProveModal isOpen={isModalOpen} onClose={closeModal}></ProveModal>
+          <ProveModal
+            isOpen={isModalOpen}
+            onClose={closeModal}
+            errorMessage={errorMessage}
+            setErrorMessage={setErrorMessage}
+          ></ProveModal>
         </div>
       )}
       {state.status === 'logged-in' && (

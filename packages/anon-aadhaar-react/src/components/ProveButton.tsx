@@ -1,7 +1,7 @@
 import { AnonAadhaarPCDArgs } from 'anon-aadhaar-pcd'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import styled from 'styled-components'
-import { Dispatch, useContext, SetStateAction, useEffect } from 'react'
+import { Dispatch, useContext, SetStateAction } from 'react'
 import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
 import { Spinner } from './LoadingSpinner'
 import React from 'react'
@@ -22,8 +22,6 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
   setErrorMessage,
 }) => {
   const { state, startReq, appId, testing } = useContext(AnonAadhaarContext)
-
-  useEffect(() => console.log('Testing :', testing), [testing])
 
   const startProving = async () => {
     try {

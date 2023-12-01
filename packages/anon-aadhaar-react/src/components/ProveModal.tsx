@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, Dispatch, SetStateAction } from 'react'
 import styled from 'styled-components'
 import { FileInput } from './FileInput'
 import { ProveButton } from './ProveButton'
@@ -10,14 +10,20 @@ import { ErrorToast } from './ErrorToast'
 interface ModalProps {
   isOpen: boolean
   onClose: () => void
+  errorMessage: string | null
+  setErrorMessage: Dispatch<SetStateAction<string | null>>
 }
 
-export const ProveModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
+export const ProveModal: React.FC<ModalProps> = ({
+  isOpen,
+  onClose,
+  errorMessage,
+  setErrorMessage,
+}) => {
   const [pdfData, setPdfData] = useState(Buffer.from([]))
   const [password, setPassword] = useState<string>('')
   const [pdfStatus, setpdfStatus] = useState<'' | AadhaarPdfValidation>('')
   const [provingEnabled, setProvingEnabled] = useState<boolean>(false)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const handlePdfChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const { pdf } = await uploadPdf(e, setpdfStatus)
