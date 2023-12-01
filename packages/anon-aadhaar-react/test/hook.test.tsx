@@ -26,6 +26,7 @@ describe('useCountryIdentity Hook', () => {
           state: initialState,
           startReq: startReqFunction,
           appId: BigInt(1234555).toString(),
+          testing: true,
         }}
       >
         {children}

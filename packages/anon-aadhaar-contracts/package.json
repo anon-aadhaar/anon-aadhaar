@@ -1,6 +1,6 @@
 {
   "name": "anon-aadhaar-contracts",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "Verifier smart contract for the anon aadhaar circuit",
   "license": "MIT",
   "scripts": {

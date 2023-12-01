@@ -25,6 +25,7 @@ import { SerializedPCD } from '@pcd/pcd-types'
 export function AnonAadhaarProvider(props: {
   children: ReactNode
   _appId: string
+  _testing?: boolean
 }) {
   // Read state from local storage on page load
   const [pcdStr, setPcdStr] = useState<SerializedPCD<AnonAadhaarPCD> | null>(
@@ -32,6 +33,7 @@ export function AnonAadhaarProvider(props: {
   )
   const [pcd, setPcd] = useState<AnonAadhaarPCD | null>(null)
   const [appId, setAppId] = useState<string | null>(null)
+  const [testing, setTesting] = useState<boolean>(true)
   const [state, setState] = useState<AnonAadhaarState>({
     status: 'logged-out',
   })
@@ -40,6 +42,7 @@ export function AnonAadhaarProvider(props: {
       console.warn('[ANON-AADHAAR]: Please provide a valid appId')
     readFromLocalStorage().then(setAndWriteState)
     setAppId(props._appId)
+    if (props._testing !== undefined) setTesting(props._testing)
   }, [props._appId])
 
   // Write state to local storage whenever a login starts, succeeds, or fails
@@ -78,7 +81,10 @@ export function AnonAadhaarProvider(props: {
   }, [pcdStr])
 
   // Provide context
-  const val = React.useMemo(() => ({ state, startReq, appId }), [state, appId])
+  const val = React.useMemo(
+    () => ({ state, startReq, appId, testing }),
+    [state, appId, testing],
+  )
 
   return (
     <AnonAadhaarContext.Provider value={val}>

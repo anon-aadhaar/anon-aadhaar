@@ -1,3 +1,8 @@
+## 0.1.11
+
+- Add staging mode, where user can choose to generate proof with the official modulus.
+- Fix react Error toaster component.
+
 ## 0.1.10
 
 - Fix bug in react lib

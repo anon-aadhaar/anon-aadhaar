@@ -6,6 +6,7 @@ import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
 import { Spinner } from './LoadingSpinner'
 import React from 'react'
 import { extractWitness } from 'anon-aadhaar-pcd'
+import { fetchPublicKey } from '../util'
 
 interface ProveButtonProps {
   pdfData: Buffer
@@ -20,7 +21,7 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
   provingEnabled,
   setErrorMessage,
 }) => {
-  const { state, startReq, appId } = useContext(AnonAadhaarContext)
+  const { state, startReq, appId, testing } = useContext(AnonAadhaarContext)
 
   const startProving = async () => {
     try {
@@ -29,6 +30,19 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
       const witness = await extractWitness(pdfData, password)
 
       if (witness instanceof Error) throw new Error(witness.message)
+
+      let publicKey = ''
+
+      if (!testing) {
+        const result = await fetchPublicKey(
+          'https://www.uidai.gov.in/images/authDoc/uidai_offline_publickey_26022021.cer',
+        )
+        if (result === null) {
+          throw new Error('Error while fetching the public key!')
+        } else {
+          publicKey = result
+        }
+      }
 
       const args: AnonAadhaarPCDArgs = {
         base_message: {
@@ -46,7 +60,7 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
         modulus: {
           argumentType: ArgumentTypeName.BigInt,
           userProvided: false,
-          value: witness?.modulusBigInt.toString(),
+          value: testing ? witness.modulusBigInt.toString() : '0x' + publicKey,
           description: '',
         },
         app_id: {

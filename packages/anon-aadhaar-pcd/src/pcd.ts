@@ -47,7 +47,7 @@ export async function prove(args: AnonAadhaarPCDArgs): Promise<AnonAadhaarPCD> {
   }
 
   if (!args.modulus.value) {
-    throw new Error('Invalid arguments')
+    throw new Error('Invalid modulus argument')
   }
 
   const id = uuidv4()
