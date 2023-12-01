@@ -53,7 +53,7 @@ jobs:
         id: get-circuit-hash
         run: |
           echo "$(pwd)" 
-          echo "circuits_hash=`packages/anon-aadhaar-pcd/script/utils.sh`" >> $GITHUB_OUTPUT
+          echo "circuits_hash=`cd packages/anon-aadhaar-pcd && ./script/utils.sh`" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Cache proving/verify key
