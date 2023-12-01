@@ -1,11 +1,12 @@
 import { AnonAadhaarPCDArgs } from 'anon-aadhaar-pcd'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import styled from 'styled-components'
-import { Dispatch, useContext, SetStateAction } from 'react'
+import { Dispatch, useContext, SetStateAction, useEffect } from 'react'
 import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
 import { Spinner } from './LoadingSpinner'
 import React from 'react'
 import { extractWitness } from 'anon-aadhaar-pcd'
+import { fetchPublicKey } from '../util'
 
 interface ProveButtonProps {
   pdfData: Buffer
@@ -20,7 +21,9 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
   provingEnabled,
   setErrorMessage,
 }) => {
-  const { state, startReq, appId } = useContext(AnonAadhaarContext)
+  const { state, startReq, appId, testing } = useContext(AnonAadhaarContext)
+
+  useEffect(() => console.log('Testing :', testing), [testing])
 
   const startProving = async () => {
     try {
@@ -30,31 +33,69 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
 
       if (witness instanceof Error) throw new Error(witness.message)
 
-      const args: AnonAadhaarPCDArgs = {
-        base_message: {
-          argumentType: ArgumentTypeName.BigInt,
-          userProvided: false,
-          value: witness?.msgBigInt.toString(),
-          description: '',
-        },
-        signature: {
-          argumentType: ArgumentTypeName.BigInt,
-          userProvided: false,
-          value: witness?.sigBigInt.toString(),
-          description: '',
-        },
-        modulus: {
-          argumentType: ArgumentTypeName.BigInt,
-          userProvided: false,
-          value: witness?.modulusBigInt.toString(),
-          description: '',
-        },
-        app_id: {
-          argumentType: ArgumentTypeName.BigInt,
-          userProvided: false,
-          value: appId,
-          description: '',
-        },
+      let args: AnonAadhaarPCDArgs
+
+      if (testing === false) {
+        const publicKey = await fetchPublicKey(
+          'https://www.uidai.gov.in/images/authDoc/uidai_offline_publickey_26022021.cer',
+        )
+
+        if (publicKey === null)
+          throw new Error('Error while fetching the public key!')
+
+        args = {
+          base_message: {
+            argumentType: ArgumentTypeName.BigInt,
+            userProvided: false,
+            value: witness?.msgBigInt.toString(),
+            description: '',
+          },
+          signature: {
+            argumentType: ArgumentTypeName.BigInt,
+            userProvided: false,
+            value: witness?.sigBigInt.toString(),
+            description: '',
+          },
+          modulus: {
+            argumentType: ArgumentTypeName.BigInt,
+            userProvided: false,
+            value: '0x' + publicKey,
+            description: '',
+          },
+          app_id: {
+            argumentType: ArgumentTypeName.BigInt,
+            userProvided: false,
+            value: appId,
+            description: '',
+          },
+        }
+      } else {
+        args = {
+          base_message: {
+            argumentType: ArgumentTypeName.BigInt,
+            userProvided: false,
+            value: witness?.msgBigInt.toString(),
+            description: '',
+          },
+          signature: {
+            argumentType: ArgumentTypeName.BigInt,
+            userProvided: false,
+            value: witness?.sigBigInt.toString(),
+            description: '',
+          },
+          modulus: {
+            argumentType: ArgumentTypeName.BigInt,
+            userProvided: false,
+            value: witness?.modulusBigInt.toString(),
+            description: '',
+          },
+          app_id: {
+            argumentType: ArgumentTypeName.BigInt,
+            userProvided: false,
+            value: appId,
+            description: '',
+          },
+        }
       }
 
       startReq({ type: 'login', args })
