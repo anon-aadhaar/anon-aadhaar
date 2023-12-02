@@ -52,14 +52,14 @@ jobs:
       - name: Get Circuit Hash
         id: get-circuit-hash
         run: |
-          echo "circuits_hash=`packages/anon-aadhaar-pcd/script/utils.sh`" >> $GITHUB_OUTPUT
+          echo "circuits_hash=`cd packages/anon-aadhaar-pcd && ./script/utils.sh`" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Cache proving/verify key
         id: zkkeys
         uses: actions/cache@v3
         with:
-          path: build/circuit
+          path: packages/anon-aadhaar-pcd/build/circuit
           key: ${{ steps.get-circuit-hash.outputs.circuits_hash }}
 
       - name: 'Dev trusted setup'
@@ -67,5 +67,6 @@ jobs:
 
       - name: Build packages
         run: yarn build:libraries
+
       - name: Test packages
         run: yarn test:libraries
