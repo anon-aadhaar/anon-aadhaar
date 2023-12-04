@@ -149,11 +149,6 @@ const Title = styled.h3`
   margin-right: auto;
   font-size: medium;
   font-weight: bold;
-
-  @media (max-width: 425px) {
-    /* For screens <= 425px (e.g., mobile devices) */
-    font-size: small;
-  }
 `
 
 const Disclaimer = styled.p`

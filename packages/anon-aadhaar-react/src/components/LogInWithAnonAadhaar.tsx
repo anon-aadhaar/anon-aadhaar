@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { ProveModal } from './ProveModal'
 import styled from 'styled-components'
-import { text } from '../util'
 import { useEffect, useContext } from 'react'
 import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
+import { icon } from './ButtonLogo'
 
 /**
  * LogInWithAnonAadhaar is a React component that provides a user interface
@@ -18,6 +18,8 @@ export const LogInWithAnonAadhaar = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const { state, startReq } = useContext(AnonAadhaarContext)
+  const blob = new Blob([icon], { type: 'image/svg+xml' })
+  const url = URL.createObjectURL(blob)
 
   useEffect(() => {
     if (state.status === 'logged-in') setIsModalOpen(false)
@@ -37,7 +39,8 @@ export const LogInWithAnonAadhaar = () => {
       {(state.status === 'logged-out' || state.status === 'logging-in') && (
         <div>
           <Btn onClick={openModal}>
-            {text('🌏', 'Log In with Anon Aadhaar')}
+            <Logo src={url} />
+            Connect
           </Btn>
           <ProveModal
             isOpen={isModalOpen}
@@ -50,7 +53,8 @@ export const LogInWithAnonAadhaar = () => {
       {state.status === 'logged-in' && (
         <div>
           <Btn onClick={() => startReq({ type: 'logout' })}>
-            {text('🌏', 'Log Out')}
+            <Logo src={url} />
+            Logout
           </Btn>
         </div>
       )}
@@ -58,7 +62,13 @@ export const LogInWithAnonAadhaar = () => {
   )
 }
 
+const Logo = styled.img`
+  height: 1.5rem;
+  margin-right: 0.5rem;
+`
+
 const Btn = styled.button`
+  display: flex;
   padding: 0.5rem 1rem;
   font-size: 1rem;
   cursor: pointer;
@@ -68,9 +78,9 @@ const Btn = styled.button`
   background: #fff;
   box-shadow: 0px 3px 8px 1px rgba(0, 0, 0, 0.25);
   border: none;
-  min-width: 12rem;
   min-height: 3rem;
   border-radius: 0.5rem;
+  align-items: center;
 
   &:hover {
     background: #fafafa;
