@@ -1,7 +1,8 @@
 ## 0.1.11
 
-- Add staging mode, where user can choose to generate proof with the official modulus.
-- Fix react Error toaster component.
+- Add staging mode, where user can choose to generate proof with the official modulus
+- Fix react Error toaster component
+- Fix dependencies with Buffer and axios
 
 ## 0.1.10
 

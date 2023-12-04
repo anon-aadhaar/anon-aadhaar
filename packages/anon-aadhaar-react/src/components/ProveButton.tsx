@@ -5,8 +5,8 @@ import { Dispatch, useContext, SetStateAction } from 'react'
 import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
 import { Spinner } from './LoadingSpinner'
 import React from 'react'
-import { extractWitness } from 'anon-aadhaar-pcd'
-import { fetchPublicKey } from '../util'
+import { extractWitness, fetchPublicKey } from 'anon-aadhaar-pcd'
+import { Buffer } from 'buffer'
 
 interface ProveButtonProps {
   pdfData: Buffer
@@ -113,8 +113,7 @@ const Btn = styled.button`
   min-height: 3rem;
   border-radius: 0.5rem;
   background: linear-gradient(345deg, #10fe53 0%, #09d3ff 100%);
-  margin-top: 1rem;
-  margin-bottom: 1rem;
+  margin: 1rem;
 
   &:hover {
     opacity: 70%;

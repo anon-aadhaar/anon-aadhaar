@@ -6,6 +6,7 @@ import { uploadPdf } from '../util'
 import { PasswordInput } from './PasswordInput'
 import { AadhaarPdfValidation } from '../interface'
 import { ErrorToast } from './ErrorToast'
+import { Buffer } from 'buffer'
 
 interface ModalProps {
   isOpen: boolean
@@ -100,14 +101,13 @@ const ModalContent = styled.div`
   transform: translate(-50%, -50%);
   background-color: #ffffff;
   border-radius: 1rem;
-  padding: 20px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   justify-content: space-between;
 
   @media (max-width: 425px) {
     /* For screens <= 425px (e.g., mobile devices) */
     width: 100%;
-    height: 60%;
+    height: 55%;
     max-width: 100%;
     max-height: 100%;
   }
@@ -138,6 +138,7 @@ const TitleSection = styled.div`
   row-gap: 1rem;
   margin-left: auto;
   margin-right: auto;
+  margin: 1rem 1rem 0;
   display: flex;
   flex-flow: column;
 `
@@ -148,11 +149,6 @@ const Title = styled.h3`
   margin-right: auto;
   font-size: medium;
   font-weight: bold;
-
-  @media (max-width: 425px) {
-    /* For screens <= 425px (e.g., mobile devices) */
-    font-size: small;
-  }
 `
 
 const Disclaimer = styled.p`
@@ -163,11 +159,14 @@ const Disclaimer = styled.p`
 `
 
 const UploadSection = styled.div`
+  margin: 0 1rem 0;
   row-gap: 1rem;
   max-width: 100%;
 `
 
 const Label = styled.div`
+  font-size: medium;
+  text-align: left;
   font-weight: 500;
   color: #111827;
 `

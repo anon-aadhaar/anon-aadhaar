@@ -1,5 +1,6 @@
 import { ChangeEvent, Dispatch, SetStateAction } from 'react'
 import { AadhaarPdfValidation } from './interface'
+import { Buffer } from 'buffer'
 
 /**
  * Get signature from pdf. Thank a another authors for this piece of code.
@@ -97,28 +98,4 @@ export const uploadPdf = (
       }
     }
   })
-}
-
-/**
- * Fetch the public key PEM file from the serverless function endpoint.
- * @param url Endpoint URL to fetch the public key.
- * @returns {Promise<string | null>} The official Aadhaar public key.
- */
-export const fetchPublicKey = async (
-  certUrl: string,
-): Promise<string | null> => {
-  try {
-    const response = await fetch(
-      `https://nodejs-serverless-function-express-eight-iota.vercel.app/api/get-public-key?url=${certUrl}`,
-    )
-    if (!response.ok) {
-      throw new Error(`Failed to fetch public key from server`)
-    }
-
-    const publicKeyData = await response.json()
-    return publicKeyData.publicKey || null
-  } catch (error) {
-    console.error('Error fetching public key:', error)
-    return null
-  }
 }
