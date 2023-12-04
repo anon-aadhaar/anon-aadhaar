@@ -30,7 +30,7 @@ Please check the [PR template](.github/PULL_REQUEST_TEMPLATE.md)
 
 #### Requirements
 
-Install `rust` and `nodejs v18`, `openssl`(Usually installed in macOS and Linux).
+Install `rust` and `nodejs v18`, `openssl`(Usually installed in macOS and Linux) and [`qpdf`](https://qpdf.readthedocs.io/en/stable/download.html).
 
 #### Installation
 
