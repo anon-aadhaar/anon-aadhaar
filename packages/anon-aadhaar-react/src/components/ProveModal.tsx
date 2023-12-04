@@ -7,12 +7,16 @@ import { PasswordInput } from './PasswordInput'
 import { AadhaarPdfValidation } from '../interface'
 import { ErrorToast } from './ErrorToast'
 import { Buffer } from 'buffer'
+import { Logo } from './LogInWithAnonAadhaar'
 
 interface ModalProps {
   isOpen: boolean
   onClose: () => void
   errorMessage: string | null
   setErrorMessage: Dispatch<SetStateAction<string | null>>
+  logo: string
+  pdfStatus: AadhaarPdfValidation | null
+  setpdfStatus: Dispatch<SetStateAction<AadhaarPdfValidation | null>>
 }
 
 export const ProveModal: React.FC<ModalProps> = ({
@@ -20,10 +24,12 @@ export const ProveModal: React.FC<ModalProps> = ({
   onClose,
   errorMessage,
   setErrorMessage,
+  logo,
+  pdfStatus,
+  setpdfStatus,
 }) => {
   const [pdfData, setPdfData] = useState(Buffer.from([]))
   const [password, setPassword] = useState<string>('')
-  const [pdfStatus, setpdfStatus] = useState<'' | AadhaarPdfValidation>('')
   const [provingEnabled, setProvingEnabled] = useState<boolean>(false)
 
   const handlePdfChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,13 +51,22 @@ export const ProveModal: React.FC<ModalProps> = ({
   return isOpen ? (
     <ModalOverlay onClick={onClose}>
       <ModalContent onClick={e => e.stopPropagation()}>
-        <ErrorToast message={errorMessage} setErrorMessage={setErrorMessage} />
+        {errorMessage !== null && (
+          <ErrorToast
+            message={errorMessage}
+            setErrorMessage={setErrorMessage}
+          />
+        )}
         <TitleSection>
-          <Title>Prove your Identity with your Aadhar card</Title>
+          <Title>
+            <Logo src={logo} />
+            Prove your Identity
+          </Title>
           <Disclaimer>
-            Anon Aadhaar lets you prove your identity by generating a ZK Proof
-            verifying your Aadhaar card was signed with the Indian government
-            public key.
+            Anon Aadhaar securely verifies your document by confirming its
+            government signature. This process happens entirely on your device
+            for privacy. Please note, slower internet speeds may affect
+            verification time.
           </Disclaimer>
         </TitleSection>
 
@@ -63,7 +78,7 @@ export const ProveModal: React.FC<ModalProps> = ({
           </UploadFile>
 
           <UploadFile>
-            <Label>Enter your Aadhaar pdf password</Label>
+            <Label>Enter your Aadhaar PDF password</Label>
             <PasswordInput setPassword={setPassword} id={'password'} />
           </UploadFile>
         </UploadSection>
@@ -144,6 +159,7 @@ const TitleSection = styled.div`
 `
 
 const Title = styled.h3`
+  display: flex;
   flex-shrink: 0;
   margin-left: auto;
   margin-right: auto;

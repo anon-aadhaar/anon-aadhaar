@@ -1,7 +1,7 @@
 import { AnonAadhaarPCDArgs } from 'anon-aadhaar-pcd'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import styled from 'styled-components'
-import { Dispatch, useContext, SetStateAction } from 'react'
+import { Dispatch, useContext, SetStateAction, useState } from 'react'
 import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
 import { Spinner } from './LoadingSpinner'
 import React from 'react'
@@ -21,6 +21,7 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
   provingEnabled,
   setErrorMessage,
 }) => {
+  const [fetchingPublicKey, setFetchingPublicKey] = useState<boolean>(false)
   const { state, startReq, appId, testing } = useContext(AnonAadhaarContext)
 
   const startProving = async () => {
@@ -34,13 +35,16 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
       let publicKey = ''
 
       if (!testing) {
+        setFetchingPublicKey(true)
         const result = await fetchPublicKey(
           'https://www.uidai.gov.in/images/authDoc/uidai_offline_publickey_26022021.cer',
         )
         if (result === null) {
+          setFetchingPublicKey(false)
           throw new Error('Error while fetching the public key!')
         } else {
           publicKey = result
+          setFetchingPublicKey(false)
         }
       }
 
@@ -81,9 +85,15 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
   return (() => {
     switch (state.status) {
       case 'logged-out':
-        return (
+        return fetchingPublicKey ? (
+          <Btn>
+            Loading... {'\u2003'}
+            <Spinner />
+          </Btn>
+        ) : (
           <Btn disabled={!provingEnabled} onClick={startProving}>
-            Request Aadhaar Proof
+            {' '}
+            Request Aadhaar Proof{' '}
           </Btn>
         )
       case 'logging-in':
