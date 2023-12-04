@@ -3,6 +3,7 @@
 - Add staging mode, where user can choose to generate proof with the official modulus
 - Fix react Error toaster component
 - Fix dependencies with Buffer and axios
+- Fix node-signpdf-gen don't have execute permission
 
 ## 0.1.10
 

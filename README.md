@@ -65,6 +65,10 @@ Generate pdf file with pkcs#1 schema. This action will create a pdf file name `s
 ```bash
 yarn pdf:pcd
 ```
+You can generate several PDF files with the same certificate by running the following command:
+```bash
+yarn pdf:pcd other-file.pdf #other-file can be any name you want to give to the file
+```
 
 Generate a proof. This action will create a proof and its public scheme in `proofs/` in `packages/anon-aadhaar-pcd/build` folder.
 
