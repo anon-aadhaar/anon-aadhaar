@@ -24,7 +24,7 @@ Simple signing of PDFs in node.
 
 ## Purpose
 
-The purpose of this package is not as much to be used as a dependendency, although it could. The main purpose is **to demonstrate** the way signing can be achieved **in a piece of readable code** as it can take a lot of hours to figure out.
+The purpose of this package is not as much to be used as a dependency, although it could. The main purpose is **to demonstrate** the way signing can be achieved **in a piece of readable code** as it can take a lot of hours to figure out.
 
 ## Usage
 
@@ -34,7 +34,7 @@ In practice we expect that most people will just read through the code we've wri
 
 ### With pdfkit-created document
 
-You have already created a PDF using foliojs/pdfkit and you want to sign that. Before saving (writing to fs, or just converting to `Buffer`) your file, you need to a add a signature placeholder to it. We have a helper for that. This is demonstrated in [the `signs input PDF` test](./src/signpdf.test.js#L125).
+You have already created a PDF using foliojs/pdfkit and you want to sign that. Before saving (writing to fs, or just converting to `Buffer`) your file, you need to add a signature placeholder to it. We have a helper for that. This is demonstrated in [the `signs input PDF` test](./src/signpdf.test.js#L125).
 
 Once you have the placeholder, just [[sign the document]](#sign-the-document).
 
