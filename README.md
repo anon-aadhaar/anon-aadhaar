@@ -65,7 +65,7 @@ Generate pdf file with pkcs#1 schema. This action will create a pdf file name `s
 ```bash
 yarn pdf:pcd
 ```
-You can generate more pdf files have a same certificate by command: 
+You can generate several PDF files with the same certificate by running the following command:
 ```bash
 yarn pdf:pcd other-file.pdf #other-file can be any name you want
 ```
