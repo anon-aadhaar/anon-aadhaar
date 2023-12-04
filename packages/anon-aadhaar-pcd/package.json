@@ -38,6 +38,7 @@
     "@types/snarkjs": "^0.7.6",
     "@zk-kit/incremental-merkle-tree": "^1.1.0",
     "axios": "^1.4.0",
+    "buffer": "^6.0.3",
     "circomlibjs": "^0.1.7",
     "json-bigint": "^1.0.0",
     "react": "^18.2.0",

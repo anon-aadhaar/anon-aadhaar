@@ -1,6 +1,7 @@
 import { pki, md, asn1 } from 'node-forge'
 import { extractCert, extractSignature, handleError } from './utils'
 import { WitnessPDFInputs } from './types'
+import { Buffer } from 'buffer'
 
 /**
  * Extract all the information needed to generate the witness from the pdf.

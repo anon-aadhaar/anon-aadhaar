@@ -6,6 +6,7 @@ import { uploadPdf } from '../util'
 import { PasswordInput } from './PasswordInput'
 import { AadhaarPdfValidation } from '../interface'
 import { ErrorToast } from './ErrorToast'
+import { Buffer } from 'buffer'
 
 interface ModalProps {
   isOpen: boolean

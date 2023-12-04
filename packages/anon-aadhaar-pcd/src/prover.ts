@@ -1,19 +1,49 @@
 import { isWebUri } from 'valid-url'
 import { AnonAadhaarPCDArgs, AnonAadhaarPCDProof } from './types'
-import axios from 'axios'
 import { splitToWords } from './utils'
 import { ZKArtifact, groth16 } from 'snarkjs'
 
 type Witness = AnonAadhaarPCDArgs
 
+/**
+ * Fetch the public key PEM file from the serverless function endpoint.
+ * @param url Endpoint URL to fetch the public key.
+ * @returns {Promise<string | null>} The official Aadhaar public key.
+ */
+export const fetchPublicKey = async (
+  certUrl: string
+): Promise<string | null> => {
+  try {
+    const response = await fetch(
+      `https://nodejs-serverless-function-express-eight-iota.vercel.app/api/get-public-key?url=${certUrl}`
+    )
+    if (!response.ok) {
+      throw new Error(`Failed to fetch public key from server`)
+    }
+
+    const publicKeyData = await response.json()
+    return publicKeyData.publicKey || null
+  } catch (error) {
+    console.error('Error fetching public key:', error)
+    return null
+  }
+}
+
 async function fetchKey(keyURL: string): Promise<ZKArtifact> {
   if (isWebUri(keyURL)) {
-    const keyData = await (
-      await axios.get(keyURL, {
-        responseType: 'arraybuffer',
-      })
-    ).data
-    return keyData
+    try {
+      const response = await fetch(keyURL)
+      if (response.ok) {
+        const data = await response.arrayBuffer()
+        return data as Buffer
+      } else {
+        throw new Error(`Failed to fetch: ${response.statusText}`)
+      }
+    } catch (error) {
+      // Handle any errors from the fetch request
+      console.error('Error fetching key:', error)
+      throw error
+    }
   }
   return keyURL
 }

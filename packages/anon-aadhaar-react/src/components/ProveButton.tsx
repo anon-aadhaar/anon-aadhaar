@@ -5,8 +5,8 @@ import { Dispatch, useContext, SetStateAction } from 'react'
 import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
 import { Spinner } from './LoadingSpinner'
 import React from 'react'
-import { extractWitness } from 'anon-aadhaar-pcd'
-import { fetchPublicKey } from '../util'
+import { extractWitness, fetchPublicKey } from 'anon-aadhaar-pcd'
+import { Buffer } from 'buffer'
 
 interface ProveButtonProps {
   pdfData: Buffer
