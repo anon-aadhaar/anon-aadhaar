@@ -5,6 +5,7 @@ import { subtle } from 'crypto'
 import * as x509 from '@peculiar/x509'
 import { BigNumberish } from './types'
 import { AnonAadhaarPCD } from './pcd'
+import { Buffer } from 'buffer'
 
 export const handleError = (error: unknown, defaultMessage: string): Error => {
   if (error instanceof Error) return error
@@ -264,4 +265,28 @@ export async function exportCallDataGroth16FromPCD(
     Input.push(argv[i])
   }
   return { a, b, c, Input }
+}
+
+/**
+ * Fetch the public key PEM file from the serverless function endpoint.
+ * @param url Endpoint URL to fetch the public key.
+ * @returns {Promise<string | null>} The official Aadhaar public key.
+ */
+export const fetchPublicKey = async (
+  certUrl: string
+): Promise<string | null> => {
+  try {
+    const response = await fetch(
+      `https://nodejs-serverless-function-express-eight-iota.vercel.app/api/get-public-key?url=${certUrl}`
+    )
+    if (!response.ok) {
+      throw new Error(`Failed to fetch public key from server`)
+    }
+
+    const publicKeyData = await response.json()
+    return publicKeyData.publicKey || null
+  } catch (error) {
+    console.error('Error fetching public key:', error)
+    return null
+  }
 }

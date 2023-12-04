@@ -1,6 +1,5 @@
 import { isWebUri } from 'valid-url'
 import { AnonAadhaarPCDArgs, AnonAadhaarPCDProof } from './types'
-import axios from 'axios'
 import { splitToWords } from './utils'
 import { ZKArtifact, groth16 } from 'snarkjs'
 
@@ -8,12 +7,19 @@ type Witness = AnonAadhaarPCDArgs
 
 async function fetchKey(keyURL: string): Promise<ZKArtifact> {
   if (isWebUri(keyURL)) {
-    const keyData = await (
-      await axios.get(keyURL, {
-        responseType: 'arraybuffer',
-      })
-    ).data
-    return keyData
+    try {
+      const response = await fetch(keyURL)
+      if (response.ok) {
+        const data = await response.arrayBuffer()
+        return data as Buffer
+      } else {
+        throw new Error(`Failed to fetch: ${response.statusText}`)
+      }
+    } catch (error) {
+      // Handle any errors from the fetch request
+      console.error('Error fetching key:', error)
+      throw error
+    }
   }
   return keyURL
 }

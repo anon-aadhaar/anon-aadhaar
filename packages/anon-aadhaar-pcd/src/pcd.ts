@@ -12,7 +12,6 @@ import { groth16 } from 'snarkjs'
 import { splitToWords } from './utils'
 import JSONBig from 'json-bigint'
 import { BackendProver, ProverInferace, WebProver } from './prover'
-import axios from 'axios'
 
 export class AnonAadhaarPCD
   implements PCD<AnonAadhaarPCDClaim, AnonAadhaarPCDProof>
@@ -77,9 +76,12 @@ async function getVerifyKey() {
     )
   }
   if (initArgs.isWebEnv) {
-    vk = await axios.get(initArgs.vkeyURL).then(response => {
-      return response.data
-    })
+    const response = await fetch(initArgs.vkeyURL)
+    if (!response.ok) {
+      throw new Error(`Failed to fetch the verify key from server`)
+    }
+
+    vk = await response.json()
   } else {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     vk = require(initArgs.vkeyURL)
