@@ -1,5 +1,9 @@
 ## 0.1.12
 
+- Fix scripts for npm CI
+
+## 0.1.12
+
 - Fix UI/UX from react lib
 - Fix Solidity npm publishing
 
