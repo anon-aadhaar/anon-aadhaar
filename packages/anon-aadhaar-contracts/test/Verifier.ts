@@ -51,11 +51,11 @@ describe('VerifyProof', function () {
           ),
           app_id: app_id.toString(),
         }
-        const dirName = __dirname + '/../../anon-aadhaar-pcd/artifacts/RSA'
+
         const { a, b, c, Input } = await exportCallDataGroth16(
           input,
-          dirName + '/main.wasm',
-          dirName + '/circuit_final.zkey',
+          await fetchKey(WASM_URL),
+          await fetchKey(ZKEY_URL),
         )
 
         expect(await verifier.verifyProof(a, b, c, Input)).to.be.equal(true)

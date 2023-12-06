@@ -89,8 +89,6 @@ function setup_circuit() {
     cp $CIRCUIT/$RSA_DIR/verification_key.json $ARTIFACTS_DIR/$RSA_DIR
 
     echo $HASH > $CIRCUIT/hash.txt
-
-    setup_contract
     
     echo "Setup finished!"
 }

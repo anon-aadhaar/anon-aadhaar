@@ -1,5 +1,5 @@
-import axios from 'axios'
 import { ZKArtifact } from 'snarkjs'
+import axios from 'axios'
 
 export async function fetchKey(keyURL: string): Promise<ZKArtifact> {
   const keyData = await (
