@@ -13,8 +13,7 @@
     "prepare": "cd ../.. && husky install"
   },
   "files": [
-    "./interfaces/*",
-    "./contracts/*",
+    "./contracts/*.sol",
     "LICENSE",
     "README.md"
   ],
