@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { ProveModal } from './ProveModal'
 import styled from 'styled-components'
 import { useEffect, useContext } from 'react'
 import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
 import { icon } from './ButtonLogo'
+import { AadhaarPdfValidation } from '../interface'
 
 /**
  * LogInWithAnonAadhaar is a React component that provides a user interface
@@ -17,9 +18,11 @@ import { icon } from './ButtonLogo'
 export const LogInWithAnonAadhaar = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [pdfStatus, setpdfStatus] = useState<null | AadhaarPdfValidation>(null)
   const { state, startReq } = useContext(AnonAadhaarContext)
+
   const blob = new Blob([icon], { type: 'image/svg+xml' })
-  const url = URL.createObjectURL(blob)
+  const anonAadhaarLogo = useMemo(() => URL.createObjectURL(blob), [icon])
 
   useEffect(() => {
     if (state.status === 'logged-in') setIsModalOpen(false)
@@ -32,6 +35,7 @@ export const LogInWithAnonAadhaar = () => {
   const closeModal = () => {
     setIsModalOpen(false)
     setErrorMessage(null)
+    setpdfStatus(null)
   }
 
   return (
@@ -39,21 +43,24 @@ export const LogInWithAnonAadhaar = () => {
       {(state.status === 'logged-out' || state.status === 'logging-in') && (
         <div>
           <Btn onClick={openModal}>
-            <Logo src={url} />
-            Connect
+            <Logo src={anonAadhaarLogo} />
+            Login
           </Btn>
           <ProveModal
             isOpen={isModalOpen}
             onClose={closeModal}
             errorMessage={errorMessage}
             setErrorMessage={setErrorMessage}
+            logo={anonAadhaarLogo}
+            pdfStatus={pdfStatus}
+            setpdfStatus={setpdfStatus}
           ></ProveModal>
         </div>
       )}
       {state.status === 'logged-in' && (
         <div>
           <Btn onClick={() => startReq({ type: 'logout' })}>
-            <Logo src={url} />
+            <Logo src={anonAadhaarLogo} />
             Logout
           </Btn>
         </div>
@@ -62,14 +69,14 @@ export const LogInWithAnonAadhaar = () => {
   )
 }
 
-const Logo = styled.img`
+export const Logo = styled.img`
   height: 1.5rem;
   margin-right: 0.5rem;
 `
 
 const Btn = styled.button`
   display: flex;
-  padding: 0.5rem 1rem;
+  padding: 0 1rem;
   font-size: 1rem;
   cursor: pointer;
   color: #000000;
@@ -78,7 +85,7 @@ const Btn = styled.button`
   background: #fff;
   box-shadow: 0px 3px 8px 1px rgba(0, 0, 0, 0.25);
   border: none;
-  min-height: 3rem;
+  min-height: 2.5rem;
   border-radius: 0.5rem;
   align-items: center;
 

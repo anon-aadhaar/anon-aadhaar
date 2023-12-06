@@ -1,3 +1,8 @@
+## 0.1.12
+
+- Fix UI/UX from react lib
+- Fix Solidity npm publishing
+
 ## 0.1.11
 
 - Add staging mode, where user can choose to generate proof with the official modulus

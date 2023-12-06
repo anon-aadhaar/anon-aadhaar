@@ -64,7 +64,7 @@ export function text(emoji: string, text: string) {
  */
 export const uploadPdf = (
   e: ChangeEvent<HTMLInputElement>,
-  setpdfStatus: Dispatch<SetStateAction<'' | AadhaarPdfValidation>>,
+  setpdfStatus: Dispatch<SetStateAction<null | AadhaarPdfValidation>>,
 ): Promise<{ pdf: Buffer }> => {
   return new Promise((resolve, reject) => {
     if (e.target.files) {
@@ -93,7 +93,7 @@ export const uploadPdf = (
           }
         }
       } catch {
-        setpdfStatus('')
+        setpdfStatus(null)
         reject()
       }
     }
