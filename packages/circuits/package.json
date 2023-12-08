@@ -1,0 +1,14 @@
+{
+  "name": "circuits",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsup test/script.ts",
+    "test": "npx ts-mocha test/**/*.test.ts --exit"
+  },
+  "dependencies": {
+    "circomlib": "^2.0.5",
+    "mocha": "^10.2.0"
+  }
+}
