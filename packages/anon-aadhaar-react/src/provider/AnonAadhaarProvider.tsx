@@ -6,7 +6,7 @@ import {
 } from '../hooks/useAnonAadhaar'
 import { AnonAadhaarPCD, AnonAadhaarPCDPackage } from 'anon-aadhaar-pcd'
 import React, { Dispatch, SetStateAction } from 'react'
-import { proveWithWebProver } from '../prove'
+import { proveAndVerify } from '../prove'
 import { SerializedPCD } from '@pcd/pcd-types'
 
 /**
@@ -26,6 +26,7 @@ export function AnonAadhaarProvider(props: {
   children: ReactNode
   _appId: string
   _testing?: boolean
+  _isWeb?: boolean
 }) {
   // Read state from local storage on page load
   const [pcdStr, setPcdStr] = useState<SerializedPCD<AnonAadhaarPCD> | null>(
@@ -34,6 +35,7 @@ export function AnonAadhaarProvider(props: {
   const [pcd, setPcd] = useState<AnonAadhaarPCD | null>(null)
   const [appId, setAppId] = useState<string | null>(null)
   const [testing, setTesting] = useState<boolean>(true)
+  const [isWeb, setIsWeb] = useState<boolean>(true)
   const [state, setState] = useState<AnonAadhaarState>({
     status: 'logged-out',
   })
@@ -43,6 +45,7 @@ export function AnonAadhaarProvider(props: {
     readFromLocalStorage().then(setAndWriteState)
     setAppId(props._appId)
     if (props._testing !== undefined) setTesting(props._testing)
+    if (props._isWeb !== undefined) setIsWeb(props._isWeb)
   }, [props._appId])
 
   // Write state to local storage whenever a login starts, succeeds, or fails
@@ -56,9 +59,9 @@ export function AnonAadhaarProvider(props: {
   const startReq = React.useCallback(
     (request: AnonAadhaarRequest) => {
       console.log(`[ANON-AADHAAR] startReq ${shallowToString(request)}`)
-      setAndWriteState(handleLoginReq(request, setPcdStr, setPcd))
+      setAndWriteState(handleLoginReq(request, setPcdStr, setPcd, isWeb))
     },
-    [setAndWriteState, setPcdStr, setPcd],
+    [setAndWriteState, setPcdStr, setPcd, isWeb],
   )
 
   // Receive PCD from proving component
@@ -82,8 +85,8 @@ export function AnonAadhaarProvider(props: {
 
   // Provide context
   const val = React.useMemo(
-    () => ({ state, startReq, appId, testing }),
-    [state, appId, testing],
+    () => ({ state, startReq, appId, testing, isWeb }),
+    [state, appId, testing, isWeb],
   )
 
   return (
@@ -178,13 +181,14 @@ function handleLoginReq(
   request: AnonAadhaarRequest,
   setPcdStr: Dispatch<SetStateAction<SerializedPCD<AnonAadhaarPCD> | null>>,
   setPcd: Dispatch<SetStateAction<AnonAadhaarPCD | null>>,
+  isWeb: boolean,
 ): AnonAadhaarState {
   const { type } = request
   switch (type) {
     case 'login':
       try {
         const { args } = request
-        proveWithWebProver(args).then(
+        proveAndVerify(args, isWeb).then(
           ({
             pcd,
             serialized,
