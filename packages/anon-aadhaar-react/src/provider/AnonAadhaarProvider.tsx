@@ -4,9 +4,13 @@ import {
   AnonAadhaarRequest,
   AnonAadhaarState,
 } from '../hooks/useAnonAadhaar'
-import { AnonAadhaarPCD, AnonAadhaarPCDPackage } from 'anon-aadhaar-pcd'
+import {
+  AnonAadhaarPCD,
+  AnonAadhaarPCDPackage,
+  verifyLocal,
+} from 'anon-aadhaar-pcd'
 import React, { Dispatch, SetStateAction } from 'react'
-import { proveAndVerify } from '../prove'
+import { proveAndSerialize } from '../prove'
 import { SerializedPCD } from '@pcd/pcd-types'
 
 /**
@@ -68,7 +72,7 @@ export function AnonAadhaarProvider(props: {
   React.useEffect(() => {
     if (pcdStr === null || pcd === null) return
     console.log(`[ANON-AADHAAR] trying to log in with ${pcdStr}`)
-    handleLogin(state, pcdStr, pcd)
+    handleLogin(state, pcdStr, pcd, isWeb)
       .then(newState => {
         if (newState) setAndWriteState(newState)
         else
@@ -188,7 +192,7 @@ function handleLoginReq(
     case 'login':
       try {
         const { args } = request
-        proveAndVerify(args, isWeb).then(
+        proveAndSerialize(args, isWeb).then(
           ({
             pcd,
             serialized,
@@ -222,6 +226,7 @@ async function handleLogin(
   state: AnonAadhaarState,
   pcdStr: SerializedPCD<AnonAadhaarPCD>,
   _pcd: AnonAadhaarPCD,
+  isWeb: boolean,
 ): Promise<AnonAadhaarState | null> {
   if (state.status !== 'logging-in') {
     console.log(
@@ -230,8 +235,14 @@ async function handleLogin(
     return null
   }
 
-  if (!(await AnonAadhaarPCDPackage.verify(_pcd))) {
-    throw new Error('Invalid proof')
+  if (isWeb) {
+    if (!(await AnonAadhaarPCDPackage.verify(_pcd))) {
+      throw new Error('Invalid proof')
+    }
+  } else {
+    if (!(await verifyLocal(_pcd))) {
+      throw new Error('Invalid proof')
+    }
   }
 
   return {

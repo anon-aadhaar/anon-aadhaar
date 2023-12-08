@@ -69,24 +69,54 @@ export async function prove(args: AnonAadhaarPCDArgs): Promise<AnonAadhaarPCD> {
 }
 
 async function getVerifyKey() {
+  let vk
+  if (!initArgs) {
+    throw new Error(
+      'cannot make Anon Aadhaar proof: init has not been called yet'
+    )
+  }
+  if (initArgs.isWebEnv) {
+    const response = await fetch(initArgs.vkeyURL)
+    if (!response.ok) {
+      throw new Error(`Failed to fetch the verify key from server`)
+    }
+
+    vk = await response.json()
+  } else {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    vk = require(initArgs.vkeyURL)
+  }
+  return vk
+}
+
+export async function verify(pcd: AnonAadhaarPCD): Promise<boolean> {
+  const vk = await getVerifyKey()
+
+  return groth16.verify(
+    vk,
+    [
+      pcd.proof.nullifier.toString(),
+      ...splitToWords(BigInt(pcd.proof.modulus), BigInt(64), BigInt(32)),
+      pcd.proof.app_id.toString(),
+    ],
+    pcd.proof.proof
+  )
+}
+
+export async function verifyLocal(pcd: AnonAadhaarPCD): Promise<boolean> {
   if (!initArgs) {
     throw new Error(
       'cannot make Anon Aadhaar proof: init has not been called yet'
     )
   }
 
-  const response = await fetch(initArgs.vkeyURL)
+  const response = await fetch(initArgs?.vkeyURL)
 
   if (!response.ok) {
     throw new Error(`Failed to fetch the verify key from server`)
   }
 
   const vk = await response.json()
-  return vk
-}
-
-export async function verify(pcd: AnonAadhaarPCD): Promise<boolean> {
-  const vk = await getVerifyKey()
 
   return groth16.verify(
     vk,

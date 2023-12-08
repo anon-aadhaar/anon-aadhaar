@@ -22,7 +22,7 @@ import {
  * @see {@link https://github.com/privacy-scaling-explorations/anon-aadhaar}
  *   For more information about the underlying circuit and proving system.
  */
-export const proveAndVerify = async (
+export const proveAndSerialize = async (
   pcdArgs: AnonAadhaarPCDArgs,
   isWeb: boolean,
 ): Promise<{
