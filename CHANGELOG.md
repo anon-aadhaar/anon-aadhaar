@@ -1,3 +1,7 @@
+## 0.1.15
+
+- Fix subtle dependency issue
+
 ## 0.1.14
 
 - Added localhost mode, to fetch artifacts from local.
