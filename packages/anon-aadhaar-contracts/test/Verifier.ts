@@ -2,7 +2,6 @@ import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers'
 import { expect } from 'chai'
 import { ethers } from 'hardhat'
 import {
-  genData,
   splitToWords,
   exportCallDataGroth16,
   extractWitness,
@@ -11,6 +10,7 @@ import {
 } from 'anon-aadhaar-pcd'
 import crypto from 'crypto'
 import { fetchKey } from './util'
+import { genData } from '../../anon-aadhaar-pcd/test/utils'
 import fs from 'fs'
 
 describe('VerifyProof', function () {
