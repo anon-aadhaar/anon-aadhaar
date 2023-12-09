@@ -2,7 +2,7 @@ import { describe } from 'mocha'
 import { AnonAadhaarPCDArgs, PCDInitArgs } from '../src/types'
 import { init, prove, verify } from '../src/pcd'
 import { assert } from 'chai'
-import { genData } from '../src/utils'
+import { genData } from './utils'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import { WASM_URL, ZKEY_URL, VK_URL } from '../src/constants'
 

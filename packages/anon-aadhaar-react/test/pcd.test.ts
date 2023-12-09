@@ -1,8 +1,9 @@
 import { describe } from 'mocha'
-import { AnonAadhaarPCDArgs, verify, genData } from 'anon-aadhaar-pcd'
+import { AnonAadhaarPCDArgs, verify } from 'anon-aadhaar-pcd'
 import { assert } from 'chai'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import { proveAndSerialize } from '../src/prove'
+import { genData } from '../../anon-aadhaar-pcd/test/utils'
 
 describe('PCD tests', function () {
   this.timeout(0)

@@ -1,5 +1,6 @@
 import { writeFileSync } from 'fs'
-import { genData, splitToWords } from '../src'
+import { genData } from '../test/utils'
+import { splitToWords } from '../src'
 import crypto from 'crypto'
 
 const main = () => {
