@@ -5,8 +5,8 @@ include "./sha.circom";
 
 
 template QR_Verify(n, k, len) {
-    signal input padded_message[len];
-    signal input message_len;
+    signal input padded_message[len]; // private
+    signal input message_len; // private 
     signal input signature[k]; //private
     signal input modulus[k]; //public
 

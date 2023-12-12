@@ -142,11 +142,4 @@ const verifySignature = (n: string) => {
   console.log(isSignatureValid);
 };
 
-// Input n should be base10 bigint string
-// const ntest = "";
-  // "";
-// const n = "";
-// verifySignature(ntest);
-
-// extract(ntest);
 
