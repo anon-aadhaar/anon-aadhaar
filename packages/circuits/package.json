@@ -8,7 +8,11 @@
     "test": "npx ts-mocha test/**/*.test.ts --exit"
   },
   "dependencies": {
+    "@zk-email/helpers": "^3.0.2",
+    "assert": "^2.1.0",
+    "circom_tester": "^0.0.20",
     "circomlib": "^2.0.5",
-    "mocha": "^10.2.0"
+    "mocha": "^10.2.0",
+    "anon-aadhaar-pcd": "*"
   }
 }

@@ -1,5 +1,5 @@
 # Notes 
 
-Those circuit copy from [zk-email-verify](https://github.com/zkemail/zk-email-verify/commit/6d89b0d8fb5774a1727ea7901ca91cdde717fb19).
+Those circuit copy from [zk-email-verify](https://github.com/zkemail/zk-email-verify/tree/bd4e2412735c09499df93d17cf3180b65711483f).
 
-We modified rsa.circom to support pkcs#1 signature use SHA1 hash function.
+We built qr verify from circuits built by zkemail. Thank zkemail for awesome work!!!
