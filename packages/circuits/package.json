@@ -1,10 +1,10 @@
 {
-  "name": "circuits",
+  "name": "@anon-aadhaar/circuit",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "build": "tsup test/script.ts",
+    "build": "tsup test/index.ts",
     "test": "npx ts-mocha test/**/*.test.ts --exit"
   },
   "dependencies": {
