@@ -4,9 +4,10 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "build": "tsup test/index.ts",
+    "build": "tsup src/index.ts",
     "test": "npx ts-mocha test/**/*.test.ts --exit",
-    "format": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\""
+    "format": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\"",
+    "lint": "echo 'no lint'"
   },
   "dependencies": {
     "@zk-email/helpers": "^3.0.2",
