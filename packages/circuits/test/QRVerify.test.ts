@@ -9,27 +9,32 @@ import {
   bufferToHex,
 } from '@zk-email/helpers/dist/binaryFormat'
 import { genData, splitToWords } from 'anon-aadhaar-pcd'
-import { convertBigIntToByteArray, decompressByteArray } from './script'
+import { convertBigIntToByteArray, decompressByteArray } from '../src/index'
 import fs from 'fs'
 import crypto from 'crypto'
 
 describe('Test QR Verify circuit', function () {
   this.timeout(0)
-  it('Test circuit with Sha256RSA signature', async () => {
-    const signedData = 'Hello-world'
-    const data = await genData(signedData, 'SHA-256')
 
-    const circuit = await circom_tester(
+  let circuit: any
+
+  this.beforeAll(async () => {
+    circuit = await circom_tester(
       path.join(__dirname, '../', 'circuits', 'qr_verify.circom'),
       {
         recompile: true,
         include: path.join(__dirname, '../node_modules'),
-      }
+      },
     )
+  })
+
+  it('Test circuit with Sha256RSA signature', async () => {
+    const signedData = 'Hello-world'
+    const data = await genData(signedData, 'SHA-256')
 
     const [paddedMsg, messageLen] = sha256Pad(
       Buffer.from(signedData, 'ascii'),
-      512 * 2
+      512 * 3,
     )
 
     await circuit.calculateWitness({
@@ -42,7 +47,7 @@ describe('Test QR Verify circuit', function () {
 
   it('Test QR code data', async () => {
     const pkData = fs.readFileSync(
-      path.join(__dirname, 'assets', 'uidai_prod_cdup.cer')
+      path.join(__dirname, '../assets', 'uidai_prod_cdup.cer'),
     )
 
     const pk = crypto.createPublicKey(pkData)
@@ -52,7 +57,7 @@ describe('Test QR Verify circuit', function () {
       {
         recompile: true,
         include: path.join(__dirname, '../node_modules'),
-      }
+      },
     )
 
     // data on https://uidai.gov.in/en/ecosystem/authentication-devices-documents/qr-code-reader.html
@@ -66,7 +71,7 @@ describe('Test QR Verify circuit', function () {
 
     const signatureBytes = QRDataDecode.slice(
       QRDataDecode.length - 256,
-      QRDataDecode.length
+      QRDataDecode.length,
     )
 
     const signedData = QRDataDecode.slice(0, QRDataDecode.length - 256)
@@ -76,12 +81,12 @@ describe('Test QR Verify circuit', function () {
     const modulus = BigInt(
       '0x' +
         bufferToHex(
-          Buffer.from(pk.export({ format: 'jwk' }).n as string, 'base64url')
-        )
+          Buffer.from(pk.export({ format: 'jwk' }).n as string, 'base64url'),
+        ),
     )
 
     const signature = BigInt(
-      '0x' + bufferToHex(Buffer.from(signatureBytes)).toString()
+      '0x' + bufferToHex(Buffer.from(signatureBytes)).toString(),
     )
 
     await circuit.calculateWitness({
