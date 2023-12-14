@@ -13,6 +13,26 @@ import { convertBigIntToByteArray, decompressByteArray } from '../src/index'
 import fs from 'fs'
 import crypto from 'crypto'
 import { genData } from '../../anon-aadhaar-pcd/test/utils'
+import pako from 'pako'
+
+function convertBigIntToByteArray(bigInt: bigint) {
+  const byteLength = Math.max(1, Math.ceil(bigInt.toString(2).length / 8))
+
+  const result = new Uint8Array(byteLength)
+  let i = 0
+  while (bigInt > 0) {
+    result[i] = Number(bigInt % BigInt(256))
+    bigInt = bigInt / BigInt(256)
+    i += 1
+  }
+  return result.reverse()
+}
+
+function decompressByteArray(byteArray: Uint8Array) {
+  const decompressedArray = pako.inflate(byteArray)
+  return decompressedArray
+}
+
 describe('Test QR Verify circuit', function () {
   this.timeout(0)
 
