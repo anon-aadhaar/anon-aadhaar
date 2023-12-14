@@ -9,7 +9,6 @@ import {
   bufferToHex,
 } from '@zk-email/helpers/dist/binaryFormat'
 import { splitToWords } from 'anon-aadhaar-pcd'
-import { convertBigIntToByteArray, decompressByteArray } from '../src/index'
 import fs from 'fs'
 import crypto from 'crypto'
 import { genData } from '../../anon-aadhaar-pcd/test/utils'
