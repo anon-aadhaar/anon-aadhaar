@@ -1,3 +1,11 @@
+## 0.1.15
+
+- Fix subtle dependency issue
+
+## 0.1.14
+
+- Added localhost mode, to fetch artifacts from local.
+
 ## 0.1.13
 
 - Fix scripts for npm CI

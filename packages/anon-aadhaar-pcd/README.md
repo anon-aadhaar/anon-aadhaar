@@ -37,5 +37,5 @@ yarn test
 Generate pdf file with pkcs#1 schema. This action will create pdf file name `signed.pdf` signed by `certificate.cer` in `build` folder.
 
 ```bash
-./script/setup-dev.sh pdf_setup
+./script/setup-dev.sh pdf-setup
 ```

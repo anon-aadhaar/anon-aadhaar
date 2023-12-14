@@ -8,11 +8,11 @@ import {
   Uint8ArrayToCharArray,
   bufferToHex,
 } from '@zk-email/helpers/dist/binaryFormat'
-import { genData, splitToWords } from 'anon-aadhaar-pcd'
+import { splitToWords } from 'anon-aadhaar-pcd'
 import { convertBigIntToByteArray, decompressByteArray } from '../src/index'
 import fs from 'fs'
 import crypto from 'crypto'
-
+import { genData } from '../../anon-aadhaar-pcd/test/utils'
 describe('Test QR Verify circuit', function () {
   this.timeout(0)
 
@@ -47,19 +47,11 @@ describe('Test QR Verify circuit', function () {
   })
 
   it('Test QR code data', async () => {
+    // load public key
     const pkData = fs.readFileSync(
       path.join(__dirname, '../assets', 'uidai_prod_cdup.cer'),
     )
-
     const pk = crypto.createPublicKey(pkData)
-
-    const circuit = await circom_tester(
-      path.join(__dirname, '../', 'circuits', 'qr_verify.circom'),
-      {
-        recompile: true,
-        include: path.join(__dirname, '../node_modules'),
-      },
-    )
 
     // data on https://uidai.gov.in/en/ecosystem/authentication-devices-documents/qr-code-reader.html
     const QRData =

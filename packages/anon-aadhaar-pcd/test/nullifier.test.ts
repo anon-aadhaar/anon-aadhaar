@@ -1,5 +1,6 @@
 import { describe } from 'mocha'
-import { genData, splitToWords } from '../src/utils'
+import { splitToWords } from '../src/utils'
+import { genData } from './utils'
 import path from 'path'
 import { buildPoseidon } from 'circomlibjs'
 import crypto from 'crypto'

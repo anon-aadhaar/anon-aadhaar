@@ -22,17 +22,18 @@ import {
  * @see {@link https://github.com/privacy-scaling-explorations/anon-aadhaar}
  *   For more information about the underlying circuit and proving system.
  */
-export const proveWithWebProver = async (
+export const proveAndSerialize = async (
   pcdArgs: AnonAadhaarPCDArgs,
+  isWeb: boolean,
 ): Promise<{
   pcd: AnonAadhaarPCD
   serialized: SerializedPCD<AnonAadhaarPCD>
 }> => {
   const pcdInitArgs: PCDInitArgs = {
-    wasmURL: WASM_URL,
-    zkeyURL: ZKEY_URL,
-    vkeyURL: VK_URL,
-    isWebEnv: true,
+    wasmURL: isWeb ? WASM_URL : '/main.wasm',
+    zkeyURL: isWeb ? ZKEY_URL : '/circuit_final.zkey',
+    vkeyURL: isWeb ? VK_URL : '/verification_key.json',
+    isWebEnv: isWeb,
   }
 
   await init(pcdInitArgs)
