@@ -131,11 +131,16 @@ async function generateRsaKey(hash = 'SHA-256') {
 
   return { publicKey, privateKey }
 }
-
-export async function genData(
+/**
+ *
+ * @param data
+ * @param HASH_ALGO
+ * @returns
+ */
+export const genData = async function (
   data: string,
   HASH_ALGO: string
-) {
+): Promise<[bigint, bigint, bigint, bigint]> {
   const keys = await generateRsaKey(HASH_ALGO)
 
   const public_key = await subtle.exportKey('jwk', keys.publicKey)
