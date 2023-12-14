@@ -8,7 +8,7 @@ import {
   Uint8ArrayToCharArray,
   bufferToHex,
 } from '@zk-email/helpers/dist/binaryFormat'
-import { genData, splitToWords } from 'anon-aadhaar-pcd'
+import {genData, splitToWords} from 'anon-aadhaar-pcd'
 import { convertBigIntToByteArray, decompressByteArray } from '../src/index'
 import fs from 'fs'
 import crypto from 'crypto'
@@ -30,6 +30,7 @@ describe('Test QR Verify circuit', function () {
 
   it('Test circuit with Sha256RSA signature', async () => {
     const signedData = 'Hello-world'
+    
     const data = await genData(signedData, 'SHA-256')
 
     const [paddedMsg, messageLen] = sha256Pad(

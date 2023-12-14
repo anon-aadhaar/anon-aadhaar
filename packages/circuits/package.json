@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@zk-email/helpers": "^3.0.2",
-    "anon-aadhaar-pcd": "*",
+    "anon-aadhaar-pcd": "workspace:^",
     "assert": "^2.1.0",
     "circom_tester": "^0.0.20",
     "circomlib": "^2.0.5",

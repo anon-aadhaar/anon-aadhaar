@@ -135,7 +135,7 @@ async function generateRsaKey(hash = 'SHA-256') {
 export async function genData(
   data: string,
   HASH_ALGO: string
-): Promise<[bigint, bigint, bigint, bigint]> {
+) {
   const keys = await generateRsaKey(HASH_ALGO)
 
   const public_key = await subtle.exportKey('jwk', keys.publicKey)
