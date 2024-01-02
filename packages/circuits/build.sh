@@ -98,7 +98,7 @@ function generate_proof() {
     echo "Building proof...!"
     mkdir -p $BUILD_DIR/proofs
     npx ts-node ./script/generateInput.ts
-    snarkjs groth16 fullprove $BUILD_DIR/input.json $BUILD_DIR/circuit/RSA/main_js/main.wasm $BUILD_DIR/circuit/RSA/circuit_final.zkey $BUILD_DIR/proofs/proof.json $BUILD_DIR/proofs/public.json
+    snarkjs groth16 fullprove $BUILD_DIR/input.json $BUILD_DIR/qr_verify_js/qr_verify.wasm $PARTIAL_ZKEYS_DIR/circuit_final_nonchunk.zkey $BUILD_DIR/proofs/proof.json $BUILD_DIR/proofs/public.json
     echo "Generated proof...!"
 }
 
@@ -109,9 +109,6 @@ case "$1" in
     setup)
         dev_trusted_setup
     ;;
-    pdf-setup) 
-        gen_cert_and_key $2
-    ;;
     contract-setup) 
         setup_contract
     ;;
@@ -119,6 +116,6 @@ case "$1" in
         generate_proof
     ;;
     *)
-        echo "Usage: $0 {install|setup|pdf-setup}"
+        echo "Usage: $0 {install|setup}"
     ;;
 esac
