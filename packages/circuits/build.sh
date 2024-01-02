@@ -2,14 +2,13 @@
 
 
 # default dir
-ROOT=$(pwd)
-BUILD_DIR=$(pwd)/build
-PDF_DIR=$(pwd)/build/pdf
-ARTIFACTS_DIR=$(pwd)/artifacts
-RSA_ARTIFACTS_DIR=$(pwd)/artifacts/RSA
-POWERS_OF_TAU=$BUILD_DIR/powersOfTau28_hez_final_18.ptau
-RSA_DIR=RSA
-CONTRACTS_DIR=$(pwd)/../anon-aadhaar-contracts
+BUILD_DIR=./build
+PTAU=powersOfTau28_hez_final_20.ptau
+PTAU_PATH=$BUILD_DIR/$PTAU
+CIRCUIR_PATH=./circuits/qr_verify.circom
+CIRLIB_PATH=./node_modules
+R1CS_PATH=$BUILD_DIR/qr_verify.r1cs
+PARTIAL_ZKEYS_DIR=$BUILD_DIR/partial_zkeys
 
 CIRCOM_BIN_DIR=$HOME/.cargo/bin/circom
 
@@ -34,8 +33,8 @@ function install_deps() {
 
     echo "Download power of tau...."
     cd $BUILD_DIR    
-    if [ ! -f $POWERS_OF_TAU ]; then
-        wget https://hermez.s3-eu-west-1.amazonaws.com/powersOfTau28_hez_final_18.ptau
+    if [ ! -f $PTAU_PATH ]; then
+        wget https://hermez.s3-eu-west-1.amazonaws.com/$PTAU
         echo "Finished download!"
     else 
         echo "Powers of tau file already downloaded... Skip download action!"
@@ -47,49 +46,39 @@ function install_deps() {
 # trusted setup for development
 # DON'T USE IT IN PRODUCT
 function dev_trusted_setup() {
-    cd $ROOT
     echo "Starting setup...!"
-    HASH=`$ROOT/script/utils.sh`
+
+    if [ ! -d $PARTIAL_ZKEYS_DIR ]; then
+        mkdir -p $PARTIAL_ZKEYS_DIR
+    fi
 
     echo "TRUSTED SETUP FOR DEVELOPMENT - PLEASE, DON'T USE IT IN PRODUCT!!!!"
-    cd $BUILD_DIR 
 
-    CIRCUIT=circuit
-    if [ -f $CIRCUIT/hash.txt ]; then 
-        OLD_HASH=`cat $CIRCUIT/hash.txt`
-        echo $OLD_HASH 
-    else 
-        OLD_HASH=""
-    fi
+    circom ./circuits/qr_verify.circom  --r1cs --wasm -o $BUILD_DIR -l ./node_modules
 
-    if [ "$HASH" != "$OLD_HASH" ]; then 
-        mkdir -p $BUILD_DIR/$CIRCUIT
+    yarn add snarkjs@git+https://github.com/vb7401/snarkjs.git#24981febe8826b6ab76ae4d76cf7f9142919d2b8
+	yarn
 
-        cd $ROOT/circuits/RSA
-        mkdir -p $BUILD_DIR/$CIRCUIT/$RSA_DIR
-        circom main.circom  --r1cs --wasm -o $BUILD_DIR/$CIRCUIT/$RSA_DIR
-        npx snarkjs groth16 setup $BUILD_DIR/$CIRCUIT/$RSA_DIR/main.r1cs $POWERS_OF_TAU $BUILD_DIR/$CIRCUIT/$RSA_DIR/circuit_0000.zkey
-        echo "test random" | npx snarkjs zkey contribute $BUILD_DIR/$CIRCUIT/$RSA_DIR/circuit_0000.zkey $BUILD_DIR/$CIRCUIT/$RSA_DIR/circuit_final.zkey
-        npx snarkjs zkey export verificationkey $BUILD_DIR/$CIRCUIT/$RSA_DIR/circuit_final.zkey $BUILD_DIR/$CIRCUIT/$RSA_DIR/verification_key.json
-    fi 
+
+    NODE_OPTIONS=--max-old-space-size=8192 \
+	node ./node_modules/.bin/snarkjs groth16 setup $R1CS_PATH $PTAU_PATH $PARTIAL_ZKEYS_DIR/circuit_0000.zkey
+
+    echo "test random" | NODE_OPTIONS='--max-old-space-size=8192' \
+	node ./node_modules/.bin/snarkjs zkey contribute $PARTIAL_ZKEYS_DIR/circuit_0000.zkey $PARTIAL_ZKEYS_DIR/circuit_final.zkey --name="1st Contributor Name" -v 
+
+    yarn remove snarkjs
+    yarn add snarkjs@0.7.0
+    yarn
+
+    NODE_OPTIONS=--max-old-space-size=8192 \
+	node ./node_modules/.bin/snarkjs groth16 setup $R1CS_PATH $PTAU_PATH $PARTIAL_ZKEYS_DIR/circuit_0000.zkey
+
+    echo "test random" | NODE_OPTIONS='--max-old-space-size=8192' \
+	node ./node_modules/.bin/snarkjs zkey contribute $PARTIAL_ZKEYS_DIR/circuit_0000.zkey $PARTIAL_ZKEYS_DIR/circuit_final_nonchunk.zkey --name="1st Contributor Name" -v 
     
-    echo "Finish setup....!"
+    yarn add snarkjs@git+https://github.com/vb7401/snarkjs.git#24981febe8826b6ab76ae4d76cf7f9142919d2b8
+	yarn
 
-    echo "Copy proving key and verify key to artifacts!!!!"
-
-    cd $BUILD_DIR
-
-    if [ ! -d $ARTIFACTS_DIR ]; then
-        mkdir -p $ARTIFACTS_DIR/$RSA_DIR
-    fi
-
-    cp $CIRCUIT/$RSA_DIR/main_js/main.wasm $ARTIFACTS_DIR/$RSA_DIR
-    cp $CIRCUIT/$RSA_DIR/circuit_final.zkey $ARTIFACTS_DIR/$RSA_DIR
-    cp $CIRCUIT/$RSA_DIR/verification_key.json $ARTIFACTS_DIR/$RSA_DIR
-
-    echo $HASH > $CIRCUIT/hash.txt
-    
-    echo "Setup finished!"
 }
 
 
@@ -118,7 +107,7 @@ case "$1" in
         install_deps
     ;;
     setup)
-        setup_circuit
+        dev_trusted_setup
     ;;
     pdf-setup) 
         gen_cert_and_key $2
@@ -133,4 +122,3 @@ case "$1" in
         echo "Usage: $0 {install|setup|pdf-setup}"
     ;;
 esac
-
