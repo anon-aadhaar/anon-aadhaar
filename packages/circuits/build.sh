@@ -94,12 +94,19 @@ function setup_contract() {
 }
 
 function generate_proof() {
-    cd $ROOT
     echo "Building proof...!"
     mkdir -p $BUILD_DIR/proofs
-    npx ts-node ./script/generateInput.ts
-    snarkjs groth16 fullprove $BUILD_DIR/input.json $BUILD_DIR/qr_verify_js/qr_verify.wasm $PARTIAL_ZKEYS_DIR/circuit_final_nonchunk.zkey $BUILD_DIR/proofs/proof.json $BUILD_DIR/proofs/public.json
+    npx ts-node ./scritpts/generateInput.ts
+
+    NODE_OPTIONS='--max-old-space-size=8192' ./node_modules/.bin/snarkjs zkey export verificationkey $PARTIAL_ZKEYS_DIR/circuit_final.zkey "$BUILD_DIR"/vkey.json
+
+    node $BUILD_DIR/qr_verify_js/generate_witness.js "$BUILD_DIR"/qr_verify_js/qr_verify.wasm  $BUILD_DIR/input.json $BUILD_DIR/witness.wtns
+    NODE_OPTIONS='--max-old-space-size=8192' ./node_modules/.bin/snarkjs groth16 prove $PARTIAL_ZKEYS_DIR/circuit_final.zkey $BUILD_DIR/witness.wtns $BUILD_DIR/proof.json $BUILD_DIR/public.json
     echo "Generated proof...!"
+
+
+    NODE_OPTIONS='--max-old-space-size=8192' ./node_modules/.bin/snarkjs groth16 verify $BUILD_DIR/vkey.json $BUILD_DIR/public.json $BUILD_DIR/proof.json
+    echo "Verify proof...!"
 }
 
 case "$1" in
@@ -109,13 +116,10 @@ case "$1" in
     setup)
         dev_trusted_setup
     ;;
-    contract-setup) 
-        setup_contract
-    ;;
     gen-proof) 
         generate_proof
     ;;
     *)
-        echo "Usage: $0 {install|setup}"
+        echo "Usage: $0 {install|setup|gen-proof}"
     ;;
 esac
