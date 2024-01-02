@@ -56,9 +56,6 @@ function dev_trusted_setup() {
 
     circom ./circuits/qr_verify.circom  --r1cs --wasm -o $BUILD_DIR -l ./node_modules
 
-    yarn add snarkjs@git+https://github.com/vb7401/snarkjs.git#24981febe8826b6ab76ae4d76cf7f9142919d2b8
-	yarn
-
 
     NODE_OPTIONS=--max-old-space-size=8192 \
 	node ./node_modules/.bin/snarkjs groth16 setup $R1CS_PATH $PTAU_PATH $PARTIAL_ZKEYS_DIR/circuit_0000.zkey
@@ -66,19 +63,12 @@ function dev_trusted_setup() {
     echo "test random" | NODE_OPTIONS='--max-old-space-size=8192' \
 	node ./node_modules/.bin/snarkjs zkey contribute $PARTIAL_ZKEYS_DIR/circuit_0000.zkey $PARTIAL_ZKEYS_DIR/circuit_final.zkey --name="1st Contributor Name" -v 
 
-    yarn remove snarkjs
-    yarn add snarkjs@0.7.0
-    yarn
-
     NODE_OPTIONS=--max-old-space-size=8192 \
 	node ./node_modules/.bin/snarkjs groth16 setup $R1CS_PATH $PTAU_PATH $PARTIAL_ZKEYS_DIR/circuit_0000.zkey
 
     echo "test random" | NODE_OPTIONS='--max-old-space-size=8192' \
 	node ./node_modules/.bin/snarkjs zkey contribute $PARTIAL_ZKEYS_DIR/circuit_0000.zkey $PARTIAL_ZKEYS_DIR/circuit_final_nonchunk.zkey --name="1st Contributor Name" -v 
     
-    yarn add snarkjs@git+https://github.com/vb7401/snarkjs.git#24981febe8826b6ab76ae4d76cf7f9142919d2b8
-	yarn
-
 }
 
 
