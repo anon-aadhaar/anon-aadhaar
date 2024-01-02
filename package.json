@@ -15,7 +15,8 @@
     "contracts:pcd": "yarn workspace anon-aadhaar-pcd run gen-contract",
     "dev-install:pcd": "yarn workspace anon-aadhaar-pcd run dev-install",
     "postversion": "yarn workspace anon-aadhaar-pcd version --new-version $npm_package_version --no-git-tag-version && yarn workspace anon-aadhaar-react version --new-version $npm_package_version --no-git-tag-version && yarn workspace anon-aadhaar-contracts version --new-version $npm_package_version --no-git-tag-version",
-    "lint": "yarn workspaces run lint"
+    "lint": "yarn workspaces run lint",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -34,5 +35,8 @@
   "bugs": {
     "url": "https://github.com/privacy-scaling-explorations/anon-aadhaar/issues"
   },
-  "homepage": "https://github.com/privacy-scaling-explorations/anon-aadhaar#readme"
+  "homepage": "https://github.com/privacy-scaling-explorations/anon-aadhaar#readme",
+  "devDependencies": {
+    "husky": "^8.0.0"
+  }
 }
