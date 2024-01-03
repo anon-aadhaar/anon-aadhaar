@@ -3,9 +3,7 @@ import { splitToWords } from 'anon-aadhaar-pcd'
 import { genData } from '../../anon-aadhaar-pcd/test/utils'
 import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
 
-import {
-  Uint8ArrayToCharArray,
-} from '@zk-email/helpers/dist/binaryFormat'
+import { Uint8ArrayToCharArray } from '@zk-email/helpers/dist/binaryFormat'
 
 const main = () => {
   const signedData = 'Hello-world'
@@ -15,7 +13,6 @@ const main = () => {
       Buffer.from(signedData, 'ascii'),
       512 * 3,
     )
-  
 
     const input = {
       padded_message: Uint8ArrayToCharArray(paddedMsg),
@@ -27,6 +24,4 @@ const main = () => {
   })
 }
 
-
-
-main();
+main()

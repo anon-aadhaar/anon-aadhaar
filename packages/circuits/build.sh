@@ -77,7 +77,7 @@ function setup_contract() {
 
 function generate_witness() {
     echo "Gen witness..."
-    npx ts-node ./scritpts/generateInput.ts
+    npx ts-node ./scripts/generateInput.ts
     node $BUILD_DIR/qr_verify_js/generate_witness.js "$BUILD_DIR"/qr_verify_js/qr_verify.wasm  $BUILD_DIR/input.json $BUILD_DIR/witness.wtns
     echo "Done!"
 }
