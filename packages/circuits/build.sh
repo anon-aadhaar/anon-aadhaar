@@ -20,7 +20,6 @@ function install_deps() {
     fi
 
     echo "Install circom"
-    cd $BUILD_DIR
     if [ ! -f $CIRCOM_BIN_DIR ]; then
         git clone https://github.com/iden3/circom.git
         cd circom
@@ -32,7 +31,6 @@ function install_deps() {
     fi 
 
     echo "Download power of tau...."
-    cd $BUILD_DIR    
     if [ ! -f $PTAU_PATH ]; then
         wget https://hermez.s3-eu-west-1.amazonaws.com/$PTAU
         echo "Finished download!"
@@ -63,12 +61,6 @@ function dev_trusted_setup() {
     echo "test random" | NODE_OPTIONS='--max-old-space-size=8192' \
 	node ./node_modules/.bin/snarkjs zkey contribute $PARTIAL_ZKEYS_DIR/circuit_0000.zkey $PARTIAL_ZKEYS_DIR/circuit_final.zkey --name="1st Contributor Name" -v 
 
-    NODE_OPTIONS=--max-old-space-size=8192 \
-	node ./node_modules/.bin/snarkjs groth16 setup $R1CS_PATH $PTAU_PATH $PARTIAL_ZKEYS_DIR/circuit_0000.zkey
-
-    echo "test random" | NODE_OPTIONS='--max-old-space-size=8192' \
-	node ./node_modules/.bin/snarkjs zkey contribute $PARTIAL_ZKEYS_DIR/circuit_0000.zkey $PARTIAL_ZKEYS_DIR/circuit_final_nonchunk.zkey --name="1st Contributor Name" -v 
-    
 }
 
 
@@ -76,25 +68,32 @@ function setup_contract() {
     cd $ROOT
     echo "Building contracts...!"
     mkdir -p $BUILD_DIR/contracts
-    snarkjs zkey export solidityverifier ./build/circuit/RSA/circuit_final.zkey $BUILD_DIR/contracts/Verifier.sol
+    npx snarkjs zkey export solidityverifier ./build/circuit/RSA/circuit_final.zkey $BUILD_DIR/contracts/Verifier.sol
     # Update the contract name in the Solidity verifier
     sed -i '' -e "s/contract Groth16Verifier/contract Verifier/g" $BUILD_DIR/contracts/Verifier.sol
     cp $BUILD_DIR/contracts/Verifier.sol $CONTRACTS_DIR/contracts
     echo "Contracts generated!"
 }
 
+function generate_witness() {
+    echo "Gen witness..."
+    npx ts-node ./scritpts/generateInput.ts
+    node $BUILD_DIR/qr_verify_js/generate_witness.js "$BUILD_DIR"/qr_verify_js/qr_verify.wasm  $BUILD_DIR/input.json $BUILD_DIR/witness.wtns
+    echo "Done!"
+}
+
 function generate_proof() {
     echo "Building proof...!"
     mkdir -p $BUILD_DIR/proofs
-    npx ts-node ./scritpts/generateInput.ts
 
     NODE_OPTIONS='--max-old-space-size=8192' ./node_modules/.bin/snarkjs zkey export verificationkey $PARTIAL_ZKEYS_DIR/circuit_final.zkey "$BUILD_DIR"/vkey.json
 
-    node $BUILD_DIR/qr_verify_js/generate_witness.js "$BUILD_DIR"/qr_verify_js/qr_verify.wasm  $BUILD_DIR/input.json $BUILD_DIR/witness.wtns
     NODE_OPTIONS='--max-old-space-size=8192' ./node_modules/.bin/snarkjs groth16 prove $PARTIAL_ZKEYS_DIR/circuit_final.zkey $BUILD_DIR/witness.wtns $BUILD_DIR/proof.json $BUILD_DIR/public.json
     echo "Generated proof...!"
 
+}
 
+function verify_proof() {
     NODE_OPTIONS='--max-old-space-size=8192' ./node_modules/.bin/snarkjs groth16 verify $BUILD_DIR/vkey.json $BUILD_DIR/public.json $BUILD_DIR/proof.json
     echo "Verify proof...!"
 }
@@ -109,7 +108,13 @@ case "$1" in
     gen-proof) 
         generate_proof
     ;;
+    gen-witness) 
+        generate_witness
+    ;;
+    verify-proof)
+        verify_proof
+    ;;
     *)
-        echo "Usage: $0 {install|setup|gen-proof}"
+        echo "Usage: $0 {install|setup|gen-proof|gen-witness|verify-proof}"
     ;;
 esac

@@ -17,6 +17,6 @@
     "circomlib": "^2.0.5",
     "mocha": "^10.2.0",
     "prettier": "^3.1.1",
-    "snarkjs": "git+https://github.com/vb7401/snarkjs.git#24981febe8826b6ab76ae4d76cf7f9142919d2b8"
+    "snarkjs": "^0.7.0"
   }
 }
