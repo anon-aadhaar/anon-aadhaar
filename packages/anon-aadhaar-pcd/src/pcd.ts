@@ -9,7 +9,6 @@ import {
 
 import { v4 as uuidv4 } from 'uuid'
 import { groth16 } from 'snarkjs'
-import { splitToWords } from './utils'
 import JSONBig from 'json-bigint'
 import { BackendProver, ProverInferace, WebProver } from './prover'
 
@@ -92,15 +91,7 @@ async function getVerifyKey() {
 export async function verify(pcd: AnonAadhaarPCD): Promise<boolean> {
   const vk = await getVerifyKey()
 
-  return groth16.verify(
-    vk,
-    [
-      pcd.proof.nullifier.toString(),
-      ...splitToWords(BigInt(pcd.proof.modulus), BigInt(64), BigInt(32)),
-      pcd.proof.app_id.toString(),
-    ],
-    pcd.proof.proof
-  )
+  return groth16.verify(vk, pcd.proof.modulus, pcd.proof.groth16Proof)
 }
 
 export async function verifyLocal(pcd: AnonAadhaarPCD): Promise<boolean> {
@@ -118,15 +109,7 @@ export async function verifyLocal(pcd: AnonAadhaarPCD): Promise<boolean> {
 
   const vk = await response.json()
 
-  return groth16.verify(
-    vk,
-    [
-      pcd.proof.nullifier.toString(),
-      ...splitToWords(BigInt(pcd.proof.modulus), BigInt(64), BigInt(32)),
-      pcd.proof.app_id.toString(),
-    ],
-    pcd.proof.proof
-  )
+  return groth16.verify(vk, pcd.proof.modulus, pcd.proof.groth16Proof)
 }
 
 export function serialize(

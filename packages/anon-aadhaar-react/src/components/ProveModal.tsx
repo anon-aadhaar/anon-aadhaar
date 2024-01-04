@@ -92,8 +92,7 @@ export const ProveModal: React.FC<ModalProps> = ({
           </UploadSection>
 
           <ProveButton
-            // pdfData={pdfData}
-            pdfData={Buffer.from([])}
+            qrData={qrData}
             provingEnabled={provingEnabled}
             setErrorMessage={setErrorMessage}
           />
@@ -129,8 +128,7 @@ export const ProveModal: React.FC<ModalProps> = ({
           </UploadSection>
 
           <ProveButton
-            // pdfData={pdfData}
-            pdfData={Buffer.from([])}
+            qrData={qrData}
             provingEnabled={provingEnabled}
             setErrorMessage={setErrorMessage}
           />

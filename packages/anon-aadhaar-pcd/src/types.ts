@@ -1,4 +1,4 @@
-import { BigIntArgument } from '@pcd/pcd-types'
+import { NumberArgument, StringArrayArgument } from '@pcd/pcd-types'
 import { Groth16Proof } from 'snarkjs'
 
 export type BigNumberish = string | bigint
@@ -21,28 +21,26 @@ export interface PCDInitArgs {
 /**
  * @dev claim this public key signed a message
  */
-export interface AnonAadhaarPCDClaim {
-  modulus: BigNumberish
+export type AnonAadhaarPCDClaim = {
+  modulus: string[]
 }
 
 /**
  * @dev proof of claim correct
  */
-export interface AnonAadhaarPCDProof {
-  nullifier: BigNumberish
-  modulus: BigNumberish
-  proof: Groth16Proof // 3 points on curve if we use groth16
-  app_id: BigNumberish
+export type AnonAadhaarPCDProof = {
+  groth16Proof: Groth16Proof // 3 points on curve if we use groth16
+  modulus: string[]
 }
 
 /**
  * @dev witness use for create zk proof of AnonAadhaarPCD package.
  */
-export interface AnonAadhaarPCDArgs {
-  base_message: BigIntArgument // private witness
-  signature: BigIntArgument // private witness
-  modulus: BigIntArgument // public witness
-  app_id: BigIntArgument // public witness
+export type AnonAadhaarPCDArgs = {
+  padded_message: StringArrayArgument // private witness
+  message_len: NumberArgument // private witness
+  signature: StringArrayArgument // public witness
+  modulus: StringArrayArgument // public witness
 }
 
 export type Proof = [
@@ -56,20 +54,9 @@ export type Proof = [
   BigNumberish
 ]
 
-export interface FullProof {
-  modulus: BigNumberish[]
-  nullifier: BigNumberish
-  proof: Proof
-}
-
-export interface PCDProof {
-  modulus: BigNumberish
-  nullifier: BigNumberish
-  proof: Groth16Proof
-}
-
-export type WitnessPDFInputs = {
-  msgBigInt: bigint
-  modulusBigInt: bigint
-  sigBigInt: bigint
+export type WitnessQRInputs = {
+  paddedMessage: string[]
+  messageLength: number
+  signatureBigint: bigint
+  modulusBigint: bigint
 }

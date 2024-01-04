@@ -1,65 +1,67 @@
-import { pki, md, asn1 } from 'node-forge'
-import { extractCert, extractSignature, handleError } from './utils'
-import { WitnessPDFInputs } from './types'
+import {
+  convertBigIntToByteArray,
+  decompressByteArray,
+  fetchPublicKey,
+  handleError,
+} from './utils'
+import { WitnessQRInputs } from './types'
+import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
 import { Buffer } from 'buffer'
+import {
+  bufferToHex,
+  Uint8ArrayToCharArray,
+} from '@zk-email/helpers/dist/binaryFormat'
 
 /**
- * Extract all the information needed to generate the witness from the pdf.
- * @param pdf pdf buffer
- * @param pwd pdf password
+ * Extract all the information needed to generate the witness from the QRCode data.
+ * @param qrData QrCode Data
  * @returns {witness}
  */
 export const extractWitness = async (
-  pdfData: Buffer,
-  password: string
-): Promise<WitnessPDFInputs | Error> => {
+  qrData: string
+): Promise<WitnessQRInputs | Error> => {
   try {
-    // Extractiong the Pdf Data that have to be hashed and the RSA signature of the hash
-    const { signedData, signature } = extractSignature(pdfData)
+    const bigIntData = BigInt(qrData)
 
-    if (signature === '') throw Error('Missing pdf signature')
+    const byteArray = convertBigIntToByteArray(bigIntData)
 
-    // RSA signature ASN1 encoded
-    const asn1sig = asn1.fromDer(signature).value as string
+    const decompressedByteArray = decompressByteArray(byteArray)
 
-    // Extracting the x509 certificate from PDF
-    const x509Certificate = await extractCert(pdfData, password)
-
-    // Load RSA publicKey from x509 cert in PEM format
-    const RSAPublicKey = pki.certificateFromPem(
-      x509Certificate.toString('pem')
-    ).publicKey
-
-    // Initiate sha1 hash algo
-    const sha1 = md.sha1.create()
-
-    // Hash PDF data with sha1
-    sha1.update(signedData.toString('binary')) // defaults to raw encoding
-
-    // Recover the signed hash from RSA signature
-    const decryptData = Buffer.from(
-      (RSAPublicKey as pki.rsa.PublicKey).encrypt(asn1sig, 'RAW'),
-      'binary'
+    // Read signature data
+    const signature = decompressedByteArray.slice(
+      decompressedByteArray.length - 256,
+      decompressedByteArray.length
     )
 
-    // Convert sha1 hash from PDF Data to bytes
-    const hash = Buffer.from(sha1.digest().bytes(), 'binary')
-
-    // Compare hash from signature and hash computed from PDF Data
-    const isValid = Buffer.compare(decryptData.subarray(236, 256), hash) === 0
-
-    if (!isValid) throw Error('Signature not valid')
-
-    const msgBigInt = BigInt('0x' + hash.toString('hex'))
-    const sigBigInt = BigInt(
-      '0x' + Buffer.from(asn1sig, 'binary').toString('hex')
-    )
-    const modulusBigInt = BigInt(
-      '0x' + (RSAPublicKey as pki.rsa.PublicKey).n.toString(16)
+    const signedData = decompressedByteArray.slice(
+      0,
+      decompressedByteArray.length - 256
     )
 
-    return { msgBigInt, sigBigInt, modulusBigInt }
+    const pk = await fetchPublicKey(
+      'https://www.uidai.gov.in/images/authDoc/uidai_offline_publickey_26022021.cer'
+    )
+
+    if (!pk) throw Error('Error while fetching public key.')
+
+    const modulusBigint = BigInt('0x' + pk)
+
+    const signatureBigint = BigInt(
+      '0x' + bufferToHex(Buffer.from(signature)).toString()
+    )
+
+    const [paddedMessage, messageLength] = sha256Pad(signedData, 512 * 3)
+
+    return {
+      paddedMessage: Uint8ArrayToCharArray(paddedMessage),
+      messageLength,
+      signatureBigint,
+      modulusBigint,
+    }
   } catch (error) {
-    return handleError(error, '[Unable to extract the witness from the pdf]')
+    return handleError(
+      error,
+      '[Unable to extract the witness from the QR code]'
+    )
   }
 }

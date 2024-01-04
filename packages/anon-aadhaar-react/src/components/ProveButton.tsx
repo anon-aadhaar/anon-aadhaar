@@ -1,77 +1,56 @@
-import { AnonAadhaarPCDArgs } from 'anon-aadhaar-pcd'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import styled from 'styled-components'
-import { Dispatch, useContext, SetStateAction, useState } from 'react'
+import { Dispatch, useContext, SetStateAction } from 'react'
 import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
 import { Spinner } from './LoadingSpinner'
 import React from 'react'
-import { extractWitness, fetchPublicKey } from 'anon-aadhaar-pcd'
-import { Buffer } from 'buffer'
+import {
+  extractWitness,
+  AnonAadhaarPCDArgs,
+  splitToWords,
+} from 'anon-aadhaar-pcd'
 
 interface ProveButtonProps {
-  pdfData: Buffer
+  qrData: string | null
   provingEnabled: boolean
   setErrorMessage: Dispatch<SetStateAction<string | null>>
 }
 
 export const ProveButton: React.FC<ProveButtonProps> = ({
-  pdfData,
+  qrData,
   provingEnabled,
   setErrorMessage,
 }) => {
-  const [fetchingPublicKey, setFetchingPublicKey] = useState<boolean>(false)
-  const { state, startReq, appId, testing } = useContext(AnonAadhaarContext)
+  const { state, startReq } = useContext(AnonAadhaarContext)
 
   const startProving = async () => {
     try {
-      if (appId === null) throw new Error('Missing application Id!')
+      if (qrData === null) throw new Error('Missing application Id!')
 
-      const witness = await extractWitness(pdfData)
+      const witness = await extractWitness(qrData)
 
       if (witness instanceof Error) throw new Error(witness.message)
 
-      let publicKey = ''
-
-      if (!testing) {
-        setFetchingPublicKey(true)
-        const result = await fetchPublicKey(
-          'https://www.uidai.gov.in/images/authDoc/uidai_offline_publickey_26022021.cer',
-        )
-        if (result === null) {
-          setFetchingPublicKey(false)
-          throw new Error('Error while fetching the public key!')
-        } else {
-          publicKey = result
-          setFetchingPublicKey(false)
-        }
-      }
-
       const args: AnonAadhaarPCDArgs = {
-        base_message: {
-          argumentType: ArgumentTypeName.BigInt,
-          userProvided: false,
-          value: witness?.msgBigInt.toString(),
-          description: '',
+        padded_message: {
+          argumentType: ArgumentTypeName.StringArray,
+          value: witness.paddedMessage,
+        },
+        message_len: {
+          argumentType: ArgumentTypeName.Number,
+          value: witness.messageLength.toString(),
         },
         signature: {
-          argumentType: ArgumentTypeName.BigInt,
-          userProvided: false,
-          value: witness?.sigBigInt.toString(),
-          description: '',
+          argumentType: ArgumentTypeName.StringArray,
+          value: splitToWords(witness.signatureBigint, BigInt(64), BigInt(32)),
         },
         modulus: {
-          argumentType: ArgumentTypeName.BigInt,
-          userProvided: false,
-          value: testing ? witness.modulusBigInt.toString() : '0x' + publicKey,
-          description: '',
-        },
-        app_id: {
-          argumentType: ArgumentTypeName.BigInt,
-          userProvided: false,
-          value: appId,
-          description: '',
+          argumentType: ArgumentTypeName.StringArray,
+          value: splitToWords(witness.modulusBigint, BigInt(64), BigInt(32)),
         },
       }
+
+      console.log(args)
 
       startReq({ type: 'login', args })
     } catch (error) {
@@ -83,12 +62,7 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
   return (() => {
     switch (state.status) {
       case 'logged-out':
-        return fetchingPublicKey ? (
-          <Btn>
-            Loading... {'\u2003'}
-            <Spinner />
-          </Btn>
-        ) : (
+        return (
           <Btn disabled={!provingEnabled} onClick={startProving}>
             {' '}
             Request Aadhaar Proof{' '}

@@ -30,9 +30,9 @@ export const proveAndSerialize = async (
   serialized: SerializedPCD<AnonAadhaarPCD>
 }> => {
   const pcdInitArgs: PCDInitArgs = {
-    wasmURL: isWeb ? WASM_URL : '/main.wasm',
+    wasmURL: isWeb ? WASM_URL : '/qr_verify.wasm',
     zkeyURL: isWeb ? ZKEY_URL : '/circuit_final.zkey',
-    vkeyURL: isWeb ? VK_URL : '/verification_key.json',
+    vkeyURL: isWeb ? VK_URL : '/vkey.json',
     isWebEnv: isWeb,
   }
 

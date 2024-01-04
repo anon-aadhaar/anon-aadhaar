@@ -194,11 +194,10 @@ export async function exportCallDataGroth16FromPCD(
   c: [BigNumberish, BigNumberish]
   Input: BigNumberish[]
 }> {
-  const calldata = await groth16.exportSolidityCallData(_pcd.proof.proof, [
-    _pcd.proof.nullifier.toString(),
-    ...splitToWords(BigInt(_pcd.proof.modulus), BigInt(64), BigInt(32)),
-    _pcd.proof.app_id.toString(),
-  ])
+  const calldata = await groth16.exportSolidityCallData(
+    _pcd.proof.groth16Proof,
+    _pcd.proof.modulus
+  )
 
   const argv = calldata
     .replace(/["[\]\s]/g, '')
@@ -220,9 +219,11 @@ export async function exportCallDataGroth16FromPCD(
 }
 
 /**
- * Fetch the public key PEM file from the serverless function endpoint.
- * @param url Endpoint URL to fetch the public key.
- * @returns {Promise<string | null>} The official Aadhaar public key.
+ * Fetch the public key file from the serverless function endpoint.
+ * @param url Endpoint URL from where to fetch the public key.
+ * @returns {Promise<string | null>} The official Aadhaar public key in bigint string format.
+ *
+ * See the endpoint implementation here: [Endpoint Code](https://github.com/anon-aadhaar-private/nodejs-serverless-function-express/blob/main/api/get-public-key.ts)
  */
 export const fetchPublicKey = async (
   certUrl: string

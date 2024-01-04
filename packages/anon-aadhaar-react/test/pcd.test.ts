@@ -1,36 +1,46 @@
 import { describe } from 'mocha'
-import { AnonAadhaarPCDArgs, verify } from 'anon-aadhaar-pcd'
+import { AnonAadhaarPCDArgs, splitToWords, verify } from 'anon-aadhaar-pcd'
 import { assert } from 'chai'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import { proveAndSerialize } from '../src/prove'
 import { genData } from '../../anon-aadhaar-pcd/test/utils'
+import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
+import { Uint8ArrayToCharArray } from '@zk-email/helpers/dist/binaryFormat'
 
 describe('PCD tests', function () {
   this.timeout(0)
 
   let testData: [bigint, bigint, bigint, bigint]
+  let paddedMsg: Uint8Array
+  let messageLen: number
 
   this.beforeAll(async () => {
-    testData = await genData('Hello world', 'SHA-1')
+    const signedData = 'Hello-world'
+
+    testData = await genData(signedData, 'SHA-256')
+    ;[paddedMsg, messageLen] = sha256Pad(
+      Buffer.from(signedData, 'ascii'),
+      512 * 3,
+    )
   })
 
   it('PCD flow web prover', async function () {
     const pcdArgs: AnonAadhaarPCDArgs = {
+      padded_message: {
+        argumentType: ArgumentTypeName.StringArray,
+        value: Uint8ArrayToCharArray(paddedMsg),
+      },
+      message_len: {
+        argumentType: ArgumentTypeName.Number,
+        value: messageLen.toString(),
+      },
       signature: {
-        argumentType: ArgumentTypeName.BigInt,
-        value: testData[1] + '',
+        argumentType: ArgumentTypeName.StringArray,
+        value: splitToWords(testData[1], BigInt(64), BigInt(32)),
       },
       modulus: {
-        argumentType: ArgumentTypeName.BigInt,
-        value: testData[2] + '',
-      },
-      base_message: {
-        argumentType: ArgumentTypeName.BigInt,
-        value: testData[3] + '',
-      },
-      app_id: {
-        argumentType: ArgumentTypeName.BigInt,
-        value: BigInt(1234555).toString(),
+        argumentType: ArgumentTypeName.StringArray,
+        value: splitToWords(testData[2], BigInt(64), BigInt(32)),
       },
     }
 
