@@ -10,14 +10,12 @@ import { Buffer } from 'buffer'
 
 interface ProveButtonProps {
   pdfData: Buffer
-  password: string
   provingEnabled: boolean
   setErrorMessage: Dispatch<SetStateAction<string | null>>
 }
 
 export const ProveButton: React.FC<ProveButtonProps> = ({
   pdfData,
-  password,
   provingEnabled,
   setErrorMessage,
 }) => {
@@ -28,7 +26,7 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
     try {
       if (appId === null) throw new Error('Missing application Id!')
 
-      const witness = await extractWitness(pdfData, password)
+      const witness = await extractWitness(pdfData)
 
       if (witness instanceof Error) throw new Error(witness.message)
 

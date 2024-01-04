@@ -5,6 +5,7 @@ import * as x509 from '@peculiar/x509'
 import { BigNumberish } from './types'
 import { AnonAadhaarPCD } from './pcd'
 import { Buffer } from 'buffer'
+import pako from 'pako'
 
 export const handleError = (error: unknown, defaultMessage: string): Error => {
   if (error instanceof Error) return error
@@ -240,4 +241,22 @@ export const fetchPublicKey = async (
     console.error('Error fetching public key:', error)
     return null
   }
+}
+
+export function convertBigIntToByteArray(bigInt: bigint) {
+  const byteLength = Math.max(1, Math.ceil(bigInt.toString(2).length / 8))
+
+  const result = new Uint8Array(byteLength)
+  let i = 0
+  while (bigInt > 0) {
+    result[i] = Number(bigInt % BigInt(256))
+    bigInt = bigInt / BigInt(256)
+    i += 1
+  }
+  return result.reverse()
+}
+
+export function decompressByteArray(byteArray: Uint8Array) {
+  const decompressedArray = pako.inflate(byteArray)
+  return decompressedArray
 }

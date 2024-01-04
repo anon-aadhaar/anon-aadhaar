@@ -22,6 +22,7 @@ export const FileInput: FunctionComponent<FileInputProps> = ({
           setFileName(e.target.files[0].name)
           onChange(e)
         }}
+        accept="image/*"
         hidden
       />
       <FileName id="file-chosen">{fileName}</FileName>

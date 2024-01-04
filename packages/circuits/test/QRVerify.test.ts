@@ -8,33 +8,19 @@ import {
   Uint8ArrayToCharArray,
   bufferToHex,
 } from '@zk-email/helpers/dist/binaryFormat'
-import { splitToWords } from 'anon-aadhaar-pcd'
+import {
+  convertBigIntToByteArray,
+  decompressByteArray,
+  splitToWords,
+} from 'anon-aadhaar-pcd'
 import fs from 'fs'
 import crypto from 'crypto'
 import { genData } from '../../anon-aadhaar-pcd/test/utils'
-import pako from 'pako'
-
-function convertBigIntToByteArray(bigInt: bigint) {
-  const byteLength = Math.max(1, Math.ceil(bigInt.toString(2).length / 8))
-
-  const result = new Uint8Array(byteLength)
-  let i = 0
-  while (bigInt > 0) {
-    result[i] = Number(bigInt % BigInt(256))
-    bigInt = bigInt / BigInt(256)
-    i += 1
-  }
-  return result.reverse()
-}
-
-function decompressByteArray(byteArray: Uint8Array) {
-  const decompressedArray = pako.inflate(byteArray)
-  return decompressedArray
-}
 
 describe('Test QR Verify circuit', function () {
   this.timeout(0)
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let circuit: any
 
   this.beforeAll(async () => {
@@ -85,6 +71,8 @@ describe('Test QR Verify circuit', function () {
       QRDataDecode.length - 256,
       QRDataDecode.length,
     )
+
+    console.log(signatureBytes)
 
     const signedData = QRDataDecode.slice(0, QRDataDecode.length - 256)
 

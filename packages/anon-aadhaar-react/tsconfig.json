@@ -11,7 +11,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
-    "noUnusedParameters": true
+    "noUnusedParameters": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": ["src/*", "../anon-aadhaar-pcd/src/extractWitness.ts"],
   "exclude": ["mocha.cjs", "eslintrc.cjs"]
