@@ -1,5 +1,4 @@
 import { ChangeEvent, Dispatch, SetStateAction } from 'react'
-import { AadhaarPdfValidation } from './interface'
 import { Buffer } from 'buffer'
 import jsQR from 'jsqr'
 import { convertBigIntToByteArray, decompressByteArray } from 'anon-aadhaar-pcd'
@@ -61,48 +60,48 @@ export function text(emoji: string, text: string) {
   return `${emoji}${msp}${text}`
 }
 
-/**
- * Handle the upload of the pdf, extract the signature and the signed data.
- * @param pdf pdf buffer
- * @returns {Signature, signedData}
- */
-export const uploadPdf = (
-  e: ChangeEvent<HTMLInputElement>,
-  setpdfStatus: Dispatch<SetStateAction<null | AadhaarPdfValidation>>,
-): Promise<{ pdf: Buffer }> => {
-  return new Promise((resolve, reject) => {
-    if (e.target.files) {
-      try {
-        const fileReader = new FileReader()
-        fileReader.readAsBinaryString(e.target.files[0])
-        fileReader.onload = e => {
-          if (e.target) {
-            try {
-              const { signature } = extractSignature(
-                Buffer.from(e.target.result as string, 'binary'),
-              )
+// /**
+//  * Handle the upload of the pdf, extract the signature and the signed data.
+//  * @param pdf pdf buffer
+//  * @returns {Signature, signedData}
+//  */
+// export const uploadPdf = (
+//   e: ChangeEvent<HTMLInputElement>,
+//   setpdfStatus: Dispatch<SetStateAction<null | AadhaarPdfValidation>>,
+// ): Promise<{ pdf: Buffer }> => {
+//   return new Promise((resolve, reject) => {
+//     if (e.target.files) {
+//       try {
+//         const fileReader = new FileReader()
+//         fileReader.readAsBinaryString(e.target.files[0])
+//         fileReader.onload = e => {
+//           if (e.target) {
+//             try {
+//               const { signature } = extractSignature(
+//                 Buffer.from(e.target.result as string, 'binary'),
+//               )
 
-              if (signature != '') {
-                resolve({
-                  pdf: Buffer.from(e.target.result as string, 'binary'),
-                })
-                setpdfStatus(AadhaarPdfValidation.SIGNATURE_PRESENT)
-              } else {
-                setpdfStatus(AadhaarPdfValidation.SIGNATURE_NOT_PRESENT)
-              }
-            } catch (error) {
-              setpdfStatus(AadhaarPdfValidation.ERROR_PARSING_PDF)
-              reject(error)
-            }
-          }
-        }
-      } catch {
-        setpdfStatus(null)
-        reject()
-      }
-    }
-  })
-}
+//               if (signature != '') {
+//                 resolve({
+//                   pdf: Buffer.from(e.target.result as string, 'binary'),
+//                 })
+//                 setpdfStatus(AadhaarPdfValidation.SIGNATURE_PRESENT)
+//               } else {
+//                 setpdfStatus(AadhaarPdfValidation.SIGNATURE_NOT_PRESENT)
+//               }
+//             } catch (error) {
+//               setpdfStatus(AadhaarPdfValidation.ERROR_PARSING_PDF)
+//               reject(error)
+//             }
+//           }
+//         }
+//       } catch {
+//         setpdfStatus(null)
+//         reject()
+//       }
+//     }
+//   })
+// }
 
 /**
  * Handle the upload of the pdf, extract the signature and the signed data.
