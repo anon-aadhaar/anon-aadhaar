@@ -12,7 +12,7 @@ import { Uint8ArrayToCharArray } from '@zk-email/helpers/dist/binaryFormat'
 import { AnonAadhaarPCDArgs, splitToWords } from 'anon-aadhaar-pcd'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import { AnonAadhaarProvider } from '../src/provider/AnonAadhaarProvider'
-import { genData } from '../../anon-aadhaar-pcd/test/utils'
+import { genData } from 'anon-aadhaar-pcd/test/utils'
 
 describe('useCountryIdentity Hook', () => {
   let testData: [bigint, bigint, bigint, bigint]

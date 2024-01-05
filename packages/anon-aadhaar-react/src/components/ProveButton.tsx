@@ -1,14 +1,9 @@
-import { ArgumentTypeName } from '@pcd/pcd-types'
 import styled from 'styled-components'
 import { Dispatch, useContext, SetStateAction } from 'react'
 import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
 import { Spinner } from './LoadingSpinner'
 import React from 'react'
-import {
-  extractWitness,
-  AnonAadhaarPCDArgs,
-  splitToWords,
-} from 'anon-aadhaar-pcd'
+import { processArgs } from '../prove'
 
 interface ProveButtonProps {
   qrData: string | null
@@ -21,36 +16,13 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
   provingEnabled,
   setErrorMessage,
 }) => {
-  const { state, startReq } = useContext(AnonAadhaarContext)
+  const { state, startReq, testing } = useContext(AnonAadhaarContext)
 
   const startProving = async () => {
     try {
       if (qrData === null) throw new Error('Missing application Id!')
 
-      const witness = await extractWitness(qrData)
-
-      if (witness instanceof Error) throw new Error(witness.message)
-
-      const args: AnonAadhaarPCDArgs = {
-        padded_message: {
-          argumentType: ArgumentTypeName.StringArray,
-          value: witness.paddedMessage,
-        },
-        message_len: {
-          argumentType: ArgumentTypeName.Number,
-          value: witness.messageLength.toString(),
-        },
-        signature: {
-          argumentType: ArgumentTypeName.StringArray,
-          value: splitToWords(witness.signatureBigint, BigInt(64), BigInt(32)),
-        },
-        modulus: {
-          argumentType: ArgumentTypeName.StringArray,
-          value: splitToWords(witness.modulusBigint, BigInt(64), BigInt(32)),
-        },
-      }
-
-      console.log(args)
+      const args = await processArgs(qrData, testing)
 
       startReq({ type: 'login', args })
     } catch (error) {

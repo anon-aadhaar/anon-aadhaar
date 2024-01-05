@@ -1,7 +1,6 @@
 import {
   convertBigIntToByteArray,
   decompressByteArray,
-  fetchPublicKey,
   handleError,
 } from './utils'
 import { WitnessQRInputs } from './types'
@@ -11,6 +10,7 @@ import {
   bufferToHex,
   Uint8ArrayToCharArray,
 } from '@zk-email/helpers/dist/binaryFormat'
+import { pki } from 'node-forge'
 
 /**
  * Extract all the information needed to generate the witness from the QRCode data.
@@ -18,7 +18,8 @@ import {
  * @returns {witness}
  */
 export const extractWitness = async (
-  qrData: string
+  qrData: string,
+  certificateFile: string
 ): Promise<WitnessQRInputs | Error> => {
   try {
     const bigIntData = BigInt(qrData)
@@ -38,13 +39,12 @@ export const extractWitness = async (
       decompressedByteArray.length - 256
     )
 
-    const pk = await fetchPublicKey(
-      'https://www.uidai.gov.in/images/authDoc/uidai_offline_publickey_26022021.cer'
-    )
+    const RSAPublicKey = pki.certificateFromPem(certificateFile).publicKey
+    const publicKey = (RSAPublicKey as pki.rsa.PublicKey).n.toString(16)
 
-    if (!pk) throw Error('Error while fetching public key.')
+    console.log('public key in extract: ', publicKey)
 
-    const modulusBigint = BigInt('0x' + pk)
+    const modulusBigint = BigInt('0x' + publicKey)
 
     const signatureBigint = BigInt(
       '0x' + bufferToHex(Buffer.from(signature)).toString()

@@ -1,13 +1,21 @@
-import React, { useEffect, useState, Dispatch, SetStateAction } from 'react'
+import React, {
+  useEffect,
+  useState,
+  Dispatch,
+  SetStateAction,
+  useContext,
+} from 'react'
 import styled from 'styled-components'
 import { FileInput } from './FileInput'
 import { ProveButton } from './ProveButton'
 import { ScanQR } from './ScanQR'
-import { uploadQRpng, verifySignature } from '../util'
+import { uploadQRpng } from '../util'
 import { AadhaarQRValidation } from '../interface'
 import { ErrorToast } from './ErrorToast'
 import { BrowserView, MobileView } from 'react-device-detect'
 import { Logo } from './LogInWithAnonAadhaar'
+import { verifySignature } from '../verifySignature'
+import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
 
 interface ModalProps {
   isOpen: boolean
@@ -30,10 +38,12 @@ export const ProveModal: React.FC<ModalProps> = ({
 }) => {
   const [qrData, setQrData] = useState<string | null>(null)
   const [provingEnabled, setProvingEnabled] = useState<boolean>(false)
+  const { testing } = useContext(AnonAadhaarContext)
 
   useEffect(() => {
     if (qrData) {
-      verifySignature(qrData)
+      console.log('QRcode data: ', qrData)
+      verifySignature(qrData, testing)
         .then(verified => {
           verified
             ? setQrStatus(AadhaarQRValidation.SIGNATURE_VERIFIED)

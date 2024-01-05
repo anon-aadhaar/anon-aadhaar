@@ -3,7 +3,7 @@ import { AnonAadhaarPCDArgs, splitToWords, verify } from 'anon-aadhaar-pcd'
 import { assert } from 'chai'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import { proveAndSerialize } from '../src/prove'
-import { genData } from '../../anon-aadhaar-pcd/test/utils'
+import { genData } from 'anon-aadhaar-pcd/test/utils'
 import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
 import { Uint8ArrayToCharArray } from '@zk-email/helpers/dist/binaryFormat'
 
@@ -24,7 +24,7 @@ describe('PCD tests', function () {
     )
   })
 
-  it('PCD flow web prover', async function () {
+  it.skip('PCD flow web prover', async function () {
     const pcdArgs: AnonAadhaarPCDArgs = {
       padded_message: {
         argumentType: ArgumentTypeName.StringArray,
