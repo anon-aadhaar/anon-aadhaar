@@ -59,11 +59,13 @@ template Filter(max_num_bytes) {
 
 
     component inset[max_num_bytes];
-        for (var i = 0; i < max_num_bytes; i++) {
-            inset[i] = InSet();
-            inset[i].element <== s_data[i];
-            inset[i].selector <== selector;
-            extract_data[i] <== inset[i].out * data[i];
-        }
+    signal selected[max_num_bytes];
+    for (var i = 0; i < max_num_bytes; i++) {
+        inset[i] = InSet();
+        inset[i].element <== s_data[i];
+        inset[i].selector <== selector;
+        selected[i] <== (1 - data_is255[i].out) * inset[i].out;
+        extract_data[i] <== data[i] * (selected[i]  + data_is255[i].out);
+    }
 
 }
