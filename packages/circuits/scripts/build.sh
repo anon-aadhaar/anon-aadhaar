@@ -2,15 +2,16 @@
 
 
 # default dir
-BUILD_DIR=./build
+BUILD_DIR=$(pwd)/build
 PTAU=powersOfTau28_hez_final_20.ptau
 PTAU_PATH=$BUILD_DIR/$PTAU
-CIRCUIR_PATH=./circuits/qr_verify.circom
-CIRLIB_PATH=./node_modules
+CIRCUIT=$(pwd)/circuits
+CIRCUIR_PATH=$(pwd)/circuits/qr_verify.circom
+CIRLIB_PATH=$(pwd)/node_modules
 R1CS_PATH=$BUILD_DIR/qr_verify.r1cs
 QR_VERIFY_DIR=$BUILD_DIR/qr_verify_js
 PARTIAL_ZKEYS_DIR=$BUILD_DIR/partial_zkeys
-ARTIFACTS_DIR=./artifacts
+ARTIFACTS_DIR=$(pwd)/artifacts
 
 CIRCOM_BIN_DIR=$HOME/.cargo/bin/circom
 
@@ -50,10 +51,20 @@ function install_deps() {
 function dev_trusted_setup() {
     echo "Starting setup...!"
 
+    HASH=`$(pwd)/scripts/utils.sh`
+
+    if [ -f $BUILD_DIR/hash.txt ]; then 
+        OLD_HASH=`cat $BUILD_DIR/hash.txt`
+        echo $OLD_HASH 
+    else 
+        OLD_HASH=""
+    fi
+
     if [ ! -d $PARTIAL_ZKEYS_DIR ]; then
         mkdir -p $PARTIAL_ZKEYS_DIR
     fi
 
+    if [ "$HASH" != "$OLD_HASH" ]; then 
     echo "TRUSTED SETUP FOR DEVELOPMENT - PLEASE, DON'T USE IT IN PRODUCT!!!!"
 
     circom ./circuits/qr_verify.circom  --r1cs --wasm -o $BUILD_DIR -l ./node_modules
@@ -68,13 +79,18 @@ function dev_trusted_setup() {
 
     echo "Copy proving key and verify key to artifacts!!!!"
 
-        if [ ! -d $ARTIFACTS_DIR ]; then
+
+    if [ ! -d $ARTIFACTS_DIR ]; then
         mkdir -p $ARTIFACTS_DIR
     fi
 
     cp $QR_VERIFY_DIR/qr_verify.wasm $ARTIFACTS_DIR
     cp $PARTIAL_ZKEYS_DIR/circuit_final.zkey $ARTIFACTS_DIR
     cp $BUILD_DIR/vkey.json $ARTIFACTS_DIR
+    
+    fi
+
+    echo $HASH > $BUILD_DIR/hash.txt
     
     echo "Setup finished!"
 }

@@ -9,11 +9,11 @@
     "format": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\"",
     "lint": "echo 'no lint'",
     "circom": "circom",
-    "dev-install": "/bin/bash ./build.sh install",
-    "dev-setup": "/bin/bash ./build.sh setup",
-    "gen-proof": "/bin/bash ./build.sh gen-proof",
-    "gen-witness": "/bin/bash ./build.sh gen-witness",
-    "verif-proof": "/bin/bash ./build.sh verify-proof"
+    "dev-install": "/bin/bash ./scripts/build.sh install",
+    "dev-setup": "/bin/bash ./scripts/build.sh setup",
+    "gen-proof": "/bin/bash ./scripts/build.sh gen-proof",
+    "gen-witness": "/bin/bash ./scripts/build.sh gen-witness",
+    "verif-proof": "/bin/bash ./scripts/build.sh verify-proof"
   },
   "dependencies": {
     "@zk-email/helpers": "^3.0.2",
