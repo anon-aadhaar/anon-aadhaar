@@ -77,18 +77,14 @@ function dev_trusted_setup() {
 	node ./node_modules/.bin/snarkjs zkey contribute $PARTIAL_ZKEYS_DIR/circuit_0000.zkey $PARTIAL_ZKEYS_DIR/circuit_final.zkey --name="1st Contributor Name" -v 
     NODE_OPTIONS='--max-old-space-size=8192' ./node_modules/.bin/snarkjs zkey export verificationkey $PARTIAL_ZKEYS_DIR/circuit_final.zkey "$BUILD_DIR"/vkey.json
 
-    echo "Copy proving key and verify key to artifacts!!!!"
-
-
-    if [ ! -d $ARTIFACTS_DIR ]; then
+    fi
+        if [ ! -d $ARTIFACTS_DIR ]; then
         mkdir -p $ARTIFACTS_DIR
     fi
 
     cp $QR_VERIFY_DIR/qr_verify.wasm $ARTIFACTS_DIR
     cp $PARTIAL_ZKEYS_DIR/circuit_final.zkey $ARTIFACTS_DIR
     cp $BUILD_DIR/vkey.json $ARTIFACTS_DIR
-    
-    fi
 
     echo $HASH > $BUILD_DIR/hash.txt
     
