@@ -7,6 +7,7 @@ import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
 import { Uint8ArrayToCharArray } from '@zk-email/helpers/dist/binaryFormat'
 
 import pako from 'pako'
+import assert from 'assert'
 
 function convertBigIntToByteArray(bigInt: bigint) {
   const byteLength = Math.max(1, Math.ceil(bigInt.toString(2).length / 8))
@@ -54,30 +55,13 @@ describe('Test filter', function () {
 
     const [paddedMsg] = sha256Pad(signedData, 512 * 3)
 
-    // create filter
-    const filter: number[] = []
-    let count = 0
-    paddedMsg.forEach(element => {
-      if (element === 255) {
-        count++
-      }
-
-      if (count <= 16) {
-        if (element === 255) filter.push(255)
-        else filter.push(1)
-      } else {
-        filter.push(0)
-      }
-    })
-
     const witness = await circuit.calculateWitness({
       data: Uint8ArrayToCharArray(paddedMsg),
-      filter: filter,
+      selector: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     })
 
     for (let i = 0; i < 10; ++i) {
-      console.log(witness[i + 1])
-      console.log(signedData[i])
+      assert(witness[i + 1] == signedData[i])
     }
   })
 })
