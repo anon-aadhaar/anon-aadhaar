@@ -1,4 +1,4 @@
-import { ArgumentTypeName, SerializedPCD } from '@pcd/pcd-types'
+import { SerializedPCD } from '@pcd/pcd-types'
 import {
   prove,
   PCDInitArgs,
@@ -9,10 +9,9 @@ import {
   VK_URL,
   ZKEY_URL,
   WASM_URL,
-  extractWitness,
-  splitToWords,
+  generateArgs,
 } from 'anon-aadhaar-pcd'
-import { fetchRawPublicKey } from './util'
+import { fetchCertificateFile } from './util'
 
 /**
  * proveAndSerialize is a function that generates proofs using the web-based proving system of anon-aadhaar.
@@ -60,7 +59,7 @@ export const processArgs = async (
   qrData: string,
   testing: boolean,
 ): Promise<AnonAadhaarPCDArgs> => {
-  const certificate = await fetchRawPublicKey(
+  const certificate = await fetchCertificateFile(
     `https://www.uidai.gov.in/images/authDoc/${
       testing ? 'uidai_prod_cdup' : 'uidai_offline_publickey_26022021'
     }.cer`,
@@ -68,27 +67,7 @@ export const processArgs = async (
 
   if (!certificate) throw Error('Error while fetching public key.')
 
-  const witness = await extractWitness(qrData, certificate)
+  const args = await generateArgs(qrData, certificate)
 
-  if (witness instanceof Error) throw new Error(witness.message)
-
-  const args: AnonAadhaarPCDArgs = {
-    padded_message: {
-      argumentType: ArgumentTypeName.StringArray,
-      value: witness.paddedMessage,
-    },
-    message_len: {
-      argumentType: ArgumentTypeName.Number,
-      value: witness.messageLength.toString(),
-    },
-    signature: {
-      argumentType: ArgumentTypeName.StringArray,
-      value: splitToWords(witness.signatureBigint, BigInt(64), BigInt(32)),
-    },
-    modulus: {
-      argumentType: ArgumentTypeName.StringArray,
-      value: splitToWords(witness.modulusBigint, BigInt(64), BigInt(32)),
-    },
-  }
   return args
 }

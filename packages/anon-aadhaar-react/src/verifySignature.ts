@@ -1,12 +1,11 @@
 import { convertBigIntToByteArray, decompressByteArray } from 'anon-aadhaar-pcd'
-import { fetchRawPublicKey, str2ab } from './util'
+import { fetchCertificateFile, str2ab } from './util'
 import { pki } from 'node-forge'
 
 export const verifySignature = async (
   n: string,
   testing: boolean,
 ): Promise<boolean> => {
-  console.log('is testing: ', testing)
   const bigIntData = BigInt(n)
 
   const byteArray = convertBigIntToByteArray(bigIntData)
@@ -24,7 +23,7 @@ export const verifySignature = async (
     decompressedByteArray.length - 256,
   )
 
-  const certificate = await fetchRawPublicKey(
+  const certificate = await fetchCertificateFile(
     `https://www.uidai.gov.in/images/authDoc/${
       testing ? 'uidai_prod_cdup' : 'uidai_offline_publickey_26022021'
     }.cer`,

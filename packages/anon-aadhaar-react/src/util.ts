@@ -68,12 +68,21 @@ export const uploadQRpng = (
   })
 }
 
+export function str2ab(str: string) {
+  const buf = new ArrayBuffer(str.length)
+  const bufView = new Uint8Array(buf)
+  for (let i = 0, strLen = str.length; i < strLen; i++) {
+    bufView[i] = str.charCodeAt(i)
+  }
+  return buf
+}
+
 /**
  * Fetch the public key certificate from the serverless function endpoint.
  * @param url Endpoint URL to fetch the public key.
  * @returns {Promise<string | null>} The official Aadhaar public key.
  */
-export const fetchRawPublicKey = async (
+export const fetchCertificateFile = async (
   certUrl: string,
 ): Promise<string | null> => {
   try {
@@ -90,13 +99,4 @@ export const fetchRawPublicKey = async (
     console.error('Error fetching public key:', error)
     return null
   }
-}
-
-export function str2ab(str: string) {
-  const buf = new ArrayBuffer(str.length)
-  const bufView = new Uint8Array(buf)
-  for (let i = 0, strLen = str.length; i < strLen; i++) {
-    bufView[i] = str.charCodeAt(i)
-  }
-  return buf
 }

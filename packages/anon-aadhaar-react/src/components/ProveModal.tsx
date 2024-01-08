@@ -42,7 +42,6 @@ export const ProveModal: React.FC<ModalProps> = ({
 
   useEffect(() => {
     if (qrData) {
-      console.log('QRcode data: ', qrData)
       verifySignature(qrData, testing)
         .then(verified => {
           verified

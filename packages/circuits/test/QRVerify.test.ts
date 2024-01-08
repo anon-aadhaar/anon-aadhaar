@@ -72,8 +72,6 @@ describe('Test QR Verify circuit', function () {
       QRDataDecode.length,
     )
 
-    console.log(signatureBytes)
-
     const signedData = QRDataDecode.slice(0, QRDataDecode.length - 256)
 
     const [paddedMsg, messageLen] = sha256Pad(signedData, 512 * 3)
