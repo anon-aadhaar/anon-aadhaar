@@ -17,10 +17,10 @@ export const ScanQR: FunctionComponent<ScanQRProps> = ({
     <QrReader
       containerStyle={{ width: '90%' }}
       videoStyle={{ height: '70%' }}
-      // scanDelay={300}
+      scanDelay={1000}
       constraints={{ facingMode: 'environment' }}
       onResult={(result, error) => {
-        if (result?.getText()) {
+        if (result?.getText() && result?.getText() !== '') {
           setQrStatus(AadhaarQRValidation.QR_CODE_SCANNED)
           setQrData(result.getText())
           setShowScanner(false)

@@ -24,7 +24,7 @@ describe('PCD tests', function () {
     )
   })
 
-  it.skip('PCD flow web prover', async function () {
+  it('PCD flow web prover', async function () {
     const pcdArgs: AnonAadhaarPCDArgs = {
       padded_message: {
         argumentType: ArgumentTypeName.StringArray,

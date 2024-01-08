@@ -62,7 +62,7 @@ export const ProveModal: React.FC<ModalProps> = ({
     } else {
       setProvingEnabled(false)
     }
-  }, [qrStatus, qrData])
+  }, [qrStatus])
 
   return isOpen ? (
     <ModalOverlay onClick={onClose}>
