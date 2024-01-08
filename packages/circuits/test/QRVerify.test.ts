@@ -111,6 +111,6 @@ describe('Test QR Verify circuit', function () {
       selector: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     })
 
-    assert(witness[1] == paddedMsg[0]);
+    assert(witness[1] == paddedMsg[0])
   })
 })

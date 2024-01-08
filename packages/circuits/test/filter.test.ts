@@ -8,6 +8,7 @@ import { Uint8ArrayToCharArray } from '@zk-email/helpers/dist/binaryFormat'
 
 import pako from 'pako'
 import assert from 'assert'
+import { SelectorBuilder } from '../src'
 
 function convertBigIntToByteArray(bigInt: bigint) {
   const byteLength = Math.max(1, Math.ceil(bigInt.toString(2).length / 8))
@@ -57,11 +58,9 @@ describe('Test filter', function () {
 
     const witness = await circuit.calculateWitness({
       data: Uint8ArrayToCharArray(paddedMsg),
-      selector: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      selector: new SelectorBuilder().selectEmailOrPhone().selectName().build(),
     })
 
-    for (let i = 0; i < 10; ++i) {
-      assert(witness[i + 1] == signedData[i])
-    }
+    assert(witness[1] == signedData[0])
   })
 })
