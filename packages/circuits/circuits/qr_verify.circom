@@ -2,6 +2,7 @@ pragma circom 2.1.6;
 
 include "./rsa.circom";
 include "./sha.circom";
+include "./filter.circom";
 
 
 template QR_Verify(n, k, len) {
@@ -9,7 +10,9 @@ template QR_Verify(n, k, len) {
     signal input message_len; // private 
     signal input signature[k]; //private
     signal input modulus[k]; //public
+    signal input selector[16];
 
+    signal output reveal_data[len];
     component shaHasher = Sha256Bytes(len);
 
     shaHasher.in_padded <== padded_message;
@@ -45,6 +48,12 @@ template QR_Verify(n, k, len) {
         rsa.signature[i] <== signature[i];
     }
     
+    component filter = Filter(len);
+
+    filter.data <== padded_message;
+    filter.selector <== selector;
+    reveal_data <== filter.extract_data;
 }
+
 
 component main{public [modulus]} = QR_Verify(64, 32, 512 * 3);

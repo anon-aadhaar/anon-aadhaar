@@ -13,6 +13,7 @@ import fs from 'fs'
 import crypto from 'crypto'
 import { genData } from '../../anon-aadhaar-pcd/test/utils'
 import pako from 'pako'
+import assert from 'assert'
 
 function convertBigIntToByteArray(bigInt: bigint) {
   const byteLength = Math.max(1, Math.ceil(bigInt.toString(2).length / 8))
@@ -62,6 +63,7 @@ describe('Test QR Verify circuit', function () {
       message_len: messageLen,
       signature: splitToWords(data[1], BigInt(64), BigInt(32)),
       modulus: splitToWords(data[2], BigInt(64), BigInt(32)),
+      selector: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     })
   })
 
@@ -101,11 +103,14 @@ describe('Test QR Verify circuit', function () {
       '0x' + bufferToHex(Buffer.from(signatureBytes)).toString(),
     )
 
-    await circuit.calculateWitness({
+    const witness = await circuit.calculateWitness({
       padded_message: Uint8ArrayToCharArray(paddedMsg),
       message_len: messageLen,
       signature: splitToWords(signature, BigInt(64), BigInt(32)),
       modulus: splitToWords(modulus, BigInt(64), BigInt(32)),
+      selector: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     })
+
+    assert(witness[1] == paddedMsg[0]);
   })
 })
