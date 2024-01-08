@@ -95,17 +95,16 @@ export class SelectorBuilder {
   }
 }
 
-export function readData(data: bigint[], index: number) {
-    let count = 0; 
-    let start = 0;
-    let end = data.indexOf(255n, start);
+export function readData(data: number[], index: number) {
+  let count = 0
+  let start = 0
+  let end = data.indexOf(255, start)
 
-    while (count != index) {
-        start = end + 1;
-        end = data.indexOf(255n, start);
-        count++;
-    }    
+  while (count != index) {
+    start = end + 1
+    end = data.indexOf(255, start)
+    count++
+  }
 
-    console.log(start, end);
-    return data.slice(start, end);
+  return data.slice(start, end)
 }

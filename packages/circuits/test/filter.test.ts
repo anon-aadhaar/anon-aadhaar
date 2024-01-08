@@ -7,8 +7,9 @@ import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
 import { Uint8ArrayToCharArray } from '@zk-email/helpers/dist/binaryFormat'
 
 import pako from 'pako'
-import assert from 'assert'
+
 import { SELECTOR_ID, SelectorBuilder, readData } from '../src'
+import assert from 'assert'
 
 function convertBigIntToByteArray(bigInt: bigint) {
   const byteLength = Math.max(1, Math.ceil(bigInt.toString(2).length / 8))
@@ -61,10 +62,13 @@ describe('Test filter', function () {
       selector: new SelectorBuilder().selectEmailOrPhone().selectName().build(),
     })
 
-    const extractedData = witness.slice(1, 512 * 3 + 1);
+    const extractedData = witness.slice(1, 512 * 3 + 1).map(v => Number(v))
 
-    const name = readData(extractedData, SELECTOR_ID.name);
+    const name = readData(extractedData, SELECTOR_ID.name).map(Number)
+    const nameFromInput = readData(Array.from(paddedMsg), SELECTOR_ID.name)
 
+    for (let i = 0; i < name.length; ++i) {
+      assert(name[i] === nameFromInput[i])
+    }
   })
 })
-
