@@ -1,12 +1,12 @@
 #!/bin/bash
 
 
-RSA_DIR=$(pwd)/circuits/RSA
+CIRCUIT=./circuits
 
 ALL_HASH="";
-for file in $(ls $RSA_DIR) 
+for file in $(ls $CIRCUIT) 
 do 
-    ALL_HASH+="$(sha256sum $RSA_DIR/$file)"
+    ALL_HASH+="$(sha256sum $CIRCUIT/$file)"
 done 
 
 

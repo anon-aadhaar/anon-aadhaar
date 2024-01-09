@@ -9,14 +9,14 @@
     "test-publish:libraries": "yarn workspaces run test-publish",
     "publish:libraries": "yarn workspace anon-aadhaar-pcd run publishtonpm && yarn workspace anon-aadhaar-react run publishtonpm && yarn workspace anon-aadhaar-contracts run publishtonpm",
     "test:libraries": "yarn workspaces run test",
-    "dev-setup:pcd": "yarn workspace anon-aadhaar-pcd run dev-setup",
-    "pdf:pcd": "yarn workspace anon-aadhaar-pcd run gen-pdf",
-    "proof:pcd": "yarn workspace anon-aadhaar-pcd run gen-proof",
-    "contracts:pcd": "yarn workspace anon-aadhaar-pcd run gen-contract",
-    "dev-install:pcd": "yarn workspace anon-aadhaar-pcd run dev-install",
     "postversion": "yarn workspace anon-aadhaar-pcd version --new-version $npm_package_version --no-git-tag-version && yarn workspace anon-aadhaar-react version --new-version $npm_package_version --no-git-tag-version && yarn workspace anon-aadhaar-contracts version --new-version $npm_package_version --no-git-tag-version",
     "lint": "yarn workspaces run lint",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "dev-install:circuit": "yarn workspace anon-aadhaar-circuit run dev-install",
+    "dev-setup:circuit": "yarn workspace anon-aadhaar-circuit run dev-setup",
+    "witness:circuit": "yarn workspace anon-aadhaar-circuit run gen-witness",
+    "proof:circuit": "yarn workspace anon-aadhaar-circuit run gen-proof",
+    "verif:circuit": "yarn workspace anon-aadhaar-circuit run verif-proof"
   },
   "repository": {
     "type": "git",

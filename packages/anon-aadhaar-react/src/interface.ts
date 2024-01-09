@@ -1,5 +1,5 @@
-export enum AadhaarPdfValidation {
-  SIGNATURE_NOT_PRESENT = 'Signature not detected in document ❌',
-  SIGNATURE_PRESENT = 'Signature detected ✅',
-  ERROR_PARSING_PDF = '.pdf document invalid ❌',
+export enum AadhaarQRValidation {
+  QR_CODE_SCANNED = 'QR code scanned 🔎',
+  SIGNATURE_VERIFIED = 'Signature verified ✅',
+  ERROR_PARSING_QR = 'QR code invalid ❌',
 }

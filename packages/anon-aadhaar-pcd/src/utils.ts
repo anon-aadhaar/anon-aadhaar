@@ -5,6 +5,7 @@ import * as x509 from '@peculiar/x509'
 import { BigNumberish } from './types'
 import { AnonAadhaarPCD } from './pcd'
 import { Buffer } from 'buffer'
+import pako from 'pako'
 
 export const handleError = (error: unknown, defaultMessage: string): Error => {
   if (error instanceof Error) return error
@@ -193,11 +194,10 @@ export async function exportCallDataGroth16FromPCD(
   c: [BigNumberish, BigNumberish]
   Input: BigNumberish[]
 }> {
-  const calldata = await groth16.exportSolidityCallData(_pcd.proof.proof, [
-    _pcd.proof.nullifier.toString(),
-    ...splitToWords(BigInt(_pcd.proof.modulus), BigInt(64), BigInt(32)),
-    _pcd.proof.app_id.toString(),
-  ])
+  const calldata = await groth16.exportSolidityCallData(
+    _pcd.proof.groth16Proof,
+    _pcd.proof.modulus
+  )
 
   const argv = calldata
     .replace(/["[\]\s]/g, '')
@@ -219,9 +219,11 @@ export async function exportCallDataGroth16FromPCD(
 }
 
 /**
- * Fetch the public key PEM file from the serverless function endpoint.
- * @param url Endpoint URL to fetch the public key.
- * @returns {Promise<string | null>} The official Aadhaar public key.
+ * Fetch the public key file from the serverless function endpoint.
+ * @param url Endpoint URL from where to fetch the public key.
+ * @returns {Promise<string | null>} The official Aadhaar public key in bigint string format.
+ *
+ * See the endpoint implementation here: [Endpoint Code](https://github.com/anon-aadhaar-private/nodejs-serverless-function-express/blob/main/api/get-public-key.ts)
  */
 export const fetchPublicKey = async (
   certUrl: string
@@ -240,4 +242,22 @@ export const fetchPublicKey = async (
     console.error('Error fetching public key:', error)
     return null
   }
+}
+
+export function convertBigIntToByteArray(bigInt: bigint) {
+  const byteLength = Math.max(1, Math.ceil(bigInt.toString(2).length / 8))
+
+  const result = new Uint8Array(byteLength)
+  let i = 0
+  while (bigInt > 0) {
+    result[i] = Number(bigInt % BigInt(256))
+    bigInt = bigInt / BigInt(256)
+    i += 1
+  }
+  return result.reverse()
+}
+
+export function decompressByteArray(byteArray: Uint8Array) {
+  const decompressedArray = pako.inflate(byteArray)
+  return decompressedArray
 }
