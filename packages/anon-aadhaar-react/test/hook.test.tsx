@@ -7,13 +7,27 @@ import {
   AnonAadhaarContext,
   AnonAadhaarState,
 } from '../src/hooks/useAnonAadhaar'
-import { AnonAadhaarPCDArgs } from 'anon-aadhaar-pcd'
+import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
+import { Uint8ArrayToCharArray } from '@zk-email/helpers/dist/binaryFormat'
+import { AnonAadhaarPCDArgs, splitToWords } from 'anon-aadhaar-pcd'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import { AnonAadhaarProvider } from '../src/provider/AnonAadhaarProvider'
-import { genData } from '../../anon-aadhaar-pcd/test/utils'
+import { genData } from 'anon-aadhaar-pcd/test/utils'
 
 describe('useCountryIdentity Hook', () => {
   let testData: [bigint, bigint, bigint, bigint]
+  let paddedMsg: Uint8Array
+  let messageLen: number
+
+  before(async () => {
+    const signedData = 'Hello-world'
+
+    testData = await genData(signedData, 'SHA-256')
+    ;[paddedMsg, messageLen] = sha256Pad(
+      Buffer.from(signedData, 'ascii'),
+      512 * 3,
+    )
+  })
 
   it('returns initial state and startReq function', () => {
     const initialState: AnonAadhaarState = { status: 'logged-out' }
@@ -42,27 +56,23 @@ describe('useCountryIdentity Hook', () => {
     expect(startReq).to.equal(startReqFunction)
   })
 
-  before(async () => {
-    testData = await genData('Hello world', 'SHA-1')
-  })
-
   it('returns updated state when request sent', () => {
     const pcdArgs: AnonAadhaarPCDArgs = {
+      padded_message: {
+        argumentType: ArgumentTypeName.StringArray,
+        value: Uint8ArrayToCharArray(paddedMsg),
+      },
+      message_len: {
+        argumentType: ArgumentTypeName.Number,
+        value: messageLen.toString(),
+      },
       signature: {
-        argumentType: ArgumentTypeName.BigInt,
-        value: testData[1] + '',
+        argumentType: ArgumentTypeName.StringArray,
+        value: splitToWords(testData[1], BigInt(64), BigInt(32)),
       },
       modulus: {
-        argumentType: ArgumentTypeName.BigInt,
-        value: testData[2] + '',
-      },
-      base_message: {
-        argumentType: ArgumentTypeName.BigInt,
-        value: testData[3] + '',
-      },
-      app_id: {
-        argumentType: ArgumentTypeName.BigInt,
-        value: BigInt(1234555).toString(),
+        argumentType: ArgumentTypeName.StringArray,
+        value: splitToWords(testData[2], BigInt(64), BigInt(32)),
       },
     }
 

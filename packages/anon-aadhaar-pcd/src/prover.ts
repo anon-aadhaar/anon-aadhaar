@@ -1,6 +1,5 @@
 import { isWebUri } from 'valid-url'
 import { AnonAadhaarPCDArgs, AnonAadhaarPCDProof } from './types'
-import { splitToWords } from './utils'
 import { ZKArtifact, groth16 } from 'snarkjs'
 
 type Witness = AnonAadhaarPCDArgs
@@ -68,47 +67,30 @@ export class BackendProver implements ProverInferace {
       throw new Error('Cannot make proof: missing signature')
     }
 
-    if (!witness.base_message.value) {
+    if (!witness.padded_message.value) {
       throw new Error('Cannot make proof: missing message')
     }
 
-    if (!witness.app_id.value) {
+    if (!witness.message_len.value) {
       throw new Error('Cannot make proof: missing application id')
     }
 
     const input = {
-      signature: splitToWords(
-        BigInt(witness.signature.value),
-        BigInt(64),
-        BigInt(32)
-      ),
-      modulus: splitToWords(
-        BigInt(witness.modulus.value),
-        BigInt(64),
-        BigInt(32)
-      ),
-      base_message: splitToWords(
-        BigInt(witness.base_message.value),
-        BigInt(64),
-        BigInt(32)
-      ),
-      app_id: witness.app_id.value.toString(),
+      padded_message: witness.padded_message.value,
+      message_len: witness.message_len.value,
+      signature: witness.signature.value,
+      modulus: witness.modulus.value,
     }
 
-    const { proof, publicSignals } = await groth16.fullProve(
+    const { proof } = await groth16.fullProve(
       input,
       await this.wasm.getKey(),
       await this.zkey.getKey()
     )
 
-    if (publicSignals === undefined)
-      throw new Error('Cannot make proof: something went wrong!')
-
     return {
       modulus: witness.modulus.value,
-      nullifier: publicSignals[0],
-      app_id: witness.app_id.value.toString(),
-      proof,
+      groth16Proof: proof,
     }
   }
 }
@@ -127,41 +109,29 @@ export class WebProver implements ProverInferace {
     const zkeyBuffer = (await this.zkey.getKey()) as ArrayBuffer
 
     if (!witness.modulus.value) {
-      throw new Error('Cannot make proof: missing mod')
+      throw new Error('Cannot make proof: missing modulus')
     }
 
     if (!witness.signature.value) {
       throw new Error('Cannot make proof: missing signature')
     }
 
-    if (!witness.base_message.value) {
+    if (!witness.padded_message.value) {
       throw new Error('Cannot make proof: missing message')
     }
 
-    if (!witness.app_id.value) {
+    if (!witness.message_len.value) {
       throw new Error('Cannot make proof: missing application id')
     }
 
     const input = {
-      signature: splitToWords(
-        BigInt(witness.signature.value),
-        BigInt(64),
-        BigInt(32)
-      ),
-      modulus: splitToWords(
-        BigInt(witness.modulus.value),
-        BigInt(64),
-        BigInt(32)
-      ),
-      base_message: splitToWords(
-        BigInt(witness.base_message.value),
-        BigInt(64),
-        BigInt(32)
-      ),
-      app_id: witness.app_id.value.toString(),
+      padded_message: witness.padded_message.value,
+      message_len: witness.message_len.value,
+      signature: witness.signature.value,
+      modulus: witness.modulus.value,
     }
 
-    const { proof, publicSignals } = await groth16.fullProve(
+    const { proof } = await groth16.fullProve(
       input,
       new Uint8Array(wasmBuffer),
       new Uint8Array(zkeyBuffer)
@@ -169,9 +139,7 @@ export class WebProver implements ProverInferace {
 
     return {
       modulus: witness.modulus.value,
-      nullifier: publicSignals[0],
-      app_id: witness.app_id.value.toString(),
-      proof,
+      groth16Proof: proof,
     }
   }
 }

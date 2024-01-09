@@ -1,13 +1,21 @@
-import React, { useEffect, useState, Dispatch, SetStateAction } from 'react'
+import React, {
+  useEffect,
+  useState,
+  Dispatch,
+  SetStateAction,
+  useContext,
+} from 'react'
 import styled from 'styled-components'
 import { FileInput } from './FileInput'
 import { ProveButton } from './ProveButton'
-import { uploadPdf } from '../util'
-import { PasswordInput } from './PasswordInput'
-import { AadhaarPdfValidation } from '../interface'
+import { ScanQR } from './ScanQR'
+import { uploadQRpng } from '../util'
+import { AadhaarQRValidation } from '../interface'
 import { ErrorToast } from './ErrorToast'
-import { Buffer } from 'buffer'
+import { BrowserView, MobileView } from 'react-device-detect'
 import { Logo } from './LogInWithAnonAadhaar'
+import { verifySignature } from '../verifySignature'
+import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
 
 interface ModalProps {
   isOpen: boolean
@@ -15,8 +23,8 @@ interface ModalProps {
   errorMessage: string | null
   setErrorMessage: Dispatch<SetStateAction<string | null>>
   logo: string
-  pdfStatus: AadhaarPdfValidation | null
-  setpdfStatus: Dispatch<SetStateAction<AadhaarPdfValidation | null>>
+  qrStatus: AadhaarQRValidation | null
+  setQrStatus: Dispatch<SetStateAction<AadhaarQRValidation | null>>
 }
 
 export const ProveModal: React.FC<ModalProps> = ({
@@ -25,71 +33,116 @@ export const ProveModal: React.FC<ModalProps> = ({
   errorMessage,
   setErrorMessage,
   logo,
-  pdfStatus,
-  setpdfStatus,
+  qrStatus,
+  setQrStatus,
 }) => {
-  const [pdfData, setPdfData] = useState(Buffer.from([]))
-  const [password, setPassword] = useState<string>('')
+  const [qrData, setQrData] = useState<string | null>(null)
   const [provingEnabled, setProvingEnabled] = useState<boolean>(false)
-
-  const handlePdfChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { pdf } = await uploadPdf(e, setpdfStatus)
-    setPdfData(pdf)
-  }
+  const { testing } = useContext(AnonAadhaarContext)
 
   useEffect(() => {
-    if (
-      pdfStatus === AadhaarPdfValidation.SIGNATURE_PRESENT &&
-      password !== ''
-    ) {
+    if (qrData) {
+      verifySignature(qrData, testing)
+        .then(verified => {
+          verified
+            ? setQrStatus(AadhaarQRValidation.SIGNATURE_VERIFIED)
+            : setQrStatus(AadhaarQRValidation.ERROR_PARSING_QR)
+        })
+        .catch(error => {
+          setQrStatus(AadhaarQRValidation.ERROR_PARSING_QR)
+          console.error(error)
+        })
+    }
+  }, [qrData])
+
+  useEffect(() => {
+    if (qrStatus === AadhaarQRValidation.SIGNATURE_VERIFIED) {
       setProvingEnabled(true)
     } else {
       setProvingEnabled(false)
     }
-  }, [pdfStatus, password, pdfData])
+  }, [qrStatus])
 
   return isOpen ? (
     <ModalOverlay onClick={onClose}>
-      <ModalContent onClick={e => e.stopPropagation()}>
-        {errorMessage !== null && (
-          <ErrorToast
-            message={errorMessage}
+      <BrowserView>
+        <ModalContent onClick={e => e.stopPropagation()}>
+          {errorMessage !== null && (
+            <ErrorToast
+              message={errorMessage}
+              setErrorMessage={setErrorMessage}
+            />
+          )}
+          <TitleSection>
+            <Title>
+              <Logo src={logo} />
+              Prove your Identity
+            </Title>
+            <Disclaimer>
+              Anon Aadhaar securely verifies your document by confirming its
+              government signature. This process happens entirely on your device
+              for privacy. Please note, slower internet speeds may affect
+              verification time.
+            </Disclaimer>
+          </TitleSection>
+
+          <UploadSection>
+            <UploadFile>
+              <Label>Upload your Aadhaar secure QRCode</Label>
+              <FileInput
+                onChange={async e => {
+                  const { qrValue } = await uploadQRpng(e, setQrStatus)
+                  setQrData(qrValue)
+                }}
+                id={'handlePdfChange'}
+              />
+              <DocumentResult>{qrStatus}</DocumentResult>
+            </UploadFile>
+          </UploadSection>
+
+          <ProveButton
+            qrData={qrData}
+            provingEnabled={provingEnabled}
             setErrorMessage={setErrorMessage}
           />
-        )}
-        <TitleSection>
-          <Title>
-            <Logo src={logo} />
-            Prove your Identity
-          </Title>
-          <Disclaimer>
-            Anon Aadhaar securely verifies your document by confirming its
-            government signature. This process happens entirely on your device
-            for privacy. Please note, slower internet speeds may affect
-            verification time.
-          </Disclaimer>
-        </TitleSection>
+        </ModalContent>
+      </BrowserView>
+      <MobileView>
+        <ModalContent onClick={e => e.stopPropagation()}>
+          {errorMessage !== null && (
+            <ErrorToast
+              message={errorMessage}
+              setErrorMessage={setErrorMessage}
+            />
+          )}
+          <TitleSection>
+            <Title>
+              <Logo src={logo} />
+              Prove your Identity
+            </Title>
+            <Disclaimer>
+              Anon Aadhaar securely verifies your document by confirming its
+              government signature. This process happens entirely on your device
+              for privacy. Please note, slower internet speeds may affect
+              verification time.
+            </Disclaimer>
+          </TitleSection>
 
-        <UploadSection>
-          <UploadFile>
-            <Label>Upload your Masked Aadhaar PDF</Label>
-            <FileInput onChange={handlePdfChange} id={'handlePdfChange'} />
-            <DocumentResult>{pdfStatus}</DocumentResult>
-          </UploadFile>
+          <UploadSection>
+            <UploadFile>
+              <Label>Upload your Masked Aadhaar PDF</Label>
+              <ScanQR setQrData={setQrData} setQrStatus={setQrStatus} />
+              <DocumentResult>{qrStatus}</DocumentResult>
+            </UploadFile>
+          </UploadSection>
 
-          <UploadFile>
-            <Label>Enter your Aadhaar PDF password</Label>
-            <PasswordInput setPassword={setPassword} id={'password'} />
-          </UploadFile>
-        </UploadSection>
-
-        <ProveButton
-          pdfData={pdfData}
-          password={password}
-          provingEnabled={provingEnabled}
-          setErrorMessage={setErrorMessage}
-        />
-      </ModalContent>
+          <ProveButton
+            qrData={qrData}
+            provingEnabled={provingEnabled}
+            setErrorMessage={setErrorMessage}
+          />
+        </ModalContent>
+      </MobileView>
     </ModalOverlay>
   ) : null
 }

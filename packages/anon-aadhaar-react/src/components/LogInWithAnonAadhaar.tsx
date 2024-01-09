@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { useEffect, useContext } from 'react'
 import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
 import { icon } from './ButtonLogo'
-import { AadhaarPdfValidation } from '../interface'
+import { AadhaarQRValidation } from '../interface'
 
 /**
  * LogInWithAnonAadhaar is a React component that provides a user interface
@@ -18,7 +18,7 @@ import { AadhaarPdfValidation } from '../interface'
 export const LogInWithAnonAadhaar = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [pdfStatus, setpdfStatus] = useState<null | AadhaarPdfValidation>(null)
+  const [qrStatus, setQrStatus] = useState<null | AadhaarQRValidation>(null)
   const { state, startReq } = useContext(AnonAadhaarContext)
 
   const blob = new Blob([icon], { type: 'image/svg+xml' })
@@ -35,7 +35,7 @@ export const LogInWithAnonAadhaar = () => {
   const closeModal = () => {
     setIsModalOpen(false)
     setErrorMessage(null)
-    setpdfStatus(null)
+    setQrStatus(null)
   }
 
   return (
@@ -52,8 +52,8 @@ export const LogInWithAnonAadhaar = () => {
             errorMessage={errorMessage}
             setErrorMessage={setErrorMessage}
             logo={anonAadhaarLogo}
-            pdfStatus={pdfStatus}
-            setpdfStatus={setpdfStatus}
+            qrStatus={qrStatus}
+            setQrStatus={setQrStatus}
           ></ProveModal>
         </div>
       )}

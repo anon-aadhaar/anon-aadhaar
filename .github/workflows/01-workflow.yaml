@@ -37,11 +37,11 @@ jobs:
         run: yarn lint
 
       - name: Cache power of tau
-        id: powersOfTau28_hez_final_18
+        id: powersOfTau28_hez_final_20
         uses: actions/cache@v3
         with:
-          path: packages/anon-aadhaar-pcd/build/powersOfTau28_hez_final_18.ptau
-          key: powersOfTau28_hez_final_18.ptau
+          path: packages/circuits/build/powersOfTau28_hez_final_20.ptau
+          key: powersOfTau28_hez_final_20.ptau
       - name: Cache Circom
         id: Circom
         uses: actions/cache@v3
@@ -50,23 +50,23 @@ jobs:
           key: circom
 
       - name: Download power of tau and install Circom
-        run: yarn dev-install:pcd
+        run: yarn dev-install:circuit
 
       - name: Get Circuit Hash
         id: get-circuit-hash
         run: |
-          echo "circuits_hash=`cd packages/anon-aadhaar-pcd && ./script/utils.sh`" >> $GITHUB_OUTPUT
+          echo "circuits_hash=`cd packages/circuits/scripts && ./utils.sh`" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Cache proving/verify key
         id: zkkeys
         uses: actions/cache@v3
         with:
-          path: packages/anon-aadhaar-pcd/build/circuit
+          path: packages/circuits/build
           key: ${{ steps.get-circuit-hash.outputs.circuits_hash }}
 
       - name: 'Dev trusted setup'
-        run: 'yarn dev-setup:pcd'
+        run: 'yarn dev-setup:circuit'
 
       - name: Build packages
         run: yarn build:libraries
