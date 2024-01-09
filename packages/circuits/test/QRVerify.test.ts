@@ -14,6 +14,7 @@ import crypto from 'crypto'
 import { genData } from '../../anon-aadhaar-pcd/test/utils'
 import pako from 'pako'
 import assert from 'assert'
+import { SELECTOR_ID, SelectorBuilder, readData } from '../src'
 
 function convertBigIntToByteArray(bigInt: bigint) {
   const byteLength = Math.max(1, Math.ceil(bigInt.toString(2).length / 8))
@@ -108,9 +109,15 @@ describe('Test QR Verify circuit', function () {
       message_len: messageLen,
       signature: splitToWords(signature, BigInt(64), BigInt(32)),
       modulus: splitToWords(modulus, BigInt(64), BigInt(32)),
-      selector: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      selector: new SelectorBuilder().selectDoB().build(),
     })
 
-    assert(witness[1] == paddedMsg[0])
+    const revealedData = witness.slice(1, 3 * 512 + 1).map(Number)
+    const revealedDoB = readData(revealedData, SELECTOR_ID.dob)
+    const actualDoB = readData(Array.from(paddedMsg), SELECTOR_ID.dob)
+
+    for (let i = 0; i < revealedData.length; ++i) {
+      assert(revealedDoB[i] === actualDoB[i])
+    }
   })
 })

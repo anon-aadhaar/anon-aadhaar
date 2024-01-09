@@ -52,7 +52,7 @@ template QR_Verify(n, k, len) {
 
     filter.data <== padded_message;
     filter.selector <== selector;
-    reveal_data <== filter.extract_data;
+    reveal_data <== filter.reveal_data;
 }
 
 

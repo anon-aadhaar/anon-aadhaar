@@ -34,7 +34,7 @@ template InSet() {
 template Filter(max_num_bytes) {
     signal input data[max_num_bytes]; // private input;
     signal input selector[16]; // public input;
-    signal output extract_data[max_num_bytes];
+    signal output reveal_data[max_num_bytes];
 
     signal s_data[max_num_bytes + 1];
  
@@ -65,7 +65,6 @@ template Filter(max_num_bytes) {
         inset[i].element <== s_data[i];
         inset[i].selector <== selector;
         selected[i] <== (1 - data_is255[i].out) * inset[i].out;
-        extract_data[i] <== data[i] * (selected[i]  + data_is255[i].out);
+        reveal_data[i] <== data[i] * (selected[i]  + data_is255[i].out);
     }
-
 }

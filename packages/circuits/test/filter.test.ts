@@ -66,7 +66,6 @@ describe('Test filter', function () {
 
     const name = readData(extractedData, SELECTOR_ID.name).map(Number)
     const nameFromInput = readData(Array.from(paddedMsg), SELECTOR_ID.name)
-
     for (let i = 0; i < name.length; ++i) {
       assert(name[i] === nameFromInput[i])
     }
