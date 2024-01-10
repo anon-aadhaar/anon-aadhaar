@@ -18,7 +18,7 @@ import crypto from 'crypto'
 import { genData } from '../../anon-aadhaar-pcd/test/utils'
 
 import assert from 'assert'
-import { SELECTOR_ID, SelectorBuilder, readData } from '../src'
+import { SELECTOR_ID, SelectorBuilder, readData } from 'anon-aadhaar-pcd'
 
 describe('Test QR Verify circuit', function () {
   this.timeout(0)
@@ -51,7 +51,7 @@ describe('Test QR Verify circuit', function () {
       message_len: messageLen,
       signature: splitToWords(data[1], BigInt(64), BigInt(32)),
       modulus: splitToWords(data[2], BigInt(64), BigInt(32)),
-      selector: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      selector: new SelectorBuilder().build(),
     })
   })
 

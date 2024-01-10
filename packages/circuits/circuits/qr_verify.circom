@@ -56,4 +56,4 @@ template QR_Verify(n, k, len) {
 }
 
 
-component main{public [modulus]} = QR_Verify(64, 32, 512 * 3);
+component main{public [modulus, selector]} = QR_Verify(64, 32, 512 * 3);

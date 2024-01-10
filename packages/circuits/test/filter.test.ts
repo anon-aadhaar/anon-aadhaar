@@ -8,7 +8,7 @@ import { Uint8ArrayToCharArray } from '@zk-email/helpers/dist/binaryFormat'
 
 import pako from 'pako'
 
-import { SELECTOR_ID, SelectorBuilder, readData } from '../src'
+import { SELECTOR_ID, SelectorBuilder, readData } from 'anon-aadhaar-pcd'
 import assert from 'assert'
 
 function convertBigIntToByteArray(bigInt: bigint) {
