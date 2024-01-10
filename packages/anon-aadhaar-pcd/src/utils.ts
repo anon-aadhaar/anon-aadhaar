@@ -1,7 +1,5 @@
-import { decryptPDF } from 'spdf'
 import { Proof } from './types'
 import { groth16, Groth16Proof, ZKArtifact } from 'snarkjs'
-import * as x509 from '@peculiar/x509'
 import { BigNumberish } from './types'
 import { AnonAadhaarPCD } from './pcd'
 import { Buffer } from 'buffer'
@@ -109,31 +107,6 @@ export function packProof(originalProof: Groth16Proof): Proof {
     originalProof.pi_c[0],
     originalProof.pi_c[1],
   ]
-}
-
-export const extractDecryptedCert = (
-  pdfFile: Buffer,
-  signaturePosition = 1
-) => {
-  const certPos = getSubstringIndex(pdfFile, '/Cert <', signaturePosition)
-
-  const certEnd = pdfFile.indexOf('>', certPos)
-  const byteRange = pdfFile.subarray(certPos, certEnd).toString()
-
-  const decryptedCert = Buffer.from(byteRange.slice(7))
-
-  return { decryptedCert }
-}
-
-/**
- * extract Cert from anon aadhaar card
- * @param pdf the encrypted pdf buffer
- * @returns certificate in pdf
- */
-export async function extractCert(pdf: Buffer, password: string) {
-  const decryptedPdf: Uint8Array = await decryptPDF(pdf, password)
-  const { decryptedCert } = extractDecryptedCert(Buffer.from(decryptedPdf))
-  return new x509.X509Certificate(decryptedCert)
 }
 
 /**

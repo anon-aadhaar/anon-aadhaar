@@ -64,7 +64,7 @@ function dev_trusted_setup() {
         mkdir -p $PARTIAL_ZKEYS_DIR
     fi
 
-    if [ "$HASH" != "$OLD_HASH" ]; then 
+    # if [ "$HASH" != "$OLD_HASH" ]; then 
     echo "TRUSTED SETUP FOR DEVELOPMENT - PLEASE, DON'T USE IT IN PRODUCT!!!!"
 
     circom ./circuits/qr_verify.circom  --r1cs --wasm -o $BUILD_DIR -l ./node_modules
@@ -77,8 +77,8 @@ function dev_trusted_setup() {
 	node ./node_modules/.bin/snarkjs zkey contribute $PARTIAL_ZKEYS_DIR/circuit_0000.zkey $PARTIAL_ZKEYS_DIR/circuit_final.zkey --name="1st Contributor Name" -v 
     NODE_OPTIONS='--max-old-space-size=8192' ./node_modules/.bin/snarkjs zkey export verificationkey $PARTIAL_ZKEYS_DIR/circuit_final.zkey "$BUILD_DIR"/vkey.json
 
-    fi
-        if [ ! -d $ARTIFACTS_DIR ]; then
+    # fi
+    if [ ! -d $ARTIFACTS_DIR ]; then
         mkdir -p $ARTIFACTS_DIR
     fi
 
