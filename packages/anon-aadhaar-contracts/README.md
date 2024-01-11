@@ -1,6 +1,6 @@
 # anon-aadhaar-contracts
 
-This package contains the anon Aadhaar Verfier contract. You can import it directly in your smart contract to check on-chain that a user have a valid anon Aadhaar identity proof.
+This package contains the anon Aadhaar Verifier contract. You can import it directly in your smart contract to check on-chain that a user have a valid anon Aadhaar identity proof.
 
 Try running some of the following tasks:
 
