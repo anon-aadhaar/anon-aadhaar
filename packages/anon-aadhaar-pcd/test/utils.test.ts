@@ -4,7 +4,7 @@ import { splitToWords } from '../src/utils'
 import { expect } from 'chai'
 
 describe('Utils tests', function () {
-  it('splitToWords succesfully', () => {
+  it('splitToWords successfully', () => {
     const number = BigInt('255')
     const result = splitToWords(number, BigInt(1), BigInt(8))
     const expected = ['1', '1', '1', '1', '1', '1', '1', '1']
