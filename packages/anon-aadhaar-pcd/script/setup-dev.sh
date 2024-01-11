@@ -13,7 +13,7 @@ CONTRACTS_DIR=$(pwd)/../anon-aadhaar-contracts
 
 CIRCOM_BIN_DIR=$HOME/.cargo/bin/circom
 
-# install circom and depenencies
+# install circom and dependencies 
 function install_deps() {
     git submodule update --init --recursive --remote
 
