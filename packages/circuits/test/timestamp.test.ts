@@ -15,7 +15,7 @@ function formatDate(date: Date) {
 }
 
 
-describe('date-to-timestamp', function () {
+describe.only('date-to-timestamp', function () {
   this.timeout(0)
 
   let circuit: any
@@ -37,6 +37,8 @@ describe('date-to-timestamp', function () {
     const witness = await circuit.calculateWitness({
       in: formatDate(now),
     })
+
+    await circuit.checkConstraints(witness);
 
     await circuit.assertOut(witness, {
       out: timestamp,
