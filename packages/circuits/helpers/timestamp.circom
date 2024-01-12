@@ -11,14 +11,14 @@ function numStringToNum(num) {
 // includeMinutes - 1 to include minutes, 0 to round down to hour
 // includeSeconds - 1 to include seconds, 0 to round down to minute
 template DateStringToTimestamp(maxYears, includeHours, includeMinutes, includeSeconds) {
-    signal input date[14];
-    signal output timestamp;
+    signal input in[14];
+    signal output out;
 
     var daysTillPreviousMonth[12] =[0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
 
-    var year = numStringToNum(date[0]) * 1000 + numStringToNum(date[1]) * 100 + numStringToNum(date[2]) * 10 + numStringToNum(date[3]);
-    var month = numStringToNum(date[4]) * 10 + numStringToNum(date[5]);
-    var day = numStringToNum(date[6]) * 10 + numStringToNum(date[7]);
+    var year = numStringToNum(in[0]) * 1000 + numStringToNum(in[1]) * 100 + numStringToNum(in[2]) * 10 + numStringToNum(in[3]);
+    var month = numStringToNum(in[4]) * 10 + numStringToNum(in[5]);
+    var day = numStringToNum(in[6]) * 10 + numStringToNum(in[7]);
 
     assert(year >= 1970 && year <= maxYears);
 
@@ -61,19 +61,19 @@ template DateStringToTimestamp(maxYears, includeHours, includeMinutes, includeSe
     var totalTime = daysPassed * 86400;
 
     if (includeHours == 1) {
-        var hours = numStringToNum(date[8]) * 10 + numStringToNum(date[9]);
+        var hours = numStringToNum(in[8]) * 10 + numStringToNum(in[9]);
         totalTime += hours * 3600;
     }
 
     if (includeMinutes == 1) {
-        var minutes = numStringToNum(date[10]) * 10 + numStringToNum(date[11]);
+        var minutes = numStringToNum(in[10]) * 10 + numStringToNum(in[11]);
         totalTime += minutes * 60;
     }
 
     if (includeSeconds == 1) {
-        var seconds = numStringToNum(date[12]) * 10 + numStringToNum(date[13]);
+        var seconds = numStringToNum(in[12]) * 10 + numStringToNum(in[13]);
         totalTime += seconds;
     }
 
-    timestamp <== totalTime;
+    out <== totalTime;
 }

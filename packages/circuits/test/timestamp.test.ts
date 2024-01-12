@@ -35,11 +35,11 @@ describe('date-to-timestamp', function () {
     const timestamp = Math.floor(now.getTime() / 1000)
 
     const witness = await circuit.calculateWitness({
-      date: formatDate(now),
+      in: formatDate(now),
     })
 
     await circuit.assertOut(witness, {
-      timestamp: timestamp,
+      out: timestamp,
     })
   })
 
@@ -48,11 +48,11 @@ describe('date-to-timestamp', function () {
     const timestamp = Math.floor(now.getTime() / 1000)
 
     const witness = await circuit.calculateWitness({
-      date: formatDate(now),
+      in: formatDate(now),
     })
 
     await circuit.assertOut(witness, {
-      timestamp: timestamp,
+      out: timestamp,
     })
   })
 
@@ -61,11 +61,11 @@ describe('date-to-timestamp', function () {
     const timestamp = Math.floor(now.getTime() / 1000)
 
     const witness = await circuit.calculateWitness({
-      date: formatDate(now),
+      in: formatDate(now),
     })
 
     await circuit.assertOut(witness, {
-      timestamp: timestamp,
+      out: timestamp,
     })
   })
 })
@@ -91,11 +91,11 @@ describe('date-to-timestamp > rounded', function () {
     const roundedTimestamp = Math.floor(timestamp / 3600) * 3600
 
     const witness = await circuit.calculateWitness({
-      date: formatDate(now),
+      in: formatDate(now),
     })
 
     await circuit.assertOut(witness, {
-      timestamp: roundedTimestamp,
+      out: roundedTimestamp,
     })
   })
 })
