@@ -3,6 +3,7 @@ pragma circom 2.1.6;
 include "./rsa.circom";
 include "./sha.circom";
 include "./filter.circom";
+include "../helpers/timestamp.circom";
 
 
 template QR_Verify(n, k, len) {
@@ -13,6 +14,8 @@ template QR_Verify(n, k, len) {
     signal input selector[16];
 
     signal output reveal_data[len];
+    signal output timestamp;
+
     component shaHasher = Sha256Bytes(len);
 
     shaHasher.in_padded <== padded_message;
@@ -53,6 +56,14 @@ template QR_Verify(n, k, len) {
     filter.data <== padded_message;
     filter.selector <== selector;
     reveal_data <== filter.reveal_data;
+
+    // Extract date and output the timestamp rounded to nearest hour
+    // Date starts from 6th index in YYYYMMDDHHMMSSmmm format
+    component date_to_timestamp = DateStringToTimestamp(2030, 1, 0, 0);
+    for (var i = 0; i < 14; i++) {
+        date_to_timestamp.in[i] <== padded_message[i + 6];
+    }
+    timestamp <== date_to_timestamp.out - 19800; // 19800 is the offset for IST
 }
 
 

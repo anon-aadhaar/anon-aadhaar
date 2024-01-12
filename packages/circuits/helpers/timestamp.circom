@@ -7,6 +7,7 @@ function numStringToNum(num) {
 }
 
 // Converts a date string of format YYYYMMDDHHMMSS to a unix time
+// Assumes the input time is in UTC
 // includeHours - 1 to include hours, 0 to round down to day
 // includeMinutes - 1 to include minutes, 0 to round down to hour
 // includeSeconds - 1 to include seconds, 0 to round down to minute
