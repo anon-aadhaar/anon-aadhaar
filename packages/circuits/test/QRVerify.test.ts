@@ -36,6 +36,25 @@ describe('Test QR Verify circuit', function () {
     )
   })
 
+  it.only('Test circuit with Sha256RSA signature', async () => {
+    const signedData = 'Hello-20240116140412' // Add date from 6th index as this is expected in the message
+
+    const data = await genData(signedData, 'SHA-256')
+
+    const [paddedMsg, messageLen] = sha256Pad(
+      Buffer.from(signedData, 'ascii'),
+      512 * 3,
+    )
+
+    await circuit.calculateWitness({
+      padded_message: Uint8ArrayToCharArray(paddedMsg),
+      message_len: messageLen,
+      signature: splitToWords(data[1], BigInt(64), BigInt(32)),
+      modulus: splitToWords(data[2], BigInt(64), BigInt(32)),
+      selector: new SelectorBuilder().build(),
+    })
+  })
+
   it('Test QR code data', async () => {
     // load public key
     const pkData = fs.readFileSync(
