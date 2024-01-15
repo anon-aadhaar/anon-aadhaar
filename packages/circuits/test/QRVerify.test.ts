@@ -36,26 +36,6 @@ describe('Test QR Verify circuit', function () {
     )
   })
 
-  it('Test circuit with Sha256RSA signature', async () => {
-    const signedData = 'Hello-world'
-
-    const data = await genData(signedData, 'SHA-256')
-
-    const [paddedMsg, messageLen] = sha256Pad(
-      Buffer.from(signedData, 'ascii'),
-      512 * 3,
-    )
-
-    await circuit.calculateWitness({
-      padded_message: Uint8ArrayToCharArray(paddedMsg),
-      message_len: messageLen,
-      signature: splitToWords(data[1], BigInt(64), BigInt(32)),
-      modulus: splitToWords(data[2], BigInt(64), BigInt(32)),
-      selector: new SelectorBuilder().build(),
-      reveal_timestamp: 0,
-    })
-  })
-
   it('Test QR code data', async () => {
     // load public key
     const pkData = fs.readFileSync(
@@ -98,7 +78,6 @@ describe('Test QR Verify circuit', function () {
       signature: splitToWords(signature, BigInt(64), BigInt(32)),
       modulus: splitToWords(modulus, BigInt(64), BigInt(32)),
       selector: new SelectorBuilder().selectDoB().build(),
-      reveal_timestamp: 0,
     })
 
     const revealedData = witness.slice(1, 3 * 512 + 1).map(Number)

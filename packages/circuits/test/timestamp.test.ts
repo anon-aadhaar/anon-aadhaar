@@ -15,7 +15,7 @@ function formatDate(date: Date) {
 }
 
 
-describe.only('date-to-timestamp', function () {
+describe('date-to-timestamp', function () {
   this.timeout(0)
 
   let circuit: any

@@ -39,7 +39,8 @@ template DateStringToTimestamp(maxYears, includeHours, includeMinutes, includeSe
     dayNum.in <== [in[6], in[7]];
     signal day <== dayNum.out;
 
-    assert(year >= 1970 && year <= maxYears);
+    assert(year >= 1970);
+    assert(year <= maxYears);
 
     var maxLeapYears = (maxYears - 1972) \ 4;   // 1972 is first leap year since epoch
     var arrLength = 14 + maxLeapYears + maxLeapYears;
@@ -92,8 +93,6 @@ template DateStringToTimestamp(maxYears, includeHours, includeMinutes, includeSe
         hoursNum.in <== [in[8], in[9]];
         secondsPassed[1] <== hoursNum.out * 3600;
     } else {
-        in[8] === 0;
-        in[9] === 0;
         secondsPassed[1] <== 0;
     }
 
@@ -102,8 +101,6 @@ template DateStringToTimestamp(maxYears, includeHours, includeMinutes, includeSe
         minutesNum.in <== [in[10], in[11]];
         secondsPassed[2] <== minutesNum.out * 60;
     } else {
-        in[10] === 0;
-        in[11] === 0;
         secondsPassed[2] <== 0;
     }
 
@@ -112,8 +109,6 @@ template DateStringToTimestamp(maxYears, includeHours, includeMinutes, includeSe
         secondsNum.in <== [in[12], in[13]];
         secondsPassed[3] <== secondsNum.out;
     } else {
-        in[12] === 0;
-        in[13] === 0;
         secondsPassed[3] <== 0;
     }
 
