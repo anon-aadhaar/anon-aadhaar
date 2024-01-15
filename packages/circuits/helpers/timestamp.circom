@@ -2,8 +2,18 @@ pragma circom 2.1.6;
 
 include "circomlib/circuits/comparators.circom";
 
-function numStringToNum(num) {
-    return num - 48;
+template DigitsToNumber(length) {
+    signal input in[length];
+    signal output out;
+
+    signal sum[length + 1];
+    sum[0] <== 0;
+
+    for (var i = 1; i <= length; i++) {
+        sum[i] <== sum[i - 1] * 10 + (in[i - 1] - 48);
+    }
+
+    out <== sum[length];
 }
 
 // Converts a date string of format YYYYMMDDHHMMSS to a unix time
@@ -17,9 +27,17 @@ template DateStringToTimestamp(maxYears, includeHours, includeMinutes, includeSe
 
     signal daysTillPreviousMonth[12] <== [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
 
-    var year = numStringToNum(in[0]) * 1000 + numStringToNum(in[1]) * 100 + numStringToNum(in[2]) * 10 + numStringToNum(in[3]);
-    var month = numStringToNum(in[4]) * 10 + numStringToNum(in[5]);
-    var day = numStringToNum(in[6]) * 10 + numStringToNum(in[7]);
+    component yearNum = DigitsToNumber(4);
+    yearNum.in <== [in[0], in[1], in[2], in[3]];
+    signal year <== yearNum.out;
+
+    component monthNum = DigitsToNumber(2);
+    monthNum.in <== [in[4], in[5]];
+    signal month <== monthNum.out;
+
+    component dayNum = DigitsToNumber(2);
+    dayNum.in <== [in[6], in[7]];
+    signal day <== dayNum.out;
 
     assert(year >= 1970 && year <= maxYears);
 
@@ -70,8 +88,9 @@ template DateStringToTimestamp(maxYears, includeHours, includeMinutes, includeSe
     secondsPassed[0] <== totalDaysPassed[arrLength -1] * 86400;
 
     if (includeHours == 1) {
-        var hours = numStringToNum(in[8]) * 10 + numStringToNum(in[9]);
-        secondsPassed[1] <== hours * 3600;
+        component hoursNum = DigitsToNumber(2);
+        hoursNum.in <== [in[8], in[9]];
+        secondsPassed[1] <== hoursNum.out * 3600;
     } else {
         in[8] === 0;
         in[9] === 0;
@@ -79,8 +98,9 @@ template DateStringToTimestamp(maxYears, includeHours, includeMinutes, includeSe
     }
 
     if (includeMinutes == 1) {
-        var minutes = numStringToNum(in[10]) * 10 + numStringToNum(in[11]);
-        secondsPassed[2] <== minutes * 60;
+        component minutesNum = DigitsToNumber(2);
+        minutesNum.in <== [in[10], in[11]];
+        secondsPassed[2] <== minutesNum.out * 60;
     } else {
         in[10] === 0;
         in[11] === 0;
@@ -88,8 +108,9 @@ template DateStringToTimestamp(maxYears, includeHours, includeMinutes, includeSe
     }
 
     if (includeSeconds == 1) {
-        var seconds = numStringToNum(in[12]) * 10 + numStringToNum(in[13]);
-        secondsPassed[3] <== seconds;
+        component secondsNum = DigitsToNumber(2);
+        secondsNum.in <== [in[12], in[13]];
+        secondsPassed[3] <== secondsNum.out;
     } else {
         in[12] === 0;
         in[13] === 0;
@@ -99,4 +120,3 @@ template DateStringToTimestamp(maxYears, includeHours, includeMinutes, includeSe
     out <== secondsPassed[0] + secondsPassed[1] + secondsPassed[2] + secondsPassed[3];
 }
 
-// component main = DateStringToTimestamp(2032, 1, 1, 1);
