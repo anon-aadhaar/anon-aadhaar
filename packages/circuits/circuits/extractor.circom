@@ -31,9 +31,16 @@ template InSet() {
     out <== inside[15];
 }
 
-template Filter(max_num_bytes) {
+template Extractor(max_num_bytes) {
     signal input data[max_num_bytes]; // private input;
     signal input selector[16]; // public input;
+    signal input reveal_timestamp;
+
+    signal output email_or_phone; 
+
+    signal output four_digit[4];
+    signal output timestamp[14];
+ 
     signal output reveal_data[max_num_bytes];
 
     signal s_data[max_num_bytes + 1];
@@ -53,6 +60,7 @@ template Filter(max_num_bytes) {
         s_data[i] <== s_data[i - 1] + data_is255[i].out;        
     } 
 
+    reveal_timestamp * (1 - reveal_timestamp) === 0;
     for (var i = 0; i < 16; i++) {
         selector[i] * (1 - selector[i]) === 0;
     }
@@ -66,5 +74,14 @@ template Filter(max_num_bytes) {
         inset[i].selector <== selector;
         selected[i] <== (1 - data_is255[i].out) * inset[i].out;
         reveal_data[i] <== data[i] * (selected[i]  + data_is255[i].out);
+    }
+
+    email_or_phone <== data[0] * selector[0];
+    for (var i = 0; i < 4; i++) {
+        four_digit[i] <== data[i + 2] * selector[1];
+    }
+
+    for (var i = 0; i < 14; i++) {
+        timestamp[i] <== data[i + 6] * reveal_timestamp;
     }
 }

@@ -2,7 +2,7 @@ pragma circom 2.1.6;
 
 include "./rsa.circom";
 include "./sha.circom";
-include "./filter.circom";
+include "./extractor.circom";
 include "../helpers/timestamp.circom";
 
 
@@ -13,7 +13,15 @@ template QR_Verify(n, k, len) {
     signal input modulus[k]; //public
     signal input selector[16];
 
+    signal input reveal_timestamp;
+
     signal output reveal_data[len];
+    signal output email_or_phone; 
+
+    signal output four_digit[4];
+    signal output timestamp[14];
+ 
+
     signal output timestamp;
 
     component shaHasher = Sha256Bytes(len);
@@ -51,11 +59,15 @@ template QR_Verify(n, k, len) {
         rsa.signature[i] <== signature[i];
     }
     
-    component filter = Filter(len);
+    component extractor = Extractor(len);
 
-    filter.data <== padded_message;
-    filter.selector <== selector;
-    reveal_data <== filter.reveal_data;
+    extractor.data <== padded_message;
+    extractor.selector <== selector;
+    extractor.reveal_timestamp <== reveal_timestamp;
+
+    reveal_data <== extractor.reveal_data;
+    timestamp <== extractor.timestamp; 
+    four_digit <== extractor.four_digit;
 
     // Extract date and output the timestamp rounded to nearest hour
     // Date starts from 6th index in YYYYMMDDHHMMSSmmm format
