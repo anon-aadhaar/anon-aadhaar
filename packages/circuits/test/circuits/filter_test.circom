@@ -1,6 +1,6 @@
 pragma circom 2.1.6; 
 
-include "../../circuits/filter.circom";
+include "../../circuits/extractor.circom";
 
 
-component main = Filter(3 * 512); 
+component main = Extractor(3 * 512); 

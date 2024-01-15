@@ -52,6 +52,7 @@ describe('Test QR Verify circuit', function () {
       signature: splitToWords(data[1], BigInt(64), BigInt(32)),
       modulus: splitToWords(data[2], BigInt(64), BigInt(32)),
       selector: new SelectorBuilder().build(),
+      reveal_timestamp: 0,
     })
   })
 
@@ -97,6 +98,7 @@ describe('Test QR Verify circuit', function () {
       signature: splitToWords(signature, BigInt(64), BigInt(32)),
       modulus: splitToWords(modulus, BigInt(64), BigInt(32)),
       selector: new SelectorBuilder().selectDoB().build(),
+      reveal_timestamp: 0,
     })
 
     const revealedData = witness.slice(1, 3 * 512 + 1).map(Number)
