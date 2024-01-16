@@ -16,13 +16,13 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
   provingEnabled,
   setErrorMessage,
 }) => {
-  const { state, startReq, testing } = useContext(AnonAadhaarContext)
+  const { state, startReq, useTestAadhaar } = useContext(AnonAadhaarContext)
 
   const startProving = async () => {
     try {
       if (qrData === null) throw new Error('Missing application Id!')
 
-      const args = await processArgs(qrData, testing)
+      const args = await processArgs(qrData, useTestAadhaar)
 
       startReq({ type: 'login', args })
     } catch (error) {
