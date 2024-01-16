@@ -3,7 +3,7 @@ const circom_tester = require('circom_tester/wasm/tester')
 
 import path from 'path'
 import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
-import { bigIntToChunkedBytes } from "@zk-email/helpers/dist/binaryFormat";
+import { bigIntToChunkedBytes } from '@zk-email/helpers/dist/binaryFormat'
 import {
   Uint8ArrayToCharArray,
   bufferToHex,
@@ -13,12 +13,12 @@ import {
   decompressByteArray,
   extractPhoto,
   splitToWords,
-} from 'anon-aadhaar-pcd'
+} from '@anon-aadhaar/core'
 import fs from 'fs'
 import crypto from 'crypto'
-import { genData } from '../../anon-aadhaar-pcd/test/utils'
+import { genData } from '../../core/test/utils'
 import assert from 'assert'
-import { SELECTOR_ID, readData } from 'anon-aadhaar-pcd'
+import { SELECTOR_ID, readData } from '@anon-aadhaar/core'
 import { buildPoseidon } from 'circomlibjs'
 
 describe('Test QR Verify circuit', function () {
@@ -201,9 +201,9 @@ describe('Test QR Verify circuit', function () {
     })
 
     // Calculate the Poseidon hash with pubkey chunked to 9*242 like in circuit
-    const poseidon = await buildPoseidon();
-    const pubkeyChunked = bigIntToChunkedBytes(data[2], 128, 16);
-    const hash = poseidon(pubkeyChunked);
+    const poseidon = await buildPoseidon()
+    const pubkeyChunked = bigIntToChunkedBytes(data[2], 128, 16)
+    const hash = poseidon(pubkeyChunked)
 
     assert(witness[4] === BigInt(poseidon.F.toObject(hash)))
   })

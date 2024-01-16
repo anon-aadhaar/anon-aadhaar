@@ -1,4 +1,4 @@
-# anon-aadhaar-react
+# @anon-aadhaar/react
 
 anon-aadhaar-react is a React component library to embed the [anon-aadhaar](https://github.com/privacy-scaling-explorations/anon-aadhaar) circuit in your project, and let you verify that a user has a regular Aadhaar ID, by generating ZKProofs.
 
@@ -7,13 +7,13 @@ anon-aadhaar-react is a React component library to embed the [anon-aadhaar](http
 Install anon-aadhaar-react with npm
 
 ```bash
-  npm install anon-aadhaar-react
+  npm install @anon-aadhaar/react
 ```
 
 Install anon-aadhaar-react with yarn
 
 ```bash
-  yarn add anon-aadhaar-react
+  yarn add @anon-aadhaar/react
 ```
 
 ## Usage/Examples
@@ -21,7 +21,7 @@ Install anon-aadhaar-react with yarn
 **`<AnonAadhaarProvider>`**
 
 ```ts
-import { AnonAadhaarProvider } from 'anon-aadhaar-react'
+import { AnonAadhaarProvider } from '@anon-aadhaar/react'
 
 export default function App({ Component, pageProps }: AppProps) {
   return (

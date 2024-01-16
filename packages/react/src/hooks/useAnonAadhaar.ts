@@ -1,4 +1,4 @@
-import { AnonAadhaarPCD, AnonAadhaarPCDArgs } from 'anon-aadhaar-pcd'
+import { AnonAadhaarPCD, AnonAadhaarPCDArgs } from '@anon-aadhaar/core'
 import { createContext, useContext } from 'react'
 import { SerializedPCD } from '@pcd/pcd-types'
 

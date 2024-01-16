@@ -1,7 +1,7 @@
 {
-  "name": "anon-aadhaar-contracts",
+  "name": "@anon-aadhaar/contracts",
   "version": "0.1.15",
-  "description": "Verifier smart contract for the anon aadhaar circuit",
+  "description": "Verifier smart contract for Anon Aadhaar protocol",
   "license": "MIT",
   "scripts": {
     "test": "npx hardhat test",
@@ -10,7 +10,8 @@
     "format": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\"",
     "test-publish": "yarn build && yarn lint && yarn test && npm publish --dry-run",
     "publishtonpm": "yarn build && yarn lint && yarn test && npm publish",
-    "prepare": "cd ../.. && husky install"
+    "prepare": "cd ../.. && husky install",
+    "bump-to": "yarn version --no-commit-hooks --no-git-tag-version --new-version"
   },
   "files": [
     "./contracts/*.sol",

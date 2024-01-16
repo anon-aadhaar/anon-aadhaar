@@ -1,5 +1,10 @@
 import { QrReader } from 'react-qr-reader'
-import { Dispatch, SetStateAction, FunctionComponent, useState } from 'react'
+import React, {
+  Dispatch,
+  SetStateAction,
+  FunctionComponent,
+  useState,
+} from 'react'
 import { AadhaarQRValidation } from '../interface'
 
 interface ScanQRProps {

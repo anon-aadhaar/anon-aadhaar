@@ -1,4 +1,7 @@
-import { convertBigIntToByteArray, decompressByteArray } from 'anon-aadhaar-pcd'
+import {
+  convertBigIntToByteArray,
+  decompressByteArray,
+} from '@anon-aadhaar/core'
 import { fetchCertificateFile, str2ab } from './util'
 import { pki } from 'node-forge'
 

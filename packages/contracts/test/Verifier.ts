@@ -7,10 +7,10 @@ import {
   extractWitness,
   WASM_URL,
   ZKEY_URL,
-} from 'anon-aadhaar-pcd'
+} from '../../core/src'
 import crypto from 'crypto'
 import { fetchKey } from './util'
-import { genData } from '../../anon-aadhaar-pcd/test/utils'
+import { genData } from '../../core/test/utils'
 import fs from 'fs'
 
 describe('VerifyProof', function () {

@@ -1,5 +1,5 @@
 {
-  "name": "anon-aadhaar-pcd",
+  "name": "@anon-aadhaar/core",
   "version": "0.1.15",
   "main": "./dist/index.js",
   "types": "./src/index.ts",
@@ -12,13 +12,15 @@
     "format": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\"",
     "prepare": "cd ../.. && husky install",
     "test-publish": "yarn build && yarn lint && yarn test && npm publish --dry-run",
-    "publishtonpm": "yarn build && yarn lint && yarn test && npm publish"
+    "publishtonpm": "yarn build && yarn lint && yarn test && npm publish",
+    "bump-to": "yarn version --no-commit-hooks --no-git-tag-version --new-version"
   },
   "files": [
     "./artifacts/verification_key.json",
     "./src/*",
     "./dist/*",
-    "./README.md"
+    "README.md",
+    "LICENSE"
   ],
   "publishConfig": {
     "access": "public",

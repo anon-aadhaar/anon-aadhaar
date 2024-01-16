@@ -7,8 +7,13 @@ import {
 import {
   AnonAadhaarPCD,
   AnonAadhaarPCDPackage,
+  PCDInitArgs,
+  VK_URL,
+  WASM_URL,
+  ZKEY_URL,
+  init,
   verifyLocal,
-} from 'anon-aadhaar-pcd'
+} from '@anon-aadhaar/core'
 import React, { Dispatch, SetStateAction } from 'react'
 import { proveAndSerialize } from '../prove'
 import { SerializedPCD } from '@pcd/pcd-types'
@@ -49,6 +54,21 @@ export function AnonAadhaarProvider(props: {
       setIsWeb(props._fetchArtifactsFromServer)
   }, [])
 
+  useEffect(() => {
+    const pcdInitArgs: PCDInitArgs = {
+      wasmURL: isWeb ? WASM_URL : '/qr_verify.wasm',
+      zkeyURL: isWeb ? ZKEY_URL : '/circuit_final.zkey',
+      vkeyURL: isWeb ? VK_URL : '/vkey.json',
+      isWebEnv: isWeb,
+    }
+
+    init(pcdInitArgs)
+      .then()
+      .catch(e => {
+        throw Error(e)
+      })
+  }, [isWeb])
+
   // Write state to local storage whenever a login starts, succeeds, or fails
   const setAndWriteState = (newState: AnonAadhaarState) => {
     console.log(`[ANON-AADHAAR] new state ${shallowToString(newState)}`)
@@ -60,9 +80,9 @@ export function AnonAadhaarProvider(props: {
   const startReq = React.useCallback(
     (request: AnonAadhaarRequest) => {
       console.log(`[ANON-AADHAAR] startReq ${shallowToString(request)}`)
-      setAndWriteState(handleLoginReq(request, setPcdStr, setPcd, isWeb))
+      setAndWriteState(handleLoginReq(request, setPcdStr, setPcd))
     },
-    [setAndWriteState, setPcdStr, setPcd, isWeb],
+    [setAndWriteState, setPcdStr, setPcd],
   )
 
   // Receive PCD from proving component
@@ -182,14 +202,13 @@ function handleLoginReq(
   request: AnonAadhaarRequest,
   setPcdStr: Dispatch<SetStateAction<SerializedPCD<AnonAadhaarPCD> | null>>,
   setPcd: Dispatch<SetStateAction<AnonAadhaarPCD | null>>,
-  isWeb: boolean,
 ): AnonAadhaarState {
   const { type } = request
   switch (type) {
     case 'login':
       try {
         const { args } = request
-        proveAndSerialize(args, isWeb).then(
+        proveAndSerialize(args).then(
           ({
             pcd,
             serialized,
