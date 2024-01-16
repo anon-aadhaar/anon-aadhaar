@@ -10,6 +10,7 @@ import {
   ZKEY_URL,
   WASM_URL,
   generateArgs,
+  handleError,
 } from 'anon-aadhaar-pcd'
 import { fetchCertificateFile } from './util'
 
@@ -59,11 +60,16 @@ export const processArgs = async (
   qrData: string,
   testing: boolean,
 ): Promise<AnonAadhaarPCDArgs> => {
-  const certificate = await fetchCertificateFile(
-    `https://www.uidai.gov.in/images/authDoc/${
-      testing ? 'uidai_prod_cdup' : 'uidai_offline_publickey_26022021'
-    }.cer`,
-  )
+  let certificate: string | null = null
+  try {
+    certificate = await fetchCertificateFile(
+      `https://www.uidai.gov.in/images/authDoc/${
+        testing ? 'uidai_prod_cdup' : 'uidai_offline_publickey_26022021'
+      }.cer`,
+    )
+  } catch (e) {
+    handleError(e, 'Error while fetching public key.')
+  }
 
   if (!certificate) throw Error('Error while fetching public key.')
 

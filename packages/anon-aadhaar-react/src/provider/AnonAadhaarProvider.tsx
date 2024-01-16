@@ -28,29 +28,26 @@ import { SerializedPCD } from '@pcd/pcd-types'
  */
 export function AnonAadhaarProvider(props: {
   children: ReactNode
-  _appId: string
-  _testing?: boolean
-  _isWeb?: boolean
+  _useTestAadhaar?: boolean
+  _fetchArtifactsFromServer?: boolean
 }) {
   // Read state from local storage on page load
   const [pcdStr, setPcdStr] = useState<SerializedPCD<AnonAadhaarPCD> | null>(
     null,
   )
   const [pcd, setPcd] = useState<AnonAadhaarPCD | null>(null)
-  const [appId, setAppId] = useState<string | null>(null)
-  const [testing, setTesting] = useState<boolean>(true)
+  const [useTestAadhaar, setUseTestAadhaar] = useState<boolean>(true)
   const [isWeb, setIsWeb] = useState<boolean>(true)
   const [state, setState] = useState<AnonAadhaarState>({
     status: 'logged-out',
   })
   useEffect(() => {
-    if (props._appId === '')
-      console.warn('[ANON-AADHAAR]: Please provide a valid appId')
     readFromLocalStorage().then(setAndWriteState)
-    setAppId(props._appId)
-    if (props._testing !== undefined) setTesting(props._testing)
-    if (props._isWeb !== undefined) setIsWeb(props._isWeb)
-  }, [props._appId])
+    if (props._useTestAadhaar !== undefined)
+      setUseTestAadhaar(props._useTestAadhaar)
+    if (props._fetchArtifactsFromServer !== undefined)
+      setIsWeb(props._fetchArtifactsFromServer)
+  }, [])
 
   // Write state to local storage whenever a login starts, succeeds, or fails
   const setAndWriteState = (newState: AnonAadhaarState) => {
@@ -89,8 +86,8 @@ export function AnonAadhaarProvider(props: {
 
   // Provide context
   const val = React.useMemo(
-    () => ({ state, startReq, appId, testing, isWeb }),
-    [state, appId, testing, isWeb],
+    () => ({ state, startReq, useTestAadhaar, isWeb }),
+    [state, useTestAadhaar, isWeb],
   )
 
   return (
@@ -200,12 +197,8 @@ function handleLoginReq(
             pcd: AnonAadhaarPCD
             serialized: SerializedPCD<AnonAadhaarPCD>
           }) => {
-            if (typeof setPcdStr === 'function') {
-              setPcdStr(serialized)
-            }
-            if (typeof setPcd === 'function') {
-              setPcd(pcd)
-            }
+            setPcdStr(serialized)
+            setPcd(pcd)
           },
         )
       } catch (error) {

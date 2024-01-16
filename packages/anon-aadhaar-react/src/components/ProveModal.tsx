@@ -8,7 +8,6 @@ import React, {
 import styled from 'styled-components'
 import { FileInput } from './FileInput'
 import { ProveButton } from './ProveButton'
-import { ScanQR } from './ScanQR'
 import { uploadQRpng } from '../util'
 import { AadhaarQRValidation } from '../interface'
 import { ErrorToast } from './ErrorToast'
@@ -38,11 +37,11 @@ export const ProveModal: React.FC<ModalProps> = ({
 }) => {
   const [qrData, setQrData] = useState<string | null>(null)
   const [provingEnabled, setProvingEnabled] = useState<boolean>(false)
-  const { testing } = useContext(AnonAadhaarContext)
+  const { useTestAadhaar } = useContext(AnonAadhaarContext)
 
   useEffect(() => {
     if (qrData) {
-      verifySignature(qrData, testing)
+      verifySignature(qrData, useTestAadhaar)
         .then(verified => {
           verified
             ? setQrStatus(AadhaarQRValidation.SIGNATURE_VERIFIED)
@@ -88,7 +87,7 @@ export const ProveModal: React.FC<ModalProps> = ({
 
           <UploadSection>
             <UploadFile>
-              <Label>Upload your Aadhaar secure QRCode</Label>
+              <Label>Upload your Aadhaar secure QR Code: </Label>
               <FileInput
                 onChange={async e => {
                   const { qrValue } = await uploadQRpng(e, setQrStatus)
@@ -121,26 +120,12 @@ export const ProveModal: React.FC<ModalProps> = ({
               Prove your Identity
             </Title>
             <Disclaimer>
-              Anon Aadhaar securely verifies your document by confirming its
-              government signature. This process happens entirely on your device
-              for privacy. Please note, slower internet speeds may affect
-              verification time.
+              <b>Notice: </b> Currently, Anon Aadhaar Identity verification is
+              not available on mobile devices. To complete this process, please
+              visit this website using a desktop browser. We apologize for any
+              inconvenience and thank you for your understanding.
             </Disclaimer>
           </TitleSection>
-
-          <UploadSection>
-            <UploadFile>
-              <Label>Upload your Masked Aadhaar PDF</Label>
-              <ScanQR setQrData={setQrData} setQrStatus={setQrStatus} />
-              <DocumentResult>{qrStatus}</DocumentResult>
-            </UploadFile>
-          </UploadSection>
-
-          <ProveButton
-            qrData={qrData}
-            provingEnabled={provingEnabled}
-            setErrorMessage={setErrorMessage}
-          />
         </ModalContent>
       </MobileView>
     </ModalOverlay>
@@ -175,7 +160,7 @@ const ModalContent = styled.div`
   @media (max-width: 425px) {
     /* For screens <= 425px (e.g., mobile devices) */
     width: 100%;
-    height: 67%;
+    height: 30%;
     max-width: 100%;
     max-height: 100%;
   }
