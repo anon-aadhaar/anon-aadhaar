@@ -9,7 +9,7 @@ import { Uint8ArrayToCharArray } from '@zk-email/helpers/dist/binaryFormat'
 import { BigNumberish, buildPoseidon } from 'circomlibjs'
 import pako from 'pako'
 
-import { SELECTOR_ID, SelectorBuilder, readData } from 'anon-aadhaar-pcd'
+import { SELECTOR_ID, SelectorBuilder, extractPhoto, readData } from 'anon-aadhaar-pcd'
 import assert from 'assert'
 
 function convertBigIntToByteArray(bigInt: bigint) {
@@ -58,14 +58,17 @@ describe('Test filter', function () {
 
     const signedData = QRDataDecode.slice(0, QRDataDecode.length - 256)
 
-    const [paddedMsg] = sha256Pad(signedData, 512 * 3)
+    const [paddedMsg, dataLen] = sha256Pad(signedData, 512 * 3)
 
+    console.log(dataLen);
     const witness: any[] = await circuit.calculateWitness({
       data: Uint8ArrayToCharArray(paddedMsg),
       selector: new SelectorBuilder().selectEmailOrPhone().selectName().build(),
+      dataLen
     })
 
     const extractedData = witness.slice(1, 512 * 3).map(v => Number(v))
+
 
     const name = readData(extractedData, SELECTOR_ID.name).map(Number)
     const nameFromInput = readData(Array.from(paddedMsg), SELECTOR_ID.name)
@@ -73,9 +76,8 @@ describe('Test filter', function () {
       assert(name[i] === nameFromInput[i])
     }
 
-    let hash: BigNumberish = 0n
-    for (let i = 100; i <= 200; ++i) {
-      hash = poseidon([hash, BigInt(paddedMsg[i])])
-    }
+    const {begin, end} = extractPhoto(Array.from(signedData));
+
+    console.log(begin, end);
   })
 })

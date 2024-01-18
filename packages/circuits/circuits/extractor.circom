@@ -59,16 +59,32 @@ template InRange(n) {
 
 
 template VerifyFieldPosition(max_num_bytes) {
-    signal input photoPosition[2]; 
+    signal input dataLen;
+    signal input filter[max_num_bytes];
+
+    signal output photoPosition[2]; 
+
+    signal numberElementLessThan16[max_num_bytes]; 
+    numberElementLessThan16[0] <== 0;
+    signal lessThan[max_num_bytes - 1];
+    for (var i = 1; i < max_num_bytes; i++) {
+        lessThan[i - 1] <== LessThan(8)([filter[i], 16]);
+        numberElementLessThan16[i] <== numberElementLessThan16[i - 1] + lessThan[i  -1 ];
+    }
     
+    signal totalBasicFieldsSize <== numberElementLessThan16[max_num_bytes - 1];
+
+    photoPosition[0] <== totalBasicFieldsSize + 1;
+    photoPosition[1] <== dataLen - 65;
+    log(photoPosition[0], photoPosition[1]);
 }
 
 
 template Extractor(max_num_bytes) {
     signal input data[max_num_bytes]; // private input;
+    signal input dataLen; 
     signal input selector[16];
 
-    signal photoPosition[2];
     signal output photoHash;
     
     signal output email_or_phone; 
@@ -95,7 +111,7 @@ template Extractor(max_num_bytes) {
     }
     photoHash <== photoHashSteps[max_num_bytes  - 1];
 
-    signal s_data[max_num_bytes + 1];
+    signal s_data[max_num_bytes];
  
     component data_is255[max_num_bytes]; 
 
@@ -116,6 +132,11 @@ template Extractor(max_num_bytes) {
         selector[i] * (1 - selector[i]) === 0;
     }
 
+    component verifyFieldPosition = VerifyFieldPosition(max_num_bytes);
+    verifyFieldPosition.dataLen <== dataLen;
+    verifyFieldPosition.filter <== s_data;
+
+    signal photoPosition[2] <== verifyFieldPosition.photoPosition;
     component inset[max_num_bytes];
     signal selected[max_num_bytes];
     for (var i = 0; i < max_num_bytes; i++) {
@@ -131,5 +152,4 @@ template Extractor(max_num_bytes) {
         four_digit[i] <== data[i + 2] * selector[1];
     }
 
-    log(photoHash);
 }

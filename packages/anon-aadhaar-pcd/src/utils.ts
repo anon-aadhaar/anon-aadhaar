@@ -372,3 +372,17 @@ export function readData(data: number[], index: number) {
 
   return data.slice(start, end)
 }
+
+export function extractPhoto(qrData: number[]) {
+  let begin = 0
+  for (let i = 0; i < 16; ++i) {
+    begin = qrData.indexOf(255, begin + 1)
+  }
+
+  const end = qrData.length - 65
+  return {
+    begin,
+    end,
+    photo: qrData.slice(begin, end),
+  }
+}
