@@ -111,7 +111,7 @@ describe('Test QR Verify circuit', function () {
   it('should output timestamp of when data is generated', async () => {
     // load public key
     const pkData = fs.readFileSync(
-      path.join(__dirname, '../assets', 'uidai_prod_cdup.cer')
+      path.join(__dirname, '../assets', 'uidai_prod_cdup.cer'),
     )
     const pk = crypto.createPublicKey(pkData)
 
@@ -124,7 +124,7 @@ describe('Test QR Verify circuit', function () {
 
     const signatureBytes = decodedData.slice(
       decodedData.length - 256,
-      decodedData.length
+      decodedData.length,
     )
 
     const signedData = decodedData.slice(0, decodedData.length - 256)
@@ -133,12 +133,12 @@ describe('Test QR Verify circuit', function () {
     const modulus = BigInt(
       '0x' +
         bufferToHex(
-          Buffer.from(pk.export({ format: 'jwk' }).n as string, 'base64url')
-        )
+          Buffer.from(pk.export({ format: 'jwk' }).n as string, 'base64url'),
+        ),
     )
 
     const signature = BigInt(
-      '0x' + bufferToHex(Buffer.from(signatureBytes)).toString()
+      '0x' + bufferToHex(Buffer.from(signatureBytes)).toString(),
     )
 
     const witness = await circuit.calculateWitness({
@@ -153,7 +153,7 @@ describe('Test QR Verify circuit', function () {
     // 2019-03-08 11:44:07.437 rounded down to nearest hour is 2019-03-08 11:00:00.000
     // Converting this IST to UTC gives 2019-03-08T05:30:00.000Z
     const expectedTimestamp = Math.floor(
-      new Date('2019-03-08T05:30:00.000Z').getTime() / 1000
+      new Date('2019-03-08T05:30:00.000Z').getTime() / 1000,
     )
 
     await circuit.assertOut(witness, {

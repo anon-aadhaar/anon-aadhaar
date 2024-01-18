@@ -1,6 +1,8 @@
 pragma circom 2.1.6; 
 
 include "circomlib/circuits/comparators.circom";
+include "circomlib/circuits/poseidon.circom";
+
 
 // input selector and element
 // if selector[i] == 1 and element = i then return 1. 
@@ -31,13 +33,67 @@ template InSet() {
     out <== inside[15];
 }
 
+/**
+    return 1 if  left <= element <= right 
+    else return 0;
+**/
+template InRange(n) {
+    signal input left;
+    signal input right; 
+    signal input element; 
+
+    signal output out; 
+
+    component l = GreaterEqThan(n);
+    component r = GreaterEqThan(n);
+
+    l.in[0] <== element; 
+    l.in[1] <== left;
+
+    r.in[0] <== right;
+    r.in[1] <== element;
+
+    out <== l.out * r.out;
+}
+
+
+
+template VerifyFieldPosition(max_num_bytes) {
+    signal input photoPosition[2]; 
+    
+}
+
+
 template Extractor(max_num_bytes) {
     signal input data[max_num_bytes]; // private input;
-    signal input selector[16]; // public input;
+    signal input selector[16];
 
+    signal photoPosition[2];
+    signal output photoHash;
+    
     signal output email_or_phone; 
     signal output four_digit[4];
     signal output reveal_data[max_num_bytes];
+
+    signal photoHashSteps[max_num_bytes];
+
+    component hasher[max_num_bytes - 1];
+
+
+    photoHashSteps[0] <== 0;
+
+    component inRange[max_num_bytes - 1];
+    for (var i = 1; i < max_num_bytes; i++) {
+        hasher[i - 1] = Poseidon(2); // should be optimize in other PR;
+        hasher[i - 1].inputs[0] <== photoHashSteps[i - 1];
+        hasher[i - 1].inputs[1] <== data[i];
+        inRange[i - 1] = InRange(12);
+        inRange[i - 1].left <== 100; 
+        inRange[i - 1].right <== 200;
+        inRange[i - 1].element <== i;
+        photoHashSteps[i] <== (hasher[i - 1].out - photoHashSteps[i - 1]) * inRange[i - 1].out  + photoHashSteps[i - 1];
+    }
+    photoHash <== photoHashSteps[max_num_bytes  - 1];
 
     signal s_data[max_num_bytes + 1];
  
@@ -74,4 +130,6 @@ template Extractor(max_num_bytes) {
     for (var i = 0; i < 4; i++) {
         four_digit[i] <== data[i + 2] * selector[1];
     }
+
+    log(photoHash);
 }

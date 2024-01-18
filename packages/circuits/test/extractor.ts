@@ -6,6 +6,7 @@ const circom_tester = require('circom_tester/wasm/tester')
 import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
 import { Uint8ArrayToCharArray } from '@zk-email/helpers/dist/binaryFormat'
 
+import { BigNumberish, buildPoseidon } from 'circomlibjs'
 import pako from 'pako'
 
 import { SELECTOR_ID, SelectorBuilder, readData } from 'anon-aadhaar-pcd'
@@ -33,6 +34,7 @@ describe('Test filter', function () {
   this.timeout(0)
 
   let circuit: any
+  let poseidon: any
 
   this.beforeAll(async () => {
     circuit = await circom_tester(
@@ -42,6 +44,7 @@ describe('Test filter', function () {
         include: path.join(__dirname, '../node_modules'),
       },
     )
+    poseidon = await buildPoseidon()
   })
 
   it('Should extract data', async () => {
@@ -62,12 +65,17 @@ describe('Test filter', function () {
       selector: new SelectorBuilder().selectEmailOrPhone().selectName().build(),
     })
 
-    const extractedData = witness.slice(1, 512 * 3 + 1).map(v => Number(v))
+    const extractedData = witness.slice(1, 512 * 3).map(v => Number(v))
 
     const name = readData(extractedData, SELECTOR_ID.name).map(Number)
     const nameFromInput = readData(Array.from(paddedMsg), SELECTOR_ID.name)
     for (let i = 0; i < name.length; ++i) {
       assert(name[i] === nameFromInput[i])
+    }
+
+    let hash: BigNumberish = 0n
+    for (let i = 100; i <= 200; ++i) {
+      hash = poseidon([hash, BigInt(paddedMsg[i])])
     }
   })
 })

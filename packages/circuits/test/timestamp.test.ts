@@ -2,7 +2,6 @@
 const circom_tester = require('circom_tester/wasm/tester')
 import path from 'path'
 
-
 // Convert date to string format expected by circom
 // ASCII encoding of YYYYMMDDHHMMSS
 function formatDate(date: Date) {
@@ -13,7 +12,6 @@ function formatDate(date: Date) {
     .slice(0, 14) // remove milliseconds
     .map(s => s.charCodeAt(0)) // Convert to ascii
 }
-
 
 describe('date-to-timestamp', function () {
   this.timeout(0)
@@ -38,7 +36,7 @@ describe('date-to-timestamp', function () {
       in: formatDate(now),
     })
 
-    await circuit.checkConstraints(witness);
+    await circuit.checkConstraints(witness)
 
     await circuit.assertOut(witness, {
       out: timestamp,
@@ -83,7 +81,7 @@ describe('date-to-timestamp > rounded', function () {
       {
         recompile: true,
         include: path.join(__dirname, '../node_modules'),
-      }
+      },
     )
   })
 
