@@ -80,19 +80,15 @@ template Extractor(MAX_NUMBER_BYTES) {
     
     signal s_data[MAX_NUMBER_BYTES];
  
-    component data_is255[MAX_NUMBER_BYTES]; 
+    component data_is255[MAX_NUMBER_BYTES - 1]; 
 
     s_data[0] <== 0;
-
-    data_is255[0] = IsEqual();
-    data_is255[0].in[0] <== 255;
-    data_is255[0].in[1] <== data[0]; 
-
-    for (var i = 1; i < MAX_NUMBER_BYTES; i++) {
+ 
+    for (var i = 0; i < MAX_NUMBER_BYTES - 1; i++) {
         data_is255[i] = IsEqual();
         data_is255[i].in[0] <== 255;
-        data_is255[i].in[1] <== data[i]; 
-        s_data[i] <== s_data[i - 1] + data_is255[i].out;        
+        data_is255[i].in[1] <== data[i + 1]; 
+        s_data[i + 1] <== s_data[i] + data_is255[i].out;        
     } 
 
 
