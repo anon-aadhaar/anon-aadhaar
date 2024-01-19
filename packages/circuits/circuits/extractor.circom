@@ -4,35 +4,6 @@ include "circomlib/circuits/comparators.circom";
 include "circomlib/circuits/poseidon.circom";
 
 
-// input selector and element
-// if selector[i] == 1 and element = i then return 1. 
-// We can optimize this template by precompute isOne array;
-template InSet() {
-    signal input selector[16];
-    signal input element; 
-    signal inside[16]; 
-    signal output out;
-    component isOne[16];
-    component equal[16];
-    for (var i = 0; i < 16; i++) {
-        isOne[i] = IsEqual();
-        isOne[i].in[0] <== selector[i];
-        isOne[i].in[1] <== 1;
-
-        equal[i] = IsEqual();
-        equal[i].in[0] <== element;
-        equal[i].in[1] <== i;
-
-        if (i > 0) {
-            inside[i] <== inside[i - 1] + isOne[i].out* equal[i].out;
-        } else {
-            inside[i] <== isOne[i].out * equal[i].out;
-        }
-    }
-
-    out <== inside[15];
-}
-
 /**
     return 1 if  left <= element <= right 
     else return 0;
@@ -57,61 +28,61 @@ template InRange(n) {
 }
 
 
-template VerifyFieldPosition(max_num_bytes) {
+template PhotoPositionComputation(MAX_NUMBER_BYTES) {
     signal input dataLen;
-    signal input data[max_num_bytes];
-    signal input filter[max_num_bytes];
+    signal input data[MAX_NUMBER_BYTES];
+    signal input filter[MAX_NUMBER_BYTES];
 
     signal output photoPosition[2]; 
 
-    signal numberElementLessThan16[max_num_bytes]; 
+    signal numberElementLessThan16[MAX_NUMBER_BYTES]; 
     numberElementLessThan16[0] <== 0;
-    signal lessThan[max_num_bytes - 1];
-    for (var i = 1; i < max_num_bytes; i++) {
+    signal lessThan[MAX_NUMBER_BYTES - 1];
+    for (var i = 1; i < MAX_NUMBER_BYTES; i++) {
         lessThan[i - 1] <== LessThan(8)([filter[i], 16]);
         numberElementLessThan16[i] <== numberElementLessThan16[i - 1] + lessThan[i  -1 ];
     }
     
-    signal totalBasicFieldsSize <== numberElementLessThan16[max_num_bytes - 1];
+    signal totalBasicFieldsSize <== numberElementLessThan16[MAX_NUMBER_BYTES - 1];
 
     photoPosition[0] <== totalBasicFieldsSize + 1;
 
-    signal index[max_num_bytes];
-    signal equals[max_num_bytes];
-    signal acctualLen[max_num_bytes];
-    signal tmp[max_num_bytes - 1];
+    signal index[MAX_NUMBER_BYTES];
+    signal equals[MAX_NUMBER_BYTES];
+    signal acctualLen[MAX_NUMBER_BYTES];
+    signal tmp[MAX_NUMBER_BYTES - 1];
 
     index[0] <== 0;
     acctualLen[0] <== 0;
     equals[0] <== 0;
 
-    for (var i = 1; i < max_num_bytes; i++) {
+    for (var i = 1; i < MAX_NUMBER_BYTES; i++) {
         index[i] <== index[i - 1] + 1;
         equals[i] <== IsEqual()([index[i], dataLen - 1]);
         tmp[i - 1] <== data[i - 1] * 256  + data[i];
         acctualLen[i] <== (tmp[i - 1] - acctualLen[i - 1]) * equals[i] + acctualLen[i - 1];  
-        
     } 
 
-    photoPosition[1] <== acctualLen[max_num_bytes - 1]/8 - 65;
+    photoPosition[1] <== acctualLen[MAX_NUMBER_BYTES - 1]/8 - 65;
+
 }
 
 
-template Extractor(max_num_bytes) {
-    signal input data[max_num_bytes]; // private input;
+template Extractor(MAX_NUMBER_BYTES) {
+    signal input data[MAX_NUMBER_BYTES];
     signal input dataLen; 
-    signal input selector[16];
 
     signal output photoHash;
-    
+
+    signal output basicIdentityHash; 
+
     signal output email_or_phone; 
     signal output four_digit[4];
-    signal output reveal_data[max_num_bytes];
+    signal output reveal_data[MAX_NUMBER_BYTES];
 
-
-    signal s_data[max_num_bytes];
+    signal s_data[MAX_NUMBER_BYTES];
  
-    component data_is255[max_num_bytes]; 
+    component data_is255[MAX_NUMBER_BYTES]; 
 
     s_data[0] <== 0;
 
@@ -119,58 +90,59 @@ template Extractor(max_num_bytes) {
     data_is255[0].in[0] <== 255;
     data_is255[0].in[1] <== data[0]; 
 
-    for (var i = 1; i < max_num_bytes; i++) {
+    for (var i = 1; i < MAX_NUMBER_BYTES; i++) {
         data_is255[i] = IsEqual();
         data_is255[i].in[0] <== 255;
         data_is255[i].in[1] <== data[i]; 
         s_data[i] <== s_data[i - 1] + data_is255[i].out;        
     } 
 
-    for (var i = 0; i < 16; i++) {
-        selector[i] * (1 - selector[i]) === 0;
+
+    component photoPositionComputation = PhotoPositionComputation(MAX_NUMBER_BYTES);
+    photoPositionComputation.dataLen <== dataLen;
+    photoPositionComputation.filter <== s_data;
+    photoPositionComputation.data <== data;
+
+    signal photoPosition[2] <== photoPositionComputation.photoPosition;
+
+    signal photoFlag[MAX_NUMBER_BYTES];
+    for (var i = 0; i < MAX_NUMBER_BYTES; i++) {
+        photoFlag[i] <== InRange(12)(photoPosition[0], photoPosition[1], i);
     }
 
-    component verifyFieldPosition = VerifyFieldPosition(max_num_bytes);
-    verifyFieldPosition.dataLen <== dataLen;
-    verifyFieldPosition.filter <== s_data;
-    verifyFieldPosition.data <== data;
+    photoHash <== HashChain(MAX_NUMBER_BYTES)(photoFlag, data);
 
-    signal photoPosition[2] <== verifyFieldPosition.photoPosition;
+    signal basicIdentityFlag[MAX_NUMBER_BYTES];
+    signal pincodeFlag[MAX_NUMBER_BYTES];
+    signal identityFlag[MAX_NUMBER_BYTES];
 
-    signal photoHashSteps[max_num_bytes];
-
-    component hasher[max_num_bytes - 1];
-
-
-    photoHashSteps[0] <== 0;
-
-    component inRange[max_num_bytes - 1];
-    for (var i = 1; i < max_num_bytes; i++) {
-        // should be optimize in other PR;
-        // we can compute Poseidon hash of > 2 values   
-        hasher[i - 1] = Poseidon(2); 
-        hasher[i - 1].inputs[0] <== photoHashSteps[i - 1];
-        hasher[i - 1].inputs[1] <== data[i];
-        inRange[i - 1] = InRange(12);
-        inRange[i - 1].left <== photoPosition[0]; 
-        inRange[i - 1].right <== photoPosition[1];
-        inRange[i - 1].element <== i;
-        photoHashSteps[i] <== (hasher[i - 1].out - photoHashSteps[i - 1]) * inRange[i - 1].out  + photoHashSteps[i - 1];
+    for (var i = 0; i < MAX_NUMBER_BYTES; i++) {
+        basicIdentityFlag[i] <== InRange(12)(2, 4, s_data[i]);
+        pincodeFlag[i] <== IsEqual()([11, s_data[i]]);   
+        identityFlag[i] <== basicIdentityFlag[i] * pincodeFlag[i];
     }
 
-    photoHash <== photoHashSteps[max_num_bytes  - 1];
-    component inset[max_num_bytes];
-    signal selected[max_num_bytes];
-    for (var i = 0; i < max_num_bytes; i++) {
-        inset[i] = InSet();
-        inset[i].element <== s_data[i];
-        inset[i].selector <== selector;
-        selected[i] <== (1 - data_is255[i].out) * inset[i].out;
-        reveal_data[i] <== data[i] * (selected[i]  + data_is255[i].out);
-    }
+    basicIdentityHash <== HashChain(MAX_NUMBER_BYTES)(identityFlag, data);  
+}
 
-    email_or_phone <== data[0] * selector[0];
-    for (var i = 0; i < 4; i++) {
-        four_digit[i] <== data[i + 2] * selector[1];
+template HashChain(MAX_NUMBER_BYTES) {
+    signal input flag[MAX_NUMBER_BYTES];
+    signal input data[MAX_NUMBER_BYTES]; 
+
+    signal output hash;
+
+    signal hashChain[MAX_NUMBER_BYTES];
+
+    component hasher[MAX_NUMBER_BYTES - 1];
+    // We always skip the first element, since email_or_phone unnessanary when compute nullifier;
+    hashChain[0] <== 0;
+
+    for (var i = 0; i < MAX_NUMBER_BYTES - 1; i++) {
+        hasher[i] = Poseidon(2); 
+        hasher[i].inputs[0] <== hashChain[i];
+        hasher[i].inputs[1] <== data[i + 1];
+        hashChain[i + 1] <== (hasher[i].out - hashChain[i]) * flag[i + 1]  + hashChain[i];       
     }
+    
+    hash <== hashChain[MAX_NUMBER_BYTES - 1];
 }

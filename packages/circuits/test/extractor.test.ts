@@ -4,20 +4,12 @@ import path from 'path'
 const circom_tester = require('circom_tester/wasm/tester')
 
 import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
-import {
-  Uint8ArrayToCharArray,
-  int64toBytes,
-} from '@zk-email/helpers/dist/binaryFormat'
+import { Uint8ArrayToCharArray } from '@zk-email/helpers/dist/binaryFormat'
 
-import { BigNumberish, buildPoseidon } from 'circomlibjs'
+import { buildPoseidon } from 'circomlibjs'
 import pako from 'pako'
 
-import {
-  SELECTOR_ID,
-  SelectorBuilder,
-  extractPhoto,
-  readData,
-} from 'anon-aadhaar-pcd'
+import { extractPhoto } from 'anon-aadhaar-pcd'
 import assert from 'assert'
 
 function convertBigIntToByteArray(bigInt: bigint) {
@@ -70,17 +62,8 @@ describe('Test filter', function () {
 
     const witness: any[] = await circuit.calculateWitness({
       data: Uint8ArrayToCharArray(paddedMsg),
-      selector: new SelectorBuilder().selectEmailOrPhone().selectName().build(),
       dataLen,
     })
-
-    const extractedData = witness.slice(1, 512 * 3).map(v => Number(v))
-
-    const name = readData(extractedData, SELECTOR_ID.name).map(Number)
-    const nameFromInput = readData(Array.from(paddedMsg), SELECTOR_ID.name)
-    for (let i = 0; i < name.length; ++i) {
-      assert(name[i] === nameFromInput[i])
-    }
 
     const { begin, end } = extractPhoto(Array.from(signedData))
 
