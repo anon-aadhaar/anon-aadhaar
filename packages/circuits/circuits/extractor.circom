@@ -76,10 +76,8 @@ template Extractor(MAX_NUMBER_BYTES) {
 
     signal output basicIdentityHash; 
 
-    signal output email_or_phone; 
     signal output four_digit[4];
-    signal output reveal_data[MAX_NUMBER_BYTES];
-
+    
     signal s_data[MAX_NUMBER_BYTES];
  
     component data_is255[MAX_NUMBER_BYTES]; 
@@ -118,11 +116,16 @@ template Extractor(MAX_NUMBER_BYTES) {
 
     for (var i = 0; i < MAX_NUMBER_BYTES; i++) {
         basicIdentityFlag[i] <== InRange(12)(2, 4, s_data[i]);
-        pincodeFlag[i] <== IsEqual()([11, s_data[i]]);   
-        identityFlag[i] <== basicIdentityFlag[i] * pincodeFlag[i];
+        pincodeFlag[i] <== IsEqual()([10, s_data[i]]);   
+        identityFlag[i] <== basicIdentityFlag[i] + pincodeFlag[i] - basicIdentityFlag[i] * pincodeFlag[i]; 
     }
 
     basicIdentityHash <== HashChain(MAX_NUMBER_BYTES)(identityFlag, data);  
+
+    // extract last fordigit; 
+    for (var i = 0; i < 4; i++) {
+        four_digit[i] <== data[i + 2];
+    }
 }
 
 template HashChain(MAX_NUMBER_BYTES) {

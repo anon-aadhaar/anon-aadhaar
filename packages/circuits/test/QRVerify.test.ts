@@ -11,6 +11,7 @@ import {
 import {
   convertBigIntToByteArray,
   decompressByteArray,
+  extractPhoto,
   splitToWords,
 } from 'anon-aadhaar-pcd'
 import fs from 'fs'
@@ -19,6 +20,7 @@ import { genData } from '../../anon-aadhaar-pcd/test/utils'
 
 import assert from 'assert'
 import { SELECTOR_ID, SelectorBuilder, readData } from 'anon-aadhaar-pcd'
+import { buildPoseidon } from 'circomlibjs'
 
 describe('Test QR Verify circuit', function () {
   this.timeout(0)
@@ -36,7 +38,7 @@ describe('Test QR Verify circuit', function () {
     )
   })
 
-  it.only('Test circuit with Sha256RSA signature', async () => {
+  it('Test circuit with Sha256RSA signature', async () => {
     const signedData = 'Hello-20240116140412' // Add date from 6th index as this is expected in the message
 
     const data = await genData(signedData, 'SHA-256')
@@ -51,11 +53,10 @@ describe('Test QR Verify circuit', function () {
       message_len: messageLen,
       signature: splitToWords(data[1], BigInt(64), BigInt(32)),
       modulus: splitToWords(data[2], BigInt(64), BigInt(32)),
-      selector: new SelectorBuilder().build(),
     })
   })
 
-  it('Test QR code data', async () => {
+  it('Compute nullifier must correct', async () => {
     // load public key
     const pkData = fs.readFileSync(
       path.join(__dirname, '../assets', 'uidai_prod_cdup.cer'),
@@ -96,16 +97,41 @@ describe('Test QR Verify circuit', function () {
       message_len: messageLen,
       signature: splitToWords(signature, BigInt(64), BigInt(32)),
       modulus: splitToWords(modulus, BigInt(64), BigInt(32)),
-      selector: new SelectorBuilder().selectDoB().build(),
     })
 
-    const revealedData = witness.slice(1, 3 * 512 + 1).map(Number)
-    const revealedDoB = readData(revealedData, SELECTOR_ID.dob)
-    const actualDoB = readData(Array.from(paddedMsg), SELECTOR_ID.dob)
+    const poseidon: any = await buildPoseidon()
 
-    for (let i = 0; i < revealedData.length; ++i) {
-      assert(revealedDoB[i] === actualDoB[i])
+    const { photo } = extractPhoto(Array.from(signedData))
+
+    let basicData: number[] = []
+    for (const id of [
+      SELECTOR_ID.name,
+      SELECTOR_ID.dob,
+      SELECTOR_ID.gender,
+      SELECTOR_ID.pinCode,
+    ].sort((x, y) => x - y)) {
+      basicData = basicData.concat([
+        255,
+        ...readData(Array.from(signedData), id),
+      ])
     }
+
+    let basicHash = 0
+    for (let i = 0; i < basicData.length; ++i) {
+      basicHash = poseidon([basicHash, BigInt(basicData[i])])
+    }
+
+    let photoHash = 0
+    for (let i = 0; i < photo.length; ++i) {
+      photoHash = poseidon([photoHash, BigInt(photo[i])])
+    }
+
+    const four_digit = paddedMsg.slice(2, 6)
+    const userNullifier = poseidon([...four_digit, photoHash])
+    const identityNullifier = poseidon([...four_digit, basicHash])
+
+    assert(witness[1] == BigInt(poseidon.F.toString(identityNullifier)))
+    assert(witness[2] == BigInt(poseidon.F.toString(userNullifier)))
   })
 
   it('should output timestamp of when data is generated', async () => {
@@ -146,7 +172,6 @@ describe('Test QR Verify circuit', function () {
       message_len: messageLen,
       signature: splitToWords(signature, BigInt(64), BigInt(32)),
       modulus: splitToWords(modulus, BigInt(64), BigInt(32)),
-      selector: new SelectorBuilder().selectDoB().build(),
     })
 
     // This is the time in the QR data above is 20190308114407437.
@@ -156,8 +181,6 @@ describe('Test QR Verify circuit', function () {
       new Date('2019-03-08T05:30:00.000Z').getTime() / 1000,
     )
 
-    await circuit.assertOut(witness, {
-      timestamp: expectedTimestamp,
-    })
+    assert(witness[3] === BigInt(expectedTimestamp))
   })
 })

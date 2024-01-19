@@ -383,6 +383,6 @@ export function extractPhoto(qrData: number[]) {
   return {
     begin,
     end,
-    photo: qrData.slice(begin, end),
+    photo: qrData.slice(begin, end + 1),
   }
 }

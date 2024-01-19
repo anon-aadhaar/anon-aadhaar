@@ -30,7 +30,7 @@ function decompressByteArray(byteArray: Uint8Array) {
   return decompressedArray
 }
 
-describe('Test filter', function () {
+describe('Extractor testcases', function () {
   this.timeout(0)
 
   let circuit: any

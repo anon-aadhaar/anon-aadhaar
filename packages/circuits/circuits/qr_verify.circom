@@ -11,11 +11,10 @@ template QR_Verify(n, k, len) {
     signal input message_len; // private 
     signal input signature[k]; //private
     signal input modulus[k]; //public
-    signal input selector[16];
 
-    signal output reveal_data[len];
-    signal output email_or_phone; 
-    signal output four_digit[4];
+    signal output identityNullifier; 
+    signal output userNullifier; 
+
     signal output timestamp;
 
     component shaHasher = Sha256Bytes(len);
@@ -55,11 +54,24 @@ template QR_Verify(n, k, len) {
     
     component extractor = Extractor(len);
 
+    extractor.dataLen <== message_len;
     extractor.data <== padded_message;
-    extractor.selector <== selector;
 
-    reveal_data <== extractor.reveal_data;
-    four_digit <== extractor.four_digit;
+    signal four_digit[4] <== extractor.four_digit;
+
+    signal photoHash <== extractor.photoHash;
+    signal basicIdentityHash <== extractor.basicIdentityHash;
+
+    component poseidonHasher[2]; 
+
+    poseidonHasher[0] = Poseidon(5); 
+    poseidonHasher[0].inputs <== [four_digit[0], four_digit[1], four_digit[2], four_digit[3], photoHash];
+
+    poseidonHasher[1] = Poseidon(5); 
+    poseidonHasher[1].inputs <== [four_digit[0], four_digit[1], four_digit[2], four_digit[3], basicIdentityHash];
+
+    userNullifier <== poseidonHasher[0].out;
+    identityNullifier <== poseidonHasher[1].out;
 
     // Output the timestamp rounded to nearest hour
     component date_to_timestamp = DateStringToTimestamp(2030, 1, 0, 0);
@@ -70,4 +82,4 @@ template QR_Verify(n, k, len) {
 }
 
 
-component main{public [modulus, selector]} = QR_Verify(64, 32, 512 * 3);
+component main{public [modulus]} = QR_Verify(64, 32, 512 * 3);
