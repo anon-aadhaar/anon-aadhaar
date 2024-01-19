@@ -60,6 +60,7 @@ template InRange(n) {
 
 template VerifyFieldPosition(max_num_bytes) {
     signal input dataLen;
+    signal input data[max_num_bytes];
     signal input filter[max_num_bytes];
 
     signal output photoPosition[2]; 
@@ -75,7 +76,25 @@ template VerifyFieldPosition(max_num_bytes) {
     signal totalBasicFieldsSize <== numberElementLessThan16[max_num_bytes - 1];
 
     photoPosition[0] <== totalBasicFieldsSize + 1;
-    photoPosition[1] <== dataLen - 65;
+
+    signal index[max_num_bytes];
+    signal equals[max_num_bytes];
+    signal acctualLen[max_num_bytes];
+    signal tmp[max_num_bytes - 1];
+
+    index[0] <== 0;
+    acctualLen[0] <== 0;
+    equals[0] <== 0;
+
+    for (var i = 1; i < max_num_bytes; i++) {
+        index[i] <== index[i - 1] + 1;
+        equals[i] <== IsEqual()([index[i], dataLen - 1]);
+        tmp[i - 1] <== data[i - 1] * 256  + data[i];
+        acctualLen[i] <== (tmp[i - 1] - acctualLen[i - 1]) * equals[i] + acctualLen[i - 1];  
+        
+    } 
+
+    photoPosition[1] <== acctualLen[max_num_bytes - 1]/8 - 65;
     log(photoPosition[0], photoPosition[1]);
 }
 
@@ -100,7 +119,9 @@ template Extractor(max_num_bytes) {
 
     component inRange[max_num_bytes - 1];
     for (var i = 1; i < max_num_bytes; i++) {
-        hasher[i - 1] = Poseidon(2); // should be optimize in other PR;
+        // should be optimize in other PR;
+        // we can compute Poseidon hash of > 2 values   
+        hasher[i - 1] = Poseidon(2); 
         hasher[i - 1].inputs[0] <== photoHashSteps[i - 1];
         hasher[i - 1].inputs[1] <== data[i];
         inRange[i - 1] = InRange(12);
@@ -135,6 +156,7 @@ template Extractor(max_num_bytes) {
     component verifyFieldPosition = VerifyFieldPosition(max_num_bytes);
     verifyFieldPosition.dataLen <== dataLen;
     verifyFieldPosition.filter <== s_data;
+    verifyFieldPosition.data <== data;
 
     signal photoPosition[2] <== verifyFieldPosition.photoPosition;
     component inset[max_num_bytes];
@@ -151,5 +173,4 @@ template Extractor(max_num_bytes) {
     for (var i = 0; i < 4; i++) {
         four_digit[i] <== data[i + 2] * selector[1];
     }
-
 }
