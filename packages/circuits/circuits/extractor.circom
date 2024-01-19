@@ -57,7 +57,6 @@ template InRange(n) {
 }
 
 
-
 template VerifyFieldPosition(max_num_bytes) {
     signal input dataLen;
     signal input data[max_num_bytes];
@@ -95,7 +94,6 @@ template VerifyFieldPosition(max_num_bytes) {
     } 
 
     photoPosition[1] <== acctualLen[max_num_bytes - 1]/8 - 65;
-    log(photoPosition[0], photoPosition[1]);
 }
 
 
@@ -110,27 +108,6 @@ template Extractor(max_num_bytes) {
     signal output four_digit[4];
     signal output reveal_data[max_num_bytes];
 
-    signal photoHashSteps[max_num_bytes];
-
-    component hasher[max_num_bytes - 1];
-
-
-    photoHashSteps[0] <== 0;
-
-    component inRange[max_num_bytes - 1];
-    for (var i = 1; i < max_num_bytes; i++) {
-        // should be optimize in other PR;
-        // we can compute Poseidon hash of > 2 values   
-        hasher[i - 1] = Poseidon(2); 
-        hasher[i - 1].inputs[0] <== photoHashSteps[i - 1];
-        hasher[i - 1].inputs[1] <== data[i];
-        inRange[i - 1] = InRange(12);
-        inRange[i - 1].left <== 100; 
-        inRange[i - 1].right <== 200;
-        inRange[i - 1].element <== i;
-        photoHashSteps[i] <== (hasher[i - 1].out - photoHashSteps[i - 1]) * inRange[i - 1].out  + photoHashSteps[i - 1];
-    }
-    photoHash <== photoHashSteps[max_num_bytes  - 1];
 
     signal s_data[max_num_bytes];
  
@@ -159,6 +136,29 @@ template Extractor(max_num_bytes) {
     verifyFieldPosition.data <== data;
 
     signal photoPosition[2] <== verifyFieldPosition.photoPosition;
+
+    signal photoHashSteps[max_num_bytes];
+
+    component hasher[max_num_bytes - 1];
+
+
+    photoHashSteps[0] <== 0;
+
+    component inRange[max_num_bytes - 1];
+    for (var i = 1; i < max_num_bytes; i++) {
+        // should be optimize in other PR;
+        // we can compute Poseidon hash of > 2 values   
+        hasher[i - 1] = Poseidon(2); 
+        hasher[i - 1].inputs[0] <== photoHashSteps[i - 1];
+        hasher[i - 1].inputs[1] <== data[i];
+        inRange[i - 1] = InRange(12);
+        inRange[i - 1].left <== photoPosition[0]; 
+        inRange[i - 1].right <== photoPosition[1];
+        inRange[i - 1].element <== i;
+        photoHashSteps[i] <== (hasher[i - 1].out - photoHashSteps[i - 1]) * inRange[i - 1].out  + photoHashSteps[i - 1];
+    }
+
+    photoHash <== photoHashSteps[max_num_bytes  - 1];
     component inset[max_num_bytes];
     signal selected[max_num_bytes];
     for (var i = 0; i < max_num_bytes; i++) {

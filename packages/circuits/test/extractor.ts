@@ -84,6 +84,11 @@ describe('Test filter', function () {
 
     const { begin, end } = extractPhoto(Array.from(signedData))
 
-    console.log(begin, end)
+    let hash = 0
+    for (let i = begin; i <= end; ++i) {
+      hash = poseidon([hash, BigInt(paddedMsg[i])])
+    }
+
+    assert(witness[1] == BigInt(poseidon.F.toString(hash)))
   })
 })
