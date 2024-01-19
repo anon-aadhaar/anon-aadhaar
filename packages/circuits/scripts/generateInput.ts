@@ -1,6 +1,6 @@
 import { writeFileSync } from 'fs'
 import { splitToWords } from 'anon-aadhaar-pcd'
-import { genData } from '../../anon-aadhaar-pcd/test/utils'
+import { genData } from '../../core/test/utils'
 import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
 
 import { Uint8ArrayToCharArray } from '@zk-email/helpers/dist/binaryFormat'
