@@ -309,7 +309,7 @@ export class SelectorBuilder {
     this.selector[4] = 1
     return this
   }
-  selectCafeof() {
+  selectCareof() {
     this.selector[5] = 1
     return this
   }
@@ -341,7 +341,7 @@ export class SelectorBuilder {
     this.selector[12] = 1
     return this
   }
-  selectStress() {
+  selectStreet() {
     this.selector[13] = 1
     return this
   }
