@@ -15,6 +15,8 @@ import {
 } from 'anon-aadhaar-pcd'
 import fs from 'fs'
 import crypto from 'crypto'
+import assert from 'assert'
+
 import { genData } from '../../anon-aadhaar-pcd/test/utils'
 
 describe('Test QR Verify circuit', function () {
@@ -48,6 +50,7 @@ describe('Test QR Verify circuit', function () {
       message_len: messageLen,
       signature: splitToWords(data[1], BigInt(64), BigInt(32)),
       modulus: splitToWords(data[2], BigInt(64), BigInt(32)),
+      signed_message: 0,
     })
   })
 
@@ -87,11 +90,14 @@ describe('Test QR Verify circuit', function () {
       '0x' + bufferToHex(Buffer.from(signatureBytes)).toString(),
     )
 
-    await circuit.calculateWitness({
+    const witness = await circuit.calculateWitness({
       padded_message: Uint8ArrayToCharArray(paddedMsg),
       message_len: messageLen,
       signature: splitToWords(signature, BigInt(64), BigInt(32)),
       modulus: splitToWords(modulus, BigInt(64), BigInt(32)),
+      signed_message: 4,
     })
+
+    assert(witness[1] === 16n)
   })
 })
