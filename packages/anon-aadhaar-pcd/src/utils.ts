@@ -268,7 +268,7 @@ export const enum SELECTOR_ID {
   name,
   dob,
   gender,
-  cafeof,
+  careOf,
   district,
   landmark,
   house,
