@@ -276,7 +276,7 @@ export const enum SELECTOR_ID {
   pinCode,
   postOffice,
   state,
-  stress,
+  street,
   subDistrict,
   VTC,
 }
