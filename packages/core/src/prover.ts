@@ -59,27 +59,27 @@ export class BackendProver implements ProverInferace {
   }
 
   async proving(witness: Witness): Promise<AnonAadhaarPCDProof> {
-    if (!witness.modulus.value) {
-      throw new Error('Cannot make proof: missing modulus')
+    if (!witness.pubKey.value) {
+      throw new Error('Cannot make proof: missing pubKey')
     }
 
     if (!witness.signature.value) {
       throw new Error('Cannot make proof: missing signature')
     }
 
-    if (!witness.padded_message.value) {
+    if (!witness.aadhaarData.value) {
       throw new Error('Cannot make proof: missing message')
     }
 
-    if (!witness.message_len.value) {
+    if (!witness.aadhaarDataLength.value) {
       throw new Error('Cannot make proof: missing application id')
     }
 
     const input = {
-      padded_message: witness.padded_message.value,
-      message_len: witness.message_len.value,
+      aadhaarData: witness.aadhaarData.value,
+      aadhaarDataLength: witness.aadhaarDataLength.value,
       signature: witness.signature.value,
-      modulus: witness.modulus.value,
+      pubKey: witness.pubKey.value,
     }
 
     const { proof, publicSignals } = await groth16.fullProve(
@@ -93,7 +93,6 @@ export class BackendProver implements ProverInferace {
       userNullifier: publicSignals[1],
       timestamp: publicSignals[2],
       pubkeyHash: publicSignals[3],
-      modulus: witness.modulus.value,
       groth16Proof: proof,
     }
   }
@@ -112,27 +111,27 @@ export class WebProver implements ProverInferace {
     const wasmBuffer = (await this.wasm.getKey()) as ArrayBuffer
     const zkeyBuffer = (await this.zkey.getKey()) as ArrayBuffer
 
-    if (!witness.modulus.value) {
-      throw new Error('Cannot make proof: missing modulus')
+    if (!witness.pubKey.value) {
+      throw new Error('Cannot make proof: missing pubKey')
     }
 
     if (!witness.signature.value) {
       throw new Error('Cannot make proof: missing signature')
     }
 
-    if (!witness.padded_message.value) {
+    if (!witness.aadhaarData.value) {
       throw new Error('Cannot make proof: missing message')
     }
 
-    if (!witness.message_len.value) {
+    if (!witness.aadhaarDataLength.value) {
       throw new Error('Cannot make proof: missing application id')
     }
 
     const input = {
-      padded_message: witness.padded_message.value,
-      message_len: witness.message_len.value,
+      aadhaarData: witness.aadhaarData.value,
+      aadhaarDataLength: witness.aadhaarDataLength.value,
       signature: witness.signature.value,
-      modulus: witness.modulus.value,
+      pubKey: witness.pubKey.value,
     }
 
     const { proof, publicSignals } = await groth16.fullProve(
@@ -146,7 +145,6 @@ export class WebProver implements ProverInferace {
       userNullifier: publicSignals[1],
       timestamp: publicSignals[2],
       pubkeyHash: publicSignals[3],
-      modulus: witness.modulus.value,
       groth16Proof: proof,
     }
   }
