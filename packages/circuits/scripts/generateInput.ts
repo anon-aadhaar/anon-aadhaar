@@ -1,12 +1,12 @@
 import { writeFileSync } from 'fs'
-import { splitToWords } from 'anon-aadhaar-pcd'
+import { hash, splitToWords } from '@anon-aadhaar/core'
 import { genData } from '../../core/test/utils'
 import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
 
 import { Uint8ArrayToCharArray } from '@zk-email/helpers/dist/binaryFormat'
 
 const main = () => {
-  const signedData = 'Hello-world'
+  const signedData = 'Hello-20240116140412'
 
   genData(signedData, 'SHA-256').then(data => {
     const [paddedMsg, messageLen] = sha256Pad(
@@ -19,6 +19,7 @@ const main = () => {
       aadhaarDataLength: messageLen,
       signature: splitToWords(data[1], BigInt(64), BigInt(32)),
       pubKey: splitToWords(data[2], BigInt(64), BigInt(32)),
+      signalHash: hash(1),
     }
     writeFileSync('build/input.json', JSON.stringify(input))
   })

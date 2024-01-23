@@ -12,7 +12,7 @@ import {
 } from '@zk-email/helpers/dist/binaryFormat'
 import { pki } from 'node-forge'
 import { ArgumentTypeName } from '@pcd/pcd-types'
-import hash from './hash'
+import { hash } from './hash'
 
 /**
  * Extract all the information needed to generate the witness from the QRCode data.

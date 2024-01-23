@@ -8,7 +8,7 @@ import { NumericString } from 'snarkjs'
  * @param message The message to be hashed.
  * @returns The message digest.
  */
-export default function hash(
+export function hash(
   message: BytesLike | Hexable | number | bigint
 ): NumericString {
   message = BigNumber.from(message).toTwos(256).toHexString()
