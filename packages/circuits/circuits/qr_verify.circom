@@ -5,13 +5,13 @@ include "./sha.circom";
 
 
 template QR_Verify(n, k, len) {
-    signal input signed_message;
+    signal input signedMessage;
     signal input padded_message[len]; // private
     signal input message_len; // private 
     signal input signature[k]; //private
     signal input modulus[k]; //public
 
-    signal output message_approved;
+    signal output messageSquare;
 
     component shaHasher = Sha256Bytes(len);
 
@@ -47,7 +47,7 @@ template QR_Verify(n, k, len) {
         rsa.modulus[i] <== modulus[i];
         rsa.signature[i] <== signature[i];
     }
-    signed_message * signed_message ==> message_approved;
+    signedMessage * signedMessage ==> messageSquare;
 }
 
 component main{public [modulus]} = QR_Verify(64, 32, 512 * 3);

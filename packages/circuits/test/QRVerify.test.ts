@@ -50,7 +50,7 @@ describe('Test QR Verify circuit', function () {
       message_len: messageLen,
       signature: splitToWords(data[1], BigInt(64), BigInt(32)),
       modulus: splitToWords(data[2], BigInt(64), BigInt(32)),
-      signed_message: 0,
+      signedMessage: 0,
     })
   })
 
@@ -95,7 +95,7 @@ describe('Test QR Verify circuit', function () {
       message_len: messageLen,
       signature: splitToWords(signature, BigInt(64), BigInt(32)),
       modulus: splitToWords(modulus, BigInt(64), BigInt(32)),
-      signed_message: 4,
+      signedMessage: 4,
     })
 
     assert(witness[1] === 16n)
