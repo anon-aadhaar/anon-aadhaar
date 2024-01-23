@@ -12,6 +12,8 @@ template QR_Verify(n, k, len) {
     signal input signature[k]; //private
     signal input modulus[k]; //public
 
+    signal input signalHash;
+
     signal output identityNullifier; 
     signal output userNullifier; 
     signal output timestamp;
@@ -99,7 +101,11 @@ template QR_Verify(n, k, len) {
     component pubkeyHasher = Poseidon(poseidonInputSize);
     pubkeyHasher.inputs <== pubkeyHasherInput;
     pubkeyHash <== pubkeyHasher.out;
+
+    signal signalHashSquare; 
+
+    signalHashSquare <== signalHash * signalHash;
 }
 
 
-component main{public [modulus]} = QR_Verify(64, 32, 512 * 3);
+component main{public [signalHash]} = QR_Verify(64, 32, 512 * 3);

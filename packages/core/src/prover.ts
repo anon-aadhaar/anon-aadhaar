@@ -72,7 +72,7 @@ export class BackendProver implements ProverInferace {
     }
 
     if (!witness.message_len.value) {
-      throw new Error('Cannot make proof: missing application id')
+      throw new Error('Cannot make proof: missing message length')
     }
 
     const input = {
@@ -125,7 +125,7 @@ export class WebProver implements ProverInferace {
     }
 
     if (!witness.message_len.value) {
-      throw new Error('Cannot make proof: missing application id')
+      throw new Error('Cannot make proof: missing message len')
     }
 
     const input = {

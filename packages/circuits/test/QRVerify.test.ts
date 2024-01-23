@@ -53,6 +53,7 @@ describe('Test QR Verify circuit', function () {
       message_len: messageLen,
       signature: splitToWords(data[1], BigInt(64), BigInt(32)),
       modulus: splitToWords(data[2], BigInt(64), BigInt(32)),
+      signalHash: 0,
     })
   })
 
@@ -97,6 +98,7 @@ describe('Test QR Verify circuit', function () {
       message_len: messageLen,
       signature: splitToWords(signature, BigInt(64), BigInt(32)),
       modulus: splitToWords(modulus, BigInt(64), BigInt(32)),
+      signalHash: 4,
     })
 
     const poseidon: any = await buildPoseidon()
@@ -172,6 +174,7 @@ describe('Test QR Verify circuit', function () {
       message_len: messageLen,
       signature: splitToWords(signature, BigInt(64), BigInt(32)),
       modulus: splitToWords(modulus, BigInt(64), BigInt(32)),
+      signalHash: 0,
     })
 
     // This is the time in the QR data above is 20190308114407437.
@@ -199,6 +202,7 @@ describe('Test QR Verify circuit', function () {
       message_len: messageLen,
       signature: splitToWords(data[1], BigInt(64), BigInt(32)),
       modulus: splitToWords(data[2], BigInt(64), BigInt(32)),
+      signalHash: 0,
     })
 
     // Calculate the Poseidon hash with pubkey chunked to 9*242 like in circuit
