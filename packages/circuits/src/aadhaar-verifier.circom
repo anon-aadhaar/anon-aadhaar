@@ -6,7 +6,7 @@ include "./extractor.circom";
 include "../helpers/timestamp.circom";
 
 
-template QR_Verify(n, k, len) {
+template AadhaarVerifier(n, k, len) {
     signal input padded_message[len]; // private
     signal input message_len; // private 
     signal input signature[k]; //private
@@ -102,4 +102,4 @@ template QR_Verify(n, k, len) {
 }
 
 
-component main{public [modulus]} = QR_Verify(64, 32, 512 * 3);
+component main{public [modulus]} = AadhaarVerifier(64, 32, 512 * 3);
