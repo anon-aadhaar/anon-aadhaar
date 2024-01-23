@@ -72,7 +72,7 @@ export class BackendProver implements ProverInferace {
     }
 
     if (!witness.aadhaarDataLength.value) {
-      throw new Error('Cannot make proof: missing application id')
+      throw new Error('Cannot make proof: missing aadhaarDataLength')
     }
 
     const input = {
@@ -124,7 +124,7 @@ export class WebProver implements ProverInferace {
     }
 
     if (!witness.aadhaarDataLength.value) {
-      throw new Error('Cannot make proof: missing application id')
+      throw new Error('Cannot make proof: missing aadhaarDataLength')
     }
 
     const input = {

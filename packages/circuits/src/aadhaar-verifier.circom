@@ -14,6 +14,7 @@ template AadhaarVerifier(n, k, maxDataLength) {
     signal input aadhaarDataLength;             // length of the padded data
     signal input signature[k];                  // RSA signature
     signal input pubKey[k];                     // RSA public key (of the government)
+    signal input signalHash;
 
     signal output identityNullifier;            // Hash of last 4 digits of Aadhaar number, name, DOB, gender and pin code
     signal output userNullifier;                // Hash of last 4 digits of Aadhaar number and photo
@@ -100,7 +101,11 @@ template AadhaarVerifier(n, k, maxDataLength) {
     component pubkeyHasher = Poseidon(poseidonInputSize);
     pubkeyHasher.inputs <== pubkeyHasherInput;
     pubkeyHash <== pubkeyHasher.out;
+
+
+    signal signalHashSquare; 
+    signalHashSquare <== signalHash * signalHash;
 }
 
 
-component main = AadhaarVerifier(64, 32, 512 * 3);
+component main { public [signalHash] } = AadhaarVerifier(64, 32, 512 * 3);
