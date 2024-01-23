@@ -1,9 +1,9 @@
 pragma circom 2.1.6;
 
-include "./rsa.circom";
-include "./sha.circom";
+include "./helpers/rsa.circom";
+include "./helpers/sha.circom";
+include "./helpers/timestamp.circom";
 include "./extractor.circom";
-include "../helpers/timestamp.circom";
 
 
 template AadhaarVerifier(n, k, len) {

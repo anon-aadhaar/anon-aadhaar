@@ -30,7 +30,7 @@ describe('Test QR Verify circuit', function () {
 
   this.beforeAll(async () => {
     circuit = await circom_tester(
-      path.join(__dirname, '../', 'circuits', 'qr_verify.circom'),
+      path.join(__dirname, '../', 'circuits', 'aadhaar-verifier.circom'),
       {
         recompile: true,
         include: path.join(__dirname, '../node_modules'),
