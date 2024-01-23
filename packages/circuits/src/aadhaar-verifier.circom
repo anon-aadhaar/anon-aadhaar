@@ -5,19 +5,22 @@ include "./helpers/sha.circom";
 include "./helpers/timestamp.circom";
 include "./extractor.circom";
 
+// Circuit to verify Aadhaar signature
+// n: RSA pubic key size per chunk
+// k: Number of chunks the RSA public key is split into
+// maxDataLength: Maximum length of the data
+template AadhaarVerifier(n, k, maxDataLength) {
+    signal input aadhaarData[maxDataLength];    // Private: Aadhhar data padded (the data that is SHA hashed and signed)
+    signal input aadhaarDataLength;             // Private: length of the padded data
+    signal input signature[k];                  // Private: RSA signature
+    signal input pubKey[k];                     // Public: RSA public key (of the government)
 
-template AadhaarVerifier(n, k, len) {
-    signal input aadhaarData[len]; // private
-    signal input aadhaarDataLength; // private 
-    signal input signature[k]; //private
-    signal input pubKey[k]; //public
+    signal output identityNullifier;            // Hash of last 4 digits of Aadhaar number, name, DOB, gender and pin code
+    signal output userNullifier;                // Hash of last 4 digits of Aadhaar number and photo
+    signal output timestamp;                    // Timestamp of when the data was signed - extracted and converted to Unix timestamp
+    signal output pubkeyHash;                   // Poseidon hash of the RSA public key
 
-    signal output identityNullifier; 
-    signal output userNullifier; 
-    signal output timestamp;
-    signal output pubkeyHash;
-
-    component shaHasher = Sha256Bytes(len);
+    component shaHasher = Sha256Bytes(maxDataLength);
 
     shaHasher.in_padded <== aadhaarData;
     shaHasher.in_len_padded_bytes <== aadhaarDataLength;
@@ -52,7 +55,7 @@ template AadhaarVerifier(n, k, len) {
         rsa.signature[i] <== signature[i];
     }
     
-    component extractor = Extractor(len);
+    component extractor = Extractor(maxDataLength);
 
     extractor.dataLen <== aadhaarDataLength;
     extractor.data <== aadhaarData;
