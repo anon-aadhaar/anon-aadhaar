@@ -3,7 +3,7 @@ const circom_tester = require('circom_tester/wasm/tester')
 
 import path from 'path'
 import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
-import { bigIntToChunkedBytes } from "@zk-email/helpers/dist/binaryFormat";
+import { bigIntToChunkedBytes } from '@zk-email/helpers/dist/binaryFormat'
 import {
   Uint8ArrayToCharArray,
   bufferToHex,
@@ -16,6 +16,8 @@ import {
 } from 'anon-aadhaar-pcd'
 import fs from 'fs'
 import crypto from 'crypto'
+import assert from 'assert'
+
 import { genData } from '../../anon-aadhaar-pcd/test/utils'
 import assert from 'assert'
 import { SELECTOR_ID, readData } from 'anon-aadhaar-pcd'
@@ -52,6 +54,7 @@ describe('Test QR Verify circuit', function () {
       message_len: messageLen,
       signature: splitToWords(data[1], BigInt(64), BigInt(32)),
       modulus: splitToWords(data[2], BigInt(64), BigInt(32)),
+      signalHash: 0,
     })
   })
 
@@ -96,6 +99,7 @@ describe('Test QR Verify circuit', function () {
       message_len: messageLen,
       signature: splitToWords(signature, BigInt(64), BigInt(32)),
       modulus: splitToWords(modulus, BigInt(64), BigInt(32)),
+      signalHash: 4,
     })
 
     const poseidon: any = await buildPoseidon()
@@ -171,6 +175,7 @@ describe('Test QR Verify circuit', function () {
       message_len: messageLen,
       signature: splitToWords(signature, BigInt(64), BigInt(32)),
       modulus: splitToWords(modulus, BigInt(64), BigInt(32)),
+      signalHash: 0,
     })
 
     // This is the time in the QR data above is 20190308114407437.
@@ -198,12 +203,13 @@ describe('Test QR Verify circuit', function () {
       message_len: messageLen,
       signature: splitToWords(data[1], BigInt(64), BigInt(32)),
       modulus: splitToWords(data[2], BigInt(64), BigInt(32)),
+      signalHash: 0,
     })
 
     // Calculate the Poseidon hash with pubkey chunked to 9*242 like in circuit
-    const poseidon = await buildPoseidon();
-    const pubkeyChunked = bigIntToChunkedBytes(data[2], 128, 16);
-    const hash = poseidon(pubkeyChunked);
+    const poseidon = await buildPoseidon()
+    const pubkeyChunked = bigIntToChunkedBytes(data[2], 128, 16)
+    const hash = poseidon(pubkeyChunked)
 
     assert(witness[4] === BigInt(poseidon.F.toObject(hash)))
   })
