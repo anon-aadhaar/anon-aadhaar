@@ -56,7 +56,7 @@ export function AnonAadhaarProvider(props: {
 
   useEffect(() => {
     const pcdInitArgs: PCDInitArgs = {
-      wasmURL: isWeb ? WASM_URL : '/qr_verify.wasm',
+      wasmURL: isWeb ? WASM_URL : '/aadhaar-verifier.wasm',
       zkeyURL: isWeb ? ZKEY_URL : '/circuit_final.zkey',
       vkeyURL: isWeb ? VK_URL : '/vkey.json',
       isWebEnv: isWeb,
