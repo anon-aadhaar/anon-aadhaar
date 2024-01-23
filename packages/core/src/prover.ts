@@ -82,13 +82,17 @@ export class BackendProver implements ProverInferace {
       modulus: witness.modulus.value,
     }
 
-    const { proof } = await groth16.fullProve(
+    const { proof, publicSignals } = await groth16.fullProve(
       input,
       await this.wasm.getKey(),
       await this.zkey.getKey()
     )
 
     return {
+      identityNullifier: publicSignals[0],
+      userNullifier: publicSignals[1],
+      timestamp: publicSignals[2],
+      pubkeyHash: publicSignals[3],
       modulus: witness.modulus.value,
       groth16Proof: proof,
     }
@@ -131,13 +135,17 @@ export class WebProver implements ProverInferace {
       modulus: witness.modulus.value,
     }
 
-    const { proof } = await groth16.fullProve(
+    const { proof, publicSignals } = await groth16.fullProve(
       input,
       new Uint8Array(wasmBuffer),
       new Uint8Array(zkeyBuffer)
     )
 
     return {
+      identityNullifier: publicSignals[0],
+      userNullifier: publicSignals[1],
+      timestamp: publicSignals[2],
+      pubkeyHash: publicSignals[3],
       modulus: witness.modulus.value,
       groth16Proof: proof,
     }

@@ -3,14 +3,14 @@
 
 # default dir
 BUILD_DIR=$(pwd)/build
-PTAU=powersOfTau28_hez_final_20.ptau
+PTAU=powersOfTau28_hez_final_21.ptau
 PTAU_PATH=$BUILD_DIR/$PTAU
 CIRCUIT=$(pwd)/circuits
 CIRCUIR_PATH=$(pwd)/circuits/qr_verify.circom
 CIRLIB_PATH=$(pwd)/node_modules
 R1CS_PATH=$BUILD_DIR/qr_verify.r1cs
 QR_VERIFY_DIR=$BUILD_DIR/qr_verify_js
-PARTIAL_ZKEYS_DIR=$BUILD_DIR/partial_zkeys
+ZKEY_DIR=$BUILD_DIR/zkey
 ARTIFACTS_DIR=$(pwd)/artifacts
 
 CIRCOM_BIN_DIR=$HOME/.cargo/bin/circom
@@ -60,8 +60,8 @@ function dev_trusted_setup() {
         OLD_HASH=""
     fi
 
-    if [ ! -d $PARTIAL_ZKEYS_DIR ]; then
-        mkdir -p $PARTIAL_ZKEYS_DIR
+    if [ ! -d $ZKEY_DIR ]; then
+        mkdir -p $ZKEY_DIR
     fi
 
     if [ "$HASH" != "$OLD_HASH" ]; then 
@@ -71,11 +71,11 @@ function dev_trusted_setup() {
 
 
     NODE_OPTIONS=--max-old-space-size=8192 \
-	node ./node_modules/.bin/snarkjs groth16 setup $R1CS_PATH $PTAU_PATH $PARTIAL_ZKEYS_DIR/circuit_0000.zkey
+	node ./node_modules/.bin/snarkjs groth16 setup $R1CS_PATH $PTAU_PATH $ZKEY_DIR/circuit_0000.zkey
 
     echo "test random" | NODE_OPTIONS='--max-old-space-size=8192' \
-	node ./node_modules/.bin/snarkjs zkey contribute $PARTIAL_ZKEYS_DIR/circuit_0000.zkey $PARTIAL_ZKEYS_DIR/circuit_final.zkey --name="1st Contributor Name" -v 
-    NODE_OPTIONS='--max-old-space-size=8192' ./node_modules/.bin/snarkjs zkey export verificationkey $PARTIAL_ZKEYS_DIR/circuit_final.zkey "$BUILD_DIR"/vkey.json
+	node ./node_modules/.bin/snarkjs zkey contribute $ZKEY_DIR/circuit_0000.zkey $ZKEY_DIR/circuit_final.zkey --name="1st Contributor Name" -v 
+    NODE_OPTIONS='--max-old-space-size=8192' ./node_modules/.bin/snarkjs zkey export verificationkey $ZKEY_DIR/circuit_final.zkey $BUILD_DIR/vkey.json
 
     fi
         if [ ! -d $ARTIFACTS_DIR ]; then
@@ -83,7 +83,7 @@ function dev_trusted_setup() {
     fi
 
     cp $QR_VERIFY_DIR/qr_verify.wasm $ARTIFACTS_DIR
-    cp $PARTIAL_ZKEYS_DIR/circuit_final.zkey $ARTIFACTS_DIR
+    cp $ZKEY_DIR/circuit_final.zkey $ARTIFACTS_DIR
     cp $BUILD_DIR/vkey.json $ARTIFACTS_DIR
 
     echo $HASH > $BUILD_DIR/hash.txt
@@ -114,7 +114,7 @@ function generate_proof() {
     echo "Building proof...!"
     mkdir -p $BUILD_DIR/proofs
 
-    NODE_OPTIONS='--max-old-space-size=8192' ./node_modules/.bin/snarkjs groth16 prove $PARTIAL_ZKEYS_DIR/circuit_final.zkey $BUILD_DIR/witness.wtns $BUILD_DIR/proofs/proof.json $BUILD_DIR/proofs/public.json
+    NODE_OPTIONS='--max-old-space-size=8192' ./node_modules/.bin/snarkjs groth16 prove $ZKEY_DIR/circuit_final.zkey $BUILD_DIR/witness.wtns $BUILD_DIR/proofs/proof.json $BUILD_DIR/proofs/public.json
     echo "Generated proof...!"
 
 }

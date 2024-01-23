@@ -30,6 +30,10 @@ export type AnonAadhaarPCDClaim = {
  */
 export type AnonAadhaarPCDProof = {
   groth16Proof: Groth16Proof // 3 points on curve if we use groth16
+  identityNullifier: string
+  userNullifier: string
+  timestamp: string
+  pubkeyHash: string
   modulus: string[]
 }
 

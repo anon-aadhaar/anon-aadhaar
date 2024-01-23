@@ -91,7 +91,17 @@ async function getVerifyKey() {
 export async function verify(pcd: AnonAadhaarPCD): Promise<boolean> {
   const vk = await getVerifyKey()
 
-  return groth16.verify(vk, pcd.proof.modulus, pcd.proof.groth16Proof)
+  return groth16.verify(
+    vk,
+    [
+      pcd.proof.identityNullifier,
+      pcd.proof.userNullifier,
+      pcd.proof.timestamp,
+      pcd.proof.pubkeyHash,
+      ...pcd.proof.modulus,
+    ],
+    pcd.proof.groth16Proof
+  )
 }
 
 export async function verifyLocal(pcd: AnonAadhaarPCD): Promise<boolean> {
@@ -109,7 +119,17 @@ export async function verifyLocal(pcd: AnonAadhaarPCD): Promise<boolean> {
 
   const vk = await response.json()
 
-  return groth16.verify(vk, pcd.proof.modulus, pcd.proof.groth16Proof)
+  return groth16.verify(
+    vk,
+    [
+      pcd.proof.identityNullifier,
+      pcd.proof.userNullifier,
+      pcd.proof.timestamp,
+      pcd.proof.pubkeyHash,
+      ...pcd.proof.modulus,
+    ],
+    pcd.proof.groth16Proof
+  )
 }
 
 export function serialize(

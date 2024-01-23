@@ -13,12 +13,13 @@ import {
   decompressByteArray,
   extractPhoto,
   splitToWords,
+  SELECTOR_ID,
+  readData,
 } from '@anon-aadhaar/core'
+import { genData } from '../../core/test/utils'
 import fs from 'fs'
 import crypto from 'crypto'
-import { genData } from '../../core/test/utils'
 import assert from 'assert'
-import { SELECTOR_ID, readData } from '@anon-aadhaar/core'
 import { buildPoseidon } from 'circomlibjs'
 
 describe('Test QR Verify circuit', function () {
