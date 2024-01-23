@@ -15,10 +15,10 @@ const main = () => {
     )
 
     const input = {
-      padded_message: Uint8ArrayToCharArray(paddedMsg),
-      message_len: messageLen,
+      aadhaarData: Uint8ArrayToCharArray(paddedMsg),
+      aadhaarDataLength: messageLen,
       signature: splitToWords(data[1], BigInt(64), BigInt(32)),
-      modulus: splitToWords(data[2], BigInt(64), BigInt(32)),
+      pubKey: splitToWords(data[2], BigInt(64), BigInt(32)),
     }
     writeFileSync('build/input.json', JSON.stringify(input))
   })

@@ -22,7 +22,7 @@ export interface PCDInitArgs {
  * @dev claim this public key signed a message
  */
 export type AnonAadhaarPCDClaim = {
-  modulus: string[]
+  pubKey: string[]
 }
 
 /**
@@ -34,17 +34,16 @@ export type AnonAadhaarPCDProof = {
   userNullifier: string
   timestamp: string
   pubkeyHash: string
-  modulus: string[]
 }
 
 /**
  * @dev witness use for create zk proof of AnonAadhaarPCD package.
  */
 export type AnonAadhaarPCDArgs = {
-  padded_message: StringArrayArgument // private witness
-  message_len: NumberArgument // private witness
+  aadhaarData: StringArrayArgument // private witness
+  aadhaarDataLength: NumberArgument // private witness
   signature: StringArrayArgument // public witness
-  modulus: StringArrayArgument // public witness
+  pubKey: StringArrayArgument // public witness
 }
 
 export type Proof = [
