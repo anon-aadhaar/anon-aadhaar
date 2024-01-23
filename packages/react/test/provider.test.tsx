@@ -6,7 +6,7 @@ import { render, screen } from '@testing-library/react'
 describe('CountryIdentityProvider', () => {
   it('renders children', () => {
     render(
-      <AnonAadhaarProvider _appId={BigInt(1234555).toString()}>
+      <AnonAadhaarProvider>
         <div>Test Children</div>
       </AnonAadhaarProvider>,
     )

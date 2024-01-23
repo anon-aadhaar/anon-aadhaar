@@ -1,17 +1,12 @@
 import { SerializedPCD } from '@pcd/pcd-types'
 import {
   prove,
-  PCDInitArgs,
-  init,
   AnonAadhaarPCDArgs,
   serialize,
   AnonAadhaarPCD,
-  VK_URL,
-  ZKEY_URL,
-  WASM_URL,
   generateArgs,
   handleError,
-} from 'anon-aadhaar-pcd'
+} from '@anon-aadhaar/core'
 import { fetchCertificateFile } from './util'
 
 /**
@@ -27,20 +22,10 @@ import { fetchCertificateFile } from './util'
  */
 export const proveAndSerialize = async (
   pcdArgs: AnonAadhaarPCDArgs,
-  isWeb: boolean,
 ): Promise<{
   pcd: AnonAadhaarPCD
   serialized: SerializedPCD<AnonAadhaarPCD>
 }> => {
-  const pcdInitArgs: PCDInitArgs = {
-    wasmURL: isWeb ? WASM_URL : '/qr_verify.wasm',
-    zkeyURL: isWeb ? ZKEY_URL : '/circuit_final.zkey',
-    vkeyURL: isWeb ? VK_URL : '/vkey.json',
-    isWebEnv: isWeb,
-  }
-
-  await init(pcdInitArgs)
-
   const pcd = await prove(pcdArgs)
   const serialized = await serialize(pcd)
 
@@ -58,13 +43,13 @@ export const proveAndSerialize = async (
  */
 export const processArgs = async (
   qrData: string,
-  testing: boolean,
+  useTestAadhaar: boolean,
 ): Promise<AnonAadhaarPCDArgs> => {
   let certificate: string | null = null
   try {
     certificate = await fetchCertificateFile(
       `https://www.uidai.gov.in/images/authDoc/${
-        testing ? 'uidai_prod_cdup' : 'uidai_offline_publickey_26022021'
+        useTestAadhaar ? 'uidai_prod_cdup' : 'uidai_offline_publickey_26022021'
       }.cer`,
     )
   } catch (e) {

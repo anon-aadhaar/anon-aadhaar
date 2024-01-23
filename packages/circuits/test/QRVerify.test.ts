@@ -13,13 +13,13 @@ import {
   decompressByteArray,
   extractPhoto,
   splitToWords,
-} from 'anon-aadhaar-pcd'
+} from '@anon-aadhaar/core'
 import fs from 'fs'
 import crypto from 'crypto'
-import { genData } from '../../anon-aadhaar-pcd/test/utils'
 import assert from 'assert'
-import { SELECTOR_ID, readData } from 'anon-aadhaar-pcd'
+import { SELECTOR_ID, readData } from '@anon-aadhaar/core'
 import { buildPoseidon } from 'circomlibjs'
+import { genData } from '../../core/test/utils'
 
 describe('Test QR Verify circuit', function () {
   this.timeout(0)

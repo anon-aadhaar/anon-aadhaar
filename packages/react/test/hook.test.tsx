@@ -9,10 +9,10 @@ import {
 } from '../src/hooks/useAnonAadhaar'
 import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
 import { Uint8ArrayToCharArray } from '@zk-email/helpers/dist/binaryFormat'
-import { AnonAadhaarPCDArgs, splitToWords } from 'anon-aadhaar-pcd'
+import { AnonAadhaarPCDArgs, splitToWords } from '@anon-aadhaar/core'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import { AnonAadhaarProvider } from '../src/provider/AnonAadhaarProvider'
-import { genData } from 'anon-aadhaar-pcd/test/utils'
+import { genData } from '../../core/test/utils'
 
 describe('useCountryIdentity Hook', () => {
   let testData: [bigint, bigint, bigint, bigint]
@@ -40,8 +40,7 @@ describe('useCountryIdentity Hook', () => {
         value={{
           state: initialState,
           startReq: startReqFunction,
-          appId: BigInt(1234555).toString(),
-          testing: true,
+          useTestAadhaar: true,
         }}
       >
         {children}
@@ -77,7 +76,7 @@ describe('useCountryIdentity Hook', () => {
     }
 
     render(
-      <AnonAadhaarProvider _appId={BigInt(1234555).toString()}>
+      <AnonAadhaarProvider>
         <TestComponent pcdArgs={pcdArgs} />
       </AnonAadhaarProvider>,
     )
