@@ -10,10 +10,10 @@ include "./extractor.circom";
 // k: Number of chunks the RSA public key is split into
 // maxDataLength: Maximum length of the data
 template AadhaarVerifier(n, k, maxDataLength) {
-    signal input aadhaarData[maxDataLength];    // Private: Aadhhar data padded (the data that is SHA hashed and signed)
-    signal input aadhaarDataLength;             // Private: length of the padded data
-    signal input signature[k];                  // Private: RSA signature
-    signal input pubKey[k];                     // Public: RSA public key (of the government)
+    signal input aadhaarData[maxDataLength];    // Aadhhar data padded (the data that is SHA hashed and signed)
+    signal input aadhaarDataLength;             // length of the padded data
+    signal input signature[k];                  // RSA signature
+    signal input pubKey[k];                     // RSA public key (of the government)
 
     signal output identityNullifier;            // Hash of last 4 digits of Aadhaar number, name, DOB, gender and pin code
     signal output userNullifier;                // Hash of last 4 digits of Aadhaar number and photo
@@ -103,4 +103,4 @@ template AadhaarVerifier(n, k, maxDataLength) {
 }
 
 
-component main{public [pubKey]} = AadhaarVerifier(64, 32, 512 * 3);
+component main = AadhaarVerifier(64, 32, 512 * 3);
