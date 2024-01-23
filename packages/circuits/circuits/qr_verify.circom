@@ -2,6 +2,8 @@ pragma circom 2.1.6;
 
 include "./rsa.circom";
 include "./sha.circom";
+include "./extractor.circom";
+include "../helpers/timestamp.circom";
 
 
 template QR_Verify(n, k, len) {
@@ -9,6 +11,11 @@ template QR_Verify(n, k, len) {
     signal input message_len; // private 
     signal input signature[k]; //private
     signal input modulus[k]; //public
+
+    signal output identityNullifier; 
+    signal output userNullifier; 
+
+    signal output timestamp;
 
     component shaHasher = Sha256Bytes(len);
 
@@ -45,6 +52,34 @@ template QR_Verify(n, k, len) {
         rsa.signature[i] <== signature[i];
     }
     
+    component extractor = Extractor(len);
+
+    extractor.dataLen <== message_len;
+    extractor.data <== padded_message;
+
+    signal four_digit[4] <== extractor.four_digit;
+
+    signal photoHash <== extractor.photoHash;
+    signal basicIdentityHash <== extractor.basicIdentityHash;
+
+    component poseidonHasher[2]; 
+
+    poseidonHasher[0] = Poseidon(5); 
+    poseidonHasher[0].inputs <== [four_digit[0], four_digit[1], four_digit[2], four_digit[3], photoHash];
+
+    poseidonHasher[1] = Poseidon(5); 
+    poseidonHasher[1].inputs <== [four_digit[0], four_digit[1], four_digit[2], four_digit[3], basicIdentityHash];
+
+    userNullifier <== poseidonHasher[0].out;
+    identityNullifier <== poseidonHasher[1].out;
+
+    // Output the timestamp rounded to nearest hour
+    component date_to_timestamp = DateStringToTimestamp(2030, 1, 0, 0);
+    for (var i = 0; i < 14; i++) {
+        date_to_timestamp.in[i] <== padded_message[i + 6];
+    }
+    timestamp <== date_to_timestamp.out - 19800; // 19800 is the offset for IST
 }
+
 
 component main{public [modulus]} = QR_Verify(64, 32, 512 * 3);
