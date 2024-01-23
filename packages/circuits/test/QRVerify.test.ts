@@ -13,13 +13,14 @@ import {
   decompressByteArray,
   extractPhoto,
   splitToWords,
+  SELECTOR_ID,
+  readData,
 } from '@anon-aadhaar/core'
+import { genData } from '../../core/test/utils'
 import fs from 'fs'
 import crypto from 'crypto'
 import assert from 'assert'
-import { SELECTOR_ID, readData } from '@anon-aadhaar/core'
 import { buildPoseidon } from 'circomlibjs'
-import { genData } from '../../core/test/utils'
 
 describe('Test QR Verify circuit', function () {
   this.timeout(0)
@@ -201,9 +202,9 @@ describe('Test QR Verify circuit', function () {
     })
 
     // Calculate the Poseidon hash with pubkey chunked to 9*242 like in circuit
-    const poseidon = await buildPoseidon();
-    const pubkeyChunked = bigIntToChunkedBytes(data[2], 128, 16);
-    const hash = poseidon(pubkeyChunked);
+    const poseidon = await buildPoseidon()
+    const pubkeyChunked = bigIntToChunkedBytes(data[2], 128, 16)
+    const hash = poseidon(pubkeyChunked)
 
     assert(witness[4] === BigInt(poseidon.F.toObject(hash)))
   })

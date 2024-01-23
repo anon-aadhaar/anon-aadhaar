@@ -9,7 +9,7 @@ import { Uint8ArrayToCharArray } from '@zk-email/helpers/dist/binaryFormat'
 import { buildPoseidon } from 'circomlibjs'
 import pako from 'pako'
 
-import { extractPhoto } from 'anon-aadhaar-pcd'
+import { extractPhoto } from '@anon-aadhaar/core'
 import assert from 'assert'
 
 function convertBigIntToByteArray(bigInt: bigint) {
