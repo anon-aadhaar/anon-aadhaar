@@ -44,14 +44,14 @@ export async function prove(args: AnonAadhaarPCDArgs): Promise<AnonAadhaarPCD> {
     )
   }
 
-  if (!args.modulus.value) {
-    throw new Error('Invalid modulus argument')
+  if (!args.pubKey.value) {
+    throw new Error('Invalid pubKey argument')
   }
 
   const id = uuidv4()
 
   const pcdClaim: AnonAadhaarPCDClaim = {
-    modulus: args.modulus.value,
+    pubKey: args.pubKey.value,
   }
 
   let prover: ProverInferace
@@ -98,7 +98,6 @@ export async function verify(pcd: AnonAadhaarPCD): Promise<boolean> {
       pcd.proof.userNullifier,
       pcd.proof.timestamp,
       pcd.proof.pubkeyHash,
-      ...pcd.proof.modulus,
     ],
     pcd.proof.groth16Proof
   )
@@ -126,7 +125,6 @@ export async function verifyLocal(pcd: AnonAadhaarPCD): Promise<boolean> {
       pcd.proof.userNullifier,
       pcd.proof.timestamp,
       pcd.proof.pubkeyHash,
-      ...pcd.proof.modulus,
     ],
     pcd.proof.groth16Proof
   )

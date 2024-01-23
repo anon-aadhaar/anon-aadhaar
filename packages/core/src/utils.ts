@@ -118,7 +118,7 @@ export async function exportCallDataGroth16FromPCD(
 }> {
   const calldata = await groth16.exportSolidityCallData(
     _pcd.proof.groth16Proof,
-    _pcd.proof.modulus
+    _pcd.proof.pubKey
   )
 
   const argv = calldata

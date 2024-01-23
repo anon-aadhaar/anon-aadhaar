@@ -42,7 +42,7 @@ export const generateArgs = async (
   const RSAPublicKey = pki.certificateFromPem(certificateFile).publicKey
   const publicKey = (RSAPublicKey as pki.rsa.PublicKey).n.toString(16)
 
-  const modulusBigint = BigInt('0x' + publicKey)
+  const pubKeyBigInt = BigInt('0x' + publicKey)
 
   const signatureBigint = BigInt(
     '0x' + bufferToHex(Buffer.from(signature)).toString()
@@ -51,11 +51,11 @@ export const generateArgs = async (
   const [paddedMessage, messageLength] = sha256Pad(signedData, 512 * 3)
 
   const pcdArgs: AnonAadhaarPCDArgs = {
-    padded_message: {
+    aadhaarData: {
       argumentType: ArgumentTypeName.StringArray,
       value: Uint8ArrayToCharArray(paddedMessage),
     },
-    message_len: {
+    aadhaarDataLength: {
       argumentType: ArgumentTypeName.Number,
       value: messageLength.toString(),
     },
@@ -63,9 +63,9 @@ export const generateArgs = async (
       argumentType: ArgumentTypeName.StringArray,
       value: splitToWords(signatureBigint, BigInt(64), BigInt(32)),
     },
-    modulus: {
+    pubKey: {
       argumentType: ArgumentTypeName.StringArray,
-      value: splitToWords(modulusBigint, BigInt(64), BigInt(32)),
+      value: splitToWords(pubKeyBigInt, BigInt(64), BigInt(32)),
     },
   }
 

@@ -22,7 +22,7 @@ describe('PCD tests', function () {
   it('PCD flow location prover', async function () {
     const artifactsDirName = __dirname + '/../../circuits/artifacts'
     const pcdInitArgs: PCDInitArgs = {
-      wasmURL: artifactsDirName + '/qr_verify.wasm',
+      wasmURL: artifactsDirName + '/aadhaar-verifier.wasm',
       zkeyURL: artifactsDirName + '/circuit_final.zkey',
       vkeyURL: artifactsDirName + '/vkey.json',
       isWebEnv: false,

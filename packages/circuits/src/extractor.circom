@@ -73,28 +73,26 @@ template Extractor(MAX_NUMBER_BYTES) {
     signal input dataLen; 
 
     signal output photoHash;
-
     signal output basicIdentityHash; 
-
-    signal output four_digit[4];
+    signal output last4Digits[4];
     
-    signal s_data[MAX_NUMBER_BYTES];
+    signal sData[MAX_NUMBER_BYTES];
  
-    component data_is255[MAX_NUMBER_BYTES - 1]; 
+    component isData255[MAX_NUMBER_BYTES - 1]; 
 
-    s_data[0] <== 0;
+    sData[0] <== 0;
  
     for (var i = 0; i < MAX_NUMBER_BYTES - 1; i++) {
-        data_is255[i] = IsEqual();
-        data_is255[i].in[0] <== 255;
-        data_is255[i].in[1] <== data[i + 1]; 
-        s_data[i + 1] <== s_data[i] + data_is255[i].out;        
+        isData255[i] = IsEqual();
+        isData255[i].in[0] <== 255;
+        isData255[i].in[1] <== data[i + 1]; 
+        sData[i + 1] <== sData[i] + isData255[i].out;        
     } 
 
 
     component photoPositionComputation = PhotoPositionComputation(MAX_NUMBER_BYTES);
     photoPositionComputation.dataLen <== dataLen;
-    photoPositionComputation.filter <== s_data;
+    photoPositionComputation.filter <== sData;
     photoPositionComputation.data <== data;
 
     signal photoPosition[2] <== photoPositionComputation.photoPosition;
@@ -111,8 +109,8 @@ template Extractor(MAX_NUMBER_BYTES) {
     signal identityFlag[MAX_NUMBER_BYTES];
 
     for (var i = 0; i < MAX_NUMBER_BYTES; i++) {
-        basicIdentityFlag[i] <== InRange(12)(2, 4, s_data[i]);
-        pincodeFlag[i] <== IsEqual()([10, s_data[i]]);   
+        basicIdentityFlag[i] <== InRange(12)(2, 4, sData[i]);
+        pincodeFlag[i] <== IsEqual()([10, sData[i]]);   
         identityFlag[i] <== basicIdentityFlag[i] + pincodeFlag[i] - basicIdentityFlag[i] * pincodeFlag[i]; 
     }
 
@@ -120,7 +118,7 @@ template Extractor(MAX_NUMBER_BYTES) {
 
     // extract last fordigit; 
     for (var i = 0; i < 4; i++) {
-        four_digit[i] <== data[i + 2];
+        last4Digits[i] <== data[i + 2];
     }
 }
 

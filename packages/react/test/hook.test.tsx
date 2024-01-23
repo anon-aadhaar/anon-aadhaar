@@ -57,11 +57,11 @@ describe('useCountryIdentity Hook', () => {
 
   it('returns updated state when request sent', () => {
     const pcdArgs: AnonAadhaarPCDArgs = {
-      padded_message: {
+      aadhaarData: {
         argumentType: ArgumentTypeName.StringArray,
         value: Uint8ArrayToCharArray(paddedMsg),
       },
-      message_len: {
+      aadhaarDataLength: {
         argumentType: ArgumentTypeName.Number,
         value: messageLen.toString(),
       },
@@ -69,7 +69,7 @@ describe('useCountryIdentity Hook', () => {
         argumentType: ArgumentTypeName.StringArray,
         value: splitToWords(testData[1], BigInt(64), BigInt(32)),
       },
-      modulus: {
+      pubKey: {
         argumentType: ArgumentTypeName.StringArray,
         value: splitToWords(testData[2], BigInt(64), BigInt(32)),
       },

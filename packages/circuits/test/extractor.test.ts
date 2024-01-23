@@ -38,7 +38,7 @@ describe('Extractor testcases', function () {
 
   this.beforeAll(async () => {
     circuit = await circom_tester(
-      path.join(__dirname, './', 'circuits', 'filter_test.circom'),
+      path.join(__dirname, './', 'circuits', 'filter-test.circom'),
       {
         recompile: true,
         include: path.join(__dirname, '../node_modules'),

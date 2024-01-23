@@ -30,7 +30,7 @@ describe('Test QR Verify circuit', function () {
 
   this.beforeAll(async () => {
     circuit = await circom_tester(
-      path.join(__dirname, '../', 'circuits', 'qr_verify.circom'),
+      path.join(__dirname, '../', 'src', 'aadhaar-verifier.circom'),
       {
         recompile: true,
         include: path.join(__dirname, '../node_modules'),
@@ -49,10 +49,10 @@ describe('Test QR Verify circuit', function () {
     )
 
     await circuit.calculateWitness({
-      padded_message: Uint8ArrayToCharArray(paddedMsg),
-      message_len: messageLen,
+      aadhaarData: Uint8ArrayToCharArray(paddedMsg),
+      aadhaarDataLength: messageLen,
       signature: splitToWords(data[1], BigInt(64), BigInt(32)),
-      modulus: splitToWords(data[2], BigInt(64), BigInt(32)),
+      pubKey: splitToWords(data[2], BigInt(64), BigInt(32)),
       signalHash: 0,
     })
   })
@@ -82,7 +82,7 @@ describe('Test QR Verify circuit', function () {
 
     const [paddedMsg, messageLen] = sha256Pad(signedData, 512 * 3)
 
-    const modulus = BigInt(
+    const pubKey = BigInt(
       '0x' +
         bufferToHex(
           Buffer.from(pk.export({ format: 'jwk' }).n as string, 'base64url'),
@@ -94,10 +94,10 @@ describe('Test QR Verify circuit', function () {
     )
 
     const witness = await circuit.calculateWitness({
-      padded_message: Uint8ArrayToCharArray(paddedMsg),
-      message_len: messageLen,
+      aadhaarData: Uint8ArrayToCharArray(paddedMsg),
+      aadhaarDataLength: messageLen,
       signature: splitToWords(signature, BigInt(64), BigInt(32)),
-      modulus: splitToWords(modulus, BigInt(64), BigInt(32)),
+      pubKey: splitToWords(pubKey, BigInt(64), BigInt(32)),
       signalHash: 4,
     })
 
@@ -158,7 +158,7 @@ describe('Test QR Verify circuit', function () {
     const signedData = decodedData.slice(0, decodedData.length - 256)
     const [paddedMsg, messageLen] = sha256Pad(signedData, 512 * 3)
 
-    const modulus = BigInt(
+    const pubKey = BigInt(
       '0x' +
         bufferToHex(
           Buffer.from(pk.export({ format: 'jwk' }).n as string, 'base64url'),
@@ -170,10 +170,10 @@ describe('Test QR Verify circuit', function () {
     )
 
     const witness = await circuit.calculateWitness({
-      padded_message: Uint8ArrayToCharArray(paddedMsg),
-      message_len: messageLen,
+      aadhaarData: Uint8ArrayToCharArray(paddedMsg),
+      aadhaarDataLength: messageLen,
       signature: splitToWords(signature, BigInt(64), BigInt(32)),
-      modulus: splitToWords(modulus, BigInt(64), BigInt(32)),
+      pubKey: splitToWords(pubKey, BigInt(64), BigInt(32)),
       signalHash: 0,
     })
 
@@ -198,10 +198,10 @@ describe('Test QR Verify circuit', function () {
     )
 
     const witness = await circuit.calculateWitness({
-      padded_message: Uint8ArrayToCharArray(paddedMsg),
-      message_len: messageLen,
+      aadhaarData: Uint8ArrayToCharArray(paddedMsg),
+      aadhaarDataLength: messageLen,
       signature: splitToWords(data[1], BigInt(64), BigInt(32)),
-      modulus: splitToWords(data[2], BigInt(64), BigInt(32)),
+      pubKey: splitToWords(data[2], BigInt(64), BigInt(32)),
       signalHash: 0,
     })
 
