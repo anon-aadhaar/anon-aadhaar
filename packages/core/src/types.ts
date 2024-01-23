@@ -1,6 +1,5 @@
 import {
   NumberArgument,
-  StringArgument,
   StringArrayArgument,
 } from '@pcd/pcd-types'
 import { Groth16Proof } from 'snarkjs'
