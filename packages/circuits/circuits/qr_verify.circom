@@ -80,7 +80,6 @@ template QR_Verify(n, k, len) {
     }
     timestamp <== date_to_timestamp.out - 19800; // 19800 is the offset for IST
 
-
     // Calculate Poseidon hash of the public key.
     // Poseidon component can take only 16 inputs, so we convert k chunks to k/2 chunks.
     // We are assuming k is  > 16 and <= 32 (i.e we merge two consecutive item in array to bring down the size)

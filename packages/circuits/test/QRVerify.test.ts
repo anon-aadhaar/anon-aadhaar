@@ -1,8 +1,7 @@
-import path from 'path'
-
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const circom_tester = require('circom_tester/wasm/tester')
 
+import path from 'path'
 import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
 import { bigIntToChunkedBytes } from "@zk-email/helpers/dist/binaryFormat";
 import {
@@ -18,9 +17,8 @@ import {
 import fs from 'fs'
 import crypto from 'crypto'
 import { genData } from '../../anon-aadhaar-pcd/test/utils'
-
 import assert from 'assert'
-import { SELECTOR_ID, SelectorBuilder, readData } from 'anon-aadhaar-pcd'
+import { SELECTOR_ID, readData } from 'anon-aadhaar-pcd'
 import { buildPoseidon } from 'circomlibjs'
 
 describe('Test QR Verify circuit', function () {
