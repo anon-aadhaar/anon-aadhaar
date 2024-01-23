@@ -187,7 +187,7 @@ describe('Test QR Verify circuit', function () {
     assert(witness[3] === BigInt(expectedTimestamp))
   })
 
-  it.only('should output hash of pubkey', async () => {
+  it('should output hash of pubkey', async () => {
     const signedData = 'Hello-20240116140412'
 
     const data = await genData(signedData, 'SHA-256')

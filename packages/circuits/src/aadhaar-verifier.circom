@@ -10,7 +10,7 @@ include "./extractor.circom";
 // k: Number of chunks the RSA public key is split into
 // maxDataLength: Maximum length of the data
 template AadhaarVerifier(n, k, maxDataLength) {
-    signal input aadhaarData[maxDataLength];    // Aadhhar data padded (the data that is SHA hashed and signed)
+    signal input aadhaarData[maxDataLength];    // Aadhaar data padded (the data that is SHA hashed and signed)
     signal input aadhaarDataLength;             // length of the padded data
     signal input signature[k];                  // RSA signature
     signal input pubKey[k];                     // RSA public key (of the government)
