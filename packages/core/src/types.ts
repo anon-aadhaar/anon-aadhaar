@@ -1,7 +1,4 @@
-import {
-  NumberArgument,
-  StringArrayArgument,
-} from '@pcd/pcd-types'
+import { NumberArgument, StringArrayArgument } from '@pcd/pcd-types'
 import { Groth16Proof } from 'snarkjs'
 
 export type BigNumberish = string | bigint
