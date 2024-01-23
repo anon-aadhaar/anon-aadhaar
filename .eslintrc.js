@@ -15,6 +15,7 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
+    warnOnUnsupportedTypeScriptVersion: false,
   },
   plugins: ['react', '@typescript-eslint'],
   rules: {
@@ -22,12 +23,7 @@ module.exports = {
     'react/react-in-jsx-scope': 'off',
     'react/jsx-filename-extension': [1, { extensions: ['.ts', '.tsx'] }],
   },
-  ignorePatterns: [
-    'build',
-    'script/*.mjs',
-    'dist',
-    'mocha.cjs',
-  ],
+  ignorePatterns: ['build', 'script/*.mjs', 'dist', 'mocha.cjs'],
   settings: {
     react: {
       version: 'detect',

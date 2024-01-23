@@ -12,6 +12,7 @@ import {
 } from '@zk-email/helpers/dist/binaryFormat'
 import { pki } from 'node-forge'
 import { ArgumentTypeName } from '@pcd/pcd-types'
+import hash from './hash'
 
 /**
  * Extract all the information needed to generate the witness from the QRCode data.
@@ -20,7 +21,8 @@ import { ArgumentTypeName } from '@pcd/pcd-types'
  */
 export const generateArgs = async (
   qrData: string,
-  certificateFile: string
+  certificateFile: string,
+  signal?: string
 ): Promise<AnonAadhaarPCDArgs> => {
   const bigIntData = BigInt(qrData)
 
@@ -50,6 +52,9 @@ export const generateArgs = async (
 
   const [paddedMessage, messageLength] = sha256Pad(signedData, 512 * 3)
 
+  // Set signal to 1 by default if no signal setted up
+  const signalHash = signal ? hash(signal) : hash(1)
+
   const pcdArgs: AnonAadhaarPCDArgs = {
     aadhaarData: {
       argumentType: ArgumentTypeName.StringArray,
@@ -66,6 +71,10 @@ export const generateArgs = async (
     pubKey: {
       argumentType: ArgumentTypeName.StringArray,
       value: splitToWords(pubKeyBigInt, BigInt(64), BigInt(32)),
+    },
+    signalHash: {
+      argumentType: ArgumentTypeName.String,
+      value: signalHash,
     },
   }
 

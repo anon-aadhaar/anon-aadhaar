@@ -1,12 +1,12 @@
 #!/bin/bash
 
 
-CIRCUIT=./circuits
+CIRCUIT=$(pwd)/src
 
 ALL_HASH="";
-for file in $(ls $CIRCUIT) 
+for file in $(find $CIRCUIT -type f) 
 do 
-    ALL_HASH+="$(sha256sum $CIRCUIT/$file)"
+    ALL_HASH+="$(sha256sum $file)"
 done 
 
 

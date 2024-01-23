@@ -1,4 +1,8 @@
-import { NumberArgument, StringArrayArgument } from '@pcd/pcd-types'
+import {
+  NumberArgument,
+  StringArrayArgument,
+  StringArgument,
+} from '@pcd/pcd-types'
 import { Groth16Proof } from 'snarkjs'
 
 export type BigNumberish = string | bigint
@@ -34,16 +38,18 @@ export type AnonAadhaarPCDProof = {
   userNullifier: string
   timestamp: string
   pubkeyHash: string
+  signalHash: string
 }
 
 /**
  * @dev witness use for create zk proof of AnonAadhaarPCD package.
  */
 export type AnonAadhaarPCDArgs = {
-  aadhaarData: StringArrayArgument // private witness
-  aadhaarDataLength: NumberArgument // private witness
-  signature: StringArrayArgument // public witness
-  pubKey: StringArrayArgument // public witness
+  aadhaarData: StringArrayArgument // private
+  aadhaarDataLength: NumberArgument // private
+  signature: StringArrayArgument // private
+  pubKey: StringArrayArgument // public
+  signalHash: StringArgument // public
 }
 
 export type Proof = [

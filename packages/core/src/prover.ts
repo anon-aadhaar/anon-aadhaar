@@ -75,11 +75,16 @@ export class BackendProver implements ProverInferace {
       throw new Error('Cannot make proof: missing aadhaarDataLength')
     }
 
+    if (!witness.signalHash.value) {
+      throw new Error('Cannot make proof: missing signalHash')
+    }
+
     const input = {
       aadhaarData: witness.aadhaarData.value,
       aadhaarDataLength: witness.aadhaarDataLength.value,
       signature: witness.signature.value,
       pubKey: witness.pubKey.value,
+      signalHash: witness.signalHash.value,
     }
 
     const { proof, publicSignals } = await groth16.fullProve(
@@ -94,6 +99,7 @@ export class BackendProver implements ProverInferace {
       timestamp: publicSignals[2],
       pubkeyHash: publicSignals[3],
       groth16Proof: proof,
+      signalHash: witness.signalHash.value,
     }
   }
 }
@@ -127,11 +133,16 @@ export class WebProver implements ProverInferace {
       throw new Error('Cannot make proof: missing aadhaarDataLength')
     }
 
+    if (!witness.signalHash.value) {
+      throw new Error('Cannot make proof: missing signalHash')
+    }
+
     const input = {
       aadhaarData: witness.aadhaarData.value,
       aadhaarDataLength: witness.aadhaarDataLength.value,
       signature: witness.signature.value,
       pubKey: witness.pubKey.value,
+      signalHash: witness.signalHash.value,
     }
 
     const { proof, publicSignals } = await groth16.fullProve(
@@ -146,6 +157,7 @@ export class WebProver implements ProverInferace {
       timestamp: publicSignals[2],
       pubkeyHash: publicSignals[3],
       groth16Proof: proof,
+      signalHash: witness.signalHash.value,
     }
   }
 }

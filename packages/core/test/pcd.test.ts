@@ -38,7 +38,7 @@ describe('PCD tests', function () {
     assert(verified == true, 'Should be verified')
   })
 
-  it.skip('PCD flow web prover', async function () {
+  it('PCD flow web prover', async function () {
     const pcdInitArgs: PCDInitArgs = {
       wasmURL: WASM_URL,
       zkeyURL: ZKEY_URL,

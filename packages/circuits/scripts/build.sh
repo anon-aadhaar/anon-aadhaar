@@ -5,8 +5,8 @@
 BUILD_DIR=$(pwd)/build
 PTAU=powersOfTau28_hez_final_21.ptau
 PTAU_PATH=$BUILD_DIR/$PTAU
-CIRCUIT=$(pwd)/circuits
-CIRCUIR_PATH=$(pwd)/circuits/aadhaar-verifier.circom
+CIRCUIT=$(pwd)/src
+CIRCUIR_PATH=$(pwd)/src/aadhaar-verifier.circom
 CIRLIB_PATH=$(pwd)/node_modules
 R1CS_PATH=$BUILD_DIR/aadhaar-verifier.r1cs
 JS_BUILD_DIR=$BUILD_DIR/aadhaar-verifier_js
@@ -47,7 +47,7 @@ function install_deps() {
 }
 
 function build_circuit() {
-    circom --wasm -l ../src/helpers -l ../node_modules --sym --r1cs --output ../dist ../src/aadhaar-verifier.circom 
+    circom --wasm -l ../src/helpers -l ../node_modules --sym --r1cs --output ../build ../src/aadhaar-verifier.circom 
 }
 
 # trusted setup for development
@@ -64,22 +64,22 @@ function dev_trusted_setup() {
         OLD_HASH=""
     fi
 
-    if [ ! -d $ZKEY_DIR ]; then
-        mkdir -p $ZKEY_DIR
+    if [ ! -d $PARTIAL_ZKEYS_DIR ]; then
+        mkdir -p $PARTIAL_ZKEYS_DIR
     fi
 
     if [ "$HASH" != "$OLD_HASH" ]; then 
     echo "TRUSTED SETUP FOR DEVELOPMENT - PLEASE, DON'T USE IT IN PRODUCT!!!!"
 
-    circom ./circuits/aadhaar-verifier.circom  --r1cs --wasm -o $BUILD_DIR -l ./node_modules
+    circom ./src/aadhaar-verifier.circom  --r1cs --wasm -o $BUILD_DIR -l ./node_modules
 
 
     NODE_OPTIONS=--max-old-space-size=8192 \
-	node ./node_modules/.bin/snarkjs groth16 setup $R1CS_PATH $PTAU_PATH $ZKEY_DIR/circuit_0000.zkey
+	node ./node_modules/.bin/snarkjs groth16 setup $R1CS_PATH $PTAU_PATH $PARTIAL_ZKEYS_DIR/circuit_0000.zkey
 
     echo "test random" | NODE_OPTIONS='--max-old-space-size=8192' \
-	node ./node_modules/.bin/snarkjs zkey contribute $ZKEY_DIR/circuit_0000.zkey $ZKEY_DIR/circuit_final.zkey --name="1st Contributor Name" -v 
-    NODE_OPTIONS='--max-old-space-size=8192' ./node_modules/.bin/snarkjs zkey export verificationkey $ZKEY_DIR/circuit_final.zkey $BUILD_DIR/vkey.json
+	node ./node_modules/.bin/snarkjs zkey contribute $PARTIAL_ZKEYS_DIR/circuit_0000.zkey $PARTIAL_ZKEYS_DIR/circuit_final.zkey --name="1st Contributor Name" -v 
+    NODE_OPTIONS='--max-old-space-size=8192' ./node_modules/.bin/snarkjs zkey export verificationkey $PARTIAL_ZKEYS_DIR/circuit_final.zkey $BUILD_DIR/vkey.json
 
     fi
         if [ ! -d $ARTIFACTS_DIR ]; then
