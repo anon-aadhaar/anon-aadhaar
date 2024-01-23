@@ -1,9 +1,9 @@
-import path from 'path'
-
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const circom_tester = require('circom_tester/wasm/tester')
 
+import path from 'path'
 import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
+import { bigIntToChunkedBytes } from "@zk-email/helpers/dist/binaryFormat";
 import {
   Uint8ArrayToCharArray,
   bufferToHex,
@@ -17,9 +17,8 @@ import {
 import fs from 'fs'
 import crypto from 'crypto'
 import { genData } from '../../anon-aadhaar-pcd/test/utils'
-
 import assert from 'assert'
-import { SELECTOR_ID, SelectorBuilder, readData } from 'anon-aadhaar-pcd'
+import { SELECTOR_ID, readData } from 'anon-aadhaar-pcd'
 import { buildPoseidon } from 'circomlibjs'
 
 describe('Test QR Verify circuit', function () {
@@ -182,5 +181,30 @@ describe('Test QR Verify circuit', function () {
     )
 
     assert(witness[3] === BigInt(expectedTimestamp))
+  })
+
+  it('should output hash of pubkey', async () => {
+    const signedData = 'Hello-20240116140412'
+
+    const data = await genData(signedData, 'SHA-256')
+
+    const [paddedMsg, messageLen] = sha256Pad(
+      Buffer.from(signedData, 'ascii'),
+      512 * 3,
+    )
+
+    const witness = await circuit.calculateWitness({
+      padded_message: Uint8ArrayToCharArray(paddedMsg),
+      message_len: messageLen,
+      signature: splitToWords(data[1], BigInt(64), BigInt(32)),
+      modulus: splitToWords(data[2], BigInt(64), BigInt(32)),
+    })
+
+    // Calculate the Poseidon hash with pubkey chunked to 9*242 like in circuit
+    const poseidon = await buildPoseidon();
+    const pubkeyChunked = bigIntToChunkedBytes(data[2], 128, 16);
+    const hash = poseidon(pubkeyChunked);
+
+    assert(witness[4] === BigInt(poseidon.F.toObject(hash)))
   })
 })
