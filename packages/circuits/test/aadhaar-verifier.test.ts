@@ -49,10 +49,10 @@ describe('Test QR Verify circuit', function () {
     )
 
     await circuit.calculateWitness({
-      padded_message: Uint8ArrayToCharArray(paddedMsg),
-      message_len: messageLen,
+      aadhaarData: Uint8ArrayToCharArray(paddedMsg),
+      aadhaarDataLength: messageLen,
       signature: splitToWords(data[1], BigInt(64), BigInt(32)),
-      modulus: splitToWords(data[2], BigInt(64), BigInt(32)),
+      pubKey: splitToWords(data[2], BigInt(64), BigInt(32)),
     })
   })
 
@@ -81,7 +81,7 @@ describe('Test QR Verify circuit', function () {
 
     const [paddedMsg, messageLen] = sha256Pad(signedData, 512 * 3)
 
-    const modulus = BigInt(
+    const pubKey = BigInt(
       '0x' +
         bufferToHex(
           Buffer.from(pk.export({ format: 'jwk' }).n as string, 'base64url'),
@@ -93,10 +93,10 @@ describe('Test QR Verify circuit', function () {
     )
 
     const witness = await circuit.calculateWitness({
-      padded_message: Uint8ArrayToCharArray(paddedMsg),
-      message_len: messageLen,
+      aadhaarData: Uint8ArrayToCharArray(paddedMsg),
+      aadhaarDataLength: messageLen,
       signature: splitToWords(signature, BigInt(64), BigInt(32)),
-      modulus: splitToWords(modulus, BigInt(64), BigInt(32)),
+      pubKey: splitToWords(pubKey, BigInt(64), BigInt(32)),
     })
 
     const poseidon: any = await buildPoseidon()
@@ -156,7 +156,7 @@ describe('Test QR Verify circuit', function () {
     const signedData = decodedData.slice(0, decodedData.length - 256)
     const [paddedMsg, messageLen] = sha256Pad(signedData, 512 * 3)
 
-    const modulus = BigInt(
+    const pubKey = BigInt(
       '0x' +
         bufferToHex(
           Buffer.from(pk.export({ format: 'jwk' }).n as string, 'base64url'),
@@ -168,10 +168,10 @@ describe('Test QR Verify circuit', function () {
     )
 
     const witness = await circuit.calculateWitness({
-      padded_message: Uint8ArrayToCharArray(paddedMsg),
-      message_len: messageLen,
+      aadhaarData: Uint8ArrayToCharArray(paddedMsg),
+      aadhaarDataLength: messageLen,
       signature: splitToWords(signature, BigInt(64), BigInt(32)),
-      modulus: splitToWords(modulus, BigInt(64), BigInt(32)),
+      pubKey: splitToWords(pubKey, BigInt(64), BigInt(32)),
     })
 
     // This is the time in the QR data above is 20190308114407437.
@@ -195,10 +195,10 @@ describe('Test QR Verify circuit', function () {
     )
 
     const witness = await circuit.calculateWitness({
-      padded_message: Uint8ArrayToCharArray(paddedMsg),
-      message_len: messageLen,
+      aadhaarData: Uint8ArrayToCharArray(paddedMsg),
+      aadhaarDataLength: messageLen,
       signature: splitToWords(data[1], BigInt(64), BigInt(32)),
-      modulus: splitToWords(data[2], BigInt(64), BigInt(32)),
+      pubKey: splitToWords(data[2], BigInt(64), BigInt(32)),
     })
 
     // Calculate the Poseidon hash with pubkey chunked to 9*242 like in circuit

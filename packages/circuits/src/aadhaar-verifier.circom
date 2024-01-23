@@ -7,10 +7,10 @@ include "./extractor.circom";
 
 
 template AadhaarVerifier(n, k, len) {
-    signal input padded_message[len]; // private
-    signal input message_len; // private 
+    signal input aadhaarData[len]; // private
+    signal input aadhaarDataLength; // private 
     signal input signature[k]; //private
-    signal input modulus[k]; //public
+    signal input pubKey[k]; //public
 
     signal output identityNullifier; 
     signal output userNullifier; 
@@ -19,8 +19,8 @@ template AadhaarVerifier(n, k, len) {
 
     component shaHasher = Sha256Bytes(len);
 
-    shaHasher.in_padded <== padded_message;
-    shaHasher.in_len_padded_bytes <== message_len;
+    shaHasher.in_padded <== aadhaarData;
+    shaHasher.in_len_padded_bytes <== aadhaarDataLength;
 
     signal sha[256];
 
@@ -48,14 +48,14 @@ template AadhaarVerifier(n, k, len) {
     }
 
     for (var i = 0; i < k; i++) {
-        rsa.modulus[i] <== modulus[i];
+        rsa.modulus[i] <== pubKey[i];
         rsa.signature[i] <== signature[i];
     }
     
     component extractor = Extractor(len);
 
-    extractor.dataLen <== message_len;
-    extractor.data <== padded_message;
+    extractor.dataLen <== aadhaarDataLength;
+    extractor.data <== aadhaarData;
 
     signal four_digit[4] <== extractor.four_digit;
 
@@ -76,7 +76,7 @@ template AadhaarVerifier(n, k, len) {
     // Output the timestamp rounded to nearest hour
     component date_to_timestamp = DateStringToTimestamp(2030, 1, 0, 0);
     for (var i = 0; i < 14; i++) {
-        date_to_timestamp.in[i] <== padded_message[i + 6];
+        date_to_timestamp.in[i] <== aadhaarData[i + 6];
     }
     timestamp <== date_to_timestamp.out - 19800; // 19800 is the offset for IST
 
@@ -91,9 +91,9 @@ template AadhaarVerifier(n, k, len) {
     signal pubkeyHasherInput[poseidonInputSize];
     for (var i = 0; i < poseidonInputSize; i++) {
         if (i == poseidonInputSize - 1 && poseidonInputSize % 2 == 1) {
-            pubkeyHasherInput[i] <== modulus[i * 2];
+            pubkeyHasherInput[i] <== pubKey[i * 2];
         } else {
-            pubkeyHasherInput[i] <== modulus[i * 2] + (1 << n) * modulus[i * 2 + 1];
+            pubkeyHasherInput[i] <== pubKey[i * 2] + (1 << n) * pubKey[i * 2 + 1];
         }
     }
     component pubkeyHasher = Poseidon(poseidonInputSize);
@@ -102,4 +102,4 @@ template AadhaarVerifier(n, k, len) {
 }
 
 
-component main{public [modulus]} = AadhaarVerifier(64, 32, 512 * 3);
+component main{public [pubKey]} = AadhaarVerifier(64, 32, 512 * 3);
