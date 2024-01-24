@@ -2,8 +2,9 @@
 pragma solidity ^0.8.4;
 
 import "../interfaces/IAnonAadhaarVerifier.sol";
+import "../interfaces/IAnonAadhaar.sol";
 
-contract AnonAadhaar {
+contract AnonAadhaar is IAnonAadhaar {
     address public verifier;
     uint256 public pubkeyHash;
 
@@ -19,7 +20,16 @@ contract AnonAadhaar {
         return pubkeyHash == _receivedpubkeyHash;
     }
 
-    /// @dev Verifies that the public received is corresponding with the one stored in the contract.
+    /// @dev Verifies that the signal received is corresponding with the used in proof generation.
+    /// @param _receivedSignal: Signal received.
+    /// @param signalHash: Hash of the signal from Proof.
+    /// @return Verified bool
+    function verifySignalHash(uint256 _receivedSignal, uint256 signalHash) public pure returns (bool) {
+        _receivedSignal = _hash(_receivedSignal);
+        return _receivedSignal == signalHash;
+    }
+
+    /// @dev Verifies the proof received.
     /// @param a: Public key received.
     /// @param b: Public key received.
     /// @param c: Public key received.
@@ -34,9 +44,8 @@ contract AnonAadhaar {
         uint256 signal
     ) public view returns (bool) {
         // Verifying that the pubkey is corresponding to UIDAI public key
-        require(verifyPublicKey(input[3]) == true, "AnonAadhaarVerifier: wrong issuer public key");
-        signal = _hash(signal);
-        require(input[4] == signal, "AnonAadhaarVerifier: wrong signal received");
+        require(verifyPublicKey(input[3]) == true, "[AnonAadhaarVerifier]: wrong issuer public key");
+        require(verifySignalHash(signal ,input[4]) == true, "[AnonAadhaarVerifier]: wrong signal received");
         return IAnonAadhaarVerifier(verifier).verifyProof(a, b, c, input);
     }
 

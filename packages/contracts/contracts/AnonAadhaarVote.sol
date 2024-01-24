@@ -1,27 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.4;
 
-import "../interfaces/IAnonAadhaarVerifier.sol";
+import "../interfaces/IAnonAadhaar.sol";
+import "../interfaces/IAnonAadhaarVote.sol";
 
-contract Vote {
-    // Structure to hold proposal information
-    struct Proposal {
-        string description;
-        uint256 voteCount;
-    }
+contract AnonAadhaarVote is IAnonAadhaarVote {
     string public votingQuestion;
     address public anonAadhaarVerifierAddr;
-
-    event Voted(address indexed _from, uint256 indexed _propositionIndex);
 
     // List of proposals
     Proposal[] public proposals;
 
-    // Mapping to track if an address has already voted
+    // Mapping to track if a nullifier has already voted
+    // userNullifier can be accesses in _pubInputs => _pubInputs[1]
     mapping(uint256 => bool) public hasVoted;
-    // This can be replaced by the nullifier
-    // Nullifier can be accessed by calling _pubSignals[0]
-    // mapping(uint256 => bool) public hasVoted;
 
     // Constructor to initialize proposals
     constructor(string memory _votingQuestion, string[] memory proposalDescriptions, address _verifierAddr) {
@@ -32,18 +24,33 @@ contract Vote {
         }
     }
 
-    function verify(uint256[2] calldata _pA, uint[2][2] calldata _pB, uint[2] calldata _pC, uint[5] calldata _pubSignals) public view returns (bool) {
-        return IAnonAadhaarVerifier(anonAadhaarVerifierAddr).verifyProof(_pA, _pB, _pC, _pubSignals);
+    /// @dev Convert an address to uint256, used to check against signal.
+    /// @param _addr: Public key received.
+    /// @return Address msg.sender's address in uint256
+    function addressToUint256(address _addr) private pure returns (uint256) {
+        return uint256(uint160(_addr));
     }
 
-    // Function to vote for a proposal
-    function voteForProposal(uint256 proposalIndex, uint256[2] calldata _pA, uint[2][2] calldata _pB, uint[2] calldata _pC, uint[5] calldata _pubSignals) public {
+    /// @dev Verifies that the proof received is corresponding with the one stored in the contract.
+    /// @param proposalIndex: Index of the proposal you want to vote for.
+    /// @param a: a.
+    /// @param b: b.
+    /// @param c: c.
+    /// @param _pubInputs: Public Inputs .
+    /// @param signal: signal used while generating the proof, should be = to msg.sender.
+    function voteForProposal(uint256 proposalIndex, uint256[2] calldata a, uint[2][2] calldata b, uint[2] calldata c, uint[5] calldata _pubInputs, uint256 signal) public {
         require(proposalIndex < proposals.length, "Invalid proposal index");
-        require(!hasVoted[_pubSignals[0]], "You have already voted");
-        require(verify(_pA, _pB, _pC, _pubSignals), "Your idendity proof is not valid");
+        // Check that the user hasn't voted
+        require(addressToUint256(msg.sender) == signal, "[AnonAadhaarVote]: wrong signal sent.");
+        // Verify the proof
+        require(IAnonAadhaar(anonAadhaarVerifierAddr).verifyProof(a, b, c, _pubInputs, signal) == true, "[AnonAadhaarVote]: proof sent is not valid.");
+
+        // Check that user hasn't already voted.
+        // _pubSignals[1] refers to userNullifier
+        require(!hasVoted[_pubInputs[1]], "[AnonAadhaarVote]: User has already voted");
 
         proposals[proposalIndex].voteCount++;
-        hasVoted[_pubSignals[0]] = true;
+        hasVoted[_pubInputs[1]] = true;
 
         emit Voted(msg.sender, proposalIndex);
     }
