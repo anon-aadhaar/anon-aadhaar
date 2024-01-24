@@ -98,8 +98,8 @@ export class BackendProver implements ProverInferace {
       userNullifier: publicSignals[1],
       timestamp: publicSignals[2],
       pubkeyHash: publicSignals[3],
-      groth16Proof: proof,
       signalHash: witness.signalHash.value,
+      groth16Proof: proof,
     }
   }
 }
@@ -156,8 +156,8 @@ export class WebProver implements ProverInferace {
       userNullifier: publicSignals[1],
       timestamp: publicSignals[2],
       pubkeyHash: publicSignals[3],
-      groth16Proof: proof,
       signalHash: witness.signalHash.value,
+      groth16Proof: proof,
     }
   }
 }

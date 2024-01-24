@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const circom_tester = require('circom_tester/wasm/tester')
 
@@ -25,7 +26,6 @@ import { buildPoseidon } from 'circomlibjs'
 describe('Test QR Verify circuit', function () {
   this.timeout(0)
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let circuit: any
 
   this.beforeAll(async () => {

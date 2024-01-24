@@ -15,6 +15,7 @@
     "dev-setup": "/bin/bash ./scripts/build.sh setup",
     "gen-proof": "/bin/bash ./scripts/build.sh gen-proof",
     "gen-witness": "/bin/bash ./scripts/build.sh gen-witness",
+    "gen-contracts": "/bin/bash ./scripts/build.sh gen-contracts",
     "verif-proof": "/bin/bash ./scripts/build.sh verify-proof",
     "bump-to": "yarn version --no-commit-hooks --no-git-tag-version --new-version"
   },

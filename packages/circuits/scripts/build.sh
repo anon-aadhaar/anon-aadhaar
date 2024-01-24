@@ -7,6 +7,7 @@ PTAU=powersOfTau28_hez_final_21.ptau
 PTAU_PATH=$BUILD_DIR/$PTAU
 CIRCUIT=$(pwd)/src
 CIRCUIR_PATH=$(pwd)/src/aadhaar-verifier.circom
+CONTRACTS_DIR=$(pwd)/../contracts/contracts
 CIRLIB_PATH=$(pwd)/node_modules
 R1CS_PATH=$BUILD_DIR/aadhaar-verifier.r1cs
 JS_BUILD_DIR=$BUILD_DIR/aadhaar-verifier_js
@@ -100,10 +101,10 @@ function setup_contract() {
     cd $ROOT
     echo "Building contracts...!"
     mkdir -p $BUILD_DIR/contracts
-    npx snarkjs zkey export solidityverifier ./build/circuit/RSA/circuit_final.zkey $BUILD_DIR/contracts/Verifier.sol
+    npx snarkjs zkey export solidityverifier $PARTIAL_ZKEYS_DIR/circuit_final.zkey $BUILD_DIR/contracts/Verifier.sol
     # Update the contract name in the Solidity verifier
     sed -i '' -e "s/contract Groth16Verifier/contract Verifier/g" $BUILD_DIR/contracts/Verifier.sol
-    cp $BUILD_DIR/contracts/Verifier.sol $CONTRACTS_DIR/contracts
+    cp $BUILD_DIR/contracts/Verifier.sol $CONTRACTS_DIR
     echo "Contracts generated!"
 }
 
@@ -141,6 +142,9 @@ case "$1" in
     gen-proof) 
         generate_proof
     ;;
+    gen-contracts) 
+        setup_contract
+    ;;
     gen-witness) 
         generate_witness
     ;;
@@ -148,6 +152,6 @@ case "$1" in
         verify_proof
     ;;
     *)
-        echo "Usage: $0 {install|build|setup|gen-proof|gen-witness|verify-proof}"
+        echo "Usage: $0 {install|build|setup|gen-proof|gen-contracts|gen-witness|verify-proof}"
     ;;
 esac
