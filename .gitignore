@@ -16,3 +16,7 @@ node_modules/.yarn-integrity
 
 build/
 dist/
+
+yarn-error.log
+sha256-var-circom
+artifacts/

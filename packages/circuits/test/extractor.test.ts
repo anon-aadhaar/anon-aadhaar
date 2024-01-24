@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import path from 'path'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -9,7 +10,7 @@ import { Uint8ArrayToCharArray } from '@zk-email/helpers/dist/binaryFormat'
 import { buildPoseidon } from 'circomlibjs'
 import pako from 'pako'
 
-import { extractPhoto } from 'anon-aadhaar-pcd'
+import { extractPhoto } from '@anon-aadhaar/core'
 import assert from 'assert'
 
 function convertBigIntToByteArray(bigInt: bigint) {
@@ -38,7 +39,7 @@ describe('Extractor testcases', function () {
 
   this.beforeAll(async () => {
     circuit = await circom_tester(
-      path.join(__dirname, './', 'circuits', 'filter_test.circom'),
+      path.join(__dirname, './', 'circuits', 'filter-test.circom'),
       {
         recompile: true,
         include: path.join(__dirname, '../node_modules'),

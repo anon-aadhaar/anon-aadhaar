@@ -1,0 +1,50 @@
+{
+  "name": "@anon-aadhaar/contracts",
+  "version": "0.1.15",
+  "description": "Verifier smart contract for Anon Aadhaar protocol",
+  "license": "MIT",
+  "scripts": {
+    "test": "npx hardhat test",
+    "build": "npx hardhat compile",
+    "lint": "eslint --ext .js,.ts .",
+    "format": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\"",
+    "test-publish": "yarn build && yarn lint && yarn test && npm publish --dry-run",
+    "publishtonpm": "yarn build && yarn lint && yarn test && npm publish",
+    "prepare": "cd ../.. && husky install",
+    "bump-to": "yarn version --no-commit-hooks --no-git-tag-version --new-version"
+  },
+  "files": [
+    "./contracts/*.sol",
+    "LICENSE",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.0",
+    "@nomicfoundation/hardhat-ethers": "^3.0.0",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.0",
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "@nomicfoundation/hardhat-verify": "^1.0.0",
+    "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers",
+    "@typechain/ethers-v6": "^0.4.0",
+    "@typechain/hardhat": "^8.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.59.5",
+    "@typescript-eslint/parser": "^6.4.1",
+    "eslint": "^8.47.0",
+    "ethers": "^6.7.1",
+    "hardhat": "^2.17.1",
+    "hardhat-gas-reporter": "^1.0.8",
+    "husky": "^8.0.3",
+    "prettier": "^3.0.3",
+    "solidity-coverage": "^0.8.1",
+    "typechain": "^8.2.0"
+  },
+  "dependencies": {
+    "@types/snarkjs": "^0.7.6",
+    "dotenv": "^16.3.1",
+    "snarkjs": "^0.7.2"
+  }
+}

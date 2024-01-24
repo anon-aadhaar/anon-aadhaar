@@ -37,11 +37,11 @@ jobs:
         run: yarn lint
 
       - name: Cache power of tau
-        id: powersOfTau28_hez_final_20
+        id: powersOfTau28_hez_final_21
         uses: actions/cache@v3
         with:
-          path: packages/circuits/build/powersOfTau28_hez_final_20.ptau
-          key: powersOfTau28_hez_final_20.ptau
+          path: packages/circuits/build/powersOfTau28_hez_final_21.ptau
+          key: powersOfTau28_hez_final_21.ptau
       - name: Cache Circom
         id: Circom
         uses: actions/cache@v3
@@ -55,7 +55,7 @@ jobs:
       - name: Get Circuit Hash
         id: get-circuit-hash
         run: |
-          echo "circuits_hash=`cd packages/circuits/scripts && ./utils.sh`" >> $GITHUB_OUTPUT
+          echo "circuits_hash=`cd packages/circuits && ./scripts/utils.sh`" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Cache proving/verify key

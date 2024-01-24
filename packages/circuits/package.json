@@ -1,19 +1,22 @@
 {
-  "name": "anon-aadhaar-circuit",
-  "version": "1.0.0",
+  "name": "@anon-aadhaar/circuits",
+  "version": "0.1.15",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "build": "echo 'no-build'",
+    "build": "echo 'no build needed'",
     "test": "npx ts-mocha test/**/*.test.ts --exit",
-    "format": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\"",
+    "format": "prettier --ignore-path ../../.prettierignore --write \"**/*.+(js|ts|json)\"",
     "lint": "echo 'no lint'",
+    "publishtonpm": "echo 'not published'",
     "circom": "circom",
+    "build-cricuit": "cd scripts && sh build.sh build",
     "dev-install": "/bin/bash ./scripts/build.sh install",
     "dev-setup": "/bin/bash ./scripts/build.sh setup",
     "gen-proof": "/bin/bash ./scripts/build.sh gen-proof",
     "gen-witness": "/bin/bash ./scripts/build.sh gen-witness",
-    "verif-proof": "/bin/bash ./scripts/build.sh verify-proof"
+    "verif-proof": "/bin/bash ./scripts/build.sh verify-proof",
+    "bump-to": "yarn version --no-commit-hooks --no-git-tag-version --new-version"
   },
   "dependencies": {
     "@zk-email/helpers": "^3.0.2",

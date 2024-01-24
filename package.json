@@ -1,22 +1,24 @@
 {
-  "name": "country-identity-packages",
+  "name": "anon-aadhaar",
   "version": "0.1.15",
   "description": "A set of tools to anonymously prove your identity",
   "main": "index.js",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "build:libraries": "yarn workspaces run build",
     "test-publish:libraries": "yarn workspaces run test-publish",
-    "publish:libraries": "yarn workspace anon-aadhaar-pcd run publishtonpm && yarn workspace anon-aadhaar-react run publishtonpm && yarn workspace anon-aadhaar-contracts run publishtonpm",
+    "publish:libraries": "yarn workspaces run publishtonpm",
     "test:libraries": "yarn workspaces run test",
-    "postversion": "yarn workspace anon-aadhaar-pcd version --new-version $npm_package_version --no-git-tag-version && yarn workspace anon-aadhaar-react version --new-version $npm_package_version --no-git-tag-version && yarn workspace anon-aadhaar-contracts version --new-version $npm_package_version --no-git-tag-version",
+    "bump": "yarn version --no-commit-hooks --no-git-tag-version",
+    "version": "yarn workspaces run bump-to $npm_package_version",
     "lint": "yarn workspaces run lint",
     "prepare": "husky install",
-    "dev-install:circuit": "yarn workspace anon-aadhaar-circuit run dev-install",
-    "dev-setup:circuit": "yarn workspace anon-aadhaar-circuit run dev-setup",
-    "witness:circuit": "yarn workspace anon-aadhaar-circuit run gen-witness",
-    "proof:circuit": "yarn workspace anon-aadhaar-circuit run gen-proof",
-    "verif:circuit": "yarn workspace anon-aadhaar-circuit run verif-proof"
+    "dev-install:circuit": "yarn workspace @anon-aadhaar/circuits run dev-install",
+    "dev-setup:circuit": "yarn workspace @anon-aadhaar/circuits run dev-setup",
+    "witness:circuit": "yarn workspace @anon-aadhaar/circuits run gen-witness",
+    "proof:circuit": "yarn workspace @anon-aadhaar/circuits run gen-proof",
+    "verif:circuit": "yarn workspace @anon-aadhaar/circuits run verif-proof"
   },
   "repository": {
     "type": "git",
@@ -30,13 +32,24 @@
       "**/circomlib"
     ]
   },
-  "author": "",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/privacy-scaling-explorations/anon-aadhaar/issues"
   },
   "homepage": "https://github.com/privacy-scaling-explorations/anon-aadhaar#readme",
   "devDependencies": {
     "husky": "^8.0.0"
-  }
+  },
+  "keywords": [
+    "ethereum",
+    "anon-aadhaar",
+    "solidity",
+    "circom",
+    "javascript",
+    "typescript",
+    "zero-knowledge",
+    "zk-snarks",
+    "zero-knowledge-proofs",
+    "proof-of-identity",
+    "monorepo"
+  ]
 }
