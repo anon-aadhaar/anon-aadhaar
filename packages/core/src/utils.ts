@@ -1,7 +1,7 @@
 import { Proof } from './types'
 import { groth16, Groth16Proof, ZKArtifact } from 'snarkjs'
 import { BigNumberish } from './types'
-import { AnonAadhaarPCD } from './pcd'
+import { AnonAadhaarPCD } from './core'
 import pako from 'pako'
 
 export const handleError = (error: unknown, defaultMessage: string): Error => {

@@ -1,5 +1,5 @@
 import { describe } from 'mocha'
-import { PCDInitArgs, init, verify } from '@anon-aadhaar/core'
+import { InitArgs, init, verify } from '@anon-aadhaar/core'
 import { assert } from 'chai'
 import { processArgs, proveAndSerialize } from '../src/prove'
 
@@ -11,7 +11,7 @@ describe('PCD tests', function () {
 
   it('PCD flow web prover', async function () {
     const artifactsDirName = __dirname + '/../../circuits/artifacts'
-    const pcdInitArgs: PCDInitArgs = {
+    const pcdInitArgs: InitArgs = {
       wasmURL: artifactsDirName + '/aadhaar-verifier.wasm',
       zkeyURL: artifactsDirName + '/circuit_final.zkey',
       vkeyURL: artifactsDirName + '/vkey.json',

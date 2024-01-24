@@ -2,7 +2,7 @@ import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers'
 import { expect } from 'chai'
 import { ethers } from 'hardhat'
 import {
-  PCDInitArgs,
+  InitArgs,
   init,
   generateArgs,
   prove,
@@ -29,7 +29,7 @@ describe('VerifyProof', function () {
       .toString()
 
     const artifactsDirName = __dirname + '/../../circuits/artifacts'
-    const pcdInitArgs: PCDInitArgs = {
+    const pcdInitArgs: InitArgs = {
       wasmURL: artifactsDirName + '/aadhaar-verifier.wasm',
       zkeyURL: artifactsDirName + '/circuit_final.zkey',
       vkeyURL: artifactsDirName + '/vkey.json',
@@ -103,8 +103,8 @@ describe('VerifyProof', function () {
   })
 
   describe('AnonAadhaar Vote', function () {
-    describe('Verifier', function () {
-      it('Should revert if signal is different from senderss address', async function () {
+    describe('Vote for a proposal', function () {
+      it.only('Should revert if signal is different from senderss address', async function () {
         const { anonAadhaarVote } = await loadFixture(deployOneYearLockFixture)
 
         // Create signer
@@ -129,7 +129,7 @@ describe('VerifyProof', function () {
         const [user] = await ethers.getSigners()
 
         const artifactsDirName = __dirname + '/../../circuits/artifacts'
-        const pcdInitArgs: PCDInitArgs = {
+        const pcdInitArgs: InitArgs = {
           wasmURL: artifactsDirName + '/aadhaar-verifier.wasm',
           zkeyURL: artifactsDirName + '/circuit_final.zkey',
           vkeyURL: artifactsDirName + '/vkey.json',

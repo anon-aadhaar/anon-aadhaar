@@ -9,7 +9,7 @@ import {
 } from '../src/hooks/useAnonAadhaar'
 import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
 import { Uint8ArrayToCharArray } from '@zk-email/helpers/dist/binaryFormat'
-import { AnonAadhaarPCDArgs, splitToWords } from '@anon-aadhaar/core'
+import { AnonAadhaarArgs, splitToWords } from '@anon-aadhaar/core'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import { AnonAadhaarProvider } from '../src/provider/AnonAadhaarProvider'
 import { genData } from '../../core/test/utils'
@@ -23,10 +23,11 @@ describe('useCountryIdentity Hook', () => {
     const signedData = 'Hello-world'
 
     testData = await genData(signedData, 'SHA-256')
-    ;[paddedMsg, messageLen] = sha256Pad(
+
+    return ([paddedMsg, messageLen] = sha256Pad(
       Buffer.from(signedData, 'ascii'),
       512 * 3,
-    )
+    ))
   })
 
   it('returns initial state and startReq function', () => {
@@ -56,7 +57,7 @@ describe('useCountryIdentity Hook', () => {
   })
 
   it('returns updated state when request sent', () => {
-    const pcdArgs: AnonAadhaarPCDArgs = {
+    const pcdArgs: AnonAadhaarArgs = {
       aadhaarData: {
         argumentType: ArgumentTypeName.StringArray,
         value: Uint8ArrayToCharArray(paddedMsg),
@@ -72,6 +73,10 @@ describe('useCountryIdentity Hook', () => {
       pubKey: {
         argumentType: ArgumentTypeName.StringArray,
         value: splitToWords(testData[2], BigInt(64), BigInt(32)),
+      },
+      signalHash: {
+        argumentType: ArgumentTypeName.String,
+        value: '1',
       },
     }
 
@@ -94,7 +99,7 @@ describe('useCountryIdentity Hook', () => {
   })
 })
 
-function TestComponent({ pcdArgs }: { pcdArgs: AnonAadhaarPCDArgs }) {
+function TestComponent({ pcdArgs }: { pcdArgs: AnonAadhaarArgs }) {
   const [state, startReq] = useAnonAadhaar()
 
   return (

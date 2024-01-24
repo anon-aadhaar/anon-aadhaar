@@ -1,6 +1,6 @@
 import { describe } from 'mocha'
-import { PCDInitArgs } from '../src/types'
-import { init, prove, verify } from '../src/pcd'
+import { InitArgs } from '../src/types'
+import { init, prove, verify } from '../src/core'
 import { assert } from 'chai'
 import { VK_URL, WASM_URL, ZKEY_URL, generateArgs } from '../src'
 import fs from 'fs'
@@ -21,7 +21,7 @@ describe('PCD tests', function () {
 
   it('PCD flow location prover', async function () {
     const artifactsDirName = __dirname + '/../../circuits/artifacts'
-    const pcdInitArgs: PCDInitArgs = {
+    const pcdInitArgs: InitArgs = {
       wasmURL: artifactsDirName + '/aadhaar-verifier.wasm',
       zkeyURL: artifactsDirName + '/circuit_final.zkey',
       vkeyURL: artifactsDirName + '/vkey.json',
@@ -39,7 +39,7 @@ describe('PCD tests', function () {
   })
 
   it('PCD flow web prover', async function () {
-    const pcdInitArgs: PCDInitArgs = {
+    const pcdInitArgs: InitArgs = {
       wasmURL: WASM_URL,
       zkeyURL: ZKEY_URL,
       vkeyURL: VK_URL,

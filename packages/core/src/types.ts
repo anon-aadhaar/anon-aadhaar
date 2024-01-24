@@ -7,9 +7,9 @@ import { Groth16Proof } from 'snarkjs'
 
 export type BigNumberish = string | bigint
 
-export const AnonAadhaarPCDTypeName = 'anon-aadhaar-pcd'
+export const AnonAadhaarTypeName = 'anon-aadhaar'
 
-export interface PCDInitArgs {
+export interface InitArgs {
   // TODO: how do we distribute these in-package, so that consumers
   // of the package don't have to copy-paste these artifacts?
   // TODO: how do we account for different versions of the same type
@@ -25,14 +25,15 @@ export interface PCDInitArgs {
 /**
  * @dev claim this public key signed a message
  */
-export type AnonAadhaarPCDClaim = {
+export type AnonAadhaarClaim = {
   pubKey: string[]
+  signalHash: string
 }
 
 /**
  * @dev proof of claim correct
  */
-export type AnonAadhaarPCDProof = {
+export type AnonAadhaarProof = {
   groth16Proof: Groth16Proof // 3 points on curve if we use groth16
   identityNullifier: string
   userNullifier: string
@@ -44,7 +45,7 @@ export type AnonAadhaarPCDProof = {
 /**
  * @dev witness use for create zk proof of AnonAadhaarPCD package.
  */
-export type AnonAadhaarPCDArgs = {
+export type AnonAadhaarArgs = {
   aadhaarData: StringArrayArgument // private
   aadhaarDataLength: NumberArgument // private
   signature: StringArrayArgument // private

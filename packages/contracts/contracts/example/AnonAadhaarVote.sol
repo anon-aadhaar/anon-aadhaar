@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.4;
 
-import "../interfaces/IAnonAadhaar.sol";
-import "../interfaces/IAnonAadhaarVote.sol";
+import "../../interfaces/IAnonAadhaar.sol";
+import "../../interfaces/IAnonAadhaarVote.sol";
 
 contract AnonAadhaarVote is IAnonAadhaarVote {
     string public votingQuestion;
@@ -44,7 +44,6 @@ contract AnonAadhaarVote is IAnonAadhaarVote {
         require(addressToUint256(msg.sender) == signal, "[AnonAadhaarVote]: wrong signal sent.");
         // Verify the proof
         require(IAnonAadhaar(anonAadhaarVerifierAddr).verifyProof(a, b, c, _pubInputs, signal) == true, "[AnonAadhaarVote]: proof sent is not valid.");
-
         // Check that user hasn't already voted.
         // _pubSignals[1] refers to userNullifier
         require(!hasVoted[_pubInputs[1]], "[AnonAadhaarVote]: User has already voted");

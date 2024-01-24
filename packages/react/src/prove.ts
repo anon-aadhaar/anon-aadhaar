@@ -1,9 +1,9 @@
 import { SerializedPCD } from '@pcd/pcd-types'
 import {
   prove,
-  AnonAadhaarPCDArgs,
+  AnonAadhaarArgs,
   serialize,
-  AnonAadhaarPCD,
+  AnonAadhaarCore,
   generateArgs,
   handleError,
 } from '@anon-aadhaar/core'
@@ -21,10 +21,10 @@ import { fetchCertificateFile } from './util'
  *   For more information about the underlying circuit and proving system.
  */
 export const proveAndSerialize = async (
-  pcdArgs: AnonAadhaarPCDArgs,
+  pcdArgs: AnonAadhaarArgs,
 ): Promise<{
-  pcd: AnonAadhaarPCD
-  serialized: SerializedPCD<AnonAadhaarPCD>
+  pcd: AnonAadhaarCore
+  serialized: SerializedPCD<AnonAadhaarCore>
 }> => {
   const pcd = await prove(pcdArgs)
   const serialized = await serialize(pcd)
@@ -44,7 +44,7 @@ export const proveAndSerialize = async (
 export const processArgs = async (
   qrData: string,
   useTestAadhaar: boolean,
-): Promise<AnonAadhaarPCDArgs> => {
+): Promise<AnonAadhaarArgs> => {
   let certificate: string | null = null
   try {
     certificate = await fetchCertificateFile(
