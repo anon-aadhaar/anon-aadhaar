@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.19;
 
 import "../interfaces/IAnonAadhaarVerifier.sol";
 import "../interfaces/IAnonAadhaar.sol";
@@ -33,20 +33,20 @@ contract AnonAadhaar is IAnonAadhaar {
     /// @param a: Public key received.
     /// @param b: Public key received.
     /// @param c: Public key received.
-    /// @param input: Public key received.
+    /// @param publicInputs: Public key received.
     /// @param signal: Public key received.
     /// @return Verified bool
-    function verifyProof(
+    function verifyAnonAadhaarProof(
         uint[2] calldata a,
         uint[2][2] calldata b,
         uint[2] calldata c,
-        uint[5] calldata input,
+        uint[5] calldata publicInputs,
         uint256 signal
     ) public view returns (bool) {
         // Verifying that the pubkey is corresponding to UIDAI public key
-        require(verifyPublicKey(input[3]) == true, "[AnonAadhaarVerifier]: wrong issuer public key");
-        require(verifySignalHash(signal ,input[4]) == true, "[AnonAadhaarVerifier]: wrong signal received");
-        return IAnonAadhaarVerifier(verifier).verifyProof(a, b, c, input);
+        require(verifyPublicKey(publicInputs[3]) == true, "[AnonAadhaarVerifier]: wrong issuer public key");
+        require(verifySignalHash(signal ,publicInputs[4]) == true, "[AnonAadhaarVerifier]: wrong signal received");
+        return IAnonAadhaarVerifier(verifier).verifyProof(a, b, c, publicInputs);
     }
 
     /// @dev Creates a keccak256 hash of a message compatible with the SNARK scalar modulus.

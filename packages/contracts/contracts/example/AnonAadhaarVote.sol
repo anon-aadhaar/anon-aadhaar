@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.19;
 
 import "../../interfaces/IAnonAadhaar.sol";
 import "../../interfaces/IAnonAadhaarVote.sol";
@@ -25,31 +25,29 @@ contract AnonAadhaarVote is IAnonAadhaarVote {
     }
 
     /// @dev Convert an address to uint256, used to check against signal.
-    /// @param _addr: Public key received.
+    /// @param _addr: msg.sender address.
     /// @return Address msg.sender's address in uint256
     function addressToUint256(address _addr) private pure returns (uint256) {
         return uint256(uint160(_addr));
     }
 
-    /// @dev Verifies that the proof received is corresponding with the one stored in the contract.
+    /// @dev Register a vote in the contract.
     /// @param proposalIndex: Index of the proposal you want to vote for.
     /// @param a: a.
     /// @param b: b.
     /// @param c: c.
-    /// @param _pubInputs: Public Inputs .
-    /// @param signal: signal used while generating the proof, should be = to msg.sender.
-    function voteForProposal(uint256 proposalIndex, uint256[2] calldata a, uint[2][2] calldata b, uint[2] calldata c, uint[5] calldata _pubInputs, uint256 signal) public {
-        require(proposalIndex < proposals.length, "Invalid proposal index");
-        // Check that the user hasn't voted
-        require(addressToUint256(msg.sender) == signal, "[AnonAadhaarVote]: wrong signal sent.");
-        // Verify the proof
-        require(IAnonAadhaar(anonAadhaarVerifierAddr).verifyProof(a, b, c, _pubInputs, signal) == true, "[AnonAadhaarVote]: proof sent is not valid.");
-        // Check that user hasn't already voted.
+    /// @param publicInputs: Public Inputs .
+    /// @param signal: signal used while generating the proof, should be equal to msg.sender.
+    function voteForProposal(uint256 proposalIndex, uint256[2] calldata a, uint[2][2] calldata b, uint[2] calldata c, uint[5] calldata publicInputs, uint256 signal) public {
+        require(proposalIndex < proposals.length, "[AnonAadhaarVote]: Invalid proposal index");
+        require(addressToUint256(msg.sender) == signal, "[AnonAadhaarVote]: wrong user signal sent.");
+        require(IAnonAadhaar(anonAadhaarVerifierAddr).verifyAnonAadhaarProof(a, b, c, publicInputs, signal) == true, "[AnonAadhaarVote]: proof sent is not valid.");
+        // Check that user hasn't already voted
         // _pubSignals[1] refers to userNullifier
-        require(!hasVoted[_pubInputs[1]], "[AnonAadhaarVote]: User has already voted");
+        require(!hasVoted[publicInputs[1]], "[AnonAadhaarVote]: User has already voted");
 
         proposals[proposalIndex].voteCount++;
-        hasVoted[_pubInputs[1]] = true;
+        hasVoted[publicInputs[1]] = true;
 
         emit Voted(msg.sender, proposalIndex);
     }
@@ -61,7 +59,7 @@ contract AnonAadhaarVote is IAnonAadhaarVote {
 
     // Function to get proposal information by index
     function getProposal(uint256 proposalIndex) public view returns (string memory, uint256) {
-        require(proposalIndex < proposals.length, "Invalid proposal index");
+        require(proposalIndex < proposals.length, "[AnonAadhaarVote]: Invalid proposal index");
 
         Proposal memory proposal = proposals[proposalIndex];
         return (proposal.description, proposal.voteCount);
