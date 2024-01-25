@@ -5,12 +5,12 @@ require('dotenv').config()
 
 const config: HardhatUserConfig = {
   solidity: '0.8.19',
-  networks: {
-    goerli: {
-      url: 'https://ethereum-goerli.publicnode.com',
-      accounts: [process.env.PRIVATE_KEY || ''],
-    },
-  },
+  // networks: {
+  //   goerli: {
+  //     url: 'https://ethereum-goerli.publicnode.com',
+  //     accounts: [process.env.PRIVATE_KEY || ''],
+  //   },
+  // },
 }
 
 export default config

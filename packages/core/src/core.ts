@@ -54,7 +54,7 @@ export async function prove(args: AnonAadhaarArgs): Promise<AnonAadhaarCore> {
 
   const id = uuidv4()
 
-  const pcdClaim: AnonAadhaarClaim = {
+  const anonAadhaarClaim: AnonAadhaarClaim = {
     pubKey: args.pubKey.value,
     signalHash: args.signalHash.value,
   }
@@ -67,9 +67,9 @@ export async function prove(args: AnonAadhaarArgs): Promise<AnonAadhaarCore> {
     prover = new BackendProver(initArgs.wasmURL, initArgs.zkeyURL)
   }
 
-  const pcdProof = await prover.proving(args)
+  const anonAadhaarProof = await prover.proving(args)
 
-  return new AnonAadhaarCore(id, pcdClaim, pcdProof)
+  return new AnonAadhaarCore(id, anonAadhaarClaim, anonAadhaarProof)
 }
 
 async function getVerifyKey() {

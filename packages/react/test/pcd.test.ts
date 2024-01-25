@@ -11,20 +11,20 @@ describe('PCD tests', function () {
 
   it('PCD flow web prover', async function () {
     const artifactsDirName = __dirname + '/../../circuits/artifacts'
-    const pcdInitArgs: InitArgs = {
+    const anonAadhaarInitArgs: InitArgs = {
       wasmURL: artifactsDirName + '/aadhaar-verifier.wasm',
       zkeyURL: artifactsDirName + '/circuit_final.zkey',
       vkeyURL: artifactsDirName + '/vkey.json',
       isWebEnv: false,
     }
 
-    await init(pcdInitArgs)
+    await init(anonAadhaarInitArgs)
 
     const args = await processArgs(testQRData, true)
 
     const result = await proveAndSerialize(args)
 
-    const verified = await verify(result.pcd)
+    const verified = await verify(result.anonAadhaarProof)
     assert(verified == true, 'Should verifiable')
   })
 })

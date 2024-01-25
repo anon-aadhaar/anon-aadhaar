@@ -37,10 +37,10 @@ export function AnonAadhaarProvider(props: {
   _fetchArtifactsFromServer?: boolean
 }) {
   // Read state from local storage on page load
-  const [pcdStr, setPcdStr] = useState<SerializedPCD<AnonAadhaarCore> | null>(
-    null,
-  )
-  const [pcd, setPcd] = useState<AnonAadhaarCore | null>(null)
+  const [anonAadhaarProofStr, setAnonAadhaarProofStr] =
+    useState<SerializedPCD<AnonAadhaarCore> | null>(null)
+  const [anonAadhaarProof, setAnonAadhaarProof] =
+    useState<AnonAadhaarCore | null>(null)
   const [useTestAadhaar, setUseTestAadhaar] = useState<boolean>(true)
   const [isWeb, setIsWeb] = useState<boolean>(true)
   const [state, setState] = useState<AnonAadhaarState>({
@@ -55,14 +55,14 @@ export function AnonAadhaarProvider(props: {
   }, [])
 
   useEffect(() => {
-    const pcdInitArgs: InitArgs = {
+    const anonAadhaarInitArgs: InitArgs = {
       wasmURL: isWeb ? WASM_URL : '/aadhaar-verifier.wasm',
       zkeyURL: isWeb ? ZKEY_URL : '/circuit_final.zkey',
       vkeyURL: isWeb ? VK_URL : '/vkey.json',
       isWebEnv: isWeb,
     }
 
-    init(pcdInitArgs)
+    init(anonAadhaarInitArgs)
       .then()
       .catch(e => {
         throw Error(e)
@@ -80,29 +80,33 @@ export function AnonAadhaarProvider(props: {
   const startReq = React.useCallback(
     (request: AnonAadhaarRequest) => {
       console.log(`[ANON-AADHAAR] startReq ${shallowToString(request)}`)
-      setAndWriteState(handleLoginReq(request, setPcdStr, setPcd))
+      setAndWriteState(
+        handleLoginReq(request, setAnonAadhaarProofStr, setAnonAadhaarProof),
+      )
     },
-    [setAndWriteState, setPcdStr, setPcd],
+    [setAndWriteState, setAnonAadhaarProofStr, setAnonAadhaarProof],
   )
 
   // Receive PCD from proving component
   React.useEffect(() => {
-    if (pcdStr === null || pcd === null) return
-    console.log(`[ANON-AADHAAR] trying to log in with ${pcdStr}`)
-    handleLogin(state, pcdStr, pcd, isWeb)
+    if (anonAadhaarProofStr === null || anonAadhaarProof === null) return
+    console.log(`[ANON-AADHAAR] trying to log in with ${anonAadhaarProofStr}`)
+    handleLogin(state, anonAadhaarProofStr, anonAadhaarProof, isWeb)
       .then(newState => {
         if (newState) setAndWriteState(newState)
         else
-          console.log(`[ANON-AADHAAR] ${state.status}, ignoring pcd: ${pcdStr}`)
+          console.log(
+            `[ANON-AADHAAR] ${state.status}, ignoring anonAadhaarProof: ${anonAadhaarProofStr}`,
+          )
       })
       .catch((e: unknown) => {
         setAndWriteState({ status: 'logged-out' })
         console.error(e)
         console.error(
-          `[ANON-AADHAAR] error logging in, ignoring pcd: ${pcdStr}`,
+          `[ANON-AADHAAR] error logging in, ignoring anonAadhaarProof: ${anonAadhaarProofStr}`,
         )
       })
-  }, [pcdStr])
+  }, [anonAadhaarProofStr])
 
   // Provide context
   const val = React.useMemo(
@@ -140,8 +144,8 @@ export function serialize(state: AnonAadhaarState): string {
   if (status === 'logged-in') {
     serState = {
       status,
-      serializedPCD: state.serializedPCD,
-      pcd: state.pcd,
+      serializedPCD: state.serializedAnonAadhaarProof,
+      anonAadhaarProof: state.anonAadhaarProof,
     }
   } else {
     serState = {
@@ -170,10 +174,10 @@ export async function parseAndValidate(
   }
 
   // Parse and validate PCD and accompanying metadata.
-  const { status, serializedPCD, pcd } = stored
+  const { status, serializedPCD, anonAadhaarProof } = stored
   if (serializedPCD == null) {
     throw new Error(`Missing serialized PCD`)
-  } else if (pcd == null) {
+  } else if (anonAadhaarProof == null) {
     throw new Error(`Missing PCD`)
   } else if (serializedPCD.type !== AnonAadhaarCorePackage.name) {
     throw new Error(`Invalid PCD type ${serializedPCD.type}`)
@@ -181,8 +185,10 @@ export async function parseAndValidate(
 
   return {
     status,
-    pcd: await AnonAadhaarCorePackage.deserialize(serializedPCD.pcd),
-    serializedPCD: serializedPCD,
+    anonAadhaarProof: await AnonAadhaarCorePackage.deserialize(
+      serializedPCD.anonAadhaarProof,
+    ),
+    serializedAnonAadhaarProof: serializedPCD,
   }
 }
 
@@ -200,8 +206,10 @@ function shallowToString(obj: unknown) {
 /** Start a login request. Returns a `logging-in` state */
 function handleLoginReq(
   request: AnonAadhaarRequest,
-  setPcdStr: Dispatch<SetStateAction<SerializedPCD<AnonAadhaarCore> | null>>,
-  setPcd: Dispatch<SetStateAction<AnonAadhaarCore | null>>,
+  setAnonAadhaarStr: Dispatch<
+    SetStateAction<SerializedPCD<AnonAadhaarCore> | null>
+  >,
+  setAnonAadhaar: Dispatch<SetStateAction<AnonAadhaarCore | null>>,
 ): AnonAadhaarState {
   const { type } = request
   switch (type) {
@@ -210,14 +218,14 @@ function handleLoginReq(
         const { args } = request
         proveAndSerialize(args).then(
           ({
-            pcd,
+            anonAadhaarProof,
             serialized,
           }: {
-            pcd: AnonAadhaarCore
+            anonAadhaarProof: AnonAadhaarCore
             serialized: SerializedPCD<AnonAadhaarCore>
           }) => {
-            setPcdStr(serialized)
-            setPcd(pcd)
+            setAnonAadhaarStr(serialized)
+            setAnonAadhaar(anonAadhaarProof)
           },
         )
       } catch (error) {
@@ -236,8 +244,8 @@ function handleLoginReq(
 /** Returns either a `logged-in` state, null to ignore, or throws on error. */
 async function handleLogin(
   state: AnonAadhaarState,
-  pcdStr: SerializedPCD<AnonAadhaarCore>,
-  _pcd: AnonAadhaarCore,
+  _anonAadhaarProofStr: SerializedPCD<AnonAadhaarCore>,
+  _anonAadhaarProof: AnonAadhaarCore,
   isWeb: boolean,
 ): Promise<AnonAadhaarState | null> {
   if (state.status !== 'logging-in') {
@@ -248,18 +256,18 @@ async function handleLogin(
   }
 
   if (isWeb) {
-    if (!(await AnonAadhaarCorePackage.verify(_pcd))) {
+    if (!(await AnonAadhaarCorePackage.verify(_anonAadhaarProof))) {
       throw new Error('Invalid proof')
     }
   } else {
-    if (!(await verifyLocal(_pcd))) {
+    if (!(await verifyLocal(_anonAadhaarProof))) {
       throw new Error('Invalid proof')
     }
   }
 
   return {
     status: 'logged-in',
-    serializedPCD: pcdStr,
-    pcd: _pcd,
+    serializedAnonAadhaarProof: _anonAadhaarProofStr,
+    anonAadhaarProof: _anonAadhaarProof,
   }
 }

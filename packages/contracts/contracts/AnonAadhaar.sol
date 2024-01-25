@@ -13,14 +13,14 @@ contract AnonAadhaar is IAnonAadhaar {
         pubkeyHash = _pubkeyHash;
     }
 
-    /// @dev Verifies that the public received is corresponding with the one stored in the contract.
+    /// @dev Verifies that the public key received is corresponding with the one stored in the contract.
     /// @param _receivedpubkeyHash: Public key received.
     /// @return Verified bool
     function verifyPublicKey(uint256 _receivedpubkeyHash) private view returns (bool) {
         return pubkeyHash == _receivedpubkeyHash;
     }
 
-    /// @dev Verifies that the signal received is corresponding with the used in proof generation.
+    /// @dev Verifies that the signal received is corresponding with the one used in proof generation.
     /// @param _receivedSignal: Signal received.
     /// @param signalHash: Hash of the signal from Proof.
     /// @return Verified bool
@@ -30,11 +30,11 @@ contract AnonAadhaar is IAnonAadhaar {
     }
 
     /// @dev Verifies the proof received.
-    /// @param a: Public key received.
-    /// @param b: Public key received.
-    /// @param c: Public key received.
-    /// @param publicInputs: Public key received.
-    /// @param signal: Public key received.
+    /// @param a: a.
+    /// @param b: b.
+    /// @param c: c.
+    /// @param publicInputs: Public inputs.
+    /// @param signal: Signal.
     /// @return Verified bool
     function verifyAnonAadhaarProof(
         uint[2] calldata a,
@@ -43,7 +43,7 @@ contract AnonAadhaar is IAnonAadhaar {
         uint[5] calldata publicInputs,
         uint256 signal
     ) public view returns (bool) {
-        // Verifying that the pubkey is corresponding to UIDAI public key
+        // Verifying that the pubkey is corresponding to the UIDAI public key
         require(verifyPublicKey(publicInputs[3]) == true, "[AnonAadhaarVerifier]: wrong issuer public key");
         require(verifySignalHash(signal ,publicInputs[4]) == true, "[AnonAadhaarVerifier]: wrong signal received");
         return IAnonAadhaarVerifier(verifier).verifyProof(a, b, c, publicInputs);

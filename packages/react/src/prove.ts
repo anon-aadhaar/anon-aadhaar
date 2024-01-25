@@ -14,22 +14,22 @@ import { fetchCertificateFile } from './util'
  * It takes an IdentityPCDArgs argument and returns a Promise containing the generated IdentityPCD and its
  * serialized form (SerializedPCD).
  *
- * @param pcdArgs - The arguments required to generate the IdentityPCD.
+ * @param AnonAadhaarArgs - The arguments required to generate the IdentityPCD.
  * @returns A Promise containing the generated IdentityPCD and its serialized form.
  *
  * @see {@link https://github.com/privacy-scaling-explorations/anon-aadhaar}
  *   For more information about the underlying circuit and proving system.
  */
 export const proveAndSerialize = async (
-  pcdArgs: AnonAadhaarArgs,
+  anonAadhaarArgs: AnonAadhaarArgs,
 ): Promise<{
-  pcd: AnonAadhaarCore
+  anonAadhaarProof: AnonAadhaarCore
   serialized: SerializedPCD<AnonAadhaarCore>
 }> => {
-  const pcd = await prove(pcdArgs)
-  const serialized = await serialize(pcd)
+  const anonAadhaarProof = await prove(anonAadhaarArgs)
+  const serialized = await serialize(anonAadhaarProof)
 
-  return { pcd, serialized }
+  return { anonAadhaarProof, serialized }
 }
 
 /**

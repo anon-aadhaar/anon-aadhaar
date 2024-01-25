@@ -21,38 +21,38 @@ describe('PCD tests', function () {
 
   it('PCD flow location prover', async function () {
     const artifactsDirName = __dirname + '/../../circuits/artifacts'
-    const pcdInitArgs: InitArgs = {
+    const anonAadhaarInitArgs: InitArgs = {
       wasmURL: artifactsDirName + '/aadhaar-verifier.wasm',
       zkeyURL: artifactsDirName + '/circuit_final.zkey',
       vkeyURL: artifactsDirName + '/vkey.json',
       isWebEnv: false,
     }
 
-    await init(pcdInitArgs)
+    await init(anonAadhaarInitArgs)
 
     const args = await generateArgs(testQRData, certificate)
 
-    const pcd = await prove(args)
+    const anonAadhaarProof = await prove(args)
 
-    const verified = await verify(pcd)
+    const verified = await verify(anonAadhaarProof)
     assert(verified == true, 'Should be verified')
   })
 
   it('PCD flow web prover', async function () {
-    const pcdInitArgs: InitArgs = {
+    const anonAadhaarInitArgs: InitArgs = {
       wasmURL: WASM_URL,
       zkeyURL: ZKEY_URL,
       vkeyURL: VK_URL,
       isWebEnv: true,
     }
 
-    await init(pcdInitArgs)
+    await init(anonAadhaarInitArgs)
 
     const args = await generateArgs(testQRData, certificate)
 
-    const pcd = await prove(args)
+    const anonAadhaarProof = await prove(args)
 
-    const verified = await verify(pcd)
+    const verified = await verify(anonAadhaarProof)
 
     assert(verified == true, 'Should be verified')
   })

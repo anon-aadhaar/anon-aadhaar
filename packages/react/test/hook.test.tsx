@@ -57,7 +57,7 @@ describe('useCountryIdentity Hook', () => {
   })
 
   it('returns updated state when request sent', () => {
-    const pcdArgs: AnonAadhaarArgs = {
+    const anonAadhaarArgs: AnonAadhaarArgs = {
       aadhaarData: {
         argumentType: ArgumentTypeName.StringArray,
         value: Uint8ArrayToCharArray(paddedMsg),
@@ -82,7 +82,7 @@ describe('useCountryIdentity Hook', () => {
 
     render(
       <AnonAadhaarProvider>
-        <TestComponent pcdArgs={pcdArgs} />
+        <TestComponent anonAadhaarArgs={anonAadhaarArgs} />
       </AnonAadhaarProvider>,
     )
 
@@ -99,13 +99,19 @@ describe('useCountryIdentity Hook', () => {
   })
 })
 
-function TestComponent({ pcdArgs }: { pcdArgs: AnonAadhaarArgs }) {
+function TestComponent({
+  anonAadhaarArgs,
+}: {
+  anonAadhaarArgs: AnonAadhaarArgs
+}) {
   const [state, startReq] = useAnonAadhaar()
 
   return (
     <div>
       <span data-testid="status">{state.status}</span>
-      <button onClick={() => startReq({ type: 'login', args: pcdArgs })}>
+      <button
+        onClick={() => startReq({ type: 'login', args: anonAadhaarArgs })}
+      >
         Trigger Login
       </button>
     </div>

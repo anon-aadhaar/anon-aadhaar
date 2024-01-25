@@ -12,7 +12,7 @@ contract AnonAadhaarVote is IAnonAadhaarVote {
     Proposal[] public proposals;
 
     // Mapping to track if a nullifier has already voted
-    // userNullifier can be accesses in _pubInputs => _pubInputs[1]
+    // userNullifier can be accessed in _pubInputs => _pubInputs[1]
     mapping(uint256 => bool) public hasVoted;
 
     // Constructor to initialize proposals
@@ -36,7 +36,7 @@ contract AnonAadhaarVote is IAnonAadhaarVote {
     /// @param a: a.
     /// @param b: b.
     /// @param c: c.
-    /// @param publicInputs: Public Inputs .
+    /// @param publicInputs: Public Inputs.
     /// @param signal: signal used while generating the proof, should be equal to msg.sender.
     function voteForProposal(uint256 proposalIndex, uint256[2] calldata a, uint[2][2] calldata b, uint[2] calldata c, uint[5] calldata publicInputs, uint256 signal) public {
         require(proposalIndex < proposals.length, "[AnonAadhaarVote]: Invalid proposal index");

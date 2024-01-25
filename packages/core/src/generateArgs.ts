@@ -55,7 +55,7 @@ export const generateArgs = async (
   // Set signal to 1 by default if no signal setted up
   const signalHash = signal ? hash(signal) : hash(1)
 
-  const pcdArgs: AnonAadhaarArgs = {
+  const anonAadhaarArgs: AnonAadhaarArgs = {
     aadhaarData: {
       argumentType: ArgumentTypeName.StringArray,
       value: Uint8ArrayToCharArray(paddedMessage),
@@ -78,5 +78,5 @@ export const generateArgs = async (
     },
   }
 
-  return pcdArgs
+  return anonAadhaarArgs
 }
