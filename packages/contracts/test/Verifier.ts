@@ -12,16 +12,7 @@ import {
   VK_URL,
 } from '../../core/src'
 import fs from 'fs'
-import {
-  BaseContract,
-  BigNumberish,
-  Contract,
-  ContractTransactionResponse,
-} from 'ethers'
-
-type BaseContractT = BaseContract & {
-  deploymentTransaction(): ContractTransactionResponse
-} & Omit<Contract, keyof BaseContract>
+import { BigNumberish } from 'ethers'
 
 describe('VerifyProof', function () {
   this.timeout(0)
@@ -129,14 +120,9 @@ describe('VerifyProof', function () {
         const [, , user2] = await ethers.getSigners()
 
         await expect(
-          (anonAadhaarVote.connect(user2) as BaseContractT).voteForProposal(
-            1,
-            a,
-            b,
-            c,
-            publicInputs,
-            user1addres,
-          ),
+          (
+            anonAadhaarVote.connect(user2) as typeof anonAadhaarVote
+          ).voteForProposal(1, a, b, c, publicInputs, user1addres),
         ).to.be.revertedWith('[AnonAadhaarVote]: wrong user signal sent.')
       })
 

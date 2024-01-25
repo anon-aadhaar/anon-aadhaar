@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "test": "npx hardhat test",
-    "test-gas": "REPORT_GAS=true npx hardhat test",
+    "test:gas": "REPORT_GAS=true npx hardhat test",
     "build": "npx hardhat compile",
     "lint": "eslint --ext .js,.ts .",
     "format": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\"",
@@ -13,7 +13,7 @@
     "publishtonpm": "yarn build && yarn lint && yarn test && npm publish",
     "prepare": "cd ../.. && husky install",
     "bump-to": "yarn version --no-commit-hooks --no-git-tag-version --new-version",
-    "deploy-goerli": "npx hardhat run scripts/deploy.ts --network goerli"
+    "deploy:goerli": "npx hardhat run scripts/deploy.ts --network goerli"
   },
   "files": [
     "./contracts/*.sol",
