@@ -5,16 +5,19 @@
   "license": "MIT",
   "scripts": {
     "test": "npx hardhat test",
+    "test-gas": "REPORT_GAS=true npx hardhat test",
     "build": "npx hardhat compile",
     "lint": "eslint --ext .js,.ts .",
     "format": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\"",
     "test-publish": "yarn build && yarn lint && yarn test && npm publish --dry-run",
     "publishtonpm": "yarn build && yarn lint && yarn test && npm publish",
     "prepare": "cd ../.. && husky install",
-    "bump-to": "yarn version --no-commit-hooks --no-git-tag-version --new-version"
+    "bump-to": "yarn version --no-commit-hooks --no-git-tag-version --new-version",
+    "deploy-goerli": "npx hardhat run scripts/deploy.ts --network goerli"
   },
   "files": [
     "./contracts/*.sol",
+    "./interfaces/*.sol",
     "LICENSE",
     "README.md"
   ],
@@ -44,7 +47,7 @@
   },
   "dependencies": {
     "@types/snarkjs": "^0.7.6",
-    "dotenv": "^16.3.1",
+    "dotenv": "^16.4.1",
     "snarkjs": "^0.7.2"
   }
 }

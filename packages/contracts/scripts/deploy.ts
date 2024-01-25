@@ -15,10 +15,10 @@ async function main() {
     '14283653287016348311748048156110700109007577525298584963450140859470242476430',
   ).toString()
 
-  const anonAadhaarVerifierTest = await ethers.deployContract(
-    'AnonAadhaarVerifier',
-    [_verifierAddress, pubkeyTestHashBigInt],
-  )
+  const anonAadhaarVerifierTest = await ethers.deployContract('AnonAadhaar', [
+    _verifierAddress,
+    pubkeyTestHashBigInt,
+  ])
   await anonAadhaarVerifierTest.waitForDeployment()
 
   const _anonAadhaarVerifierTestAddress =
@@ -28,7 +28,7 @@ async function main() {
     `AnonAadhaar Test Verifier  contract deployed to ${_anonAadhaarVerifierTestAddress}`,
   )
 
-  const anonAadhaarVote = await ethers.deployContract('Vote', [
+  const anonAadhaarVote = await ethers.deployContract('AnonAadhaarVote', [
     'Do you like this app?',
     ['0', '1', '2', '3', '4', '5'],
     _anonAadhaarVerifierTestAddress,
