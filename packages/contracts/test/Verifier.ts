@@ -7,9 +7,21 @@ import {
   generateArgs,
   prove,
   exportCallDataGroth16FromPCD,
+  WASM_URL,
+  ZKEY_URL,
+  VK_URL,
 } from '../../core/src'
 import fs from 'fs'
-import { BigNumberish } from 'ethers'
+import {
+  BaseContract,
+  BigNumberish,
+  Contract,
+  ContractTransactionResponse,
+} from 'ethers'
+
+type BaseContractT = BaseContract & {
+  deploymentTransaction(): ContractTransactionResponse
+} & Omit<Contract, keyof BaseContract>
 
 describe('VerifyProof', function () {
   this.timeout(0)
@@ -29,12 +41,11 @@ describe('VerifyProof', function () {
       .readFileSync(certificateDirName + '/uidai_prod_cdup.cer')
       .toString()
 
-    const artifactsDirName = __dirname + '/../../circuits/artifacts'
     const pcdInitArgs: InitArgs = {
-      wasmURL: artifactsDirName + '/aadhaar-verifier.wasm',
-      zkeyURL: artifactsDirName + '/circuit_final.zkey',
-      vkeyURL: artifactsDirName + '/vkey.json',
-      isWebEnv: false,
+      wasmURL: WASM_URL,
+      zkeyURL: ZKEY_URL,
+      vkeyURL: VK_URL,
+      isWebEnv: true,
     }
 
     const [user1] = await ethers.getSigners()
@@ -118,9 +129,14 @@ describe('VerifyProof', function () {
         const [, , user2] = await ethers.getSigners()
 
         await expect(
-          anonAadhaarVote
-            .connect(user2)
-            .voteForProposal(1, a, b, c, publicInputs, user1addres),
+          (anonAadhaarVote.connect(user2) as BaseContractT).voteForProposal(
+            1,
+            a,
+            b,
+            c,
+            publicInputs,
+            user1addres,
+          ),
         ).to.be.revertedWith('[AnonAadhaarVote]: wrong user signal sent.')
       })
 
