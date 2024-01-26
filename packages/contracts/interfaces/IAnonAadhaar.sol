@@ -3,6 +3,6 @@ pragma solidity ^0.8.19;
 
 interface IAnonAadhaar {
     function verifyAnonAadhaarProof(
-        uint[2] calldata _pA, uint[2][2] calldata _pB, uint[2] calldata _pC, uint[5] calldata publicInputs, uint256 signal
+        bytes calldata identityNullifier, bytes calldata userNullifier, bytes calldata timestamp, bytes calldata signalHash, uint[8] memory groth16Proof 
     ) external view returns (bool);
 }

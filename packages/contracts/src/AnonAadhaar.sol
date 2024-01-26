@@ -1,23 +1,23 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.19;
 
-import "../interfaces/IAnonAadhaarVerifier.sol";
+import "../interfaces/IAnonAadhaarGroth16Verifier.sol";
 import "../interfaces/IAnonAadhaar.sol";
 
 contract AnonAadhaar is IAnonAadhaar {
     address public verifier;
-    uint256 public pubkeyHash;
+    uint256 public storedPublicKeyHash;
 
     constructor(address _verifier, uint256 _pubkeyHash) {
         verifier = _verifier;
-        pubkeyHash = _pubkeyHash;
+        storedPublicKeyHash = _pubkeyHash;
     }
 
     /// @dev Verifies that the public key received is corresponding with the one stored in the contract.
     /// @param _receivedpubkeyHash: Public key received.
     /// @return Verified bool
-    function verifyPublicKey(uint256 _receivedpubkeyHash) private view returns (bool) {
-        return pubkeyHash == _receivedpubkeyHash;
+    function verifyPublicKeyHash(uint256 _receivedpubkeyHash) private view returns (bool) {
+        return storedPublicKeyHash == _receivedpubkeyHash;
     }
 
     /// @dev Verifies that the signal received is corresponding with the one used in proof generation.
@@ -30,23 +30,16 @@ contract AnonAadhaar is IAnonAadhaar {
     }
 
     /// @dev Verifies the proof received.
-    /// @param a: a.
-    /// @param b: b.
-    /// @param c: c.
-    /// @param publicInputs: Public inputs.
-    /// @param signal: Signal.
+    /// @param identityNullifier: a.
+    /// @param userNullifier: b.
+    /// @param timestamp: c.
+    /// @param signalHash: Signal.
+    /// @param groth16Proof: Signal.
     /// @return Verified bool
     function verifyAnonAadhaarProof(
-        uint[2] calldata a,
-        uint[2][2] calldata b,
-        uint[2] calldata c,
-        uint[5] calldata publicInputs,
-        uint256 signal
+        uint identityNullifier, uint userNullifier, uint timestamp, uint signalHash, uint[8] memory groth16Proof 
     ) public view returns (bool) {
-        // Verifying that the pubkey is corresponding to the UIDAI public key
-        require(verifyPublicKey(publicInputs[3]) == true, "[AnonAadhaarVerifier]: wrong issuer public key");
-        require(verifySignalHash(signal ,publicInputs[4]) == true, "[AnonAadhaarVerifier]: wrong signal received");
-        return IAnonAadhaarVerifier(verifier).verifyProof(a, b, c, publicInputs);
+        return IAnonAadhaarGroth16Verifier(verifier).verifyProof([groth16Proof[0], groth16Proof[1]], [[groth16Proof[2], groth16Proof[3]], [groth16Proof[4], groth16Proof[5]]], [groth16Proof[6], groth16Proof[7]], [identityNullifier, userNullifier, timestamp, storedPublicKeyHash, signalHash]);
     }
 
     /// @dev Creates a keccak256 hash of a message compatible with the SNARK scalar modulus.

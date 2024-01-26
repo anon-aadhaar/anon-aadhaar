@@ -16,7 +16,7 @@
     "deploy:goerli": "npx hardhat run scripts/deploy.ts --network goerli"
   },
   "files": [
-    "./contracts/*.sol",
+    "./src/*.sol",
     "./interfaces/*.sol",
     "LICENSE",
     "README.md"

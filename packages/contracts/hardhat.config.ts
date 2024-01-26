@@ -5,6 +5,9 @@ require('dotenv').config()
 
 const config: HardhatUserConfig = {
   solidity: '0.8.19',
+  paths: {
+    sources: './src',
+  },
   // networks: {
   //   goerli: {
   //     url: 'https://ethereum-goerli.publicnode.com',
