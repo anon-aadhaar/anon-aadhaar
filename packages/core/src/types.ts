@@ -61,7 +61,7 @@ export type WitnessQRInputs = {
   modulusBigint: bigint
 }
 
-export type Proof = [
+export type PackedGroth16Proof = [
   BigNumberish,
   BigNumberish,
   BigNumberish,

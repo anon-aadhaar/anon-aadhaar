@@ -13,7 +13,7 @@
     "publishtonpm": "yarn build && yarn lint && yarn test && npm publish",
     "prepare": "cd ../.. && husky install",
     "bump-to": "yarn version --no-commit-hooks --no-git-tag-version --new-version",
-    "deploy:goerli": "npx hardhat run scripts/deploy.ts --network goerli"
+    "deploy:sepolia": "npx hardhat run scripts/deploy.ts --network sepolia"
   },
   "files": [
     "./src/*.sol",

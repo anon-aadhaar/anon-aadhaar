@@ -9,8 +9,8 @@ const config: HardhatUserConfig = {
     sources: './src',
   },
   // networks: {
-  //   goerli: {
-  //     url: 'https://ethereum-goerli.publicnode.com',
+  //   sepolia: {
+  //     url: `https://sepolia.infura.io/v3/${process.env.PROVIDER_KEY}`,
   //     accounts: [process.env.PRIVATE_KEY || ''],
   //   },
   // },

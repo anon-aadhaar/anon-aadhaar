@@ -1,4 +1,4 @@
-import { Proof } from './types'
+import { PackedGroth16Proof } from './types'
 import { groth16, Groth16Proof, ZKArtifact } from 'snarkjs'
 import { BigNumberish } from './types'
 import { AnonAadhaarCore } from './core'
@@ -41,20 +41,22 @@ export function splitToWords(
 }
 
 /**
- * Packs a proof into a format compatible with Semaphore.
+ * Packs a proof into a format compatible with AnonAadhaar.sol contract.
  * @param originalProof The proof generated with SnarkJS.
  * @returns The proof compatible with Semaphore.
  */
-export function packProof(originalProof: Groth16Proof): Proof {
+export function packGroth16Proof(
+  groth16Proof: Groth16Proof
+): PackedGroth16Proof {
   return [
-    originalProof.pi_a[0],
-    originalProof.pi_a[1],
-    originalProof.pi_b[0][1],
-    originalProof.pi_b[0][0],
-    originalProof.pi_b[1][1],
-    originalProof.pi_b[1][0],
-    originalProof.pi_c[0],
-    originalProof.pi_c[1],
+    groth16Proof.pi_a[0],
+    groth16Proof.pi_a[1],
+    groth16Proof.pi_b[0][1],
+    groth16Proof.pi_b[0][0],
+    groth16Proof.pi_b[1][1],
+    groth16Proof.pi_b[1][0],
+    groth16Proof.pi_c[0],
+    groth16Proof.pi_c[1],
   ]
 }
 

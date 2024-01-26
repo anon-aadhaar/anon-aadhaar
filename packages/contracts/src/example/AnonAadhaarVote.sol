@@ -32,12 +32,12 @@ contract AnonAadhaarVote is IAnonAadhaarVote {
     }
 
     /// @dev Register a vote in the contract.
-    /// @param identityNullifier: a.
-    /// @param userNullifier: b.
-    /// @param timestamp: c.
-    /// @param signal: Signal.
-    /// @param groth16Proof: Signal.
+    /// @param proposalIndex: Index of the proposal you want to vote for.
+    /// @param identityNullifier: Hash of last the 4 digits + DOB, name, gender adn pin code.
+    /// @param userNullifier: Hash of the last 4 digits + photo.
+    /// @param timestamp: Timestamp of when the QR code was signed.
     /// @param signal: signal used while generating the proof, should be equal to msg.sender.
+    /// @param groth16Proof: SNARK Groth16 proof.
     function voteForProposal(uint256 proposalIndex, uint identityNullifier, uint userNullifier, uint timestamp, uint signal, uint[8] memory groth16Proof ) public {
         require(proposalIndex < proposals.length, "[AnonAadhaarVote]: Invalid proposal index");
         require(addressToUint256(msg.sender) == signal, "[AnonAadhaarVote]: wrong user signal sent.");

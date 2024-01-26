@@ -20,21 +20,12 @@ contract AnonAadhaar is IAnonAadhaar {
         return storedPublicKeyHash == _receivedpubkeyHash;
     }
 
-    /// @dev Verifies that the signal received is corresponding with the one used in proof generation.
-    /// @param _receivedSignal: Signal received.
-    /// @param signalHash: Hash of the signal from Proof.
-    /// @return Verified bool
-    function verifySignalHash(uint256 _receivedSignal, uint256 signalHash) public pure returns (bool) {
-        _receivedSignal = _hash(_receivedSignal);
-        return _receivedSignal == signalHash;
-    }
-
-    /// @dev Verifies the proof received.
-    /// @param identityNullifier: a.
-    /// @param userNullifier: b.
-    /// @param timestamp: c.
-    /// @param signal: Signal.
-    /// @param groth16Proof: Signal.
+    /// @dev Verifies the AnonAadhaar proof received.
+    /// @param identityNullifier: Hash of last the 4 digits + DOB, name, gender adn pin code.
+    /// @param userNullifier: Hash of the last 4 digits + photo.
+    /// @param timestamp: Timestamp of when the QR code was signed.
+    /// @param signal: Signal committed while genereting the proof.
+    /// @param groth16Proof: SNARK Groth16 proof.
     /// @return Verified bool
     function verifyAnonAadhaarProof(
         uint identityNullifier, uint userNullifier, uint timestamp, uint signal, uint[8] memory groth16Proof 
