@@ -12,7 +12,7 @@ import pako from 'pako'
 
 import { extractPhoto } from '@anon-aadhaar/core'
 import assert from 'assert'
-import { QRData } from '../assets/testData.json'
+import { testQRData as QRData } from '../assets/dataInput.json'
 
 function convertBigIntToByteArray(bigInt: bigint) {
   const byteLength = Math.max(1, Math.ceil(bigInt.toString(2).length / 8))

@@ -4,7 +4,7 @@ import { init, prove, verify } from '../src/pcd'
 import { assert } from 'chai'
 import { VK_URL, WASM_URL, ZKEY_URL, generateArgs } from '../src'
 import fs from 'fs'
-import { QRData } from '../../circuits/assets/testData.json'
+import { testQRData as QRData } from '../../circuits/assets/dataInput.json'
 
 describe('PCD tests', function () {
   this.timeout(0)

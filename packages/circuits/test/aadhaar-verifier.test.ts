@@ -15,17 +15,29 @@ import {
   splitToWords,
   SELECTOR_ID,
   readData,
-  SELECTOR_TEST_ID,
 } from '@anon-aadhaar/core'
 import { genData } from '../../core/test/utils'
 import fs from 'fs'
 import crypto from 'crypto'
 import assert from 'assert'
 import { buildPoseidon } from 'circomlibjs'
-import { QRData } from '../assets/testData.json'
-const testAadhaar = true
+import { testQRData } from '../assets/dataInput.json'
+import { timestampToUTCUnix } from './util'
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+require('dotenv').config()
 
-const useTestAadhaar = (_isTest: boolean) => {
+let testAadhaar = true
+let QRData: string = testQRData
+if (process.env.REAL_DATA === 'true') {
+  testAadhaar = false
+  if (typeof process.env.AADHAAR_QR_DATA === 'string') {
+    QRData = process.env.AADHAAR_QR_DATA
+  } else {
+    throw Error('You must set .env var AADHAAR_QR_DATA when using real data.')
+  }
+}
+
+const getCertificate = (_isTest: boolean) => {
   return _isTest
     ? 'uidai_prod_cdup.cer'
     : 'uidai_offline_publickey_26022021.cer'
@@ -79,7 +91,7 @@ describe('Test QR Verify circuit', function () {
   it('Compute nullifier must correct', async () => {
     // load public key
     const pkData = fs.readFileSync(
-      path.join(__dirname, '../assets', useTestAadhaar(testAadhaar)),
+      path.join(__dirname, '../assets', getCertificate(testAadhaar)),
     )
     const pk = crypto.createPublicKey(pkData)
 
@@ -117,16 +129,18 @@ describe('Test QR Verify circuit', function () {
       signalHash: 4,
     })
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const poseidon: any = await buildPoseidon()
 
     const { photo } = extractPhoto(Array.from(signedData))
 
     let basicData: number[] = []
+    const offsetId = testAadhaar ? -1 : 0
     for (const id of [
-      testAadhaar ? SELECTOR_TEST_ID.name : SELECTOR_ID.name,
-      testAadhaar ? SELECTOR_TEST_ID.dob : SELECTOR_ID.dob,
-      testAadhaar ? SELECTOR_TEST_ID.gender : SELECTOR_ID.gender,
-      testAadhaar ? SELECTOR_TEST_ID.pinCode : SELECTOR_ID.pinCode,
+      SELECTOR_ID.name + offsetId,
+      SELECTOR_ID.dob + offsetId,
+      SELECTOR_ID.gender + offsetId,
+      SELECTOR_ID.pinCode + offsetId,
     ].sort((x, y) => x - y)) {
       basicData = basicData.concat([
         255,
@@ -144,9 +158,8 @@ describe('Test QR Verify circuit', function () {
       photoHash = poseidon([photoHash, BigInt(photo[i])])
     }
 
-    const four_digit = testAadhaar
-      ? paddedMsg.slice(2, 6)
-      : paddedMsg.slice(5, 9)
+    const offset = testAadhaar ? -3 : 0
+    const four_digit = paddedMsg.slice(5 + offset, 9 + offset)
     const userNullifier = poseidon([...four_digit, photoHash])
     const identityNullifier = poseidon([...four_digit, basicHash])
 
@@ -157,7 +170,7 @@ describe('Test QR Verify circuit', function () {
   it('should output timestamp of when data is generated', async () => {
     // load public key
     const pkData = fs.readFileSync(
-      path.join(__dirname, '../assets', useTestAadhaar(testAadhaar)),
+      path.join(__dirname, '../assets', getCertificate(testAadhaar)),
     )
     const pk = crypto.createPublicKey(pkData)
 
@@ -195,15 +208,15 @@ describe('Test QR Verify circuit', function () {
     // This is the time in the QR data above is 20190308114407437.
     // 2019-03-08 11:44:07.437 rounded down to nearest hour is 2019-03-08 11:00:00.000
     // Converting this IST to UTC gives 2019-03-08T05:30:00.000Z
-    const expectedTimestamp = Math.floor(
-      new Date('2019-03-08T05:30:00.000Z').getTime() / 1000,
-    )
+    const expectedTimestamp = timestampToUTCUnix(decodedData, testAadhaar)
 
     assert(witness[3] === BigInt(expectedTimestamp))
   })
 
   it('should output hash of pubkey', async () => {
-    const signedData = 'Hello-20240116140412'
+    const signedData = testAadhaar
+      ? 'Hello-20240116140412'
+      : 'HelloWor-20240116140412'
 
     const data = await genData(signedData, 'SHA-256')
 

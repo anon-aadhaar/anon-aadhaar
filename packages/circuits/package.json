@@ -6,6 +6,7 @@
   "scripts": {
     "build": "echo 'no build needed'",
     "test": "npx ts-mocha test/**/*.test.ts --exit",
+    "test:real-data": "REAL_DATA=true npx ts-mocha test/**/*.test.ts --exit",
     "format": "prettier --ignore-path ../../.prettierignore --write \"**/*.+(js|ts|json)\"",
     "lint": "echo 'no lint'",
     "publishtonpm": "echo 'not published'",

@@ -210,25 +210,6 @@ export const enum SELECTOR_ID {
   VTC,
 }
 
-export const enum SELECTOR_TEST_ID {
-  emailOrPhone = 0,
-  referenceId,
-  name,
-  dob,
-  gender,
-  careOf,
-  district,
-  landmark,
-  house,
-  location,
-  pinCode,
-  postOffice,
-  state,
-  street,
-  subDistrict,
-  VTC,
-}
-
 export function readData(data: number[], index: number) {
   let count = 0
   let start = 0
