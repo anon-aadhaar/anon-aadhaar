@@ -50,21 +50,13 @@ describe('Test QR Verify circuit', function () {
   let circuit: any
 
   this.beforeAll(async () => {
-    circuit = testAadhaar
-      ? await circom_tester(
-          path.join(__dirname, './circuits', 'aadhaar-verifier-test.circom'),
-          {
-            recompile: true,
-            include: path.join(__dirname, '../node_modules'),
-          },
-        )
-      : await circom_tester(
-          path.join(__dirname, '../', 'src', 'aadhaar-verifier.circom'),
-          {
-            recompile: true,
-            include: path.join(__dirname, '../node_modules'),
-          },
-        )
+    const pathToCircuit = testAadhaar
+      ? path.join(__dirname, './circuits', 'aadhaar-verifier-test.circom')
+      : path.join(__dirname, '../', 'src', 'aadhaar-verifier.circom')
+    circuit = await circom_tester(pathToCircuit, {
+      recompile: true,
+      include: path.join(__dirname, '../node_modules'),
+    })
   })
 
   it('Test circuit with Sha256RSA signature', async () => {
