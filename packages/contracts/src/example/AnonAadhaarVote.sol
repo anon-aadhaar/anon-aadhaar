@@ -32,22 +32,22 @@ contract AnonAadhaarVote is IAnonAadhaarVote {
     }
 
     /// @dev Register a vote in the contract.
-    /// @param proposalIndex: Index of the proposal you want to vote for.
-    /// @param a: a.
-    /// @param b: b.
-    /// @param c: c.
-    /// @param publicInputs: Public Inputs.
+    /// @param identityNullifier: a.
+    /// @param userNullifier: b.
+    /// @param timestamp: c.
+    /// @param signal: Signal.
+    /// @param groth16Proof: Signal.
     /// @param signal: signal used while generating the proof, should be equal to msg.sender.
-    function voteForProposal(uint256 proposalIndex, uint256[2] calldata a, uint[2][2] calldata b, uint[2] calldata c, uint[5] calldata publicInputs, uint256 signal) public {
+    function voteForProposal(uint256 proposalIndex, uint identityNullifier, uint userNullifier, uint timestamp, uint signal, uint[8] memory groth16Proof ) public {
         require(proposalIndex < proposals.length, "[AnonAadhaarVote]: Invalid proposal index");
         require(addressToUint256(msg.sender) == signal, "[AnonAadhaarVote]: wrong user signal sent.");
-        require(IAnonAadhaar(anonAadhaarVerifierAddr).verifyAnonAadhaarProof(a, b, c, publicInputs, signal) == true, "[AnonAadhaarVote]: proof sent is not valid.");
+        require(IAnonAadhaar(anonAadhaarVerifierAddr).verifyAnonAadhaarProof(identityNullifier, userNullifier, timestamp, signal, groth16Proof) == true, "[AnonAadhaarVote]: proof sent is not valid.");
         // Check that user hasn't already voted
         // _pubSignals[1] refers to userNullifier
-        require(!hasVoted[publicInputs[1]], "[AnonAadhaarVote]: User has already voted");
+        require(!hasVoted[userNullifier], "[AnonAadhaarVote]: User has already voted");
 
         proposals[proposalIndex].voteCount++;
-        hasVoted[publicInputs[1]] = true;
+        hasVoted[userNullifier] = true;
 
         emit Voted(msg.sender, proposalIndex);
     }

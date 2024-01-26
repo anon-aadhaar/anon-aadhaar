@@ -33,12 +33,13 @@ contract AnonAadhaar is IAnonAadhaar {
     /// @param identityNullifier: a.
     /// @param userNullifier: b.
     /// @param timestamp: c.
-    /// @param signalHash: Signal.
+    /// @param signal: Signal.
     /// @param groth16Proof: Signal.
     /// @return Verified bool
     function verifyAnonAadhaarProof(
-        uint identityNullifier, uint userNullifier, uint timestamp, uint signalHash, uint[8] memory groth16Proof 
+        uint identityNullifier, uint userNullifier, uint timestamp, uint signal, uint[8] memory groth16Proof 
     ) public view returns (bool) {
+        uint signalHash = _hash(signal);
         return IAnonAadhaarGroth16Verifier(verifier).verifyProof([groth16Proof[0], groth16Proof[1]], [[groth16Proof[2], groth16Proof[3]], [groth16Proof[4], groth16Proof[5]]], [groth16Proof[6], groth16Proof[7]], [identityNullifier, userNullifier, timestamp, storedPublicKeyHash, signalHash]);
     }
 
