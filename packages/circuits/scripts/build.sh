@@ -9,7 +9,9 @@ CIRCUIT=$(pwd)/src
 CIRCUIR_PATH=$(pwd)/src/aadhaar-verifier.circom
 CIRLIB_PATH=$(pwd)/node_modules
 R1CS_PATH=$BUILD_DIR/aadhaar-verifier.r1cs
+R1CS_TEST_PATH=$BUILD_DIR/aadhaar-verifier-test.r1cs
 JS_BUILD_DIR=$BUILD_DIR/aadhaar-verifier_js
+JS_TESR_BUILD_DIR=$BUILD_DIR/aadhaar-verifier-test_js
 PARTIAL_ZKEYS_DIR=$BUILD_DIR/partial_zkeys
 ARTIFACTS_DIR=$(pwd)/artifacts
 
@@ -73,7 +75,7 @@ function dev_trusted_setup_test() {
 
 
     NODE_OPTIONS=--max-old-space-size=8192 \
-	node ./node_modules/.bin/snarkjs groth16 setup $R1CS_PATH $PTAU_PATH $PARTIAL_ZKEYS_DIR/circuit_0000.zkey
+	node ./node_modules/.bin/snarkjs groth16 setup $R1CS_TEST_PATH $PTAU_PATH $PARTIAL_ZKEYS_DIR/circuit_0000.zkey
 
     echo "test random" | NODE_OPTIONS='--max-old-space-size=8192' \
 	node ./node_modules/.bin/snarkjs zkey contribute $PARTIAL_ZKEYS_DIR/circuit_0000.zkey $PARTIAL_ZKEYS_DIR/circuit_final.zkey --name="1st Contributor Name" -v 
@@ -84,11 +86,11 @@ function dev_trusted_setup_test() {
         mkdir -p $ARTIFACTS_DIR
     fi
 
-    cp $JS_BUILD_DIR/aadhaar-verifier-test.wasm $ARTIFACTS_DIR/aadhaar-verifier.wasm
+    cp $JS_TESR_BUILD_DIR/aadhaar-verifier-test.wasm $ARTIFACTS_DIR/aadhaar-verifier.wasm
     cp $PARTIAL_ZKEYS_DIR/circuit_final.zkey $ARTIFACTS_DIR
     cp $BUILD_DIR/vkey.json $ARTIFACTS_DIR
 
-    echo $HASH > $BUILD_DIR/hash.txt
+    echo $HASH > $BUILD_DIR/hashTest.txt
     
     echo "Setup finished!"
 }
