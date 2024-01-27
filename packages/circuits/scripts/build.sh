@@ -50,6 +50,49 @@ function build_circuit() {
     circom --wasm -l ../src/helpers -l ../node_modules --sym --r1cs --output ../build ../src/aadhaar-verifier.circom 
 }
 
+function dev_trusted_setup_test() {
+    echo "Starting setup...!"
+
+    HASH=`$(pwd)/scripts/utils.sh`
+
+    if [ -f $BUILD_DIR/hashTest.txt ]; then 
+        OLD_HASH=`cat $BUILD_DIR/hashTest.txt`
+        echo $OLD_HASH 
+    else 
+        OLD_HASH=""
+    fi
+
+    if [ ! -d $PARTIAL_ZKEYS_DIR ]; then
+        mkdir -p $PARTIAL_ZKEYS_DIR
+    fi
+
+    if [ "$HASH" != "$OLD_HASH" ]; then 
+    echo "TRUSTED SETUP FOR DEVELOPMENT - PLEASE, DON'T USE IT IN PRODUCT!!!!"
+
+    circom ./test/circuits/aadhaar-verifier-test.circom  --r1cs --wasm -o $BUILD_DIR -l ./node_modules
+
+
+    NODE_OPTIONS=--max-old-space-size=8192 \
+	node ./node_modules/.bin/snarkjs groth16 setup $R1CS_PATH $PTAU_PATH $PARTIAL_ZKEYS_DIR/circuit_0000.zkey
+
+    echo "test random" | NODE_OPTIONS='--max-old-space-size=8192' \
+	node ./node_modules/.bin/snarkjs zkey contribute $PARTIAL_ZKEYS_DIR/circuit_0000.zkey $PARTIAL_ZKEYS_DIR/circuit_final.zkey --name="1st Contributor Name" -v 
+    NODE_OPTIONS='--max-old-space-size=8192' ./node_modules/.bin/snarkjs zkey export verificationkey $PARTIAL_ZKEYS_DIR/circuit_final.zkey $BUILD_DIR/vkey.json
+
+    fi
+        if [ ! -d $ARTIFACTS_DIR ]; then
+        mkdir -p $ARTIFACTS_DIR
+    fi
+
+    cp $JS_BUILD_DIR/aadhaar-verifier.wasm $ARTIFACTS_DIR
+    cp $PARTIAL_ZKEYS_DIR/circuit_final.zkey $ARTIFACTS_DIR
+    cp $BUILD_DIR/vkey.json $ARTIFACTS_DIR
+
+    echo $HASH > $BUILD_DIR/hash.txt
+    
+    echo "Setup finished!"
+}
+
 # trusted setup for development
 # DON'T USE IT IN PRODUCT
 function dev_trusted_setup() {
@@ -147,7 +190,10 @@ case "$1" in
     verify-proof)
         verify_proof
     ;;
+    setup-test)
+        dev_trusted_setup_test
+    ;;
     *)
-        echo "Usage: $0 {install|build|setup|gen-proof|gen-witness|verify-proof}"
+        echo "Usage: $0 {install|build|setup|setup-test|gen-proof|gen-witness|verify-proof}"
     ;;
 esac

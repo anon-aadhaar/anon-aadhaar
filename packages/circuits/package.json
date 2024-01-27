@@ -14,6 +14,7 @@
     "build-cricuit": "cd scripts && sh build.sh build",
     "dev-install": "/bin/bash ./scripts/build.sh install",
     "dev-setup": "/bin/bash ./scripts/build.sh setup",
+    "dev-setup-test": "/bin/bash ./scripts/build.sh setup-test",
     "gen-proof": "/bin/bash ./scripts/build.sh gen-proof",
     "gen-witness": "/bin/bash ./scripts/build.sh gen-witness",
     "verif-proof": "/bin/bash ./scripts/build.sh verify-proof",
