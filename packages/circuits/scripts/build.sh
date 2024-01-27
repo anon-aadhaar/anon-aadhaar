@@ -10,7 +10,9 @@ CIRCUIR_PATH=$(pwd)/src/aadhaar-verifier.circom
 CONTRACTS_DIR=$(pwd)/../contracts/src
 CIRLIB_PATH=$(pwd)/node_modules
 R1CS_PATH=$BUILD_DIR/aadhaar-verifier.r1cs
+R1CS_TEST_PATH=$BUILD_DIR/aadhaar-verifier-test.r1cs
 JS_BUILD_DIR=$BUILD_DIR/aadhaar-verifier_js
+JS_TESR_BUILD_DIR=$BUILD_DIR/aadhaar-verifier-test_js
 PARTIAL_ZKEYS_DIR=$BUILD_DIR/partial_zkeys
 ARTIFACTS_DIR=$(pwd)/artifacts
 
@@ -49,6 +51,49 @@ function install_deps() {
 
 function build_circuit() {
     circom --wasm -l ../src/helpers -l ../node_modules --sym --r1cs --output ../build ../src/aadhaar-verifier.circom 
+}
+
+function dev_trusted_setup_test() {
+    echo "Starting setup...!"
+
+    HASH=`$(pwd)/scripts/utils.sh`
+
+    if [ -f $BUILD_DIR/hashTest.txt ]; then 
+        OLD_HASH=`cat $BUILD_DIR/hashTest.txt`
+        echo $OLD_HASH 
+    else 
+        OLD_HASH=""
+    fi
+
+    if [ ! -d $PARTIAL_ZKEYS_DIR ]; then
+        mkdir -p $PARTIAL_ZKEYS_DIR
+    fi
+
+    if [ "$HASH" != "$OLD_HASH" ]; then 
+    echo "TRUSTED SETUP FOR DEVELOPMENT - PLEASE, DON'T USE IT IN PRODUCT!!!!"
+
+    circom ./test/circuits/aadhaar-verifier-test.circom  --r1cs --wasm -o $BUILD_DIR -l ./node_modules
+
+
+    NODE_OPTIONS=--max-old-space-size=8192 \
+	node ./node_modules/.bin/snarkjs groth16 setup $R1CS_TEST_PATH $PTAU_PATH $PARTIAL_ZKEYS_DIR/circuit_0000.zkey
+
+    echo "test random" | NODE_OPTIONS='--max-old-space-size=8192' \
+	node ./node_modules/.bin/snarkjs zkey contribute $PARTIAL_ZKEYS_DIR/circuit_0000.zkey $PARTIAL_ZKEYS_DIR/circuit_final.zkey --name="1st Contributor Name" -v 
+    NODE_OPTIONS='--max-old-space-size=8192' ./node_modules/.bin/snarkjs zkey export verificationkey $PARTIAL_ZKEYS_DIR/circuit_final.zkey $BUILD_DIR/vkey.json
+
+    fi
+        if [ ! -d $ARTIFACTS_DIR ]; then
+        mkdir -p $ARTIFACTS_DIR
+    fi
+
+    cp $JS_TESR_BUILD_DIR/aadhaar-verifier-test.wasm $ARTIFACTS_DIR/aadhaar-verifier.wasm
+    cp $PARTIAL_ZKEYS_DIR/circuit_final.zkey $ARTIFACTS_DIR
+    cp $BUILD_DIR/vkey.json $ARTIFACTS_DIR
+
+    echo $HASH > $BUILD_DIR/hashTest.txt
+    
+    echo "Setup finished!"
 }
 
 # trusted setup for development
@@ -151,7 +196,10 @@ case "$1" in
     verify-proof)
         verify_proof
     ;;
+    setup-test)
+        dev_trusted_setup_test
+    ;;
     *)
-        echo "Usage: $0 {install|build|setup|gen-proof|gen-contracts|gen-witness|verify-proof}"
+        echo "Usage: $0 {install|build|setup|setup-test|gen-proof|gen-contracts|gen-witness|verify-proof}"
     ;;
 esac

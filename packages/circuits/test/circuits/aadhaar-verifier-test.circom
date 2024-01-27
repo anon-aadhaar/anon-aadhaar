@@ -1,9 +1,9 @@
 pragma circom 2.1.6;
 
-include "./helpers/rsa.circom";
-include "./helpers/sha.circom";
-include "./helpers/timestamp.circom";
-include "./extractor.circom";
+include "../../src/helpers/rsa.circom";
+include "../../src/helpers/sha.circom";
+include "../../src/helpers/timestamp.circom";
+include "./extractor-test.circom";
 
 // Circuit to verify Aadhaar signature
 // n: RSA pubic key size per chunk
@@ -77,7 +77,7 @@ template AadhaarVerifier(n, k, maxDataLength) {
     // Output the timestamp rounded to nearest hour
     component dateToUnixTime = DateStringToTimestamp(2030, 1, 0, 0);
     for (var i = 0; i < 14; i++) {
-        dateToUnixTime.in[i] <== aadhaarData[i + 9];
+        dateToUnixTime.in[i] <== aadhaarData[i + 6];
     }
     timestamp <== dateToUnixTime.out - 19800; // 19800 is the offset for IST
 

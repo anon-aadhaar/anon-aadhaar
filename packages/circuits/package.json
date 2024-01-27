@@ -6,6 +6,7 @@
   "scripts": {
     "build": "echo 'no build needed'",
     "test": "npx ts-mocha test/**/*.test.ts --exit",
+    "test:real-data": "REAL_DATA=true npx ts-mocha test/**/*.test.ts --exit",
     "format": "prettier --ignore-path ../../.prettierignore --write \"**/*.+(js|ts|json)\"",
     "lint": "echo 'no lint'",
     "publishtonpm": "echo 'not published'",
@@ -13,6 +14,7 @@
     "build-cricuit": "cd scripts && sh build.sh build",
     "dev-install": "/bin/bash ./scripts/build.sh install",
     "dev-setup": "/bin/bash ./scripts/build.sh setup",
+    "dev-setup-test": "/bin/bash ./scripts/build.sh setup-test",
     "gen-proof": "/bin/bash ./scripts/build.sh gen-proof",
     "gen-witness": "/bin/bash ./scripts/build.sh gen-witness",
     "gen-contracts": "/bin/bash ./scripts/build.sh gen-contracts",

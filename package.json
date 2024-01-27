@@ -18,7 +18,8 @@
     "dev-setup:circuit": "yarn workspace @anon-aadhaar/circuits run dev-setup",
     "witness:circuit": "yarn workspace @anon-aadhaar/circuits run gen-witness",
     "proof:circuit": "yarn workspace @anon-aadhaar/circuits run gen-proof",
-    "verif:circuit": "yarn workspace @anon-aadhaar/circuits run verif-proof"
+    "verif:circuit": "yarn workspace @anon-aadhaar/circuits run verif-proof",
+    "dev-setup-test:circuit": "yarn workspace @anon-aadhaar/circuits run dev-setup-test"
   },
   "repository": {
     "type": "git",

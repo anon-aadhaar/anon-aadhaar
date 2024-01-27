@@ -109,8 +109,8 @@ template Extractor(MAX_NUMBER_BYTES) {
     signal identityFlag[MAX_NUMBER_BYTES];
 
     for (var i = 0; i < MAX_NUMBER_BYTES; i++) {
-        basicIdentityFlag[i] <== InRange(12)(3, 5, sData[i]);
-        pincodeFlag[i] <== IsEqual()([11, sData[i]]);   
+        basicIdentityFlag[i] <== InRange(12)(2, 4, sData[i]);
+        pincodeFlag[i] <== IsEqual()([10, sData[i]]);   
         identityFlag[i] <== basicIdentityFlag[i] + pincodeFlag[i] - basicIdentityFlag[i] * pincodeFlag[i]; 
     }
 
@@ -118,7 +118,7 @@ template Extractor(MAX_NUMBER_BYTES) {
 
     // extract last fordigit; 
     for (var i = 0; i < 4; i++) {
-        last4Digits[i] <== data[i + 5];
+        last4Digits[i] <== data[i + 2];
     }
 }
 
