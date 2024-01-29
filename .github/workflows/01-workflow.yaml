@@ -65,6 +65,12 @@ jobs:
           path: packages/circuits/build
           key: ${{ steps.get-circuit-hash.outputs.circuits_hash }}
 
+      - name: Create .env file for contracts tests
+        run: |
+          echo "PROVIDER_KEY=$PROVIDER_KEY_SECRET" > ./packages/contracts/.env
+        env:
+          PROVIDER_KEY_SECRET: ${{secrets.PROVIDER_KEY}}
+
       - name: 'Dev trusted setup'
         run: 'yarn dev-setup-test:circuit'
 

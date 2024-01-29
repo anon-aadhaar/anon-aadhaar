@@ -7,7 +7,7 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       forking: {
-        url: 'https://ethereum.publicnode.com',
+        url: `https://mainnet.infura.io/v3/${process.env.PROVIDER_KEY}`,
         blockNumber: 7327025,
       },
     },
