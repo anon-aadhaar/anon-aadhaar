@@ -1,9 +1,13 @@
 import '@nomiclabs/hardhat-ethers'
 import { ethers } from 'hardhat'
-import {
-  productionPublicKeyHash,
-  //   testPublicKeyHash,
-} from '../test/const'
+import { productionPublicKeyHash, testPublicKeyHash } from '../test/const'
+
+let publicKeyHash: string
+publicKeyHash = testPublicKeyHash
+// To deploy contract with production UIDAI public key, will verify real Aadhaar
+if (process.env.PRODUCTION_KEY === 'true') {
+  publicKeyHash = productionPublicKeyHash
+}
 
 async function main() {
   const verifier = await ethers.deployContract('Verifier')
@@ -13,22 +17,14 @@ async function main() {
 
   console.log(`Verifier contract deployed to ${_verifierAddress}`)
 
-  //   // To deploy contract with the test UIDAI public key, will verify only test Aadhaar
-  //   const anonAadhaarVerifierTest = await ethers.deployContract('AnonAadhaar', [
-  //     _verifierAddress,
-  //     testPublicKeyHash,
-  //   ])
-
-  // To deploy contract with production UIDAI public key, will verify real Aadhaar
-  const anonAadhaarVerifierTest = await ethers.deployContract('AnonAadhaar', [
+  const anonAadhaarVerifier = await ethers.deployContract('AnonAadhaar', [
     _verifierAddress,
-    productionPublicKeyHash,
+    publicKeyHash,
   ])
 
-  await anonAadhaarVerifierTest.waitForDeployment()
+  await anonAadhaarVerifier.waitForDeployment()
 
-  const _anonAadhaarVerifierTestAddress =
-    await anonAadhaarVerifierTest.getAddress()
+  const _anonAadhaarVerifierTestAddress = await anonAadhaarVerifier.getAddress()
 
   console.log(
     `AnonAadhaar Test Verifier  contract deployed to ${_anonAadhaarVerifierTestAddress}`,

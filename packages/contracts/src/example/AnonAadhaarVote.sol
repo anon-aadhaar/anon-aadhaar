@@ -31,12 +31,11 @@ contract AnonAadhaarVote is IAnonAadhaarVote {
         return uint256(uint160(_addr));
     }
 
+    /// @dev Check if the timestamp is more recent than (current time - 3 hours)
+    /// @param timestamp: msg.sender address.
+    /// @return bool
     function isLessThan3HoursAgo(uint timestamp) public view returns (bool) {
-        // 3 hours in seconds
-        uint threeHoursInSeconds = 3 * 60 * 60;
-
-        // Check if the timestamp is more recent than (current time - 3 hours)
-        return timestamp > (block.timestamp - threeHoursInSeconds);
+        return timestamp > (block.timestamp - 3 * 60 * 60);
     }
 
     /// @dev Register a vote in the contract.

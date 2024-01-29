@@ -13,7 +13,8 @@
     "publishtonpm": "yarn build && yarn lint && yarn test && npm publish",
     "prepare": "cd ../.. && husky install",
     "bump-to": "yarn version --no-commit-hooks --no-git-tag-version --new-version",
-    "deploy:sepolia": "npx hardhat run scripts/deploy.ts --network sepolia"
+    "deploy:sepolia-prod": "PRODUCTION_KEY=true npx hardhat run scripts/deploy.ts --network sepolia",
+    "deploy:sepolia-test": "npx hardhat run scripts/deploy.ts --network sepolia"
   },
   "files": [
     "./src/*.sol",

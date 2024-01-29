@@ -11,17 +11,15 @@ const config: HardhatUserConfig = {
         blockNumber: 7327025,
       },
     },
+    // sepolia: {
+    //   url: `https://sepolia.infura.io/v3/${process.env.PROVIDER_KEY}`,
+    //   accounts: [process.env.PRIVATE_KEY || ''],
+    // },
   },
   solidity: '0.8.19',
   paths: {
     sources: './src',
   },
-  // networks: {
-  //   sepolia: {
-  //     url: `https://sepolia.infura.io/v3/${process.env.PROVIDER_KEY}`,
-  //     accounts: [process.env.PRIVATE_KEY || ''],
-  //   },
-  // },
 }
 
 export default config
