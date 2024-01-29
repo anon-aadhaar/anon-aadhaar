@@ -15,6 +15,7 @@ import {
 } from '../../core/src'
 import { testQRData } from '../../circuits/assets/dataInput.json'
 import fs from 'fs'
+import { testPublicKeyHash } from './const'
 
 describe('VerifyProof', function () {
   this.timeout(0)
@@ -57,9 +58,7 @@ describe('VerifyProof', function () {
 
     const _verifierAddress = await verifier.getAddress()
 
-    const pubkeyHashBigInt = BigInt(
-      '14283653287016348311748048156110700109007577525298584963450140859470242476430',
-    ).toString()
+    const pubkeyHashBigInt = BigInt(testPublicKeyHash).toString()
 
     const AnonAadhaarContract = await ethers.getContractFactory('AnonAadhaar')
     const anonAadhaarVerifier = await AnonAadhaarContract.deploy(

@@ -51,16 +51,6 @@ export type AnonAadhaarArgs = {
   signalHash: StringArgument // public
 }
 
-/**
- * @dev Arguments that needs to be extracted to generates the arguments of the witness.
- */
-export type WitnessQRInputs = {
-  paddedMessage: string[]
-  messageLength: number
-  signatureBigint: bigint
-  modulusBigint: bigint
-}
-
 export type PackedGroth16Proof = [
   BigNumberish,
   BigNumberish,
