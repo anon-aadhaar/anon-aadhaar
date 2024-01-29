@@ -2,15 +2,16 @@ import '@nomiclabs/hardhat-ethers'
 import { ethers } from 'hardhat'
 import { productionPublicKeyHash, testPublicKeyHash } from '../test/const'
 
-let publicKeyHash: string
-publicKeyHash = testPublicKeyHash
+let verifierContractName = 'VerifierTest'
+let publicKeyHash = testPublicKeyHash
 // To deploy contract with production UIDAI public key, will verify real Aadhaar
 if (process.env.PRODUCTION_KEY === 'true') {
   publicKeyHash = productionPublicKeyHash
+  verifierContractName = 'Verifier'
 }
 
 async function main() {
-  const verifier = await ethers.deployContract('Verifier')
+  const verifier = await ethers.deployContract(verifierContractName)
   await verifier.waitForDeployment()
 
   const _verifierAddress = await verifier.getAddress()

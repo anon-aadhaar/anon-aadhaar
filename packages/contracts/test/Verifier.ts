@@ -6,9 +6,7 @@ import {
   init,
   generateArgs,
   prove,
-  WASM_URL,
-  ZKEY_URL,
-  VK_URL,
+  artifactUrls,
   AnonAadhaarProof,
   PackedGroth16Proof,
   packGroth16Proof,
@@ -32,9 +30,9 @@ describe('VerifyProof', function () {
       .toString()
 
     const anonAadhaarInitArgs: InitArgs = {
-      wasmURL: WASM_URL,
-      zkeyURL: ZKEY_URL,
-      vkeyURL: VK_URL,
+      wasmURL: artifactUrls.test.wasm,
+      zkeyURL: artifactUrls.test.zkey,
+      vkeyURL: artifactUrls.test.vk,
       isWebEnv: true,
     }
 
@@ -53,7 +51,7 @@ describe('VerifyProof', function () {
   })
 
   async function deployOneYearLockFixture() {
-    const Verifier = await ethers.getContractFactory('Verifier')
+    const Verifier = await ethers.getContractFactory('VerifierTest')
     const verifier = await Verifier.deploy()
 
     const _verifierAddress = await verifier.getAddress()

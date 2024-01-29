@@ -24,7 +24,7 @@ import 'hardhat-dependency-compiler'
 const config: HardhatUserConfig = {
   solidity: '0.8.19',
   dependencyCompiler: {
-    paths: ['anon-aadhaar-contracts/contracts/AnonAadhaar.sol'],
+    paths: ['@anon-aadhaar/contracts/src/AnonAadhaar.sol'],
   },
 }
 ```
@@ -49,8 +49,14 @@ Test the contracts with gas report:
 yarn test:gas
 ```
 
-Deploy the contracts to goerli:
+Deploy the contracts with the test public key to Sepolia:
 
 ```bash
-yarn deploy:goerli
+yarn deploy:sepolia-test
+```
+
+Deploy the contracts with the production public key to Sepolia:
+
+```bash
+yarn deploy:sepolia-prod
 ```

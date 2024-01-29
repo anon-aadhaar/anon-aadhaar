@@ -8,9 +8,7 @@ import {
   AnonAadhaarCore,
   AnonAadhaarCorePackage,
   InitArgs,
-  VK_URL,
-  WASM_URL,
-  ZKEY_URL,
+  artifactUrls,
   init,
   verifyLocal,
 } from '@anon-aadhaar/core'
@@ -42,7 +40,8 @@ export function AnonAadhaarProvider(props: {
   const [anonAadhaarProof, setAnonAadhaarProof] =
     useState<AnonAadhaarCore | null>(null)
   const [useTestAadhaar, setUseTestAadhaar] = useState<boolean>(true)
-  const [isWeb, setIsWeb] = useState<boolean>(true)
+  const [fetchArtifactsFromServer, setFetchArtifactsFromServer] =
+    useState<boolean>(true)
   const [state, setState] = useState<AnonAadhaarState>({
     status: 'logged-out',
   })
@@ -51,15 +50,27 @@ export function AnonAadhaarProvider(props: {
     if (props._useTestAadhaar !== undefined)
       setUseTestAadhaar(props._useTestAadhaar)
     if (props._fetchArtifactsFromServer !== undefined)
-      setIsWeb(props._fetchArtifactsFromServer)
+      setFetchArtifactsFromServer(props._fetchArtifactsFromServer)
   }, [])
 
   useEffect(() => {
     const anonAadhaarInitArgs: InitArgs = {
-      wasmURL: isWeb ? WASM_URL : '/aadhaar-verifier.wasm',
-      zkeyURL: isWeb ? ZKEY_URL : '/circuit_final.zkey',
-      vkeyURL: isWeb ? VK_URL : '/vkey.json',
-      isWebEnv: isWeb,
+      wasmURL: fetchArtifactsFromServer
+        ? useTestAadhaar
+          ? artifactUrls.test.wasm
+          : artifactUrls.prod.wasm
+        : '/aadhaar-verifier.wasm',
+      zkeyURL: fetchArtifactsFromServer
+        ? useTestAadhaar
+          ? artifactUrls.test.zkey
+          : artifactUrls.prod.zkey
+        : '/circuit_final.zkey',
+      vkeyURL: fetchArtifactsFromServer
+        ? useTestAadhaar
+          ? artifactUrls.test.vk
+          : artifactUrls.prod.vk
+        : '/vkey.json',
+      isWebEnv: fetchArtifactsFromServer,
     }
 
     init(anonAadhaarInitArgs)
@@ -67,7 +78,7 @@ export function AnonAadhaarProvider(props: {
       .catch(e => {
         throw Error(e)
       })
-  }, [isWeb])
+  }, [fetchArtifactsFromServer])
 
   // Write state to local storage whenever a login starts, succeeds, or fails
   const setAndWriteState = (newState: AnonAadhaarState) => {
@@ -91,7 +102,12 @@ export function AnonAadhaarProvider(props: {
   React.useEffect(() => {
     if (anonAadhaarProofStr === null || anonAadhaarProof === null) return
     console.log(`[ANON-AADHAAR] trying to log in with ${anonAadhaarProofStr}`)
-    handleLogin(state, anonAadhaarProofStr, anonAadhaarProof, isWeb)
+    handleLogin(
+      state,
+      anonAadhaarProofStr,
+      anonAadhaarProof,
+      fetchArtifactsFromServer,
+    )
       .then(newState => {
         if (newState) setAndWriteState(newState)
         else
@@ -110,8 +126,8 @@ export function AnonAadhaarProvider(props: {
 
   // Provide context
   const val = React.useMemo(
-    () => ({ state, startReq, useTestAadhaar, isWeb }),
-    [state, useTestAadhaar, isWeb],
+    () => ({ state, startReq, useTestAadhaar, fetchArtifactsFromServer }),
+    [state, useTestAadhaar, fetchArtifactsFromServer],
   )
 
   return (

@@ -2,7 +2,7 @@ import { describe } from 'mocha'
 import { InitArgs } from '../src/types'
 import { init, prove, verify } from '../src/core'
 import { assert } from 'chai'
-import { VK_URL, WASM_URL, ZKEY_URL, generateArgs } from '../src'
+import { artifactUrls, generateArgs } from '../src'
 import fs from 'fs'
 import { testQRData as QRData } from '../../circuits/assets/dataInput.json'
 
@@ -38,9 +38,9 @@ describe('PCD tests', function () {
 
   it('PCD flow web prover', async function () {
     const anonAadhaarInitArgs: InitArgs = {
-      wasmURL: WASM_URL,
-      zkeyURL: ZKEY_URL,
-      vkeyURL: VK_URL,
+      wasmURL: artifactUrls.test.wasm,
+      zkeyURL: artifactUrls.test.zkey,
+      vkeyURL: artifactUrls.test.vk,
       isWebEnv: true,
     }
 
