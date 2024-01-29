@@ -4,6 +4,14 @@ import '@nomicfoundation/hardhat-toolbox'
 require('dotenv').config()
 
 const config: HardhatUserConfig = {
+  networks: {
+    hardhat: {
+      forking: {
+        url: `https://mainnet.infura.io/v3/${process.env.PROVIDER_KEY}`,
+        blockNumber: 7327025,
+      },
+    },
+  },
   solidity: '0.8.19',
   paths: {
     sources: './src',

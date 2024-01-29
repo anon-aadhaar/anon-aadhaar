@@ -1,5 +1,9 @@
 import '@nomiclabs/hardhat-ethers'
 import { ethers } from 'hardhat'
+import {
+  productionPublicKeyHash,
+  //   testPublicKeyHash,
+} from '../test/const'
 
 async function main() {
   const verifier = await ethers.deployContract('Verifier')
@@ -9,16 +13,18 @@ async function main() {
 
   console.log(`Verifier contract deployed to ${_verifierAddress}`)
 
-  // PublicKey that signed the test QR Data
-  // The corresponding certificate can be found here: https://uidai.gov.in/en/ecosystem/authentication-devices-documents/qr-code-reader.html
-  const pubkeyTestHashBigInt = BigInt(
-    '14283653287016348311748048156110700109007577525298584963450140859470242476430',
-  ).toString()
+  //   // To deploy contract with the test UIDAI public key, will verify only test Aadhaar
+  //   const anonAadhaarVerifierTest = await ethers.deployContract('AnonAadhaar', [
+  //     _verifierAddress,
+  //     testPublicKeyHash,
+  //   ])
 
+  // To deploy contract with production UIDAI public key, will verify real Aadhaar
   const anonAadhaarVerifierTest = await ethers.deployContract('AnonAadhaar', [
     _verifierAddress,
-    pubkeyTestHashBigInt,
+    productionPublicKeyHash,
   ])
+
   await anonAadhaarVerifierTest.waitForDeployment()
 
   const _anonAadhaarVerifierTestAddress =

@@ -1,6 +1,6 @@
 import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers'
 import { expect } from 'chai'
-import { ethers } from 'hardhat'
+import { ethers, network } from 'hardhat'
 import {
   InitArgs,
   init,
@@ -151,6 +151,32 @@ describe('VerifyProof', function () {
             packedGroth16Proof,
           ),
         ).to.emit(anonAadhaarVote, 'Voted')
+      })
+
+      it('Should revert if timestamp is more than 3hr ago', async function () {
+        const { anonAadhaarVote } = await loadFixture(deployOneYearLockFixture)
+
+        const testTimestamp =
+          new Date('2019-03-08T09:00:00.000Z').getTime() / 1000
+
+        // Set the block timestamp to '2019-03-08T09:00:00.000Z' and mine a new block
+        await network.provider.send('evm_setNextBlockTimestamp', [
+          testTimestamp,
+        ])
+        await network.provider.send('evm_mine')
+
+        await expect(
+          anonAadhaarVote.voteForProposal(
+            0,
+            anonAadhaarProof.identityNullifier,
+            anonAadhaarProof.userNullifier,
+            anonAadhaarProof.timestamp,
+            user1addres,
+            packedGroth16Proof,
+          ),
+        ).to.be.revertedWith(
+          '[AnonAadhaarVote]: Proof must be generated with Aadhaar data generated less than 3 hours ago.',
+        )
       })
     })
   })

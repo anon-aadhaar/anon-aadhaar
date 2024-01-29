@@ -31,6 +31,14 @@ contract AnonAadhaarVote is IAnonAadhaarVote {
         return uint256(uint160(_addr));
     }
 
+    function isLessThan3HoursAgo(uint timestamp) public view returns (bool) {
+        // 3 hours in seconds
+        uint threeHoursInSeconds = 3 * 60 * 60;
+
+        // Check if the timestamp is more recent than (current time - 3 hours)
+        return timestamp > (block.timestamp - threeHoursInSeconds);
+    }
+
     /// @dev Register a vote in the contract.
     /// @param proposalIndex: Index of the proposal you want to vote for.
     /// @param identityNullifier: Hash of last the 4 digits + DOB, name, gender adn pin code.
@@ -41,6 +49,7 @@ contract AnonAadhaarVote is IAnonAadhaarVote {
     function voteForProposal(uint256 proposalIndex, uint identityNullifier, uint userNullifier, uint timestamp, uint signal, uint[8] memory groth16Proof ) public {
         require(proposalIndex < proposals.length, "[AnonAadhaarVote]: Invalid proposal index");
         require(addressToUint256(msg.sender) == signal, "[AnonAadhaarVote]: wrong user signal sent.");
+        require(isLessThan3HoursAgo(timestamp) == true, "[AnonAadhaarVote]: Proof must be generated with Aadhaar data generated less than 3 hours ago.");
         require(IAnonAadhaar(anonAadhaarVerifierAddr).verifyAnonAadhaarProof(identityNullifier, userNullifier, timestamp, signal, groth16Proof) == true, "[AnonAadhaarVote]: proof sent is not valid.");
         // Check that user hasn't already voted
         // _pubSignals[1] refers to userNullifier
@@ -77,5 +86,5 @@ contract AnonAadhaarVote is IAnonAadhaarVote {
     // Function to check if a user has already voted
     function checkVoted(uint256 _nullifier) public view returns (bool) {
         return hasVoted[_nullifier];
-    } 
+    }
 }
