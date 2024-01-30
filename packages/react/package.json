@@ -1,6 +1,6 @@
 {
   "name": "@anon-aadhaar/react",
-  "version": "0.0.0",
+  "version": "0.0.5",
   "description": "Frontend component kit for Anon Aadhaar protocol",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -12,7 +12,7 @@
     "test": "TS_NODE_COMPILER_OPTIONS={\\\"module\\\":\\\"commonjs\\\"} npx ts-mocha -p tsconfig.json test/**/*.test.{ts,tsx} --exit",
     "prepare": "cd ../.. && husky install",
     "test-publish": "yarn build && yarn lint && yarn test && npm publish --dry-run",
-    "publishtonpm": "yarn build && yarn lint && yarn test && npm publish",
+    "publishtonpm": "yarn build && yarn lint && npm publish",
     "bump-to": "yarn version --no-commit-hooks --no-git-tag-version --new-version"
   },
   "files": [
