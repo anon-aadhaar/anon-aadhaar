@@ -1,6 +1,6 @@
 {
   "name": "@anon-aadhaar/core",
-  "version": "0.1.15",
+  "version": "0.0.0",
   "main": "./dist/index.js",
   "types": "./src/index.ts",
   "repository": "https://github.com/privacy-scaling-explorations/anon-aadhaar",
