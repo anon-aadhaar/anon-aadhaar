@@ -1,10 +1,10 @@
 import { DisplayOptions, PCD, PCDPackage, SerializedPCD } from '@pcd/pcd-types'
 import {
-  PCDInitArgs,
-  AnonAadhaarPCDTypeName,
-  AnonAadhaarPCDClaim,
-  AnonAadhaarPCDProof,
-  AnonAadhaarPCDArgs,
+  InitArgs,
+  AnonAadhaarTypeName,
+  AnonAadhaarClaim,
+  AnonAadhaarProof,
+  AnonAadhaarArgs,
 } from './types'
 
 import { v4 as uuidv4 } from 'uuid'
@@ -12,18 +12,18 @@ import { groth16 } from 'snarkjs'
 import JSONBig from 'json-bigint'
 import { BackendProver, ProverInferace, WebProver } from './prover'
 
-export class AnonAadhaarPCD
-  implements PCD<AnonAadhaarPCDClaim, AnonAadhaarPCDProof>
+export class AnonAadhaarCore
+  implements PCD<AnonAadhaarClaim, AnonAadhaarProof>
 {
-  type = AnonAadhaarPCDTypeName
-  claim: AnonAadhaarPCDClaim
-  proof: AnonAadhaarPCDProof
+  type = AnonAadhaarTypeName
+  claim: AnonAadhaarClaim
+  proof: AnonAadhaarProof
   id: string
 
   public constructor(
     id: string,
-    claim: AnonAadhaarPCDClaim,
-    proof: AnonAadhaarPCDProof
+    claim: AnonAadhaarClaim,
+    proof: AnonAadhaarProof
   ) {
     this.id = id
     this.claim = claim
@@ -32,12 +32,12 @@ export class AnonAadhaarPCD
 }
 
 // initial function
-let initArgs: PCDInitArgs | undefined = undefined
-export async function init(args: PCDInitArgs): Promise<void> {
+let initArgs: InitArgs | undefined = undefined
+export async function init(args: InitArgs): Promise<void> {
   initArgs = args
 }
 
-export async function prove(args: AnonAadhaarPCDArgs): Promise<AnonAadhaarPCD> {
+export async function prove(args: AnonAadhaarArgs): Promise<AnonAadhaarCore> {
   if (!initArgs) {
     throw new Error(
       'cannot make Anon Aadhaar proof: init has not been called yet'
@@ -48,10 +48,15 @@ export async function prove(args: AnonAadhaarPCDArgs): Promise<AnonAadhaarPCD> {
     throw new Error('Invalid pubKey argument')
   }
 
+  if (!args.signalHash.value) {
+    throw new Error('Invalid signalHash argument')
+  }
+
   const id = uuidv4()
 
-  const pcdClaim: AnonAadhaarPCDClaim = {
+  const anonAadhaarClaim: AnonAadhaarClaim = {
     pubKey: args.pubKey.value,
+    signalHash: args.signalHash.value,
   }
 
   let prover: ProverInferace
@@ -62,9 +67,9 @@ export async function prove(args: AnonAadhaarPCDArgs): Promise<AnonAadhaarPCD> {
     prover = new BackendProver(initArgs.wasmURL, initArgs.zkeyURL)
   }
 
-  const pcdProof = await prover.proving(args)
+  const anonAadhaarProof = await prover.proving(args)
 
-  return new AnonAadhaarPCD(id, pcdClaim, pcdProof)
+  return new AnonAadhaarCore(id, anonAadhaarClaim, anonAadhaarProof)
 }
 
 async function getVerifyKey() {
@@ -88,7 +93,7 @@ async function getVerifyKey() {
   return vk
 }
 
-export async function verify(pcd: AnonAadhaarPCD): Promise<boolean> {
+export async function verify(pcd: AnonAadhaarCore): Promise<boolean> {
   const vk = await getVerifyKey()
 
   return groth16.verify(
@@ -104,7 +109,7 @@ export async function verify(pcd: AnonAadhaarPCD): Promise<boolean> {
   )
 }
 
-export async function verifyLocal(pcd: AnonAadhaarPCD): Promise<boolean> {
+export async function verifyLocal(pcd: AnonAadhaarCore): Promise<boolean> {
   if (!initArgs) {
     throw new Error(
       'cannot make Anon Aadhaar proof: init has not been called yet'
@@ -133,37 +138,39 @@ export async function verifyLocal(pcd: AnonAadhaarPCD): Promise<boolean> {
 }
 
 export function serialize(
-  pcd: AnonAadhaarPCD
-): Promise<SerializedPCD<AnonAadhaarPCD>> {
+  pcd: AnonAadhaarCore
+): Promise<SerializedPCD<AnonAadhaarCore>> {
   return Promise.resolve({
-    type: AnonAadhaarPCDTypeName,
+    type: AnonAadhaarTypeName,
     pcd: JSONBig().stringify({
       type: pcd.type,
       id: pcd.id,
       claim: pcd.claim,
       proof: pcd.proof,
     }),
-  } as SerializedPCD<AnonAadhaarPCD>)
+  } as SerializedPCD<AnonAadhaarCore>)
 }
 
-export async function deserialize(serialized: string): Promise<AnonAadhaarPCD> {
+export async function deserialize(
+  serialized: string
+): Promise<AnonAadhaarCore> {
   return JSONBig().parse(serialized)
 }
 
-export function getDisplayOptions(pcd: AnonAadhaarPCD): DisplayOptions {
+export function getDisplayOptions(pcd: AnonAadhaarCore): DisplayOptions {
   return {
     header: 'Anon Aadhaar Signature',
     displayName: 'pcd-' + pcd.type,
   }
 }
 
-export const AnonAadhaarPCDPackage: PCDPackage<
-  AnonAadhaarPCDClaim,
-  AnonAadhaarPCDProof,
-  AnonAadhaarPCDArgs,
-  PCDInitArgs
+export const AnonAadhaarCorePackage: PCDPackage<
+  AnonAadhaarClaim,
+  AnonAadhaarProof,
+  AnonAadhaarArgs,
+  InitArgs
 > = {
-  name: AnonAadhaarPCDTypeName,
+  name: AnonAadhaarTypeName,
   getDisplayOptions,
   prove,
   init,

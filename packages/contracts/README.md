@@ -1,12 +1,62 @@
-# anon-aadhaar-contracts
+# @anon-aadhaar/contracts
 
-This package contains the anon Aadhaar Verfier contract. You can import it directly in your smart contract to check on-chain that a user have a valid anon Aadhaar identity proof.
+This package contains the anon Aadhaar Verfier contract. You can import it directly in your Hardhat project, or use the alredy deployed contracts, to verify an Anon Aadhaar Proof.
 
-Try running some of the following tasks:
+## 🛠 Install
 
-```shell
+### npm
+
+```bash
+npm install @anon-aadhaar/contracts
+```
+
+### yarn
+
+```bash
+yarn add @anon-aadhaar/contracts
+```
+
+Update your `hardhat.config.ts`:
+
+```typescript
+import 'hardhat-dependency-compiler'
+
+const config: HardhatUserConfig = {
+  solidity: '0.8.19',
+  dependencyCompiler: {
+    paths: ['@anon-aadhaar/contracts/src/AnonAadhaar.sol'],
+  },
+}
+```
+
+## 📜 Usage
+
+Compile the contracts:
+
+```bash
 yarn build
+```
+
+Test the contracts:
+
+```bash
 yarn test
-REPORT_GAS=true npx hardhat test
-npx hardhat run scripts/deploy.ts --network goerli | mumbai
+```
+
+Test the contracts with gas report:
+
+```bash
+yarn test:gas
+```
+
+Deploy the contracts with the test public key to Sepolia:
+
+```bash
+yarn deploy:sepolia-test
+```
+
+Deploy the contracts with the production public key to Sepolia:
+
+```bash
+yarn deploy:sepolia-prod
 ```

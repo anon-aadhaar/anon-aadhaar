@@ -1,94 +1,180 @@
 import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers'
 import { expect } from 'chai'
-import { ethers } from 'hardhat'
+import { ethers, network } from 'hardhat'
 import {
-  splitToWords,
-  exportCallDataGroth16,
-  extractWitness,
-  WASM_URL,
-  ZKEY_URL,
+  InitArgs,
+  init,
+  generateArgs,
+  prove,
+  artifactUrls,
+  AnonAadhaarProof,
+  PackedGroth16Proof,
+  packGroth16Proof,
 } from '../../core/src'
-import crypto from 'crypto'
-import { fetchKey } from './util'
-import { genData } from '../../core/test/utils'
+import { testQRData } from '../../circuits/assets/dataInput.json'
 import fs from 'fs'
+import { testPublicKeyHash } from './const'
 
 describe('VerifyProof', function () {
   this.timeout(0)
 
+  let packedGroth16Proof: PackedGroth16Proof
+  let anonAadhaarProof: AnonAadhaarProof
+  let certificate: string
+  let user1addres: string
+
+  this.beforeAll(async () => {
+    const certificateDirName = __dirname + '/../../circuits/assets'
+    certificate = fs
+      .readFileSync(certificateDirName + '/uidai_prod_cdup.cer')
+      .toString()
+
+    const anonAadhaarInitArgs: InitArgs = {
+      wasmURL: artifactUrls.test.wasm,
+      zkeyURL: artifactUrls.test.zkey,
+      vkeyURL: artifactUrls.test.vk,
+      isWebEnv: true,
+    }
+
+    const [user1] = await ethers.getSigners()
+    user1addres = user1.address
+
+    await init(anonAadhaarInitArgs)
+
+    const args = await generateArgs(testQRData, certificate, user1addres)
+
+    const anonAadhaarCore = await prove(args)
+
+    anonAadhaarProof = anonAadhaarCore.proof
+
+    packedGroth16Proof = packGroth16Proof(anonAadhaarProof.groth16Proof)
+  })
+
   async function deployOneYearLockFixture() {
-    const Verifier = await ethers.getContractFactory('Verifier')
+    const Verifier = await ethers.getContractFactory('VerifierTest')
     const verifier = await Verifier.deploy()
 
-    const appIdBigInt = BigInt(
-      '196700487049306364386084600156231018794323017728',
-    ).toString()
+    const _verifierAddress = await verifier.getAddress()
+
+    const pubkeyHashBigInt = BigInt(testPublicKeyHash).toString()
+
+    const AnonAadhaarContract = await ethers.getContractFactory('AnonAadhaar')
+    const anonAadhaarVerifier = await AnonAadhaarContract.deploy(
+      _verifierAddress,
+      pubkeyHashBigInt,
+    )
+
+    const _AnonAadhaarAddress = await anonAadhaarVerifier.getAddress()
+
+    const AnonAadhaarVote = await ethers.getContractFactory('AnonAadhaarVote')
+    const anonAadhaarVote = await AnonAadhaarVote.deploy(
+      'Do you like this app?',
+      ['yes', 'no', 'maybe'],
+      _AnonAadhaarAddress,
+    )
 
     return {
-      verifier,
-      appIdBigInt,
+      anonAadhaarVerifier,
+      anonAadhaarVote,
     }
   }
 
-  describe('Verify', function () {
-    describe('Verifier', function () {
-      it.skip('Should return true for a valid proof', async function () {
-        const { verifier } = await loadFixture(deployOneYearLockFixture)
-        const testData: [bigint, bigint, bigint, bigint] = await genData(
-          'Hello world',
-          'SHA-1',
-        )
-        const app_id = BigInt(
-          parseInt(crypto.randomBytes(20).toString('hex'), 16),
-        ) // random value.
-        const input = {
-          signature: splitToWords(BigInt(testData[1]), BigInt(64), BigInt(32)),
-          modulus: splitToWords(BigInt(testData[2]), BigInt(64), BigInt(32)),
-          base_message: splitToWords(
-            BigInt(testData[3]),
-            BigInt(64),
-            BigInt(32),
-          ),
-          app_id: app_id.toString(),
-        }
-
-        const { a, b, c, Input } = await exportCallDataGroth16(
-          input,
-          await fetchKey(WASM_URL),
-          await fetchKey(ZKEY_URL),
-        )
-
-        expect(await verifier.verifyProof(a, b, c, Input)).to.be.equal(true)
-      })
-
-      it.skip('Should return true for a valid proof with webProver', async function () {
-        const { verifier, appIdBigInt } = await loadFixture(
+  describe('AnonAadhaarVote Contract', function () {
+    describe('verifyAnonAadhaarProof', function () {
+      it('Should return true for a valid PCD proof', async function () {
+        const { anonAadhaarVerifier } = await loadFixture(
           deployOneYearLockFixture,
         )
 
-        const dirName = __dirname + '/../../anon-aadhaar-pcd/build/pdf'
+        expect(
+          await anonAadhaarVerifier.verifyAnonAadhaarProof(
+            anonAadhaarProof.identityNullifier,
+            anonAadhaarProof.userNullifier,
+            anonAadhaarProof.timestamp,
+            user1addres,
+            packedGroth16Proof,
+          ),
+        ).to.be.equal(true)
+      })
 
-        const testFile = dirName + '/signed.pdf'
-        const pdfRaw = fs.readFileSync(testFile)
-        const pdfBuffer = Buffer.from(pdfRaw)
-        const inputs = await extractWitness(pdfBuffer, 'test123')
-
-        if (inputs instanceof Error) throw new Error(inputs.message)
-
-        const input = {
-          signature: splitToWords(inputs.sigBigInt, BigInt(64), BigInt(32)),
-          modulus: splitToWords(inputs.modulusBigInt, BigInt(64), BigInt(32)),
-          base_message: splitToWords(inputs.msgBigInt, BigInt(64), BigInt(32)),
-          app_id: appIdBigInt,
-        }
-
-        const { a, b, c, Input } = await exportCallDataGroth16(
-          input,
-          await fetchKey(WASM_URL),
-          await fetchKey(ZKEY_URL),
+      it('Should revert for a wrong signal', async function () {
+        const { anonAadhaarVerifier } = await loadFixture(
+          deployOneYearLockFixture,
         )
 
-        expect(await verifier.verifyProof(a, b, c, Input)).to.be.equal(true)
+        expect(
+          await anonAadhaarVerifier.verifyAnonAadhaarProof(
+            anonAadhaarProof.identityNullifier,
+            anonAadhaarProof.userNullifier,
+            anonAadhaarProof.timestamp,
+            40,
+            packedGroth16Proof,
+          ),
+        ).to.be.equal(false)
+      })
+    })
+  })
+
+  describe('AnonAadhaar Vote', function () {
+    describe('Vote for a proposal', function () {
+      it('Should revert if signal is different from senderss address', async function () {
+        const { anonAadhaarVote } = await loadFixture(deployOneYearLockFixture)
+
+        const [, , user2] = await ethers.getSigners()
+
+        await expect(
+          (
+            anonAadhaarVote.connect(user2) as typeof anonAadhaarVote
+          ).voteForProposal(
+            0,
+            anonAadhaarProof.identityNullifier,
+            anonAadhaarProof.userNullifier,
+            anonAadhaarProof.timestamp,
+            user1addres,
+            packedGroth16Proof,
+          ),
+        ).to.be.revertedWith('[AnonAadhaarVote]: wrong user signal sent.')
+      })
+
+      it('Should verify a proof with right address in signal', async function () {
+        const { anonAadhaarVote } = await loadFixture(deployOneYearLockFixture)
+
+        await expect(
+          anonAadhaarVote.voteForProposal(
+            0,
+            anonAadhaarProof.identityNullifier,
+            anonAadhaarProof.userNullifier,
+            anonAadhaarProof.timestamp,
+            user1addres,
+            packedGroth16Proof,
+          ),
+        ).to.emit(anonAadhaarVote, 'Voted')
+      })
+
+      it('Should revert if timestamp is more than 3hr ago', async function () {
+        const { anonAadhaarVote } = await loadFixture(deployOneYearLockFixture)
+
+        const testTimestamp =
+          new Date('2019-03-08T09:00:00.000Z').getTime() / 1000
+
+        // Set the block timestamp to '2019-03-08T09:00:00.000Z' and mine a new block
+        await network.provider.send('evm_setNextBlockTimestamp', [
+          testTimestamp,
+        ])
+        await network.provider.send('evm_mine')
+
+        await expect(
+          anonAadhaarVote.voteForProposal(
+            0,
+            anonAadhaarProof.identityNullifier,
+            anonAadhaarProof.userNullifier,
+            anonAadhaarProof.timestamp,
+            user1addres,
+            packedGroth16Proof,
+          ),
+        ).to.be.revertedWith(
+          '[AnonAadhaarVote]: Proof must be generated with Aadhaar data generated less than 3 hours ago.',
+        )
       })
     })
   })

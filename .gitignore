@@ -9,4 +9,5 @@ artifacts
 .yarn-integrity
 .DS_Store
 sha256-var-circom
+artifacts/
 .env

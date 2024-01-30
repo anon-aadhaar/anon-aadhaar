@@ -7,15 +7,13 @@ import { Groth16Proof } from 'snarkjs'
 
 export type BigNumberish = string | bigint
 
-export const AnonAadhaarPCDTypeName = 'anon-aadhaar-pcd'
+export const AnonAadhaarTypeName = 'anon-aadhaar'
 
-export interface PCDInitArgs {
-  // TODO: how do we distribute these in-package, so that consumers
-  // of the package don't have to copy-paste these artifacts?
-  // TODO: how do we account for different versions of the same type
-  // of artifact? eg. this one is parameterized by group size. Should
-  // we pre-generate a bunch of artifacts per possible group size?
-  // Should we do code-gen?
+/**
+ * @dev all the arguments needed to initalize the Core package.
+ * You can find these URLs in ./constants.ts
+ */
+export interface InitArgs {
   wasmURL: string
   zkeyURL: string
   vkeyURL: string
@@ -23,16 +21,17 @@ export interface PCDInitArgs {
 }
 
 /**
- * @dev claim this public key signed a message
+ * @dev claim that you have a document signed by pubKey.
  */
-export type AnonAadhaarPCDClaim = {
+export type AnonAadhaarClaim = {
   pubKey: string[]
+  signalHash: string
 }
 
 /**
- * @dev proof of claim correct
+ * @dev proof of a correct claim
  */
-export type AnonAadhaarPCDProof = {
+export type AnonAadhaarProof = {
   groth16Proof: Groth16Proof // 3 points on curve if we use groth16
   identityNullifier: string
   userNullifier: string
@@ -42,9 +41,9 @@ export type AnonAadhaarPCDProof = {
 }
 
 /**
- * @dev witness use for create zk proof of AnonAadhaarPCD package.
+ * @dev Arguments needed to compute the witness.
  */
-export type AnonAadhaarPCDArgs = {
+export type AnonAadhaarArgs = {
   aadhaarData: StringArrayArgument // private
   aadhaarDataLength: NumberArgument // private
   signature: StringArrayArgument // private
@@ -52,7 +51,7 @@ export type AnonAadhaarPCDArgs = {
   signalHash: StringArgument // public
 }
 
-export type Proof = [
+export type PackedGroth16Proof = [
   BigNumberish,
   BigNumberish,
   BigNumberish,
@@ -62,10 +61,3 @@ export type Proof = [
   BigNumberish,
   BigNumberish
 ]
-
-export type WitnessQRInputs = {
-  paddedMessage: string[]
-  messageLength: number
-  signatureBigint: bigint
-  modulusBigint: bigint
-}

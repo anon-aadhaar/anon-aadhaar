@@ -1,7 +1,7 @@
-import { Proof } from './types'
+import { PackedGroth16Proof } from './types'
 import { groth16, Groth16Proof, ZKArtifact } from 'snarkjs'
 import { BigNumberish } from './types'
-import { AnonAadhaarPCD } from './pcd'
+import { AnonAadhaarCore } from './core'
 import pako from 'pako'
 
 export const handleError = (error: unknown, defaultMessage: string): Error => {
@@ -41,20 +41,22 @@ export function splitToWords(
 }
 
 /**
- * Packs a proof into a format compatible with Semaphore.
+ * Packs a proof into a format compatible with AnonAadhaar.sol contract.
  * @param originalProof The proof generated with SnarkJS.
  * @returns The proof compatible with Semaphore.
  */
-export function packProof(originalProof: Groth16Proof): Proof {
+export function packGroth16Proof(
+  groth16Proof: Groth16Proof
+): PackedGroth16Proof {
   return [
-    originalProof.pi_a[0],
-    originalProof.pi_a[1],
-    originalProof.pi_b[0][1],
-    originalProof.pi_b[0][0],
-    originalProof.pi_b[1][1],
-    originalProof.pi_b[1][0],
-    originalProof.pi_c[0],
-    originalProof.pi_c[1],
+    groth16Proof.pi_a[0],
+    groth16Proof.pi_a[1],
+    groth16Proof.pi_b[0][1],
+    groth16Proof.pi_b[0][0],
+    groth16Proof.pi_b[1][1],
+    groth16Proof.pi_b[1][0],
+    groth16Proof.pi_c[0],
+    groth16Proof.pi_c[1],
   ]
 }
 
@@ -104,26 +106,26 @@ export async function exportCallDataGroth16(
 }
 
 /**
- * Turn a PCD into a call data format to use it as a transaction input.
- * @param _pcd The PCD you want to verify on-chain.
+ * Turn an AnonAadhaarProof into a call data format to use it as a transaction input.
+ * @param _anonAadhaarProof The Core proof you want to verify on-chain.
  * @returns {a, b, c, Input} which are the input needed to verify a proof in the Verifier smart contract.
  */
 export async function exportCallDataGroth16FromPCD(
-  _pcd: AnonAadhaarPCD
+  _anonAadhaarProof: AnonAadhaarCore
 ): Promise<{
   a: [BigNumberish, BigNumberish]
   b: [[BigNumberish, BigNumberish], [BigNumberish, BigNumberish]]
   c: [BigNumberish, BigNumberish]
-  Input: BigNumberish[]
+  publicInputs: BigNumberish[]
 }> {
   const calldata = await groth16.exportSolidityCallData(
-    _pcd.proof.groth16Proof,
+    _anonAadhaarProof.proof.groth16Proof,
     [
-      _pcd.proof.identityNullifier,
-      _pcd.proof.userNullifier,
-      _pcd.proof.timestamp,
-      _pcd.proof.pubkeyHash,
-      _pcd.proof.signalHash,
+      _anonAadhaarProof.proof.identityNullifier,
+      _anonAadhaarProof.proof.userNullifier,
+      _anonAadhaarProof.proof.timestamp,
+      _anonAadhaarProof.proof.pubkeyHash,
+      _anonAadhaarProof.proof.signalHash,
     ]
   )
 
@@ -138,12 +140,12 @@ export async function exportCallDataGroth16FromPCD(
     [argv[4], argv[5]],
   ]
   const c: [BigNumberish, BigNumberish] = [argv[6], argv[7]]
-  const Input = []
+  const publicInputs = []
 
   for (let i = 8; i < argv.length; i++) {
-    Input.push(argv[i])
+    publicInputs.push(argv[i])
   }
-  return { a, b, c, Input }
+  return { a, b, c, publicInputs }
 }
 
 /**

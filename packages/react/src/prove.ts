@@ -1,9 +1,9 @@
 import { SerializedPCD } from '@pcd/pcd-types'
 import {
   prove,
-  AnonAadhaarPCDArgs,
+  AnonAadhaarArgs,
   serialize,
-  AnonAadhaarPCD,
+  AnonAadhaarCore,
   generateArgs,
   handleError,
 } from '@anon-aadhaar/core'
@@ -14,22 +14,22 @@ import { fetchCertificateFile } from './util'
  * It takes an IdentityPCDArgs argument and returns a Promise containing the generated IdentityPCD and its
  * serialized form (SerializedPCD).
  *
- * @param pcdArgs - The arguments required to generate the IdentityPCD.
+ * @param AnonAadhaarArgs - The arguments required to generate the IdentityPCD.
  * @returns A Promise containing the generated IdentityPCD and its serialized form.
  *
  * @see {@link https://github.com/privacy-scaling-explorations/anon-aadhaar}
  *   For more information about the underlying circuit and proving system.
  */
 export const proveAndSerialize = async (
-  pcdArgs: AnonAadhaarPCDArgs,
+  anonAadhaarArgs: AnonAadhaarArgs,
 ): Promise<{
-  pcd: AnonAadhaarPCD
-  serialized: SerializedPCD<AnonAadhaarPCD>
+  anonAadhaarProof: AnonAadhaarCore
+  serialized: SerializedPCD<AnonAadhaarCore>
 }> => {
-  const pcd = await prove(pcdArgs)
-  const serialized = await serialize(pcd)
+  const anonAadhaarProof = await prove(anonAadhaarArgs)
+  const serialized = await serialize(anonAadhaarProof)
 
-  return { pcd, serialized }
+  return { anonAadhaarProof, serialized }
 }
 
 /**
@@ -44,7 +44,7 @@ export const proveAndSerialize = async (
 export const processArgs = async (
   qrData: string,
   useTestAadhaar: boolean,
-): Promise<AnonAadhaarPCDArgs> => {
+): Promise<AnonAadhaarArgs> => {
   let certificate: string | null = null
   try {
     certificate = await fetchCertificateFile(

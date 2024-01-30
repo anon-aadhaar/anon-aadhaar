@@ -1,8 +1,8 @@
 import { isWebUri } from 'valid-url'
-import { AnonAadhaarPCDArgs, AnonAadhaarPCDProof } from './types'
+import { AnonAadhaarArgs, AnonAadhaarProof } from './types'
 import { ZKArtifact, groth16 } from 'snarkjs'
 
-type Witness = AnonAadhaarPCDArgs
+type Witness = AnonAadhaarArgs
 
 async function fetchKey(keyURL: string): Promise<ZKArtifact> {
   if (isWebUri(keyURL)) {
@@ -46,7 +46,7 @@ export class KeyPath implements KeyPathInterface {
 export interface ProverInferace {
   wasm: KeyPath
   zkey: KeyPath
-  proving: (witness: Witness) => Promise<AnonAadhaarPCDProof>
+  proving: (witness: Witness) => Promise<AnonAadhaarProof>
 }
 
 export class BackendProver implements ProverInferace {
@@ -58,7 +58,7 @@ export class BackendProver implements ProverInferace {
     this.zkey = new KeyPath(zkey, false)
   }
 
-  async proving(witness: Witness): Promise<AnonAadhaarPCDProof> {
+  async proving(witness: Witness): Promise<AnonAadhaarProof> {
     if (!witness.pubKey.value) {
       throw new Error('Cannot make proof: missing pubKey')
     }
@@ -98,8 +98,8 @@ export class BackendProver implements ProverInferace {
       userNullifier: publicSignals[1],
       timestamp: publicSignals[2],
       pubkeyHash: publicSignals[3],
-      groth16Proof: proof,
       signalHash: witness.signalHash.value,
+      groth16Proof: proof,
     }
   }
 }
@@ -113,7 +113,7 @@ export class WebProver implements ProverInferace {
     this.zkey = new KeyPath(zkey, false)
   }
 
-  async proving(witness: Witness): Promise<AnonAadhaarPCDProof> {
+  async proving(witness: Witness): Promise<AnonAadhaarProof> {
     const wasmBuffer = (await this.wasm.getKey()) as ArrayBuffer
     const zkeyBuffer = (await this.zkey.getKey()) as ArrayBuffer
 
@@ -156,8 +156,8 @@ export class WebProver implements ProverInferace {
       userNullifier: publicSignals[1],
       timestamp: publicSignals[2],
       pubkeyHash: publicSignals[3],
-      groth16Proof: proof,
       signalHash: witness.signalHash.value,
+      groth16Proof: proof,
     }
   }
 }

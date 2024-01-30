@@ -3,7 +3,7 @@ import {
   decompressByteArray,
   splitToWords,
 } from './utils'
-import { AnonAadhaarPCDArgs } from './types'
+import { AnonAadhaarArgs } from './types'
 import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
 import { Buffer } from 'buffer'
 import {
@@ -23,7 +23,7 @@ export const generateArgs = async (
   qrData: string,
   certificateFile: string,
   signal?: string
-): Promise<AnonAadhaarPCDArgs> => {
+): Promise<AnonAadhaarArgs> => {
   const bigIntData = BigInt(qrData)
 
   const byteArray = convertBigIntToByteArray(bigIntData)
@@ -55,7 +55,7 @@ export const generateArgs = async (
   // Set signal to 1 by default if no signal setted up
   const signalHash = signal ? hash(signal) : hash(1)
 
-  const pcdArgs: AnonAadhaarPCDArgs = {
+  const anonAadhaarArgs: AnonAadhaarArgs = {
     aadhaarData: {
       argumentType: ArgumentTypeName.StringArray,
       value: Uint8ArrayToCharArray(paddedMessage),
@@ -78,5 +78,5 @@ export const generateArgs = async (
     },
   }
 
-  return pcdArgs
+  return anonAadhaarArgs
 }
