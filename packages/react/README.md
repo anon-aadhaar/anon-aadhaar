@@ -37,7 +37,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
 | Parameter                   | Description                                                                   | Default Value |
 | --------------------------- | ----------------------------------------------------------------------------- | ------------- |
-| `_useTestAadhaar`           | Optional. A boolean flag to determine the usage of test or real Aadhaar data. | `true`        |
+| `_useTestAadhaar`           | Optional. A boolean flag to determine the usage of test or real Aadhaar data. | `false`       |
 | `_fetchArtifactsFromServer` | Optional. A boolean flag to specify the source of zk-SNARK artifacts.         | `true`        |
 
 ---

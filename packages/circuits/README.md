@@ -20,13 +20,13 @@ The circuits in charge of the Sha256 and RSA verification are adapted from the [
 yarn dev-install
 ```
 
-### Run the development trusted setup
+### Run the trusted setup for Aadhaar QR code V2
 
 ```bash
 yarn dev-setup
 ```
 
-### Run the development trusted setup for the Aadhaar QR code data
+### Run the development trusted setup for Aadhaar QR code V1
 
 It's the one used inside of this repo to run the CI/CD with the test data provided by UIDAI
 

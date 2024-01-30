@@ -27,7 +27,7 @@ export type AnonAadhaarProviderProps = {
   /**
    * `_useTestAadhaar`: Flag to determine the usage of test Aadhaar data.
    * Set this to `true` if you want to use test Aadhaar data instead of real data for development or testing purposes.
-   * Defaults to `true` if not explicitly set.
+   * Defaults to `false` if not explicitly set.
    */
   _useTestAadhaar?: boolean
 
@@ -60,7 +60,7 @@ export function AnonAadhaarProvider(
     useState<SerializedPCD<AnonAadhaarCore> | null>(null)
   const [anonAadhaarProof, setAnonAadhaarProof] =
     useState<AnonAadhaarCore | null>(null)
-  const [useTestAadhaar, setUseTestAadhaar] = useState<boolean>(true)
+  const [useTestAadhaar, setUseTestAadhaar] = useState<boolean>(false)
   const [fetchArtifactsFromServer, setFetchArtifactsFromServer] =
     useState<boolean>(true)
   const [state, setState] = useState<AnonAadhaarState>({
