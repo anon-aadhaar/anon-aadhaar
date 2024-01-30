@@ -72,3 +72,7 @@ yarn proof:circuit
 - PSE Discord server: <a href="https://discord.com/invite/sF5CT5rzrR"><img src="https://img.shields.io/badge/discord-pse-blue"></a>
 - Twitter account: <a href="https://twitter.com/AnonAadhaar"><img src="https://img.shields.io/twitter/follow/Anon_Aadhaar?style=flat-square&logo=twitter"></a>
 - Telegram group: <a href="https://t.me/anon_aadhaar"><img src="https://img.shields.io/badge/telegram-@anon_aadhaar-blue.svg?style=flat-square&logo=telegram"></a>
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)

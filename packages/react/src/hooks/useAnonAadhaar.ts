@@ -3,14 +3,16 @@ import { createContext, useContext } from 'react'
 import { SerializedPCD } from '@pcd/pcd-types'
 
 /**
- * useAnonAadhaar is a custom React hook that provides access to the authentication
- * state and the login request function from the AnonAadhaarContext. This hook
- * is intended to be used within components that are descendants of the
- * AnonAadhaarProvider.
+ * `useAnonAadhaar` is a custom React hook that provides convenient access to the Anon Aadhaar authentication state
+ * and a function to initiate the login process. This hook is designed to be used within components that are
+ * nested inside `AnonAadhaarProvider`.
  *
- * @returns An array containing:
- *   - The authentication state (AnonAadhaarState) obtained from the context.
- *   - The login request function (startReq) obtained from the context.
+ * @returns { [AnonAadhaarState, (request: AnonAadhaarRequest) => void] }
+ * An array containing:
+ *   - `AnonAadhaarState`: The current state of the Anon Aadhaar authentication process. This includes any relevant
+ *     data about the current authentication status, user information, or error states.
+ *   - `startReq`: A function that initiates the login/logout process. This function takes an `AnonAadhaarRequest` object
+ *     as its argument, which includes the necessary information to start the authentication process.
  */
 export function useAnonAadhaar(): [
   AnonAadhaarState,

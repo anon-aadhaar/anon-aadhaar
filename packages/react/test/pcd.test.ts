@@ -1,7 +1,7 @@
 import { describe } from 'mocha'
 import { InitArgs, artifactUrls, init, verify } from '@anon-aadhaar/core'
 import { assert } from 'chai'
-import { processArgs, proveAndSerialize } from '../src/prove'
+import { processAadhaarArgs, proveAndSerialize } from '../src/prove'
 import { testQRData } from '../../circuits/assets/dataInput.json'
 
 describe('PCD tests', function () {
@@ -17,7 +17,7 @@ describe('PCD tests', function () {
 
     await init(anonAadhaarInitArgs)
 
-    const args = await processArgs(testQRData, true)
+    const args = await processAadhaarArgs(testQRData, true)
 
     const result = await proveAndSerialize(args)
 

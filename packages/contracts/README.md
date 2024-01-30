@@ -16,7 +16,7 @@ npm install @anon-aadhaar/contracts
 yarn add @anon-aadhaar/contracts
 ```
 
-Update your `hardhat.config.ts`:
+Update your `hardhat.config.ts` in your project:
 
 ```typescript
 import 'hardhat-dependency-compiler'

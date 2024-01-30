@@ -16,6 +16,30 @@ import React, { Dispatch, SetStateAction } from 'react'
 import { proveAndSerialize } from '../prove'
 import { SerializedPCD } from '@pcd/pcd-types'
 
+// Props for the AnonAadhaarProvider
+export type AnonAadhaarProviderProps = {
+  /**
+   * `children`: The ReactNode elements that form the child components of your application.
+   * This is a standard prop for components that wrap around other components to provide context or styling.
+   */
+  children: ReactNode
+
+  /**
+   * `_useTestAadhaar`: Flag to determine the usage of test Aadhaar data.
+   * Set this to `true` if you want to use test Aadhaar data instead of real data for development or testing purposes.
+   * Defaults to `true` if not explicitly set.
+   */
+  _useTestAadhaar?: boolean
+
+  /**
+   * `_fetchArtifactsFromServer`: Flag to control the source of zk-SNARK artifacts.
+   * When set to `true`, zk-SNARK artifacts are fetched from a specified AWS server, facilitating production.
+   * When set to `false`, artifacts are fetched from a local server, typically used for development and local testing.
+   * Defaults to `true` if not explicitly set.
+   */
+  _fetchArtifactsFromServer?: boolean
+}
+
 /**
  * AnonAadhaarProvider is a React component that serves as a provider for the
  * AnonAadhaarContext. It manages the authentication state, login requests,
@@ -23,17 +47,14 @@ import { SerializedPCD } from '@pcd/pcd-types'
  * authentication state from local storage on page load and handles updates to
  * the state when login requests are made and when new proofs are received.
  *
- * @param props - Props for the AnonAadhaarProvider component.
- *   - children: The child components that will have access to the provided context.
+ * @param {AnonAadhaarProviderProps}  anonAadhaarProviderProps
  *
  * @returns A JSX element that wraps the provided child components with the
  * AnonAadhaarContext.Provider.
  */
-export function AnonAadhaarProvider(props: {
-  children: ReactNode
-  _useTestAadhaar?: boolean
-  _fetchArtifactsFromServer?: boolean
-}) {
+export function AnonAadhaarProvider(
+  anonAadhaarProviderProps: AnonAadhaarProviderProps,
+) {
   // Read state from local storage on page load
   const [anonAadhaarProofStr, setAnonAadhaarProofStr] =
     useState<SerializedPCD<AnonAadhaarCore> | null>(null)
@@ -47,10 +68,12 @@ export function AnonAadhaarProvider(props: {
   })
   useEffect(() => {
     readFromLocalStorage().then(setAndWriteState)
-    if (props._useTestAadhaar !== undefined)
-      setUseTestAadhaar(props._useTestAadhaar)
-    if (props._fetchArtifactsFromServer !== undefined)
-      setFetchArtifactsFromServer(props._fetchArtifactsFromServer)
+    if (anonAadhaarProviderProps._useTestAadhaar !== undefined)
+      setUseTestAadhaar(anonAadhaarProviderProps._useTestAadhaar)
+    if (anonAadhaarProviderProps._fetchArtifactsFromServer !== undefined)
+      setFetchArtifactsFromServer(
+        anonAadhaarProviderProps._fetchArtifactsFromServer,
+      )
   }, [])
 
   useEffect(() => {
@@ -132,7 +155,7 @@ export function AnonAadhaarProvider(props: {
 
   return (
     <AnonAadhaarContext.Provider value={val}>
-      {props.children}
+      {anonAadhaarProviderProps.children}
     </AnonAadhaarContext.Provider>
   )
 }
