@@ -6,6 +6,7 @@ let verifierContractName = 'VerifierTest'
 let publicKeyHash = testPublicKeyHash
 // To deploy contract with production UIDAI public key, will verify real Aadhaar
 if (process.env.PRODUCTION_KEY === 'true') {
+  console.log('Using production key...')
   publicKeyHash = productionPublicKeyHash
   verifierContractName = 'Verifier'
 }
@@ -16,25 +17,24 @@ async function main() {
 
   const _verifierAddress = await verifier.getAddress()
 
-  console.log(`Verifier contract deployed to ${_verifierAddress}`)
+  console.log(
+    `${verifierContractName} contract deployed to ${_verifierAddress}`,
+  )
 
-  const anonAadhaarVerifier = await ethers.deployContract('AnonAadhaar', [
+  const anonAadhaar = await ethers.deployContract('AnonAadhaar', [
     _verifierAddress,
     publicKeyHash,
   ])
 
-  await anonAadhaarVerifier.waitForDeployment()
+  await anonAadhaar.waitForDeployment()
+  const _anonAadhaarAddress = await anonAadhaar.getAddress()
 
-  const _anonAadhaarVerifierTestAddress = await anonAadhaarVerifier.getAddress()
-
-  console.log(
-    `AnonAadhaar Test Verifier  contract deployed to ${_anonAadhaarVerifierTestAddress}`,
-  )
+  console.log(`AnonAadhaar contract deployed to ${_anonAadhaarAddress}`)
 
   const anonAadhaarVote = await ethers.deployContract('AnonAadhaarVote', [
     'Do you like this app?',
     ['0', '1', '2', '3', '4', '5'],
-    _anonAadhaarVerifierTestAddress,
+    _anonAadhaarAddress,
   ])
 
   await anonAadhaarVote.waitForDeployment()
