@@ -4,12 +4,12 @@ import {
   splitToWords,
 } from './utils'
 import { AnonAadhaarArgs } from './types'
-import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
-import { Buffer } from 'buffer'
 import {
   bufferToHex,
   Uint8ArrayToCharArray,
 } from '@zk-email/helpers/dist/binaryFormat'
+import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
+import { Buffer } from 'buffer'
 import { pki } from 'node-forge'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import { hash } from './hash'

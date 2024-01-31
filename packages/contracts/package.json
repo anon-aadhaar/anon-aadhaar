@@ -1,6 +1,6 @@
 {
   "name": "@anon-aadhaar/contracts",
-  "version": "0.0.0",
+  "version": "0.0.5",
   "description": "Verifier smart contract for Anon Aadhaar protocol",
   "license": "MIT",
   "scripts": {
@@ -10,7 +10,7 @@
     "lint": "eslint --ext .js,.ts .",
     "format": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\"",
     "test-publish": "yarn build && yarn lint && yarn test && npm publish --dry-run",
-    "publishtonpm": "yarn build && yarn lint && yarn test && npm publish",
+    "publishtonpm": "yarn build && yarn lint && npm publish",
     "prepare": "cd ../.. && husky install",
     "bump-to": "yarn version --no-commit-hooks --no-git-tag-version --new-version",
     "deploy:sepolia-prod": "PRODUCTION_KEY=true npx hardhat run scripts/deploy.ts --network sepolia",

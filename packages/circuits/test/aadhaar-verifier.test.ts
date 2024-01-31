@@ -4,10 +4,10 @@ const circom_tester = require('circom_tester/wasm/tester')
 
 import path from 'path'
 import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
-import { bigIntToChunkedBytes } from '@zk-email/helpers/dist/binaryFormat'
 import {
-  Uint8ArrayToCharArray,
+  bigIntToChunkedBytes,
   bufferToHex,
+  Uint8ArrayToCharArray,
 } from '@zk-email/helpers/dist/binaryFormat'
 import {
   convertBigIntToByteArray,

@@ -2,7 +2,6 @@ import { writeFileSync } from 'fs'
 import { hash, splitToWords } from '@anon-aadhaar/core'
 import { genData } from '../../core/test/utils'
 import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
-
 import { Uint8ArrayToCharArray } from '@zk-email/helpers/dist/binaryFormat'
 
 const main = () => {
