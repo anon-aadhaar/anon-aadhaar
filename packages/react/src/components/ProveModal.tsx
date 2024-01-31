@@ -81,10 +81,31 @@ export const ProveModal: React.FC<ModalProps> = ({
               Prove your Identity
             </Title>
             <Disclaimer>
-              Anon Aadhaar securely verifies your document by confirming its
-              government signature. This process happens entirely on your device
-              for privacy. Please note, slower internet speeds may affect
-              verification time.
+              Anon Aadhaar allows you to create a proof of your Aadhaar ID
+              without revealing any personal data. Generate a QR code using the
+              mAadhaar app{' '}
+              <a
+                className="text-blue-500 underline cursor-pointer"
+                href="https://apps.apple.com/in/app/maadhaar/id1435469474"
+                target="_blank"
+                rel="noreferrer"
+              >
+                iOS
+              </a>{' '}
+              /{' '}
+              <a
+                className="text-blue-500 underline cursor-pointer"
+                href="https://play.google.com/store/apps/details?id=in.gov.uidai.mAadhaarPlus&hl=en_IN&pli=1"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Android
+              </a>
+              ), by entering your Aadhaar number and OTP verification. You can
+              then save the QR as an image using the 'Share' button for import.
+              This process is local to your browser for privacy, and QR images
+              are not uploaded to any server. Note: Internet speed may affect
+              processing time.
             </Disclaimer>
           </TitleSection>
 
@@ -103,7 +124,7 @@ export const ProveModal: React.FC<ModalProps> = ({
 
             {signal && (
               <>
-                <Label>Data your about to sign: </Label>
+                <Label>Data you are signing: </Label>
                 <SignalDisplay signal={signal} />
               </>
             )}
