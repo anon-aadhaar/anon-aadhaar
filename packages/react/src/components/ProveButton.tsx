@@ -3,7 +3,7 @@ import { Dispatch, useContext, SetStateAction } from 'react'
 import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
 import { Spinner } from './LoadingSpinner'
 import React from 'react'
-import { processArgs } from '../prove'
+import { processAadhaarArgs } from '../prove'
 
 interface ProveButtonProps {
   qrData: string | null
@@ -22,7 +22,7 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
     try {
       if (qrData === null) throw new Error('Missing application Id!')
 
-      const args = await processArgs(qrData, useTestAadhaar)
+      const args = await processAadhaarArgs(qrData, useTestAadhaar)
 
       startReq({ type: 'login', args })
     } catch (error) {

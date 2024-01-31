@@ -50,7 +50,7 @@ function install_deps() {
 }
 
 function build_circuit() {
-    circom --wasm -l ../src/helpers -l ../node_modules --sym --r1cs --output ../build ../src/aadhaar-verifier.circom 
+    circom ./src/aadhaar-verifier.circom  --r1cs --wasm -o $BUILD_DIR -l ./node_modules
 }
 
 function dev_trusted_setup_test() {
@@ -70,7 +70,7 @@ function dev_trusted_setup_test() {
     fi
 
     if [ "$HASH" != "$OLD_HASH" ]; then 
-    echo "TRUSTED SETUP FOR DEVELOPMENT - PLEASE, DON'T USE IT IN PRODUCT!!!!"
+    echo "TRUSTED SETUP FOR DEVELOPMENT - PLEASE, DON'T USE IT IN PRODUCTION !!!"
 
     circom ./test/circuits/aadhaar-verifier-test.circom  --r1cs --wasm -o $BUILD_DIR -l ./node_modules
 
@@ -97,7 +97,7 @@ function dev_trusted_setup_test() {
 }
 
 # trusted setup for development
-# DON'T USE IT IN PRODUCT
+# DON'T USE IT IN PRODUCTION
 function dev_trusted_setup() {
     echo "Starting setup...!"
 
@@ -115,9 +115,7 @@ function dev_trusted_setup() {
     fi
 
     if [ "$HASH" != "$OLD_HASH" ]; then 
-    echo "TRUSTED SETUP FOR DEVELOPMENT - PLEASE, DON'T USE IT IN PRODUCT!!!!"
-
-    circom ./src/aadhaar-verifier.circom  --r1cs --wasm -o $BUILD_DIR -l ./node_modules
+    echo "TRUSTED SETUP FOR DEVELOPMENT - PLEASE, DON'T USE IT IN PRODUCTION !!!"
 
 
     NODE_OPTIONS=--max-old-space-size=8192 \
@@ -164,7 +162,7 @@ function generate_proof() {
     echo "Building proof...!"
     mkdir -p $BUILD_DIR/proofs
 
-    NODE_OPTIONS='--max-old-space-size=8192' ./node_modules/.bin/snarkjs groth16 prove $ZKEY_DIR/circuit_final.zkey $BUILD_DIR/witness.wtns $BUILD_DIR/proofs/proof.json $BUILD_DIR/proofs/public.json
+    NODE_OPTIONS='--max-old-space-size=8192' ./node_modules/.bin/snarkjs groth16 prove $PARTIAL_ZKEYS_DIR/circuit_final.zkey $BUILD_DIR/witness.wtns $BUILD_DIR/proofs/proof.json $BUILD_DIR/proofs/public.json
     echo "Generated proof...!"
 
 }
