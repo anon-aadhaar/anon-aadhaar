@@ -74,7 +74,10 @@ export function AnonAadhaarProvider(
       setFetchArtifactsFromServer(
         anonAadhaarProviderProps._fetchArtifactsFromServer,
       )
-  }, [])
+  }, [
+    anonAadhaarProviderProps._useTestAadhaar,
+    anonAadhaarProviderProps._fetchArtifactsFromServer,
+  ])
 
   useEffect(() => {
     const anonAadhaarInitArgs: InitArgs = {
