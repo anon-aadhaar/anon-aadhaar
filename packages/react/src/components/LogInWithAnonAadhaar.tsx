@@ -5,6 +5,11 @@ import { useEffect, useContext } from 'react'
 import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
 import { icon } from './ButtonLogo'
 import { AadhaarQRValidation } from '../interface'
+import React from 'react'
+
+interface LogInWithAnonAadhaarProps {
+  signal?: string
+}
 
 /**
  * LogInWithAnonAadhaar is a React component that provides a user interface
@@ -15,7 +20,7 @@ import { AadhaarQRValidation } from '../interface'
  *
  * @returns A JSX element representing the LogInWithAnonAadhaarV2 component.
  */
-export const LogInWithAnonAadhaar = () => {
+export const LogInWithAnonAadhaar = ({ signal }: LogInWithAnonAadhaarProps) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [qrStatus, setQrStatus] = useState<null | AadhaarQRValidation>(null)
@@ -54,6 +59,7 @@ export const LogInWithAnonAadhaar = () => {
             logo={anonAadhaarLogo}
             qrStatus={qrStatus}
             setQrStatus={setQrStatus}
+            signal={signal}
           ></ProveModal>
         </div>
       )}

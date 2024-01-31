@@ -15,6 +15,7 @@ import { BrowserView, MobileView } from 'react-device-detect'
 import { Logo } from './LogInWithAnonAadhaar'
 import { verifySignature } from '../verifySignature'
 import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
+import { SignalDisplay } from './SignalDisplay'
 
 interface ModalProps {
   isOpen: boolean
@@ -24,6 +25,7 @@ interface ModalProps {
   logo: string
   qrStatus: AadhaarQRValidation | null
   setQrStatus: Dispatch<SetStateAction<AadhaarQRValidation | null>>
+  signal?: string
 }
 
 export const ProveModal: React.FC<ModalProps> = ({
@@ -34,6 +36,7 @@ export const ProveModal: React.FC<ModalProps> = ({
   logo,
   qrStatus,
   setQrStatus,
+  signal,
 }) => {
   const [qrData, setQrData] = useState<string | null>(null)
   const [provingEnabled, setProvingEnabled] = useState<boolean>(false)
@@ -97,12 +100,20 @@ export const ProveModal: React.FC<ModalProps> = ({
               />
               <DocumentResult>{qrStatus}</DocumentResult>
             </UploadFile>
+
+            {signal && (
+              <>
+                <Label>Data your about to sign: </Label>
+                <SignalDisplay signal={signal} />
+              </>
+            )}
           </UploadSection>
 
           <ProveButton
             qrData={qrData}
             provingEnabled={provingEnabled}
             setErrorMessage={setErrorMessage}
+            signal={signal}
           />
         </ModalContent>
       </BrowserView>

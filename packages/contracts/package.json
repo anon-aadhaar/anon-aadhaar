@@ -1,6 +1,6 @@
 {
   "name": "@anon-aadhaar/contracts",
-  "version": "0.0.7",
+  "version": "0.0.10",
   "description": "Verifier smart contract for Anon Aadhaar protocol",
   "license": "MIT",
   "scripts": {
@@ -35,20 +35,19 @@
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers",
     "@typechain/ethers-v6": "^0.4.0",
     "@typechain/hardhat": "^8.0.0",
+    "@types/snarkjs": "^0.7.8",
     "@typescript-eslint/eslint-plugin": "^5.59.5",
     "@typescript-eslint/parser": "^6.4.1",
+    "dotenv": "^16.4.1",
     "eslint": "^8.47.0",
     "ethers": "^6.7.1",
     "hardhat": "^2.17.1",
     "hardhat-gas-reporter": "^1.0.8",
     "husky": "^8.0.3",
     "prettier": "^3.0.3",
+    "snarkjs": "^0.7.3",
     "solidity-coverage": "^0.8.1",
     "typechain": "^8.2.0"
   },
-  "dependencies": {
-    "@types/snarkjs": "^0.7.6",
-    "dotenv": "^16.4.1",
-    "snarkjs": "^0.7.2"
-  }
+  "dependencies": {}
 }

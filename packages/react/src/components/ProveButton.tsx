@@ -9,12 +9,14 @@ interface ProveButtonProps {
   qrData: string | null
   provingEnabled: boolean
   setErrorMessage: Dispatch<SetStateAction<string | null>>
+  signal?: string
 }
 
 export const ProveButton: React.FC<ProveButtonProps> = ({
   qrData,
   provingEnabled,
   setErrorMessage,
+  signal,
 }) => {
   const { state, startReq, useTestAadhaar } = useContext(AnonAadhaarContext)
 
@@ -22,7 +24,7 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
     try {
       if (qrData === null) throw new Error('Missing application Id!')
 
-      const args = await processAadhaarArgs(qrData, useTestAadhaar)
+      const args = await processAadhaarArgs(qrData, useTestAadhaar, signal)
 
       startReq({ type: 'login', args })
     } catch (error) {

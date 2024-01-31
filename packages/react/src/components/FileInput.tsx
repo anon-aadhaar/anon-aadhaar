@@ -1,4 +1,4 @@
-import { FunctionComponent, ChangeEvent, useState } from 'react'
+import React, { FunctionComponent, ChangeEvent, useState } from 'react'
 import styled from 'styled-components'
 
 interface FileInputProps {
