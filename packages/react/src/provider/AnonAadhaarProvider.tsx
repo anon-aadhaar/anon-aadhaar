@@ -101,7 +101,7 @@ export function AnonAadhaarProvider(
       .catch(e => {
         throw Error(e)
       })
-  }, [fetchArtifactsFromServer])
+  }, [fetchArtifactsFromServer, useTestAadhaar])
 
   // Write state to local storage whenever a login starts, succeeds, or fails
   const setAndWriteState = (newState: AnonAadhaarState) => {
