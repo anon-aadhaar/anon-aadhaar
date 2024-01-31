@@ -9,12 +9,14 @@ import { packGroth16Proof } from '../../core/src'
 
 async function main() {
   // Assumes proof is created in below path (using scripts in packages/circuits)
-  const proof = require('../../circuits/build/proofs/proof.json');
-  const publicInputs = require('../../circuits/build/proofs/public.json');
-  
-  const { AnonAadhaar } = require(`../deployed-contracts/${process.env.HARDHAT_NETWORK}.json`).productionPublicKey
+  const proof = require('../../circuits/build/proofs/proof.json')
+  const publicInputs = require('../../circuits/build/proofs/public.json')
 
-  const signal = 1; // Signal used when generating proof
+  const { AnonAadhaar } = require(
+    `../deployed-contracts/${process.env.HARDHAT_NETWORK}.json`,
+  ).productionPublicKey
+
+  const signal = 1 // Signal used when generating proof
 
   const anonAadhaarVerifier = await ethers.getContractAt(
     'AnonAadhaar',

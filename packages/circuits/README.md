@@ -20,6 +20,12 @@ The circuits in charge of the Sha256 and RSA verification are adapted from the [
 yarn dev-install
 ```
 
+### Build circuit
+
+```bash
+yarn build-circuit
+```
+
 ### Run the trusted setup for Aadhaar QR code V2
 
 ```bash
