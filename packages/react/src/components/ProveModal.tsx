@@ -83,7 +83,7 @@ export const ProveModal: React.FC<ModalProps> = ({
             <Disclaimer>
               Anon Aadhaar allows you to create a proof of your Aadhaar ID
               without revealing any personal data. Generate a QR code using the
-              mAadhaar app{' '}
+              mAadhaar app (
               <a
                 className="text-blue-500 underline cursor-pointer"
                 href="https://apps.apple.com/in/app/maadhaar/id1435469474"
@@ -103,9 +103,12 @@ export const ProveModal: React.FC<ModalProps> = ({
               </a>
               ), by entering your Aadhaar number and OTP verification. You can
               then save the QR as an image using the 'Share' button for import.
-              This process is local to your browser for privacy, and QR images
-              are not uploaded to any server. Note: Internet speed may affect
-              processing time.
+              <p>
+                This process is local to your browser for privacy, and QR images
+                are not uploaded to any server.
+              </p>
+              <p>&nbsp;</p>
+              <p>Note: Internet speed may affect processing time.</p>
             </Disclaimer>
           </TitleSection>
 
@@ -206,7 +209,7 @@ const ModalContent = styled.div`
 `
 
 const UploadFile = styled.div`
-  margin-top: 30px;
+  margin-top: 20px;
   margin-bottom: 30px;
 `
 
