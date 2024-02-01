@@ -15,6 +15,7 @@ import { BrowserView, MobileView } from 'react-device-detect'
 import { Logo } from './LogInWithAnonAadhaar'
 import { verifySignature } from '../verifySignature'
 import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
+import { SignalDisplay } from './SignalDisplay'
 
 interface ModalProps {
   isOpen: boolean
@@ -24,6 +25,7 @@ interface ModalProps {
   logo: string
   qrStatus: AadhaarQRValidation | null
   setQrStatus: Dispatch<SetStateAction<AadhaarQRValidation | null>>
+  signal?: string
 }
 
 export const ProveModal: React.FC<ModalProps> = ({
@@ -34,6 +36,7 @@ export const ProveModal: React.FC<ModalProps> = ({
   logo,
   qrStatus,
   setQrStatus,
+  signal,
 }) => {
   const [qrData, setQrData] = useState<string | null>(null)
   const [provingEnabled, setProvingEnabled] = useState<boolean>(false)
@@ -78,10 +81,34 @@ export const ProveModal: React.FC<ModalProps> = ({
               Prove your Identity
             </Title>
             <Disclaimer>
-              Anon Aadhaar securely verifies your document by confirming its
-              government signature. This process happens entirely on your device
-              for privacy. Please note, slower internet speeds may affect
-              verification time.
+              Anon Aadhaar allows you to create a proof of your Aadhaar ID
+              without revealing any personal data. Generate a QR code using the
+              mAadhaar app (
+              <a
+                className="text-blue-500 underline cursor-pointer"
+                href="https://apps.apple.com/in/app/maadhaar/id1435469474"
+                target="_blank"
+                rel="noreferrer"
+              >
+                iOS
+              </a>{' '}
+              /{' '}
+              <a
+                className="text-blue-500 underline cursor-pointer"
+                href="https://play.google.com/store/apps/details?id=in.gov.uidai.mAadhaarPlus&hl=en_IN&pli=1"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Android
+              </a>
+              ), by entering your Aadhaar number and OTP verification. You can
+              then save the QR as an image using the 'Share' button for import.
+              <p>
+                This process is local to your browser for privacy, and QR images
+                are not uploaded to any server.
+              </p>
+              <p>&nbsp;</p>
+              <p>Note: Internet speed may affect processing time.</p>
             </Disclaimer>
           </TitleSection>
 
@@ -97,12 +124,20 @@ export const ProveModal: React.FC<ModalProps> = ({
               />
               <DocumentResult>{qrStatus}</DocumentResult>
             </UploadFile>
+
+            {signal && (
+              <>
+                <Label>Data you are signing: </Label>
+                <SignalDisplay signal={signal} />
+              </>
+            )}
           </UploadSection>
 
           <ProveButton
             qrData={qrData}
             provingEnabled={provingEnabled}
             setErrorMessage={setErrorMessage}
+            signal={signal}
           />
         </ModalContent>
       </BrowserView>
@@ -174,7 +209,7 @@ const ModalContent = styled.div`
 `
 
 const UploadFile = styled.div`
-  margin-top: 30px;
+  margin-top: 20px;
   margin-bottom: 30px;
 `
 

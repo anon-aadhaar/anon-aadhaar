@@ -11,8 +11,7 @@ contract AnonAadhaarVote is IAnonAadhaarVote {
     // List of proposals
     Proposal[] public proposals;
 
-    // Mapping to track if a nullifier has already voted
-    // userNullifier can be accessed in _pubInputs => _pubInputs[1]
+    // Mapping to track if a userNullifier has already voted
     mapping(uint256 => bool) public hasVoted;
 
     // Constructor to initialize proposals
@@ -51,7 +50,6 @@ contract AnonAadhaarVote is IAnonAadhaarVote {
         require(isLessThan3HoursAgo(timestamp) == true, "[AnonAadhaarVote]: Proof must be generated with Aadhaar data generated less than 3 hours ago.");
         require(IAnonAadhaar(anonAadhaarVerifierAddr).verifyAnonAadhaarProof(identityNullifier, userNullifier, timestamp, signal, groth16Proof) == true, "[AnonAadhaarVote]: proof sent is not valid.");
         // Check that user hasn't already voted
-        // _pubSignals[1] refers to userNullifier
         require(!hasVoted[userNullifier], "[AnonAadhaarVote]: User has already voted");
 
         proposals[proposalIndex].voteCount++;

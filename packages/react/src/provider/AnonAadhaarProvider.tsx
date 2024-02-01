@@ -74,7 +74,10 @@ export function AnonAadhaarProvider(
       setFetchArtifactsFromServer(
         anonAadhaarProviderProps._fetchArtifactsFromServer,
       )
-  }, [])
+  }, [
+    anonAadhaarProviderProps._useTestAadhaar,
+    anonAadhaarProviderProps._fetchArtifactsFromServer,
+  ])
 
   useEffect(() => {
     const anonAadhaarInitArgs: InitArgs = {
@@ -183,7 +186,7 @@ export function serialize(state: AnonAadhaarState): string {
   if (status === 'logged-in') {
     serState = {
       status,
-      serializedPCD: state.serializedAnonAadhaarProof,
+      serializedAnonAadhaarProof: state.serializedAnonAadhaarProof,
       anonAadhaarProof: state.anonAadhaarProof,
     }
   } else {
@@ -213,21 +216,21 @@ export async function parseAndValidate(
   }
 
   // Parse and validate PCD and accompanying metadata.
-  const { status, serializedPCD, anonAadhaarProof } = stored
-  if (serializedPCD == null) {
+  const { status, serializedAnonAadhaarProof, anonAadhaarProof } = stored
+  if (serializedAnonAadhaarProof == null) {
     throw new Error(`Missing serialized PCD`)
   } else if (anonAadhaarProof == null) {
     throw new Error(`Missing PCD`)
-  } else if (serializedPCD.type !== AnonAadhaarCorePackage.name) {
-    throw new Error(`Invalid PCD type ${serializedPCD.type}`)
+  } else if (serializedAnonAadhaarProof.type !== AnonAadhaarCorePackage.name) {
+    throw new Error(`Invalid PCD type ${serializedAnonAadhaarProof.type}`)
   }
 
   return {
     status,
     anonAadhaarProof: await AnonAadhaarCorePackage.deserialize(
-      serializedPCD.anonAadhaarProof,
+      serializedAnonAadhaarProof.pcd,
     ),
-    serializedAnonAadhaarProof: serializedPCD,
+    serializedAnonAadhaarProof: serializedAnonAadhaarProof,
   }
 }
 
