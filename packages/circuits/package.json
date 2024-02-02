@@ -1,0 +1,39 @@
+{
+  "name": "@anon-aadhaar/circuits",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "echo 'no build needed'",
+    "test": "npx ts-mocha test/**/*.test.ts --exit",
+    "test:real-data": "REAL_DATA=true npx ts-mocha test/**/*.test.ts --exit",
+    "format": "prettier --ignore-path ../../.prettierignore --write \"**/*.+(js|ts|json)\"",
+    "lint": "echo 'no lint'",
+    "publishtonpm": "echo 'not published'",
+    "test-publish": "echo 'not published'",
+    "circom": "circom",
+    "build-circuit": "/bin/bash ./scripts/build.sh build",
+    "dev-install": "/bin/bash ./scripts/build.sh install",
+    "dev-setup": "/bin/bash ./scripts/build.sh setup",
+    "dev-setup-test": "/bin/bash ./scripts/build.sh setup-test",
+    "gen-proof": "/bin/bash ./scripts/build.sh gen-proof",
+    "gen-witness": "/bin/bash ./scripts/build.sh gen-witness",
+    "gen-contracts": "/bin/bash ./scripts/build.sh gen-contracts",
+    "verif-proof": "/bin/bash ./scripts/build.sh verify-proof",
+    "bump-to": "yarn version --no-commit-hooks --no-git-tag-version --new-version"
+  },
+  "dependencies": {
+    "@zk-email/helpers": "^3.1.3",
+    "anon-aadhaar-pcd": "*",
+    "assert": "^2.1.0",
+    "circom_tester": "^0.0.20",
+    "circomlib": "^2.0.5",
+    "circomlibjs": "^0.1.1",
+    "mocha": "^10.2.0",
+    "prettier": "^3.1.1",
+    "snarkjs": "^0.7.0"
+  },
+  "devDependencies": {
+    "@types/circomlibjs": "^0.1.6"
+  }
+}

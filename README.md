@@ -7,16 +7,17 @@ The core of the procotocol is the circuits, but we also provide a SDK to let any
 
 ## 📦 Packages
 
-- [anon-aadhaar-pcd](packages/anon-aadhaar-pcd/)
-- [anon-aadhaar-react](packages/anon-aadhaar-react/)
-- [anon-aadhaar-contracts](packages/anon-aadhaar-contracts/)
+- [@anon-aadhaar/core](packages/core/)
+- [@anon-aadhaar/circuits](packages/circuits/)
+- [@anon-aadhaar/react](packages/react/)
+- [@anon-aadhaar/contracts](packages/contracts/)
 
 ## Documentation
 
 - [Anon Aadhaar Documentation](https://anon-aadhaar-documentation.vercel.app/docs/intro)
-- [Anon Aadhaar Postblog](https://mirror.xyz/privacy-scaling-explorations.eth/6R8kACTYp9mF3eIpLZMXs8JAQmTyb6Uy8KnZqzmDFZI)
 
 ## Examples
+
 Explore our SDK in action by visiting our example website and repository, where you can see how it's implemented in a real-world scenario. Get inspired and learn how to integrate it into your own projects!
 
 - [Example Website](https://anon-aadhaar-example.vercel.app/)
@@ -43,7 +44,7 @@ yarn
 Install `circom` and download powers of tau file.
 
 ```bash
-yarn dev-install:pcd
+yarn dev-install:circuit
 ```
 
 Generate verification key and proving key.
@@ -51,7 +52,7 @@ Generate verification key and proving key.
 **NOTE:This action use for development only. Don't use it in product, please!**
 
 ```bash
-yarn dev-setup:pcd
+yarn dev-setup:circuit
 ```
 
 Run test
@@ -60,25 +61,18 @@ Run test
 yarn test:libraries
 ```
 
-Generate pdf file with pkcs#1 schema. This action will create a pdf file name `signed.pdf` signed by `certificate.cer` in `packages/anon-aadhaar-pcd/build` folder.
+Generate a proof. This action will create a proof and its public scheme in `proofs/` in `packages/circuits/build` folder.
 
 ```bash
-yarn pdf:pcd
-```
-You can generate several PDF files with the same certificate by running the following command:
-```bash
-yarn pdf:pcd other-file.pdf #other-file can be any name you want to give to the file
+yarn proof:circuit
 ```
 
-Generate a proof. This action will create a proof and its public scheme in `proofs/` in `packages/anon-aadhaar-pcd/build` folder.
-
-```bash
-yarn proof:pcd
-```
-
-## Our Community 
-
+## Our Community
 
 - PSE Discord server: <a href="https://discord.com/invite/sF5CT5rzrR"><img src="https://img.shields.io/badge/discord-pse-blue"></a>
 - Twitter account: <a href="https://twitter.com/AnonAadhaar"><img src="https://img.shields.io/twitter/follow/Anon_Aadhaar?style=flat-square&logo=twitter"></a>
 - Telegram group: <a href="https://t.me/anon_aadhaar"><img src="https://img.shields.io/badge/telegram-@anon_aadhaar-blue.svg?style=flat-square&logo=telegram"></a>
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)
