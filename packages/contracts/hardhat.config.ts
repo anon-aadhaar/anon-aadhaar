@@ -15,6 +15,10 @@ const config: HardhatUserConfig = {
     //   url: `https://sepolia.infura.io/v3/${process.env.PROVIDER_KEY}`,
     //   accounts: [process.env.PRIVATE_KEY || ''],
     // },
+    // scrollSepolia: {
+    //   url: `https://sepolia-rpc.scroll.io/`,
+    //   accounts: [process.env.PRIVATE_KEY_SCROLL_SEPOLIA || ''],
+    // },
   },
   solidity: '0.8.19',
   paths: {
