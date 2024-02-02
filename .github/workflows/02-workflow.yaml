@@ -20,8 +20,6 @@ jobs:
           node-version: '18' # Use the appropriate Node version for your project
           registry-url: 'https://registry.npmjs.org'
           cache: 'yarn'
-      - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
 
       - name: Check Yarn version
         run: yarn --version
@@ -31,38 +29,6 @@ jobs:
         run: yarn install
       - name: Execute lint
         run: yarn lint
-
-      - name: Cache power of tau
-        id: powersOfTau28_hez_final_21
-        uses: actions/cache@v3
-        with:
-          path: packages/circuits/build/powersOfTau28_hez_final_21.ptau
-          key: powersOfTau28_hez_final_21.ptau
-      - name: Cache Circom
-        id: Circom
-        uses: actions/cache@v3
-        with:
-          path: ~/.cargo/bin/circom
-          key: circom
-
-      - name: Download power of tau and install Circom
-        run: yarn dev-install:circuit
-
-      - name: Get Circuit Hash
-        id: get-circuit-hash
-        run: |
-          echo "circuits_hash=`cd packages/circuits/scripts && ./utils.sh`" >> $GITHUB_OUTPUT
-        shell: bash
-
-      - name: Cache proving/verify key
-        id: zkkeys
-        uses: actions/cache@v3
-        with:
-          path: packages/circuits/build
-          key: ${{ steps.get-circuit-hash.outputs.circuits_hash }}
-
-      - name: 'Dev trusted setup'
-        run: 'yarn dev-setup:circuit'
 
       - name: Authenticate and publish to npm
         run: |
