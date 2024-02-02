@@ -102,7 +102,8 @@ export const ProveModal: React.FC<ModalProps> = ({
                 Android
               </a>
               ), by entering your Aadhaar number and OTP verification. You can
-              then save the QR as an image using the 'Share' button for import.
+              then save the QR as an image using the &apos;Share&apos; button
+              for import.
               <p>
                 This process is local to your browser for privacy, and QR images
                 are not uploaded to any server.

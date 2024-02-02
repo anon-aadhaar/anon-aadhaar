@@ -1,6 +1,6 @@
 {
   "name": "@anon-aadhaar/circuits",
-  "version": "0.0.10",
+  "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
@@ -32,5 +32,8 @@
     "mocha": "^10.2.0",
     "prettier": "^3.1.1",
     "snarkjs": "^0.7.0"
+  },
+  "devDependencies": {
+    "@types/circomlibjs": "^0.1.6"
   }
 }
