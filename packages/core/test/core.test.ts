@@ -1,5 +1,5 @@
 import { describe } from 'mocha'
-import { InitArgs } from '../src/types'
+import { ArtifactsOrigin, InitArgs } from '../src/types'
 import { init, prove, verify } from '../src/core'
 import { assert } from 'chai'
 import { artifactUrls, generateArgs } from '../src'
@@ -17,13 +17,13 @@ describe('PCD tests', function () {
       .toString()
   })
 
-  it('PCD flow location prover', async function () {
+  it('Proving flow with artifacts fetched locally', async function () {
     const artifactsDirName = __dirname + '/../../circuits/artifacts'
     const anonAadhaarInitArgs: InitArgs = {
       wasmURL: artifactsDirName + '/aadhaar-verifier.wasm',
       zkeyURL: artifactsDirName + '/circuit_final.zkey',
       vkeyURL: artifactsDirName + '/vkey.json',
-      isWebEnv: false,
+      artifactsOrigin: ArtifactsOrigin.local,
     }
 
     await init(anonAadhaarInitArgs)
@@ -36,12 +36,31 @@ describe('PCD tests', function () {
     assert(verified == true, 'Should be verified')
   })
 
-  it('PCD flow web prover', async function () {
+  it('Proving flow with artifacts fetched from server', async function () {
     const anonAadhaarInitArgs: InitArgs = {
       wasmURL: artifactUrls.test.wasm,
       zkeyURL: artifactUrls.test.zkey,
       vkeyURL: artifactUrls.test.vk,
-      isWebEnv: true,
+      artifactsOrigin: ArtifactsOrigin.server,
+    }
+
+    await init(anonAadhaarInitArgs)
+
+    const args = await generateArgs(QRData, certificate)
+
+    const anonAadhaarProof = await prove(args)
+
+    const verified = await verify(anonAadhaarProof)
+
+    assert(verified == true, 'Should be verified')
+  })
+
+  it('Proving flow with chunked artifacts fetched from server', async function () {
+    const anonAadhaarInitArgs: InitArgs = {
+      wasmURL: artifactUrls.chunked.wasm,
+      zkeyURL: artifactUrls.chunked.zkey,
+      vkeyURL: artifactUrls.chunked.vk,
+      artifactsOrigin: ArtifactsOrigin.chunked,
     }
 
     await init(anonAadhaarInitArgs)
