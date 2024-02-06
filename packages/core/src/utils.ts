@@ -1,6 +1,7 @@
 import { PackedGroth16Proof } from './types'
 import { Groth16Proof } from 'snarkjs'
 import pako from 'pako'
+import localforage from 'localforage'
 
 export const handleError = (error: unknown, defaultMessage: string): Error => {
   if (error instanceof Error) return error
@@ -150,30 +151,35 @@ export function extractPhoto(qrData: number[]) {
   }
 }
 
-export const downloadCompressedZkeys = async (zkeyPath: string) => {
-  const buffers: Uint8Array[] = []
-
+export const searchZkeyFiles = async (zkeyPath: string) => {
   for (let i = 0; i < 10; i++) {
-    const response = await fetch(zkeyPath + `/circuit_final_${i}.gz`)
+    const fileName = `circuit_final_${i}.zkey`
+    const item = await localforage.getItem(fileName)
+    if (item) {
+      console.log(`${fileName} already found in localforage!`)
+      continue
+    }
+    await downloadAndStoreCompressedZkeyChunks(zkeyPath, i)
+  }
+}
+
+const downloadAndStoreCompressedZkeyChunks = async (
+  zkeyPath: string,
+  index: number
+) => {
+  try {
+    const response = await fetch(zkeyPath + `/circuit_final_${index}.gz`)
 
     if (!response.ok)
       throw Error('Error while fetching compressed chunked zkey')
 
-    console.log(`Fetched zkey chunk #${i}`)
+    console.log(`Fetched zkey chunk #${index}`)
 
     const compressedChunk = await response.arrayBuffer()
-    buffers.push(pako.ungzip(compressedChunk))
+    const uncompressedChunk = pako.ungzip(compressedChunk)
+
+    await localforage.setItem(`circuit_final_${index}.zkey`, uncompressedChunk)
+  } catch (e) {
+    console.log(e)
   }
-
-  const totalLength = buffers.reduce((acc, val) => acc + val.length, 0)
-
-  const zkey = new Uint8Array(totalLength)
-
-  let offset = 0
-  for (const array of buffers) {
-    zkey.set(array, offset)
-    offset += array.length
-  }
-
-  return zkey
 }

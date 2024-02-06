@@ -7,6 +7,7 @@ import {
 import {
   AnonAadhaarCore,
   AnonAadhaarCorePackage,
+  ArtifactsOrigin,
   InitArgs,
   artifactUrls,
   init,
@@ -96,7 +97,7 @@ export function AnonAadhaarProvider(
           ? artifactUrls.test.vk
           : artifactUrls.prod.vk
         : '/vkey.json',
-      isWebEnv: fetchArtifactsFromServer,
+      artifactsOrigin: ArtifactsOrigin.chunked,
     }
 
     init(anonAadhaarInitArgs)
