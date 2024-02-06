@@ -1,8 +1,7 @@
 import { isWebUri } from 'valid-url'
 import { AnonAadhaarArgs, AnonAadhaarProof, ArtifactsOrigin } from './types'
 import { ZKArtifact, groth16 } from 'snarkjs'
-import pako from 'pako'
-import localforage from 'localforage'
+import { storageService } from './storage'
 
 type Witness = AnonAadhaarArgs
 
@@ -11,40 +10,12 @@ const loadZkeyChunks = async () => {
   // Fetch zkey chunks from localForage
   for (let i = 0; i < 10; i++) {
     const fileName = `circuit_final_${i}.zkey`
-    const item: Uint8Array | null = await localforage.getItem(fileName)
-    if (!item) throw Error('Zkeys files missing in LocalForage!')
+    const item: Uint8Array | null = await storageService.getItem(fileName)
+    if (!item) throw Error(`circuit_final_${i}.zkey missing in LocalForage!`)
     buffers.push(item)
   }
 
   // Rebuild the zkey from chunks
-  const totalLength = buffers.reduce((acc, val) => acc + val.length, 0)
-
-  const zkey = new Uint8Array(totalLength)
-
-  let offset = 0
-  for (const array of buffers) {
-    zkey.set(array, offset)
-    offset += array.length
-  }
-
-  return zkey
-}
-
-export const downloadCompressedZkeys = async (zkeyPath: string) => {
-  const buffers: Uint8Array[] = []
-
-  for (let i = 0; i < 10; i++) {
-    const response = await fetch(zkeyPath + `/circuit_final_${i}.gz`)
-
-    if (!response.ok)
-      throw Error('Error while fetching compressed chunked zkey')
-
-    console.log(`Fetched zkey chunk #${i}`)
-
-    const compressedChunk = await response.arrayBuffer()
-    buffers.push(pako.ungzip(compressedChunk))
-  }
-
   const totalLength = buffers.reduce((acc, val) => acc + val.length, 0)
 
   const zkey = new Uint8Array(totalLength)

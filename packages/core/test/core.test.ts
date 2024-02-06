@@ -55,6 +55,7 @@ describe('PCD tests', function () {
     assert(verified == true, 'Should be verified')
   })
 
+  // TODO, need to find a solution to mock localforage
   it('Proving flow with chunked artifacts fetched from server', async function () {
     const anonAadhaarInitArgs: InitArgs = {
       wasmURL: artifactUrls.chunked.wasm,

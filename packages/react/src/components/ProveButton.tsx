@@ -4,7 +4,7 @@ import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
 import { Spinner } from './LoadingSpinner'
 import React from 'react'
 import { processAadhaarArgs } from '../prove'
-import { searchZkeyFiles, artifactUrls } from '@anon-aadhaar/core'
+import { searchZkeyChunks, artifactUrls } from '@anon-aadhaar/core'
 
 interface ProveButtonProps {
   qrData: string | null
@@ -23,8 +23,9 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
 
   const startProving = async () => {
     try {
+      // TODO handle the loading state here
       console.log('Downloading zkey chunks...')
-      await searchZkeyFiles(artifactUrls.chunked.zkey)
+      await searchZkeyChunks(artifactUrls.chunked.zkey)
       console.log('Zkey chunks downloaded and stored...')
 
       if (qrData === null) throw new Error('Missing application Id!')

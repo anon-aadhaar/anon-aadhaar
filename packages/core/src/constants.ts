@@ -4,10 +4,12 @@ enum BaseUrlArtifacts {
   Staging = 'https://dhzposh38rt8g.cloudfront.net',
 }
 
+// TODO upload all the chunked versions to AWS with the same file structure as ZKEY_CHUNKS
 enum Artifacts {
   WASM_URL = '/aadhaar-verifier.wasm',
   ZKEY_URL = '/circuit_final.zkey',
   VK_URL = '/vkey.json',
+  ZKEY_CHUNKS = '/v1.0.0/chunked_zkey',
 }
 
 export const artifactUrls = {
@@ -23,7 +25,7 @@ export const artifactUrls = {
   },
   chunked: {
     wasm: BaseUrlArtifacts.Test + Artifacts.WASM_URL,
-    zkey: BaseUrlArtifacts.Staging,
+    zkey: BaseUrlArtifacts.Staging + Artifacts.ZKEY_CHUNKS,
     vk: BaseUrlArtifacts.Test + Artifacts.VK_URL,
   },
 }

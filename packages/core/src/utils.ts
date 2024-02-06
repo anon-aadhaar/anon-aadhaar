@@ -1,7 +1,7 @@
 import { PackedGroth16Proof } from './types'
 import { Groth16Proof } from 'snarkjs'
 import pako from 'pako'
-import localforage from 'localforage'
+import { storageService } from './storage'
 
 export const handleError = (error: unknown, defaultMessage: string): Error => {
   if (error instanceof Error) return error
@@ -151,10 +151,10 @@ export function extractPhoto(qrData: number[]) {
   }
 }
 
-export const searchZkeyFiles = async (zkeyPath: string) => {
+export const searchZkeyChunks = async (zkeyPath: string) => {
   for (let i = 0; i < 10; i++) {
     const fileName = `circuit_final_${i}.zkey`
-    const item = await localforage.getItem(fileName)
+    const item = await storageService.getItem(fileName)
     if (item) {
       console.log(`${fileName} already found in localforage!`)
       continue
@@ -178,7 +178,10 @@ const downloadAndStoreCompressedZkeyChunks = async (
     const compressedChunk = await response.arrayBuffer()
     const uncompressedChunk = pako.ungzip(compressedChunk)
 
-    await localforage.setItem(`circuit_final_${index}.zkey`, uncompressedChunk)
+    await storageService.setItem(
+      `circuit_final_${index}.zkey`,
+      uncompressedChunk
+    )
   } catch (e) {
     console.log(e)
   }

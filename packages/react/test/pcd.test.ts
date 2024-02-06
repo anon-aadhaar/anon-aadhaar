@@ -1,5 +1,11 @@
 import { describe } from 'mocha'
-import { InitArgs, artifactUrls, init, verify } from '@anon-aadhaar/core'
+import {
+  ArtifactsOrigin,
+  InitArgs,
+  artifactUrls,
+  init,
+  verify,
+} from '@anon-aadhaar/core'
 import { assert } from 'chai'
 import { processAadhaarArgs, proveAndSerialize } from '../src/prove'
 import { testQRData } from '../../circuits/assets/dataInput.json'
@@ -12,7 +18,7 @@ describe('PCD tests', function () {
       wasmURL: artifactUrls.test.wasm,
       zkeyURL: artifactUrls.test.zkey,
       vkeyURL: artifactUrls.test.vk,
-      isWebEnv: true,
+      artifactsOrigin: ArtifactsOrigin.server,
     }
 
     await init(anonAadhaarInitArgs)
