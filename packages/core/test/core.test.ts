@@ -2,9 +2,15 @@ import { describe } from 'mocha'
 import { ArtifactsOrigin, InitArgs } from '../src/types'
 import { init, prove, verify } from '../src/core'
 import { assert } from 'chai'
-import { artifactUrls, generateArgs } from '../src'
+import { artifactUrls, generateArgs, searchZkeyChunks } from '../src'
 import fs from 'fs'
 import { testQRData as QRData } from '../../circuits/assets/dataInput.json'
+import { MockLocalForage } from './__mocks__/localforage'
+import * as proverModule from '../src/prover'
+import sinon from 'sinon'
+
+const storageService = new MockLocalForage()
+const originalLoadZkeyChunks = proverModule.loadZkeyChunks
 
 describe('PCD tests', function () {
   this.timeout(0)
@@ -15,6 +21,14 @@ describe('PCD tests', function () {
     certificate = fs
       .readFileSync(certificateDirName + '/uidai_prod_cdup.cer')
       .toString()
+
+    sinon.stub(proverModule, 'loadZkeyChunks').callsFake(async () => {
+      return originalLoadZkeyChunks(storageService)
+    })
+  })
+
+  this.afterAll(() => {
+    sinon.restore()
   })
 
   it('Proving flow with artifacts fetched locally', async function () {
@@ -55,14 +69,15 @@ describe('PCD tests', function () {
     assert(verified == true, 'Should be verified')
   })
 
-  // TODO, need to find a solution to mock localforage
   it('Proving flow with chunked artifacts fetched from server', async function () {
     const anonAadhaarInitArgs: InitArgs = {
-      wasmURL: artifactUrls.chunked.wasm,
-      zkeyURL: artifactUrls.chunked.zkey,
-      vkeyURL: artifactUrls.chunked.vk,
+      wasmURL: artifactUrls.test.wasm,
+      zkeyURL: artifactUrls.test.chunked,
+      vkeyURL: artifactUrls.test.vk,
       artifactsOrigin: ArtifactsOrigin.chunked,
     }
+
+    await searchZkeyChunks(artifactUrls.test.chunked, storageService)
 
     await init(anonAadhaarInitArgs)
 

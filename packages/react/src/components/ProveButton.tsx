@@ -25,7 +25,7 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
     try {
       // TODO handle the loading state here
       console.log('Downloading zkey chunks...')
-      await searchZkeyChunks(artifactUrls.chunked.zkey)
+      await searchZkeyChunks(artifactUrls.test.zkey)
       console.log('Zkey chunks downloaded and stored...')
 
       if (qrData === null) throw new Error('Missing application Id!')

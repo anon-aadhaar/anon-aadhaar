@@ -6,19 +6,24 @@ import path from 'path'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config()
 
-const enum Buckets {
-  prod = '',
-  staging = '-staging',
-  test = '-test',
+type Bucket = {
+  name: string
+  region: string
+}
+
+const Buckets: { [key: string]: Bucket } = {
+  prod: { name: 'anon-aadhaar', region: 'ap-south-1' },
+  staging: { name: 'anon-aadhaar-staging', region: 'eu-west-3' },
+  test: { name: 'anon-aadhaar-test', region: 'ap-south-1' },
 }
 
 // S3 config
 const s3 = new S3Client({
-  region: 'eu-west-3',
+  region: Buckets.test.region,
 })
 
 // Set destination
-const bucketName = `anon-aadhaar${Buckets.staging}`
+const bucketName = Buckets.test.name
 const folder_tag = 'v1.0.0'
 
 const main = async () => {

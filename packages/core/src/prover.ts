@@ -1,23 +1,25 @@
 import { isWebUri } from 'valid-url'
 import { AnonAadhaarArgs, AnonAadhaarProof, ArtifactsOrigin } from './types'
 import { ZKArtifact, groth16 } from 'snarkjs'
-import { storageService } from './storage'
+import { storageService as defaultStorageService } from './storage'
 
 type Witness = AnonAadhaarArgs
 
-const loadZkeyChunks = async () => {
+// Search for the chunks in localforage and recompose the zkey from it.
+export const loadZkeyChunks = async (
+  storageService = defaultStorageService
+): Promise<Uint8Array> => {
   const buffers: Uint8Array[] = []
   // Fetch zkey chunks from localForage
   for (let i = 0; i < 10; i++) {
     const fileName = `circuit_final_${i}.zkey`
     const item: Uint8Array | null = await storageService.getItem(fileName)
-    if (!item) throw Error(`circuit_final_${i}.zkey missing in LocalForage!`)
+    if (!item) throw Error(`${fileName} missing in LocalForage!`)
     buffers.push(item)
   }
 
   // Rebuild the zkey from chunks
   const totalLength = buffers.reduce((acc, val) => acc + val.length, 0)
-
   const zkey = new Uint8Array(totalLength)
 
   let offset = 0
@@ -69,7 +71,7 @@ export class KeyPath implements KeyPathInterface {
       case ArtifactsOrigin.server:
         return await fetchKey(this.keyURL)
       case ArtifactsOrigin.chunked:
-        return await loadZkeyChunks()
+        return await loadZkeyChunks(defaultStorageService)
     }
   }
 }
@@ -203,7 +205,7 @@ export class ChunkedProver implements ProverInferace {
   }
 
   async proving(witness: Witness): Promise<AnonAadhaarProof> {
-    const wasmBuffer = (await this.wasm.getKey()) as ArrayBuffer
+    const wasmBuffer = await this.wasm.getKey()
     const zkeyBuffer = await this.zkey.getKey()
 
     if (!witness.pubKey.value) {
@@ -236,7 +238,7 @@ export class ChunkedProver implements ProverInferace {
 
     const { proof, publicSignals } = await groth16.fullProve(
       input,
-      new Uint8Array(wasmBuffer),
+      new Uint8Array(wasmBuffer as ArrayBuffer),
       zkeyBuffer
     )
 
