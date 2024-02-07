@@ -15,6 +15,8 @@ jobs:
   build:
     name: Build and Test
     runs-on: ubuntu-20.04
+    env:
+      NODE_OPTIONS: '--max_old_space_size=4096'
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -78,6 +80,4 @@ jobs:
         run: yarn build:libraries
 
       - name: Test packages
-        run: |
-        export NODE_OPTIONS="--max_old_space_size=4096"
-        yarn test:libraries
+        run: yarn test:libraries
