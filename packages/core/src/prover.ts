@@ -2,17 +2,25 @@ import { isWebUri } from 'valid-url'
 import { AnonAadhaarArgs, AnonAadhaarProof, ArtifactsOrigin } from './types'
 import { ZKArtifact, groth16 } from 'snarkjs'
 import { storageService as defaultStorageService } from './storage'
+import { artifactUrls } from './constants'
+import { searchZkeyChunks } from './utils'
 
 type Witness = AnonAadhaarArgs
 
 // Search for the chunks in localforage and recompose the zkey from it.
 export const loadZkeyChunks = async (
+  zkeyUrl: string,
   storageService = defaultStorageService
 ): Promise<Uint8Array> => {
+  const isTest = zkeyUrl === artifactUrls.test.chunked
+  await searchZkeyChunks(zkeyUrl, storageService, isTest)
+
   const buffers: Uint8Array[] = []
   // Fetch zkey chunks from localForage
   for (let i = 0; i < 10; i++) {
-    const fileName = `circuit_final_${i}.zkey`
+    const fileName = isTest
+      ? `circuit_final_test_${i}.zkey`
+      : `circuit_final_prod_${i}.zkey`
     const item: Uint8Array | null = await storageService.getItem(fileName)
     if (!item) throw Error(`${fileName} missing in LocalForage!`)
     buffers.push(item)
@@ -71,7 +79,7 @@ export class KeyPath implements KeyPathInterface {
       case ArtifactsOrigin.server:
         return await fetchKey(this.keyURL)
       case ArtifactsOrigin.chunked:
-        return await loadZkeyChunks(defaultStorageService)
+        return await loadZkeyChunks(this.keyURL)
     }
   }
 }

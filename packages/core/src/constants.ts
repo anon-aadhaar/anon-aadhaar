@@ -22,7 +22,7 @@ export const artifactUrls = {
     wasm: BaseUrlArtifacts.Prod + Artifacts.WASM_URL,
     zkey: BaseUrlArtifacts.Prod + Artifacts.ZKEY_URL,
     vk: BaseUrlArtifacts.Prod + Artifacts.VK_URL,
-    chunked: BaseUrlArtifacts.Test + Artifacts.ZKEY_CHUNKS,
+    chunked: BaseUrlArtifacts.Prod + Artifacts.ZKEY_CHUNKS,
   },
   // staging: {
   //   wasm: BaseUrlArtifacts.Test + Artifacts.WASM_URL,

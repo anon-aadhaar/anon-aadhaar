@@ -2,7 +2,7 @@ import { describe } from 'mocha'
 import { ArtifactsOrigin, InitArgs } from '../src/types'
 import { init, prove, verify } from '../src/core'
 import { assert } from 'chai'
-import { artifactUrls, generateArgs, searchZkeyChunks } from '../src'
+import { artifactUrls, generateArgs } from '../src'
 import fs from 'fs'
 import { testQRData as QRData } from '../../circuits/assets/dataInput.json'
 import { MockLocalForage } from './__mocks__/localforage'
@@ -23,7 +23,7 @@ describe('PCD tests', function () {
       .toString()
 
     sinon.stub(proverModule, 'loadZkeyChunks').callsFake(async () => {
-      return originalLoadZkeyChunks(storageService)
+      return originalLoadZkeyChunks(artifactUrls.test.chunked, storageService)
     })
   })
 
@@ -76,8 +76,6 @@ describe('PCD tests', function () {
       vkeyURL: artifactUrls.test.vk,
       artifactsOrigin: ArtifactsOrigin.chunked,
     }
-
-    await searchZkeyChunks(artifactUrls.test.chunked, storageService)
 
     await init(anonAadhaarInitArgs)
 
