@@ -153,22 +153,31 @@ export function extractPhoto(qrData: number[]) {
 
 export const searchZkeyChunks = async (
   zkeyPath: string,
-  storageService = defaultStorageService
+  storageService = defaultStorageService,
+  useTestAadhaar = false
 ) => {
   for (let i = 0; i < 10; i++) {
-    const fileName = `circuit_final_${i}.zkey`
+    const fileName = useTestAadhaar
+      ? `circuit_final_test_${i}.zkey`
+      : `circuit_final_prod_${i}.zkey`
     const item = await storageService.getItem(fileName)
     if (item) {
       console.log(`${fileName} already found in localforage!`)
       continue
     }
-    await downloadAndStoreCompressedZkeyChunks(zkeyPath, i, storageService)
+    await downloadAndStoreCompressedZkeyChunks(
+      zkeyPath,
+      i,
+      fileName,
+      storageService
+    )
   }
 }
 
 const downloadAndStoreCompressedZkeyChunks = async (
   zkeyPath: string,
   index: number,
+  fileName: string,
   storageService = defaultStorageService
 ) => {
   try {
@@ -182,10 +191,7 @@ const downloadAndStoreCompressedZkeyChunks = async (
     const compressedChunk = await response.arrayBuffer()
     const uncompressedChunk = pako.ungzip(compressedChunk)
 
-    await storageService.setItem(
-      `circuit_final_${index}.zkey`,
-      uncompressedChunk
-    )
+    await storageService.setItem(fileName, uncompressedChunk)
   } catch (e) {
     console.log(e)
   }
