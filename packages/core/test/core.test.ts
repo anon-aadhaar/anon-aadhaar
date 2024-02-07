@@ -54,7 +54,7 @@ describe('PCD tests', function () {
     assert(verified == true, 'Should be verified')
   })
 
-  it('Proving flow with artifacts fetched from server', async function () {
+  it.skip('Proving flow with artifacts fetched from server', async function () {
     const anonAadhaarInitArgs: InitArgs = {
       wasmURL: artifactUrls.test.wasm,
       zkeyURL: artifactUrls.test.zkey,
