@@ -3,7 +3,7 @@ import { AnonAadhaarArgs, AnonAadhaarProof, ArtifactsOrigin } from './types'
 import { ZKArtifact, groth16 } from 'snarkjs'
 import { storageService as defaultStorageService } from './storage'
 import { artifactUrls } from './constants'
-import { searchZkeyChunks } from './utils'
+import { handleError, searchZkeyChunks } from './utils'
 
 type Witness = AnonAadhaarArgs
 
@@ -13,17 +13,25 @@ export const loadZkeyChunks = async (
   storageService = defaultStorageService
 ): Promise<Uint8Array> => {
   const isTest = zkeyUrl === artifactUrls.test.chunked
-  await searchZkeyChunks(zkeyUrl, storageService, isTest)
+  try {
+    await searchZkeyChunks(zkeyUrl, storageService, isTest)
+  } catch (e) {
+    handleError(e, 'Error while searching for the zkey chunks')
+  }
 
   const buffers: Uint8Array[] = []
-  // Fetch zkey chunks from localForage
-  for (let i = 0; i < 10; i++) {
-    const fileName = isTest
-      ? `circuit_final_test_${i}.zkey`
-      : `circuit_final_prod_${i}.zkey`
-    const item: Uint8Array | null = await storageService.getItem(fileName)
-    if (!item) throw Error(`${fileName} missing in LocalForage!`)
-    buffers.push(item)
+  try {
+    // Fetch zkey chunks from localForage
+    for (let i = 0; i < 10; i++) {
+      const fileName = isTest
+        ? `circuit_final_test_${i}.zkey`
+        : `circuit_final_prod_${i}.zkey`
+      const item: Uint8Array | null = await storageService.getItem(fileName)
+      if (!item) throw Error(`${fileName} missing in LocalForage!`)
+      buffers.push(item)
+    }
+  } catch (e) {
+    handleError(e, 'Error while retrieving zkey chunks from localforage')
   }
 
   // Rebuild the zkey from chunks

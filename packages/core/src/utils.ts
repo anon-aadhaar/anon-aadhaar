@@ -194,6 +194,6 @@ const downloadAndStoreCompressedZkeyChunks = async (
 
     await storageService.setItem(fileName, uncompressedChunk)
   } catch (e) {
-    console.log(e)
+    handleError(e, 'Error while dowloading the zkey chunks')
   }
 }
