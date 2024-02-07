@@ -1,0 +1,12 @@
+{
+  "testPublicKey": {
+    "VerifierTest": "0x45199Aa9C90dC945D0710Ce6d5166F9fb8263f04",
+    "AnonAadhaarTest": "0xbe4ce954Cb0f6b51E86ADa0195055CfB502380Ad",
+    "AnonAadhaarVote": "0x57a56f6515023C68ad7aeCeF0e81A4E0B21D39cA"
+  },
+  "productionPublicKey": {
+    "Verifier": "0xA09E07Cc47eF94eF56eC5DcF338379AD86A2DF4B",
+    "AnonAadhaar": "0x31c3041888bA7d27c92a61849fE24152D81b4A3e",
+    "AnonAadhaarVote": "0xFF78fD5bCbBA425ee1770d1BAf473EE41a5336be"
+  }
+}
