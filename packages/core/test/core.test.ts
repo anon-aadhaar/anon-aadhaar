@@ -9,7 +9,7 @@ import { MockLocalForage } from './__mocks__/localforage'
 import * as proverModule from '../src/prover'
 import sinon from 'sinon'
 
-const storageService = new MockLocalForage()
+const mockedStorageService = new MockLocalForage()
 const originalLoadZkeyChunks = proverModule.loadZkeyChunks
 
 describe('PCD tests', function () {
@@ -23,11 +23,15 @@ describe('PCD tests', function () {
       .toString()
 
     sinon.stub(proverModule, 'loadZkeyChunks').callsFake(async () => {
-      return originalLoadZkeyChunks(artifactUrls.test.chunked, storageService)
+      return originalLoadZkeyChunks(
+        artifactUrls.test.chunked,
+        mockedStorageService
+      )
     })
   })
 
   this.afterAll(() => {
+    mockedStorageService.clear()
     sinon.restore()
   })
 

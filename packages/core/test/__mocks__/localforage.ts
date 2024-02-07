@@ -14,4 +14,8 @@ export class MockLocalForage {
     this.store[key] = value
     return value
   }
+
+  async clear() {
+    this.store = {}
+  }
 }
