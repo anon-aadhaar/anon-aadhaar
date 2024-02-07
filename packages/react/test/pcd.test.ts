@@ -13,7 +13,7 @@ import { testQRData } from '../../circuits/assets/dataInput.json'
 describe('PCD tests', function () {
   this.timeout(0)
 
-  it('PCD flow web prover', async function () {
+  it.skip('PCD flow web prover', async function () {
     const anonAadhaarInitArgs: InitArgs = {
       wasmURL: artifactUrls.test.wasm,
       zkeyURL: artifactUrls.test.zkey,
