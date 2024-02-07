@@ -156,22 +156,25 @@ export const searchZkeyChunks = async (
   storageService = defaultStorageService,
   useTestAadhaar = false
 ) => {
+  const filePromises = []
   for (let i = 0; i < 10; i++) {
     const fileName = useTestAadhaar
       ? `circuit_final_test_${i}.zkey`
       : `circuit_final_prod_${i}.zkey`
     const item = await storageService.getItem(fileName)
     if (item) {
-      console.log(`${fileName} already found in localforage!`)
       continue
     }
-    await downloadAndStoreCompressedZkeyChunks(
-      zkeyPath,
-      i,
-      fileName,
-      storageService
+    filePromises.push(
+      downloadAndStoreCompressedZkeyChunks(
+        zkeyPath,
+        i,
+        fileName,
+        storageService
+      )
     )
   }
+  await Promise.all(filePromises)
 }
 
 const downloadAndStoreCompressedZkeyChunks = async (
@@ -185,8 +188,6 @@ const downloadAndStoreCompressedZkeyChunks = async (
 
     if (!response.ok)
       throw Error('Error while fetching compressed chunked zkey')
-
-    console.log(`Fetched zkey chunk #${index}`)
 
     const compressedChunk = await response.arrayBuffer()
     const uncompressedChunk = pako.ungzip(compressedChunk)
