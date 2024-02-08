@@ -3,7 +3,7 @@ import { AnonAadhaarArgs, AnonAadhaarProof, ArtifactsOrigin } from './types'
 import { ZKArtifact, groth16 } from 'snarkjs'
 import { storageService as defaultStorageService } from './storage'
 import { artifactUrls } from './constants'
-import { handleError, searchZkeyChunks } from './utils'
+import { handleError, retrieveFileExtension, searchZkeyChunks } from './utils'
 
 type Witness = AnonAadhaarArgs
 
@@ -49,19 +49,16 @@ export const loadZkeyChunks = async (
 
 async function fetchKey(keyURL: string): Promise<ZKArtifact> {
   if (isWebUri(keyURL)) {
-    try {
-      const response = await fetch(keyURL)
-      if (response.ok) {
-        const data = await response.arrayBuffer()
-        return data as Buffer
-      } else {
-        throw new Error(`Failed to fetch: ${response.statusText}`)
-      }
-    } catch (error) {
-      // Handle any errors from the fetch request
-      console.error('Error fetching key:', error)
-      throw error
-    }
+    const response = await fetch(keyURL)
+    if (!response.ok)
+      throw new Error(
+        `Error while fetching ${retrieveFileExtension(
+          keyURL
+        )} artifacts from prover: ${response.statusText}`
+      )
+
+    const data = await response.arrayBuffer()
+    return data as Buffer
   }
   return keyURL
 }

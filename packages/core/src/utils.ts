@@ -197,3 +197,11 @@ const downloadAndStoreCompressedZkeyChunks = async (
     handleError(e, 'Error while dowloading the zkey chunks')
   }
 }
+
+export const retrieveFileExtension = (str: string) => {
+  const parsedUrl = new URL(str)
+  const fileExtension = parsedUrl.pathname.substring(
+    parsedUrl.pathname.lastIndexOf('.') + 1
+  )
+  return fileExtension
+}
