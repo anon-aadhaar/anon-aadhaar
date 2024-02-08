@@ -47,18 +47,30 @@ export const loadZkeyChunks = async (
   return zkey
 }
 
-async function fetchKey(keyURL: string): Promise<ZKArtifact> {
+async function fetchKey(keyURL: string, maxRetries = 3): Promise<ZKArtifact> {
   if (isWebUri(keyURL)) {
-    const response = await fetch(keyURL)
-    if (!response.ok)
-      throw new Error(
-        `Error while fetching ${retrieveFileExtension(
-          keyURL
-        )} artifacts from prover: ${response.statusText}`
-      )
+    let attempts = 0
+    while (attempts < maxRetries) {
+      try {
+        const response = await fetch(keyURL)
+        if (!response.ok) {
+          throw new Error(
+            `Error while fetching ${retrieveFileExtension(
+              keyURL
+            )} artifacts from prover: ${response.statusText}`
+          )
+        }
 
-    const data = await response.arrayBuffer()
-    return data as Buffer
+        const data = await response.arrayBuffer()
+        return data as Buffer
+      } catch (error) {
+        attempts++
+        if (attempts >= maxRetries) {
+          throw error
+        }
+        await new Promise(resolve => setTimeout(resolve, 1000 * attempts))
+      }
+    }
   }
   return keyURL
 }
