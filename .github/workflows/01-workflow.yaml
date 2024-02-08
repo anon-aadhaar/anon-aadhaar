@@ -77,7 +77,26 @@ jobs:
       - name: Build packages
         run: yarn build:libraries
 
-      - name: Test packages
+      - name: Test /react
         env:
           NODE_OPTIONS: '--max_old_space_size=4096'
-        run: yarn test:libraries
+        working-directory: packages/react
+        run: yarn test
+
+      - name: Test /core
+        env:
+          NODE_OPTIONS: '--max_old_space_size=4096'
+        working-directory: packages/core
+        run: yarn test
+
+      - name: Test /circuits
+        env:
+          NODE_OPTIONS: '--max_old_space_size=4096'
+        working-directory: packages/circuits
+        run: yarn test
+
+      - name: Test /contracts
+        env:
+          NODE_OPTIONS: '--max_old_space_size=4096'
+        working-directory: packages/contracts
+        run: yarn test

@@ -14,7 +14,7 @@ import { ArgumentTypeName } from '@pcd/pcd-types'
 import { AnonAadhaarProvider } from '../src/provider/AnonAadhaarProvider'
 import { genData } from '../../core/test/utils'
 
-describe('useCountryIdentity Hook', () => {
+describe('useAnonAadhaar Hook', () => {
   let testData: [bigint, bigint, bigint, bigint]
   let paddedMsg: Uint8Array
   let messageLen: number

@@ -3,8 +3,8 @@ import { assert } from 'chai'
 import { AnonAadhaarProvider } from '../src/provider/AnonAadhaarProvider'
 import { render, screen } from '@testing-library/react'
 
-describe('CountryIdentityProvider', () => {
-  it('renders children', () => {
+describe('AnonAadhaarProvider', () => {
+  it('Should render children', () => {
     render(
       <AnonAadhaarProvider>
         <div>Test Children</div>
