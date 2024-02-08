@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react'
 import { renderHook } from '@testing-library/react-hooks'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, cleanup } from '@testing-library/react'
 import { expect } from 'chai'
 import {
   useAnonAadhaar,
@@ -28,6 +28,10 @@ describe('useAnonAadhaar Hook', () => {
       Buffer.from(signedData, 'ascii'),
       512 * 3,
     ))
+  })
+
+  afterEach(() => {
+    cleanup()
   })
 
   it('returns initial state and startReq function', () => {

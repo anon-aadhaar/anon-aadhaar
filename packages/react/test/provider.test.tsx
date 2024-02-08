@@ -1,9 +1,13 @@
 import * as React from 'react'
 import { assert } from 'chai'
 import { AnonAadhaarProvider } from '../src/provider/AnonAadhaarProvider'
-import { render, screen } from '@testing-library/react'
+import { render, screen, cleanup } from '@testing-library/react'
 
 describe('AnonAadhaarProvider', () => {
+  afterEach(() => {
+    cleanup()
+  })
+
   it('Should render children', () => {
     render(
       <AnonAadhaarProvider>
