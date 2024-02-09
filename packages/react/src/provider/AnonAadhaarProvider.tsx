@@ -7,10 +7,10 @@ import {
 import {
   AnonAadhaarCore,
   AnonAadhaarCorePackage,
+  ArtifactsOrigin,
   InitArgs,
   artifactUrls,
   init,
-  verifyLocal,
 } from '@anon-aadhaar/core'
 import React, { Dispatch, SetStateAction } from 'react'
 import { proveAndSerialize } from '../prove'
@@ -30,14 +30,6 @@ export type AnonAadhaarProviderProps = {
    * Defaults to `false` if not explicitly set.
    */
   _useTestAadhaar?: boolean
-
-  /**
-   * `_fetchArtifactsFromServer`: Flag to control the source of zk-SNARK artifacts.
-   * When set to `true`, zk-SNARK artifacts are fetched from a specified AWS server, facilitating production.
-   * When set to `false`, artifacts are fetched from a local server, typically used for development and local testing.
-   * Defaults to `true` if not explicitly set.
-   */
-  _fetchArtifactsFromServer?: boolean
 }
 
 /**
@@ -61,42 +53,24 @@ export function AnonAadhaarProvider(
   const [anonAadhaarProof, setAnonAadhaarProof] =
     useState<AnonAadhaarCore | null>(null)
   const [useTestAadhaar, setUseTestAadhaar] = useState<boolean>(false)
-  const [fetchArtifactsFromServer, setFetchArtifactsFromServer] =
-    useState<boolean>(true)
   const [state, setState] = useState<AnonAadhaarState>({
     status: 'logged-out',
   })
+
   useEffect(() => {
     readFromLocalStorage().then(setAndWriteState)
     if (anonAadhaarProviderProps._useTestAadhaar !== undefined)
       setUseTestAadhaar(anonAadhaarProviderProps._useTestAadhaar)
-    if (anonAadhaarProviderProps._fetchArtifactsFromServer !== undefined)
-      setFetchArtifactsFromServer(
-        anonAadhaarProviderProps._fetchArtifactsFromServer,
-      )
-  }, [
-    anonAadhaarProviderProps._useTestAadhaar,
-    anonAadhaarProviderProps._fetchArtifactsFromServer,
-  ])
+  }, [anonAadhaarProviderProps._useTestAadhaar])
 
   useEffect(() => {
     const anonAadhaarInitArgs: InitArgs = {
-      wasmURL: fetchArtifactsFromServer
-        ? useTestAadhaar
-          ? artifactUrls.test.wasm
-          : artifactUrls.prod.wasm
-        : '/aadhaar-verifier.wasm',
-      zkeyURL: fetchArtifactsFromServer
-        ? useTestAadhaar
-          ? artifactUrls.test.zkey
-          : artifactUrls.prod.zkey
-        : '/circuit_final.zkey',
-      vkeyURL: fetchArtifactsFromServer
-        ? useTestAadhaar
-          ? artifactUrls.test.vk
-          : artifactUrls.prod.vk
-        : '/vkey.json',
-      isWebEnv: fetchArtifactsFromServer,
+      wasmURL: useTestAadhaar ? artifactUrls.test.wasm : artifactUrls.prod.wasm,
+      zkeyURL: useTestAadhaar
+        ? artifactUrls.test.chunked
+        : artifactUrls.prod.chunked,
+      vkeyURL: useTestAadhaar ? artifactUrls.test.vk : artifactUrls.prod.vk,
+      artifactsOrigin: ArtifactsOrigin.chunked,
     }
 
     init(anonAadhaarInitArgs)
@@ -104,7 +78,7 @@ export function AnonAadhaarProvider(
       .catch(e => {
         throw Error(e)
       })
-  }, [fetchArtifactsFromServer, useTestAadhaar])
+  }, [useTestAadhaar])
 
   // Write state to local storage whenever a login starts, succeeds, or fails
   const setAndWriteState = (newState: AnonAadhaarState) => {
@@ -128,12 +102,7 @@ export function AnonAadhaarProvider(
   React.useEffect(() => {
     if (anonAadhaarProofStr === null || anonAadhaarProof === null) return
     console.log(`[ANON-AADHAAR] trying to log in with ${anonAadhaarProofStr}`)
-    handleLogin(
-      state,
-      anonAadhaarProofStr,
-      anonAadhaarProof,
-      fetchArtifactsFromServer,
-    )
+    handleLogin(state, anonAadhaarProofStr, anonAadhaarProof)
       .then(newState => {
         if (newState) setAndWriteState(newState)
         else
@@ -152,8 +121,8 @@ export function AnonAadhaarProvider(
 
   // Provide context
   const val = React.useMemo(
-    () => ({ state, startReq, useTestAadhaar, fetchArtifactsFromServer }),
-    [state, useTestAadhaar, fetchArtifactsFromServer],
+    () => ({ state, startReq, useTestAadhaar }),
+    [state, useTestAadhaar],
   )
 
   return (
@@ -288,7 +257,6 @@ async function handleLogin(
   state: AnonAadhaarState,
   _anonAadhaarProofStr: SerializedPCD<AnonAadhaarCore>,
   _anonAadhaarProof: AnonAadhaarCore,
-  isWeb: boolean,
 ): Promise<AnonAadhaarState | null> {
   if (state.status !== 'logging-in') {
     console.log(
@@ -297,14 +265,8 @@ async function handleLogin(
     return null
   }
 
-  if (isWeb) {
-    if (!(await AnonAadhaarCorePackage.verify(_anonAadhaarProof))) {
-      throw new Error('Invalid proof')
-    }
-  } else {
-    if (!(await verifyLocal(_anonAadhaarProof))) {
-      throw new Error('Invalid proof')
-    }
+  if (!(await AnonAadhaarCorePackage.verify(_anonAadhaarProof))) {
+    throw new Error('Invalid proof')
   }
 
   return {

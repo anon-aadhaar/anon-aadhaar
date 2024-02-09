@@ -5,12 +5,18 @@ import {
   AnonAadhaarClaim,
   AnonAadhaarProof,
   AnonAadhaarArgs,
+  ArtifactsOrigin,
 } from './types'
 
 import { v4 as uuidv4 } from 'uuid'
 import { groth16 } from 'snarkjs'
 import JSONBig from 'json-bigint'
-import { BackendProver, ProverInferace, WebProver } from './prover'
+import {
+  BackendProver,
+  ChunkedProver,
+  ProverInferace,
+  WebProver,
+} from './prover'
 
 export class AnonAadhaarCore
   implements PCD<AnonAadhaarClaim, AnonAadhaarProof>
@@ -61,10 +67,16 @@ export async function prove(args: AnonAadhaarArgs): Promise<AnonAadhaarCore> {
 
   let prover: ProverInferace
 
-  if (initArgs.isWebEnv) {
-    prover = new WebProver(initArgs.wasmURL, initArgs.zkeyURL)
-  } else {
-    prover = new BackendProver(initArgs.wasmURL, initArgs.zkeyURL)
+  switch (initArgs.artifactsOrigin) {
+    case ArtifactsOrigin.local:
+      prover = new BackendProver(initArgs.wasmURL, initArgs.zkeyURL)
+      break
+    case ArtifactsOrigin.server:
+      prover = new WebProver(initArgs.wasmURL, initArgs.zkeyURL)
+      break
+    case ArtifactsOrigin.chunked:
+      prover = new ChunkedProver(initArgs.wasmURL, initArgs.zkeyURL)
+      break
   }
 
   const anonAadhaarProof = await prover.proving(args)
@@ -79,16 +91,16 @@ async function getVerifyKey() {
       'cannot make Anon Aadhaar proof: init has not been called yet'
     )
   }
-  if (initArgs.isWebEnv) {
+  if (initArgs.artifactsOrigin === ArtifactsOrigin.local) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    vk = require(initArgs.vkeyURL)
+  } else {
     const response = await fetch(initArgs.vkeyURL)
     if (!response.ok) {
       throw new Error(`Failed to fetch the verify key from server`)
     }
 
     vk = await response.json()
-  } else {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    vk = require(initArgs.vkeyURL)
   }
   return vk
 }

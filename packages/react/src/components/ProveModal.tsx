@@ -241,7 +241,7 @@ const Title = styled.h3`
   font-weight: bold;
 `
 
-const Disclaimer = styled.p`
+const Disclaimer = styled.span`
   color: #6d6d6d;
   margin-top: 0.3rem;
   font-size: small;

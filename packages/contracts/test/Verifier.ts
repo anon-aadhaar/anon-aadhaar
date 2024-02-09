@@ -10,6 +10,7 @@ import {
   AnonAadhaarProof,
   PackedGroth16Proof,
   packGroth16Proof,
+  ArtifactsOrigin,
 } from '../../core/src'
 import { testQRData } from '../../circuits/assets/dataInput.json'
 import fs from 'fs'
@@ -33,7 +34,7 @@ describe('VerifyProof', function () {
       wasmURL: artifactUrls.test.wasm,
       zkeyURL: artifactUrls.test.zkey,
       vkeyURL: artifactUrls.test.vk,
-      isWebEnv: true,
+      artifactsOrigin: ArtifactsOrigin.server,
     }
 
     const [user1] = await ethers.getSigners()

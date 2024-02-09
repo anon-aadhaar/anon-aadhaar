@@ -1,8 +1,7 @@
 import { PackedGroth16Proof } from './types'
-import { groth16, Groth16Proof, ZKArtifact } from 'snarkjs'
-import { BigNumberish } from './types'
-import { AnonAadhaarCore } from './core'
+import { Groth16Proof } from 'snarkjs'
 import pako from 'pako'
+import { storageService as defaultStorageService } from './storage'
 
 export const handleError = (error: unknown, defaultMessage: string): Error => {
   if (error instanceof Error) return error
@@ -58,94 +57,6 @@ export function packGroth16Proof(
     groth16Proof.pi_c[0],
     groth16Proof.pi_c[1],
   ]
-}
-
-/**
- * Turn a groth16 proof into a call data format to use it as a transaction input.
- * @param input Inputs needed to generate the witness.
- * @param wasmPath Path to the wasm file.
- * @param zkeyPath Path to the zkey file.
- * @returns {a, b, c, Input} which are the input needed to verify a proof in the Verifier smart contract.
- */
-export async function exportCallDataGroth16(
-  input: {
-    signature: string[]
-    modulus: string[]
-    base_message: string[]
-    app_id: string
-  },
-  wasmPath: ZKArtifact,
-  zkeyPath: ZKArtifact
-): Promise<{
-  a: [BigNumberish, BigNumberish]
-  b: [[BigNumberish, BigNumberish], [BigNumberish, BigNumberish]]
-  c: [BigNumberish, BigNumberish]
-  Input: BigNumberish[]
-}> {
-  const { proof: _proof, publicSignals: _publicSignals } =
-    await groth16.fullProve(input, wasmPath, zkeyPath)
-  const calldata = await groth16.exportSolidityCallData(_proof, _publicSignals)
-
-  const argv = calldata
-    .replace(/["[\]\s]/g, '')
-    .split(',')
-    .map((x: string) => BigInt(x).toString())
-
-  const a: [BigNumberish, BigNumberish] = [argv[0], argv[1]]
-  const b: [[BigNumberish, BigNumberish], [BigNumberish, BigNumberish]] = [
-    [argv[2], argv[3]],
-    [argv[4], argv[5]],
-  ]
-  const c: [BigNumberish, BigNumberish] = [argv[6], argv[7]]
-  const Input = []
-
-  for (let i = 8; i < argv.length; i++) {
-    Input.push(argv[i])
-  }
-  return { a, b, c, Input }
-}
-
-/**
- * Turn an AnonAadhaarProof into a call data format to use it as a transaction input.
- * @param _anonAadhaarProof The Core proof you want to verify on-chain.
- * @returns {a, b, c, Input} which are the input needed to verify a proof in the Verifier smart contract.
- */
-export async function exportCallDataGroth16FromPCD(
-  _anonAadhaarProof: AnonAadhaarCore
-): Promise<{
-  a: [BigNumberish, BigNumberish]
-  b: [[BigNumberish, BigNumberish], [BigNumberish, BigNumberish]]
-  c: [BigNumberish, BigNumberish]
-  publicInputs: BigNumberish[]
-}> {
-  const calldata = await groth16.exportSolidityCallData(
-    _anonAadhaarProof.proof.groth16Proof,
-    [
-      _anonAadhaarProof.proof.identityNullifier,
-      _anonAadhaarProof.proof.userNullifier,
-      _anonAadhaarProof.proof.timestamp,
-      _anonAadhaarProof.proof.pubkeyHash,
-      _anonAadhaarProof.proof.signalHash,
-    ]
-  )
-
-  const argv = calldata
-    .replace(/["[\]\s]/g, '')
-    .split(',')
-    .map((x: string) => BigInt(x).toString())
-
-  const a: [BigNumberish, BigNumberish] = [argv[0], argv[1]]
-  const b: [[BigNumberish, BigNumberish], [BigNumberish, BigNumberish]] = [
-    [argv[2], argv[3]],
-    [argv[4], argv[5]],
-  ]
-  const c: [BigNumberish, BigNumberish] = [argv[6], argv[7]]
-  const publicInputs = []
-
-  for (let i = 8; i < argv.length; i++) {
-    publicInputs.push(argv[i])
-  }
-  return { a, b, c, publicInputs }
 }
 
 /**
@@ -238,4 +149,59 @@ export function extractPhoto(qrData: number[]) {
     end,
     photo: qrData.slice(begin, end + 1),
   }
+}
+
+export const searchZkeyChunks = async (
+  zkeyPath: string,
+  storageService = defaultStorageService,
+  useTestAadhaar = false
+) => {
+  const filePromises = []
+  for (let i = 0; i < 10; i++) {
+    const fileName = useTestAadhaar
+      ? `circuit_final_test_${i}.zkey`
+      : `circuit_final_prod_${i}.zkey`
+    const item = await storageService.getItem(fileName)
+    if (item) {
+      continue
+    }
+    filePromises.push(
+      downloadAndStoreCompressedZkeyChunks(
+        zkeyPath,
+        i,
+        fileName,
+        storageService
+      )
+    )
+  }
+  await Promise.all(filePromises)
+}
+
+const downloadAndStoreCompressedZkeyChunks = async (
+  zkeyPath: string,
+  index: number,
+  fileName: string,
+  storageService = defaultStorageService
+) => {
+  try {
+    const response = await fetch(zkeyPath + `/circuit_final_${index}.gz`)
+
+    if (!response.ok)
+      throw Error('Error while fetching compressed chunked zkey')
+
+    const compressedChunk = await response.arrayBuffer()
+    const uncompressedChunk = pako.ungzip(compressedChunk)
+
+    await storageService.setItem(fileName, uncompressedChunk)
+  } catch (e) {
+    handleError(e, 'Error while dowloading the zkey chunks')
+  }
+}
+
+export const retrieveFileExtension = (str: string) => {
+  const parsedUrl = new URL(str)
+  const fileExtension = parsedUrl.pathname.substring(
+    parsedUrl.pathname.lastIndexOf('.') + 1
+  )
+  return fileExtension
 }

@@ -1,3 +1,12 @@
+## 1.0.1
+
+- Adds chunked prover, which enables caching the zkey in the browser
+
+## 1.0.0
+
+Check our blog-post to see specifications of this new version.
+https://anon-aadhaar-documentation.vercel.app/blog/anon-aadhaar-v1-release
+
 ## 0.1.15
 
 - Fix subtle dependency issue
