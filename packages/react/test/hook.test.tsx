@@ -2,11 +2,8 @@ import React, { ReactNode } from 'react'
 import { renderHook } from '@testing-library/react-hooks'
 import { render, screen, fireEvent, cleanup } from '@testing-library/react'
 import { expect } from 'chai'
-import {
-  useAnonAadhaar,
-  AnonAadhaarContext,
-  AnonAadhaarState,
-} from '../src/hooks/useAnonAadhaar'
+import { useAnonAadhaar, AnonAadhaarContext } from '../src/hooks/useAnonAadhaar'
+import { AnonAadhaarState } from '../src/types'
 import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
 import { Uint8ArrayToCharArray } from '@zk-email/helpers/dist/binaryFormat'
 import { AnonAadhaarArgs, splitToWords } from '@anon-aadhaar/core'

@@ -1,9 +1,6 @@
 import { ReactNode, useEffect, useState } from 'react'
-import {
-  AnonAadhaarContext,
-  AnonAadhaarRequest,
-  AnonAadhaarState,
-} from '../hooks/useAnonAadhaar'
+import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
+import { AnonAadhaarRequest, AnonAadhaarState } from '../types'
 import {
   AnonAadhaarCore,
   AnonAadhaarCorePackage,

@@ -1,9 +1,5 @@
+import { AnonAadhaarArgs } from '@anon-aadhaar/core'
 import { createContext, useContext } from 'react'
-import {
-  AnonAadhaarContextVal,
-  AnonAadhaarRequest,
-  AnonAadhaarState,
-} from '../types'
 
 /**
  * `useAnonAadhaar` is a custom React hook that provides convenient access to the Anon Aadhaar authentication state
@@ -17,18 +13,34 @@ import {
  *   - `startReq`: A function that initiates the login/logout process. This function takes an `AnonAadhaarRequest` object
  *     as its argument, which includes the necessary information to start the authentication process.
  */
-export function useAnonAadhaar(): [
-  AnonAadhaarState,
-  (request: AnonAadhaarRequest) => void,
-] {
-  const val = useContext(AnonAadhaarContext)
-  return [val.state, val.startReq]
+export function useProver(): [proverState] {
+  const val = useContext(ProverContext)
+  return [val.state]
 }
 
-export const AnonAadhaarContext = createContext<AnonAadhaarContextVal>({
-  state: { status: 'logged-out' },
-  startReq: () => {
-    // StartReq
-  },
-  useTestAadhaar: true,
+export const ProverContext = createContext<ProverContextVal>({
+  state: { status: 'off' },
 })
+
+export interface ProverContextVal {
+  state: proverState
+}
+
+export type AnonAadhaarRequest =
+  | { type: 'login'; args: AnonAadhaarArgs }
+  | { type: 'logout' }
+
+export type proverState = {
+  /** Whether the user is logged in. @see ProveButton */
+  status: 'off' | 'ready' | 'proving'
+} & (
+  | {
+      status: 'off'
+    }
+  | {
+      status: 'ready'
+    }
+  | {
+      status: 'proving'
+    }
+)
