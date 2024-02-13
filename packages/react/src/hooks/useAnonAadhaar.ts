@@ -1,9 +1,10 @@
 import { createContext, useContext } from 'react'
 import {
-  AnonAadhaarContextVal,
-  AnonAadhaarRequest,
-  AnonAadhaarState,
-} from '../types'
+  AnonAadhaarArgs,
+  AnonAadhaarCore,
+  ProverState,
+} from '@anon-aadhaar/core'
+import { SerializedPCD } from '@pcd/pcd-types'
 
 /**
  * `useAnonAadhaar` is a custom React hook that provides convenient access to the Anon Aadhaar authentication state
@@ -25,10 +26,39 @@ export function useAnonAadhaar(): [
   return [val.state, val.startReq]
 }
 
+export interface AnonAadhaarContextVal {
+  state: AnonAadhaarState
+  startReq: (request: AnonAadhaarRequest) => void
+  useTestAadhaar: boolean
+  proverState: ProverState
+}
+
+export type AnonAadhaarRequest =
+  | { type: 'login'; args: AnonAadhaarArgs }
+  | { type: 'logout' }
+
+export type AnonAadhaarState = {
+  /** Whether the user is logged in. @see ProveButton */
+  status: 'logged-out' | 'logged-in' | 'logging-in'
+} & (
+  | {
+      status: 'logged-out'
+    }
+  | {
+      status: 'logging-in'
+    }
+  | {
+      status: 'logged-in'
+      serializedAnonAadhaarProof: SerializedPCD<AnonAadhaarCore>
+      anonAadhaarProof: AnonAadhaarCore
+    }
+)
+
 export const AnonAadhaarContext = createContext<AnonAadhaarContextVal>({
   state: { status: 'logged-out' },
   startReq: () => {
     // StartReq
   },
   useTestAadhaar: true,
+  proverState: ProverState.Initializing,
 })

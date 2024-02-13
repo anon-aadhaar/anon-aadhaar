@@ -1,6 +1,9 @@
 import { ReactNode, useEffect, useState } from 'react'
-import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
-import { AnonAadhaarRequest, AnonAadhaarState } from '../types'
+import {
+  AnonAadhaarContext,
+  AnonAadhaarRequest,
+  AnonAadhaarState,
+} from '../hooks/useAnonAadhaar'
 import {
   AnonAadhaarCore,
   AnonAadhaarCorePackage,
@@ -8,6 +11,7 @@ import {
   InitArgs,
   artifactUrls,
   init,
+  ProverState,
 } from '@anon-aadhaar/core'
 import React, { Dispatch, SetStateAction } from 'react'
 import { proveAndSerialize } from '../prove'
@@ -50,6 +54,9 @@ export function AnonAadhaarProvider(
   const [anonAadhaarProof, setAnonAadhaarProof] =
     useState<AnonAadhaarCore | null>(null)
   const [useTestAadhaar, setUseTestAadhaar] = useState<boolean>(false)
+  const [proverState, setProverState] = useState<ProverState>(
+    ProverState.Initializing,
+  )
   const [state, setState] = useState<AnonAadhaarState>({
     status: 'logged-out',
   })
@@ -77,6 +84,21 @@ export function AnonAadhaarProvider(
       })
   }, [useTestAadhaar])
 
+  // // Lazy loading, loading artifacts when SDK starts
+  // useEffect(() => {
+  //   if (initArgs?.zkeyURL) {
+  //     const timer = setTimeout(() => {
+  //       //
+  //     }, 1000)
+  //     searchZkeyChunks(initArgs?.zkeyURL, useTestAadhaar)
+  //       .then()
+  //       .catch(e => {
+  //         throw Error(e)
+  //       })
+  //     clearTimeout(timer)
+  //   }
+  // }, [useTestAadhaar])
+
   // Write state to local storage whenever a login starts, succeeds, or fails
   const setAndWriteState = (newState: AnonAadhaarState) => {
     console.log(`[ANON-AADHAAR] new state ${shallowToString(newState)}`)
@@ -88,8 +110,14 @@ export function AnonAadhaarProvider(
   const startReq = React.useCallback(
     (request: AnonAadhaarRequest) => {
       console.log(`[ANON-AADHAAR] startReq ${shallowToString(request)}`)
+
       setAndWriteState(
-        handleLoginReq(request, setAnonAadhaarProofStr, setAnonAadhaarProof),
+        handleLoginReq(
+          request,
+          setAnonAadhaarProofStr,
+          setAnonAadhaarProof,
+          setProverState,
+        ),
       )
     },
     [setAndWriteState, setAnonAadhaarProofStr, setAnonAadhaarProof],
@@ -118,8 +146,8 @@ export function AnonAadhaarProvider(
 
   // Provide context
   const val = React.useMemo(
-    () => ({ state, startReq, useTestAadhaar }),
-    [state, useTestAadhaar],
+    () => ({ state, startReq, useTestAadhaar, proverState }),
+    [state, useTestAadhaar, proverState],
   )
 
   return (
@@ -218,13 +246,14 @@ function handleLoginReq(
     SetStateAction<SerializedPCD<AnonAadhaarCore> | null>
   >,
   setAnonAadhaar: Dispatch<SetStateAction<AnonAadhaarCore | null>>,
+  setProverState: Dispatch<SetStateAction<ProverState>>,
 ): AnonAadhaarState {
   const { type } = request
   switch (type) {
     case 'login':
       try {
         const { args } = request
-        proveAndSerialize(args).then(
+        proveAndSerialize(args, setProverState).then(
           ({
             anonAadhaarProof,
             serialized,

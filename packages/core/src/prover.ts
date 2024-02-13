@@ -1,5 +1,10 @@
 import { isWebUri } from 'valid-url'
-import { AnonAadhaarArgs, AnonAadhaarProof, ArtifactsOrigin } from './types'
+import {
+  AnonAadhaarArgs,
+  AnonAadhaarProof,
+  ArtifactsOrigin,
+  ProverState,
+} from './types'
 import { ZKArtifact, groth16 } from 'snarkjs'
 import { storageService as defaultStorageService } from './storage'
 import { artifactUrls } from './constants'
@@ -14,7 +19,7 @@ export const loadZkeyChunks = async (
 ): Promise<Uint8Array> => {
   const isTest = zkeyUrl === artifactUrls.test.chunked
   try {
-    await searchZkeyChunks(zkeyUrl, storageService, isTest)
+    await searchZkeyChunks(zkeyUrl, isTest, storageService)
   } catch (e) {
     handleError(e, 'Error while searching for the zkey chunks')
   }
@@ -104,7 +109,10 @@ export class KeyPath implements KeyPathInterface {
 export interface ProverInferace {
   wasm: KeyPath
   zkey: KeyPath
-  proving: (witness: Witness) => Promise<AnonAadhaarProof>
+  proving: (
+    witness: Witness,
+    updateState?: (state: ProverState) => void
+  ) => Promise<AnonAadhaarProof>
 }
 
 export class BackendProver implements ProverInferace {
@@ -116,24 +124,32 @@ export class BackendProver implements ProverInferace {
     this.zkey = new KeyPath(zkey, ArtifactsOrigin.local)
   }
 
-  async proving(witness: Witness): Promise<AnonAadhaarProof> {
+  async proving(
+    witness: Witness,
+    updateState?: (state: ProverState) => void
+  ): Promise<AnonAadhaarProof> {
     if (!witness.pubKey.value) {
+      if (updateState) updateState(ProverState.Error)
       throw new Error('Cannot make proof: missing pubKey')
     }
 
     if (!witness.signature.value) {
+      if (updateState) updateState(ProverState.Error)
       throw new Error('Cannot make proof: missing signature')
     }
 
     if (!witness.aadhaarData.value) {
+      if (updateState) updateState(ProverState.Error)
       throw new Error('Cannot make proof: missing message')
     }
 
     if (!witness.aadhaarDataLength.value) {
+      if (updateState) updateState(ProverState.Error)
       throw new Error('Cannot make proof: missing aadhaarDataLength')
     }
 
     if (!witness.signalHash.value) {
+      if (updateState) updateState(ProverState.Error)
       throw new Error('Cannot make proof: missing signalHash')
     }
 
@@ -145,12 +161,14 @@ export class BackendProver implements ProverInferace {
       signalHash: witness.signalHash.value,
     }
 
+    if (updateState) updateState(ProverState.Proving)
     const { proof, publicSignals } = await groth16.fullProve(
       input,
       await this.wasm.getKey(),
       await this.zkey.getKey()
     )
 
+    if (updateState) updateState(ProverState.Completed)
     return {
       identityNullifier: publicSignals[0],
       userNullifier: publicSignals[1],
@@ -171,27 +189,37 @@ export class WebProver implements ProverInferace {
     this.zkey = new KeyPath(zkey, ArtifactsOrigin.server)
   }
 
-  async proving(witness: Witness): Promise<AnonAadhaarProof> {
+  async proving(
+    witness: Witness,
+    updateState?: (state: ProverState) => void
+  ): Promise<AnonAadhaarProof> {
+    if (updateState) updateState(ProverState.FetchingWasm)
     const wasmBuffer = (await this.wasm.getKey()) as ArrayBuffer
+    if (updateState) updateState(ProverState.FetchingZkey)
     const zkeyBuffer = (await this.zkey.getKey()) as ArrayBuffer
 
     if (!witness.pubKey.value) {
+      if (updateState) updateState(ProverState.Error)
       throw new Error('Cannot make proof: missing pubKey')
     }
 
     if (!witness.signature.value) {
+      if (updateState) updateState(ProverState.Error)
       throw new Error('Cannot make proof: missing signature')
     }
 
     if (!witness.aadhaarData.value) {
+      if (updateState) updateState(ProverState.Error)
       throw new Error('Cannot make proof: missing message')
     }
 
     if (!witness.aadhaarDataLength.value) {
+      if (updateState) updateState(ProverState.Error)
       throw new Error('Cannot make proof: missing aadhaarDataLength')
     }
 
     if (!witness.signalHash.value) {
+      if (updateState) updateState(ProverState.Error)
       throw new Error('Cannot make proof: missing signalHash')
     }
 
@@ -203,12 +231,14 @@ export class WebProver implements ProverInferace {
       signalHash: witness.signalHash.value,
     }
 
+    if (updateState) updateState(ProverState.Proving)
     const { proof, publicSignals } = await groth16.fullProve(
       input,
       new Uint8Array(wasmBuffer),
       new Uint8Array(zkeyBuffer)
     )
 
+    if (updateState) updateState(ProverState.Completed)
     return {
       identityNullifier: publicSignals[0],
       userNullifier: publicSignals[1],
@@ -229,27 +259,37 @@ export class ChunkedProver implements ProverInferace {
     this.zkey = new KeyPath(zkey, ArtifactsOrigin.chunked)
   }
 
-  async proving(witness: Witness): Promise<AnonAadhaarProof> {
+  async proving(
+    witness: Witness,
+    updateState?: (state: ProverState) => void
+  ): Promise<AnonAadhaarProof> {
+    if (updateState) updateState(ProverState.FetchingWasm)
     const wasmBuffer = await this.wasm.getKey()
+    if (updateState) updateState(ProverState.FetchingZkey)
     const zkeyBuffer = await this.zkey.getKey()
 
     if (!witness.pubKey.value) {
+      if (updateState) updateState(ProverState.Error)
       throw new Error('Cannot make proof: missing pubKey')
     }
 
     if (!witness.signature.value) {
+      if (updateState) updateState(ProverState.Error)
       throw new Error('Cannot make proof: missing signature')
     }
 
     if (!witness.aadhaarData.value) {
+      if (updateState) updateState(ProverState.Error)
       throw new Error('Cannot make proof: missing message')
     }
 
     if (!witness.aadhaarDataLength.value) {
+      if (updateState) updateState(ProverState.Error)
       throw new Error('Cannot make proof: missing aadhaarDataLength')
     }
 
     if (!witness.signalHash.value) {
+      if (updateState) updateState(ProverState.Error)
       throw new Error('Cannot make proof: missing signalHash')
     }
 
@@ -261,12 +301,14 @@ export class ChunkedProver implements ProverInferace {
       signalHash: witness.signalHash.value,
     }
 
+    if (updateState) updateState(ProverState.Proving)
     const { proof, publicSignals } = await groth16.fullProve(
       input,
       new Uint8Array(wasmBuffer as ArrayBuffer),
       zkeyBuffer
     )
 
+    if (updateState) updateState(ProverState.Completed)
     return {
       identityNullifier: publicSignals[0],
       userNullifier: publicSignals[1],

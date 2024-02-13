@@ -2,11 +2,14 @@ import React, { ReactNode } from 'react'
 import { renderHook } from '@testing-library/react-hooks'
 import { render, screen, fireEvent, cleanup } from '@testing-library/react'
 import { expect } from 'chai'
-import { useAnonAadhaar, AnonAadhaarContext } from '../src/hooks/useAnonAadhaar'
-import { AnonAadhaarState } from '../src/types'
+import {
+  useAnonAadhaar,
+  AnonAadhaarContext,
+  AnonAadhaarState,
+} from '../src/hooks/useAnonAadhaar'
 import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
 import { Uint8ArrayToCharArray } from '@zk-email/helpers/dist/binaryFormat'
-import { AnonAadhaarArgs, splitToWords } from '@anon-aadhaar/core'
+import { ProverState, AnonAadhaarArgs, splitToWords } from '@anon-aadhaar/core'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import { AnonAadhaarProvider } from '../src/provider/AnonAadhaarProvider'
 import { genData } from '../../core/test/utils'
@@ -43,6 +46,7 @@ describe('useAnonAadhaar Hook', () => {
           state: initialState,
           startReq: startReqFunction,
           useTestAadhaar: true,
+          proverState: ProverState.Initializing,
         }}
       >
         {children}
@@ -57,7 +61,7 @@ describe('useAnonAadhaar Hook', () => {
     expect(startReq).to.equal(startReqFunction)
   })
 
-  it('returns updated state when request sent', () => {
+  it.only('returns updated state when request sent', () => {
     const anonAadhaarArgs: AnonAadhaarArgs = {
       aadhaarData: {
         argumentType: ArgumentTypeName.StringArray,

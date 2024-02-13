@@ -6,6 +6,7 @@ import {
   AnonAadhaarProof,
   AnonAadhaarArgs,
   ArtifactsOrigin,
+  ProverState,
 } from './types'
 
 import { v4 as uuidv4 } from 'uuid'
@@ -43,7 +44,10 @@ export async function init(args: InitArgs): Promise<void> {
   initArgs = args
 }
 
-export async function prove(args: AnonAadhaarArgs): Promise<AnonAadhaarCore> {
+export async function prove(
+  args: AnonAadhaarArgs,
+  updateState?: (state: ProverState) => void
+): Promise<AnonAadhaarCore> {
   if (!initArgs) {
     throw new Error(
       'cannot make Anon Aadhaar proof: init has not been called yet'
@@ -79,7 +83,7 @@ export async function prove(args: AnonAadhaarArgs): Promise<AnonAadhaarCore> {
       break
   }
 
-  const anonAadhaarProof = await prover.proving(args)
+  const anonAadhaarProof = await prover.proving(args, updateState)
 
   return new AnonAadhaarCore(id, anonAadhaarClaim, anonAadhaarProof)
 }

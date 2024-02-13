@@ -67,3 +67,12 @@ export type PackedGroth16Proof = [
   BigNumberish,
   BigNumberish
 ]
+
+export enum ProverState {
+  Initializing = 'initializing',
+  FetchingWasm = 'fetching-wasm',
+  FetchingZkey = 'fetching-zkey',
+  Proving = 'proving',
+  Completed = 'completed',
+  Error = 'error',
+}

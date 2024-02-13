@@ -153,8 +153,8 @@ export function extractPhoto(qrData: number[]) {
 
 export const searchZkeyChunks = async (
   zkeyPath: string,
-  storageService = defaultStorageService,
-  useTestAadhaar = false
+  useTestAadhaar = false,
+  storageService = defaultStorageService
 ) => {
   const filePromises = []
   for (let i = 0; i < 10; i++) {
