@@ -1,3 +1,10 @@
+## 1.0.2
+
+- Adds chunked prover state hook
+- Fix QR code verification state bug
+- UI handles stringyfied JSON objects as signal
+- Manages multiple AnonAadhaarProofs
+
 ## 1.0.1
 
 - Adds chunked prover, which enables caching the zkey in the browser

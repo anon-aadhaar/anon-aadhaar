@@ -5,6 +5,7 @@ import { Spinner } from './LoadingSpinner'
 import React from 'react'
 import { processAadhaarArgs } from '../prove'
 import { AadhaarQRValidation } from '../interface'
+import { ProverState } from '@anon-aadhaar/core'
 
 interface ProveButtonProps {
   qrData: string | null
@@ -50,13 +51,32 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
           </Btn>
         )
       case 'logging-in':
-        return (
-          <Btn>
-            Generating proof...
-            {'\u2003'}
-            <Spinner />
-          </Btn>
-        )
+        switch (proverState) {
+          case ProverState.FetchingWasm:
+            return (
+              <Btn>
+                Searching for wasm file...
+                {'\u2003'}
+                <Spinner />
+              </Btn>
+            )
+          case ProverState.FetchingZkey:
+            return (
+              <Btn>
+                Searching for zkey file...
+                {'\u2003'}
+                <Spinner />
+              </Btn>
+            )
+          case ProverState.Proving:
+            return (
+              <Btn>
+                Generating proof...
+                {'\u2003'}
+                <Spinner />
+              </Btn>
+            )
+        }
     }
   })()
 }
