@@ -4,11 +4,13 @@ import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
 import { Spinner } from './LoadingSpinner'
 import React from 'react'
 import { processAadhaarArgs } from '../prove'
+import { AadhaarQRValidation } from '../interface'
 
 interface ProveButtonProps {
   qrData: string | null
   provingEnabled: boolean
   setErrorMessage: Dispatch<SetStateAction<string | null>>
+  setQrStatus: Dispatch<SetStateAction<AadhaarQRValidation | null>>
   signal?: string
 }
 
@@ -17,8 +19,12 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
   provingEnabled,
   setErrorMessage,
   signal,
+  setQrStatus,
 }) => {
-  const { state, startReq, useTestAadhaar } = useContext(AnonAadhaarContext)
+  const { state, startReq, useTestAadhaar, proverState } =
+    useContext(AnonAadhaarContext)
+
+  console.log('Prover state => ', proverState)
 
   const startProving = async () => {
     try {
@@ -27,6 +33,7 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
       const args = await processAadhaarArgs(qrData, useTestAadhaar, signal)
 
       startReq({ type: 'login', args })
+      setQrStatus(null)
     } catch (error) {
       console.log(error)
       if (error instanceof Error) setErrorMessage(error.message)
