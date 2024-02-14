@@ -20,7 +20,7 @@ interface LogInWithAnonAadhaarProps {
  *
  * @returns A JSX element representing the LogInWithAnonAadhaarV2 component.
  */
-export const LogInWithAnonAadhaar = ({ signal }: LogInWithAnonAadhaarProps) => {
+export const LaunchProveModal = ({ signal }: LogInWithAnonAadhaarProps) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [qrStatus, setQrStatus] = useState<null | AadhaarQRValidation>(null)
