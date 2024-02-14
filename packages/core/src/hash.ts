@@ -12,7 +12,8 @@ export function hash(
   message: BytesLike | Hexable | number | bigint
 ): NumericString {
   message = BigNumber.from(message).toTwos(256).toHexString()
-  message = zeroPad(message, 32)
+
+  if (message.length < 32) message = zeroPad(message, 32)
 
   return (BigInt(keccak256(message)) >> BigInt(8)).toString() as NumericString
 }

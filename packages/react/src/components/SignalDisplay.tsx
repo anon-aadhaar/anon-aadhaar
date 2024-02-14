@@ -2,15 +2,18 @@ import React, { FunctionComponent } from 'react'
 import styled from 'styled-components'
 
 interface SignalDisplayProps {
-  signal: string
+  signal: string | object
 }
 
 export const SignalDisplay: FunctionComponent<SignalDisplayProps> = ({
   signal,
 }) => {
+  const isJsonObject = typeof signal === 'object' && signal !== null
+  const displaySignal = isJsonObject ? JSON.stringify(signal, null, 2) : signal
+
   return (
     <InputFile>
-      <FileName id="file-chosen">{signal}</FileName>
+      <FileName id="file-chosen">{displaySignal}</FileName>
     </InputFile>
   )
 }

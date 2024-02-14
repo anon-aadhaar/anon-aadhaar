@@ -13,6 +13,7 @@ import { Buffer } from 'buffer'
 import { pki } from 'node-forge'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import { hash } from './hash'
+import { toUtf8Bytes } from '@ethersproject/strings'
 
 /**
  * Extract all the information needed to generate the witness from the QRCode data.
@@ -22,7 +23,7 @@ import { hash } from './hash'
 export const generateArgs = async (
   qrData: string,
   certificateFile: string,
-  signal?: string
+  signal?: string | object
 ): Promise<AnonAadhaarArgs> => {
   const bigIntData = BigInt(qrData)
 
@@ -53,7 +54,11 @@ export const generateArgs = async (
   const [paddedMessage, messageLength] = sha256Pad(signedData, 512 * 3)
 
   // Set signal to 1 by default if no signal setted up
-  const signalHash = signal ? hash(signal) : hash(1)
+  const signalHash = signal
+    ? typeof signal === 'object'
+      ? hash(toUtf8Bytes(JSON.stringify(signal)))
+      : hash(signal)
+    : hash(1)
 
   const anonAadhaarArgs: AnonAadhaarArgs = {
     aadhaarData: {

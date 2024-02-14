@@ -2,7 +2,7 @@
 
 - Adds chunked prover state hook
 - Fix QR code verification state bug
-- UI handles stringyfied JSON objects as signal
+- Adds stringified JSON objects as signal
 - Manages multiple AnonAadhaarProofs
 
 ## 1.0.1

@@ -8,7 +8,7 @@ import { AadhaarQRValidation } from '../interface'
 import React from 'react'
 
 interface LogInWithAnonAadhaarProps {
-  signal?: string
+  signal?: string | object
 }
 
 /**

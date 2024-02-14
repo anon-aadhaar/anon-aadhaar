@@ -84,21 +84,6 @@ export function AnonAadhaarProvider(
       })
   }, [useTestAadhaar])
 
-  // // Lazy loading, loading artifacts when SDK starts
-  // useEffect(() => {
-  //   if (initArgs?.zkeyURL) {
-  //     const timer = setTimeout(() => {
-  //       //
-  //     }, 1000)
-  //     searchZkeyChunks(initArgs?.zkeyURL, useTestAadhaar)
-  //       .then()
-  //       .catch(e => {
-  //         throw Error(e)
-  //       })
-  //     clearTimeout(timer)
-  //   }
-  // }, [useTestAadhaar])
-
   // Write state to local storage whenever a login starts, succeeds, or fails
   const setAndWriteState = (newState: AnonAadhaarState) => {
     console.log(`[ANON-AADHAAR] new state ${shallowToString(newState)}`)
