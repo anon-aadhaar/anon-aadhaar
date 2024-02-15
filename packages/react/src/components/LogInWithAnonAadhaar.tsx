@@ -5,10 +5,9 @@ import { useEffect, useContext } from 'react'
 import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
 import { icon } from './ButtonLogo'
 import { AadhaarQRValidation } from '../interface'
-import React from 'react'
 
 interface LogInWithAnonAadhaarProps {
-  signal?: string | object
+  signal?: string
 }
 
 /**

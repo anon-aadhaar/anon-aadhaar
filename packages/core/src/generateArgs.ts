@@ -9,11 +9,11 @@ import {
   Uint8ArrayToCharArray,
 } from '@zk-email/helpers/dist/binaryFormat'
 import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
+import { BytesLike, Hexable } from '@ethersproject/bytes'
 import { Buffer } from 'buffer'
 import { pki } from 'node-forge'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import { hash } from './hash'
-import { toUtf8Bytes } from '@ethersproject/strings'
 
 /**
  * Extract all the information needed to generate the witness from the QRCode data.
@@ -23,7 +23,7 @@ import { toUtf8Bytes } from '@ethersproject/strings'
 export const generateArgs = async (
   qrData: string,
   certificateFile: string,
-  signal?: string | object
+  signal?: BytesLike | Hexable | number | bigint
 ): Promise<AnonAadhaarArgs> => {
   const bigIntData = BigInt(qrData)
 
@@ -54,11 +54,7 @@ export const generateArgs = async (
   const [paddedMessage, messageLength] = sha256Pad(signedData, 512 * 3)
 
   // Set signal to 1 by default if no signal setted up
-  const signalHash = signal
-    ? typeof signal === 'object'
-      ? hash(toUtf8Bytes(JSON.stringify(signal)))
-      : hash(signal)
-    : hash(1)
+  const signalHash = signal ? hash(signal) : hash(1)
 
   const anonAadhaarArgs: AnonAadhaarArgs = {
     aadhaarData: {

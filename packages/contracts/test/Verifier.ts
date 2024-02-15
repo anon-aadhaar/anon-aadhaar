@@ -82,7 +82,7 @@ describe('VerifyProof', function () {
 
   describe('AnonAadhaarVote Contract', function () {
     describe('verifyAnonAadhaarProof', function () {
-      it('Should return true for a valid PCD proof', async function () {
+      it('Should return true for a valid AnonAadhaar proof', async function () {
         const { anonAadhaarVerifier } = await loadFixture(
           deployOneYearLockFixture,
         )

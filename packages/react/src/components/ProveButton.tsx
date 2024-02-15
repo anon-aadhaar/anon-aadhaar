@@ -12,7 +12,7 @@ interface ProveButtonProps {
   provingEnabled: boolean
   setErrorMessage: Dispatch<SetStateAction<string | null>>
   setQrStatus: Dispatch<SetStateAction<AadhaarQRValidation | null>>
-  signal?: string | object
+  signal?: string
 }
 
 export const ProveButton: React.FC<ProveButtonProps> = ({

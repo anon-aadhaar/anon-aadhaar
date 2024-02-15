@@ -25,7 +25,7 @@ interface ModalProps {
   logo: string
   qrStatus: AadhaarQRValidation | null
   setQrStatus: Dispatch<SetStateAction<AadhaarQRValidation | null>>
-  signal?: string | object
+  signal?: string
 }
 
 export const ProveModal: React.FC<ModalProps> = ({

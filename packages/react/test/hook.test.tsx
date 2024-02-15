@@ -13,6 +13,7 @@ import { ProverState, AnonAadhaarArgs, splitToWords } from '@anon-aadhaar/core'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import { AnonAadhaarProvider } from '../src/provider/AnonAadhaarProvider'
 import { genData } from '../../core/test/utils'
+import { useProver } from '../src/hooks/useProver'
 
 describe('useAnonAadhaar Hook', () => {
   let testData: [bigint, bigint, bigint, bigint]
@@ -61,7 +62,7 @@ describe('useAnonAadhaar Hook', () => {
     expect(startReq).to.equal(startReqFunction)
   })
 
-  it.only('returns updated state when request sent', () => {
+  it('returns updated state when request sent', () => {
     const anonAadhaarArgs: AnonAadhaarArgs = {
       aadhaarData: {
         argumentType: ArgumentTypeName.StringArray,
@@ -93,7 +94,9 @@ describe('useAnonAadhaar Hook', () => {
 
     // Verify initial state
     const statusElement = screen.getByTestId('status')
+    const proverElement = screen.getByTestId('proverState')
     expect(statusElement.textContent).to.equal('logged-out')
+    expect(proverElement.textContent).to.equal(ProverState.Initializing)
 
     // Simulate a button click
     const button = screen.getByText('Trigger Login')
@@ -101,6 +104,7 @@ describe('useAnonAadhaar Hook', () => {
 
     // Verify that the login request was triggered and state is updated
     expect(statusElement.textContent).to.equal('logging-in')
+    expect(proverElement.textContent).to.equal(ProverState.FetchingWasm)
   })
 })
 
@@ -110,10 +114,12 @@ function TestComponent({
   anonAadhaarArgs: AnonAadhaarArgs
 }) {
   const [state, startReq] = useAnonAadhaar()
+  const [proverState] = useProver()
 
   return (
     <div>
       <span data-testid="status">{state.status}</span>
+      <span data-testid="proverState">{proverState}</span>
       <button
         onClick={() => startReq({ type: 'login', args: anonAadhaarArgs })}
       >
