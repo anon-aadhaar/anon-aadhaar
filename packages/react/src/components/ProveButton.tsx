@@ -25,8 +25,6 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
   const { state, startReq, useTestAadhaar, proverState } =
     useContext(AnonAadhaarContext)
 
-  console.log('Prover state => ', proverState)
-
   const startProving = async () => {
     try {
       if (qrData === null) throw new Error('Missing application Id!')

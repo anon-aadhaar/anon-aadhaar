@@ -165,8 +165,7 @@ export function serialize(state: AnonAadhaarState): string {
   if (status === 'logged-in') {
     serState = {
       status,
-      serializedAnonAadhaarProof: state.serializedAnonAadhaarProof,
-      anonAadhaarProof: state.anonAadhaarProof,
+      anonAadhaarProofs: state.anonAadhaarProofs,
     }
   } else {
     serState = {
@@ -195,21 +194,18 @@ export async function parseAndValidate(
   }
 
   // Parse and validate PCD and accompanying metadata.
-  const { status, serializedAnonAadhaarProof, anonAadhaarProof } = stored
-  if (serializedAnonAadhaarProof == null) {
-    throw new Error(`Missing serialized PCD`)
-  } else if (anonAadhaarProof == null) {
-    throw new Error(`Missing PCD`)
-  } else if (serializedAnonAadhaarProof.type !== AnonAadhaarCorePackage.name) {
-    throw new Error(`Invalid PCD type ${serializedAnonAadhaarProof.type}`)
+  const { status, anonAadhaarProofs } = stored
+  if (anonAadhaarProofs == null) {
+    throw new Error(`Missing serialized AnonAadhaarProof`)
+  } else if (anonAadhaarProofs[0].type !== AnonAadhaarCorePackage.name) {
+    throw new Error(
+      `Invalid AnonAadhaarProof type ${anonAadhaarProofs[0].type}`,
+    )
   }
 
   return {
     status,
-    anonAadhaarProof: await AnonAadhaarCorePackage.deserialize(
-      serializedAnonAadhaarProof.pcd,
-    ),
-    serializedAnonAadhaarProof: serializedAnonAadhaarProof,
+    anonAadhaarProofs,
   }
 }
 
@@ -280,9 +276,16 @@ async function handleLogin(
     throw new Error('Invalid proof')
   }
 
+  const index =
+    state.anonAadhaarProofs === undefined
+      ? 0
+      : Object.keys(state.anonAadhaarProofs).length
+
   return {
     status: 'logged-in',
-    serializedAnonAadhaarProof: _anonAadhaarProofStr,
-    anonAadhaarProof: _anonAadhaarProof,
+    anonAadhaarProofs: {
+      ...state.anonAadhaarProofs,
+      [index]: _anonAadhaarProofStr,
+    },
   }
 }

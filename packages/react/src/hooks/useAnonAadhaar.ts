@@ -46,11 +46,15 @@ export type AnonAadhaarState = {
     }
   | {
       status: 'logging-in'
+      anonAadhaarProofs?: {
+        [key: number]: SerializedPCD<AnonAadhaarCore>
+      }
     }
   | {
       status: 'logged-in'
-      serializedAnonAadhaarProof: SerializedPCD<AnonAadhaarCore>
-      anonAadhaarProof: AnonAadhaarCore
+      anonAadhaarProofs: {
+        [key: number]: SerializedPCD<AnonAadhaarCore>
+      }
     }
 )
 
