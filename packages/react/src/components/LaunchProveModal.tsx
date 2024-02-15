@@ -6,6 +6,7 @@ import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
 import { icon } from './ButtonLogo'
 import { AadhaarQRValidation } from '../interface'
 import React from 'react'
+import { ProverState } from '@anon-aadhaar/core'
 
 interface LogInWithAnonAadhaarProps {
   signal?: string | object
@@ -20,23 +21,18 @@ interface LogInWithAnonAadhaarProps {
  *
  * @returns A JSX element representing the LogInWithAnonAadhaarV2 component.
  */
-export const LaunchProveModal = ({ signal }: LogInWithAnonAadhaarProps) => {
+export const LogInWithAnonAadhaar = ({ signal }: LogInWithAnonAadhaarProps) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [qrStatus, setQrStatus] = useState<null | AadhaarQRValidation>(null)
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const { state, startReq } = useContext(AnonAadhaarContext)
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen)
-  }
+  const { proverState } = useContext(AnonAadhaarContext)
 
   const blob = new Blob([icon], { type: 'image/svg+xml' })
   const anonAadhaarLogo = useMemo(() => URL.createObjectURL(blob), [icon])
 
   useEffect(() => {
-    if (state.status === 'logged-in') setIsModalOpen(false)
-  }, [state])
+    if (proverState === ProverState.Completed) setIsModalOpen(false)
+  }, [proverState])
 
   const openModal = () => {
     setIsModalOpen(true)
@@ -50,48 +46,20 @@ export const LaunchProveModal = ({ signal }: LogInWithAnonAadhaarProps) => {
 
   return (
     <div>
-      {(state.status === 'logged-out' || state.status === 'logging-in') && (
-        <div>
-          <Btn onClick={openModal}>
-            <Logo src={anonAadhaarLogo} />
-            Login
-          </Btn>
-          <ProveModal
-            isOpen={isModalOpen}
-            onClose={closeModal}
-            errorMessage={errorMessage}
-            setErrorMessage={setErrorMessage}
-            logo={anonAadhaarLogo}
-            qrStatus={qrStatus}
-            setQrStatus={setQrStatus}
-            signal={signal}
-          ></ProveModal>
-        </div>
-      )}
-      {state.status === 'logged-in' && (
-        <div>
-          <Btn onClick={toggleMenu}>
-            <Logo src={anonAadhaarLogo} />
-            Menu
-          </Btn>
-          <div style={{ display: isMenuOpen ? 'block' : 'none' }}>
-            <MenuItem onClick={openModal}>Create new proof</MenuItem>
-            <ProveModal
-              isOpen={isModalOpen}
-              onClose={closeModal}
-              errorMessage={errorMessage}
-              setErrorMessage={setErrorMessage}
-              logo={anonAadhaarLogo}
-              qrStatus={qrStatus}
-              setQrStatus={setQrStatus}
-              signal={signal}
-            ></ProveModal>
-            <MenuItem onClick={() => startReq({ type: 'logout' })}>
-              Logout
-            </MenuItem>
-          </div>
-        </div>
-      )}
+      <Btn onClick={openModal}>
+        <Logo src={anonAadhaarLogo} />
+        Login
+      </Btn>
+      <ProveModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        errorMessage={errorMessage}
+        setErrorMessage={setErrorMessage}
+        logo={anonAadhaarLogo}
+        qrStatus={qrStatus}
+        setQrStatus={setQrStatus}
+        signal={signal}
+      ></ProveModal>
     </div>
   )
 }
@@ -128,26 +96,5 @@ const Btn = styled.button`
     color: #a8aaaf;
     background: #e8e8e8;
     cursor: default;
-  }
-`
-
-const MenuItem = styled.button`
-  display: block;
-  width: 100%; // Menu items typically span the full width of the menu
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  color: #000000; // Adjust as needed
-  text-align: left;
-  background: none; // No background or make it slightly different to distinguish from Btn
-  border: none;
-  border-bottom: 1px solid #cccccc; // Optional: add a separator between menu items
-  cursor: pointer;
-
-  &:hover {
-    background-color: #f2f2f2; // Slight background on hover for better UX
-  }
-
-  &:last-child {
-    border-bottom: none; // No border for the last item
   }
 `
