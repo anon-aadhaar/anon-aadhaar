@@ -1,10 +1,8 @@
 ## 1.0.2
 
-- Adds chunked prover state hook
 - Fix QR code verification state bug
-- Adds stringified JSON objects as signal
 - Manages multiple AnonAadhaarProofs
-- Adds LaunchProveModal component that abstract login flow
+- Adds LaunchProveModal component that abstracts login flow
 - Adds prover hook, to check prover state and latest proof
 
 ## 1.0.1
