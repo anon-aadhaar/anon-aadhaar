@@ -27,7 +27,7 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
 
   const startProving = async () => {
     try {
-      if (qrData === null) throw new Error('Missing application Id!')
+      if (qrData === null) throw new Error('Missing QR code data.')
 
       const args = await processAadhaarArgs(qrData, useTestAadhaar, signal)
 

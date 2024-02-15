@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { CSSProperties, useMemo, useState } from 'react'
 import { ProveModal } from './ProveModal'
 import styled from 'styled-components'
 import { useEffect, useContext } from 'react'
@@ -10,18 +10,23 @@ import { ProverState } from '@anon-aadhaar/core'
 
 interface LogInWithAnonAadhaarProps {
   signal?: string | object
+  buttonStyle?: CSSProperties
+  buttonTitle?: string
 }
 
 /**
- * LogInWithAnonAadhaar is a React component that provides a user interface
- * for logging in and logging out using the AnonAadhaarContext. It renders a
- * button that triggers a login modal when clicked, and provides methods to
- * initiate user login using the anon aadhaar zk circuit. The component utilizes
- * the authentication state and login request function from the context.
+ * LaunchProveModal is a React component that provides a user interface
+ * to launch the prove Modal and start the proof generation using the AnonAadhaarContext.
+ * It renders a button that triggers a prove modal when clicked, and provides methods to
+ * initiate user proof using the anon aadhaar zk circuit.
  *
- * @returns A JSX element representing the LogInWithAnonAadhaarV2 component.
+ * @returns A JSX element representing the LaunchProveModal component.
  */
-export const LogInWithAnonAadhaar = ({ signal }: LogInWithAnonAadhaarProps) => {
+export const LaunchProveModal = ({
+  signal,
+  buttonStyle,
+  buttonTitle = 'Generate a proof',
+}: LogInWithAnonAadhaarProps) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [qrStatus, setQrStatus] = useState<null | AadhaarQRValidation>(null)
@@ -46,9 +51,9 @@ export const LogInWithAnonAadhaar = ({ signal }: LogInWithAnonAadhaarProps) => {
 
   return (
     <div>
-      <Btn onClick={openModal}>
+      <Btn style={buttonStyle} onClick={openModal}>
         <Logo src={anonAadhaarLogo} />
-        Login
+        {buttonTitle}
       </Btn>
       <ProveModal
         isOpen={isModalOpen}

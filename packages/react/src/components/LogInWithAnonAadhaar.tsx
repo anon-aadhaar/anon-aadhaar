@@ -18,7 +18,7 @@ interface LogInWithAnonAadhaarProps {
  * initiate user login using the anon aadhaar zk circuit. The component utilizes
  * the authentication state and login request function from the context.
  *
- * @returns A JSX element representing the LogInWithAnonAadhaarV2 component.
+ * @returns A JSX element representing the LogInWithAnonAadhaar component.
  */
 export const LogInWithAnonAadhaar = ({ signal }: LogInWithAnonAadhaarProps) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
