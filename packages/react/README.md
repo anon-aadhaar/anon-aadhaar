@@ -16,7 +16,7 @@ Install anon-aadhaar-react with yarn
   yarn add @anon-aadhaar/react
 ```
 
-## 📜 Usage/Examples
+## 📜 Usage
 
 ### `<AnonAadhaarProvider>`
 
@@ -132,3 +132,48 @@ const anonAadhaarArgs = await processAadhaarArgs(qrData, useTestAadhaar)
 - `useTestAadhaar`: Boolean flag to toggle between test and real Aadhaar data.
 
 **Returns**: A promise resolving to the `AnonAadhaarArgs` object, which contains parameters needed for proof generation.
+
+### `LaunchProveModal`
+
+The `LaunchProveModal` component offers a seamless interface for users to initiate the proof generation process and bypass the conventional authentication flow. It leverages the `AnonAadhaarContext` to manage the initiation and completion of the zero-knowledge proof generation, enhancing user privacy and security.
+
+```tsx
+import { LaunchProveModal } from '@anon-aadhaar/react'
+
+function YourComponent() {
+  return (
+    <div>
+      <LaunchProveModal
+        signal="yourSignalIdentifier"
+        buttonStyle={{ backgroundColor: 'blue', color: 'white' }}
+        buttonTitle="Generate a proof"
+      />
+    </div>
+  )
+}
+```
+
+| Parameter     | Description                                                       | Default Value        | Optional |
+| ------------- | ----------------------------------------------------------------- | -------------------- | -------- |
+| `signal`      | A unique identifier used to trigger the proof generation process. | undefined            | Yes      |
+| `buttonStyle` | CSS properties to customize the appearance of the button.         | `{}`                 | Yes      |
+| `buttonTitle` | Text displayed on the button to indicate the action to the user.  | `'Generate a proof'` | Yes      |
+
+This component simplifies the user interaction by providing a single button that, when clicked, opens the proof generation modal window.
+
+### `useProver` Hook
+
+```tsx
+import { useProver } from '@anon-aadhaar/react'
+
+function YourComponent() {
+  const [proverState, anonAadhaarCore] = useProver()
+
+  // Use proverState and anonAadhaarCore as needed
+}
+```
+
+| Return Value      | Description                                                                                                                                |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `ProverState`     | The current state of the proof generation processwith relevant state details.                                                              |
+| `AnonAadhaarCore` | Represents the deserialized proof of authentication, if available, indicating a successful proof generation. Otherwise, it is `undefined`. |
