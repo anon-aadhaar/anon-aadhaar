@@ -24,7 +24,12 @@ export const LaunchProveModal = ({ signal }: LogInWithAnonAadhaarProps) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [qrStatus, setQrStatus] = useState<null | AadhaarQRValidation>(null)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
   const { state, startReq } = useContext(AnonAadhaarContext)
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen)
+  }
 
   const blob = new Blob([icon], { type: 'image/svg+xml' })
   const anonAadhaarLogo = useMemo(() => URL.createObjectURL(blob), [icon])
@@ -65,10 +70,26 @@ export const LaunchProveModal = ({ signal }: LogInWithAnonAadhaarProps) => {
       )}
       {state.status === 'logged-in' && (
         <div>
-          <Btn onClick={() => startReq({ type: 'logout' })}>
+          <Btn onClick={toggleMenu}>
             <Logo src={anonAadhaarLogo} />
-            Logout
+            Menu
           </Btn>
+          <div style={{ display: isMenuOpen ? 'block' : 'none' }}>
+            <MenuItem onClick={openModal}>Create new proof</MenuItem>
+            <ProveModal
+              isOpen={isModalOpen}
+              onClose={closeModal}
+              errorMessage={errorMessage}
+              setErrorMessage={setErrorMessage}
+              logo={anonAadhaarLogo}
+              qrStatus={qrStatus}
+              setQrStatus={setQrStatus}
+              signal={signal}
+            ></ProveModal>
+            <MenuItem onClick={() => startReq({ type: 'logout' })}>
+              Logout
+            </MenuItem>
+          </div>
         </div>
       )}
     </div>
@@ -107,5 +128,26 @@ const Btn = styled.button`
     color: #a8aaaf;
     background: #e8e8e8;
     cursor: default;
+  }
+`
+
+const MenuItem = styled.button`
+  display: block;
+  width: 100%; // Menu items typically span the full width of the menu
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  color: #000000; // Adjust as needed
+  text-align: left;
+  background: none; // No background or make it slightly different to distinguish from Btn
+  border: none;
+  border-bottom: 1px solid #cccccc; // Optional: add a separator between menu items
+  cursor: pointer;
+
+  &:hover {
+    background-color: #f2f2f2; // Slight background on hover for better UX
+  }
+
+  &:last-child {
+    border-bottom: none; // No border for the last item
   }
 `

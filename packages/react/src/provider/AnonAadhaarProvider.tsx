@@ -99,6 +99,7 @@ export function AnonAadhaarProvider(
       setAndWriteState(
         handleLoginReq(
           request,
+          state,
           setAnonAadhaarProofStr,
           setAnonAadhaarProof,
           setProverState,
@@ -162,14 +163,14 @@ function writeToLocalStorage(state: AnonAadhaarState) {
 export function serialize(state: AnonAadhaarState): string {
   const { status } = state
   let serState
-  if (status === 'logged-in') {
+  if (status === 'logged-out') {
     serState = {
-      status,
-      anonAadhaarProofs: state.anonAadhaarProofs,
+      status: 'logged-out',
     }
   } else {
     serState = {
-      status: 'logged-out',
+      status,
+      anonAadhaarProofs: state.anonAadhaarProofs,
     }
   }
   return JSON.stringify(serState)
@@ -223,6 +224,7 @@ function shallowToString(obj: unknown) {
 /** Start a login request. Returns a `logging-in` state */
 function handleLoginReq(
   request: AnonAadhaarRequest,
+  state: AnonAadhaarState,
   setAnonAadhaarStr: Dispatch<
     SetStateAction<SerializedPCD<AnonAadhaarCore> | null>
   >,
@@ -249,7 +251,12 @@ function handleLoginReq(
       } catch (error) {
         console.log(error)
       }
-      return { status: 'logging-in' }
+      return {
+        status: 'logging-in',
+        ...(state.status !== 'logged-out'
+          ? { anonAadhaarProofs: state.anonAadhaarProofs }
+          : {}),
+      }
 
     case 'logout':
       return { status: 'logged-out' }

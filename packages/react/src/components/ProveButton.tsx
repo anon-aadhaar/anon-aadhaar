@@ -22,7 +22,7 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
   signal,
   setQrStatus,
 }) => {
-  const { state, startReq, useTestAadhaar, proverState } =
+  const { startReq, useTestAadhaar, proverState } =
     useContext(AnonAadhaarContext)
 
   const startProving = async () => {
@@ -40,41 +40,53 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
   }
 
   return (() => {
-    switch (state.status) {
-      case 'logged-out':
+    switch (proverState) {
+      case ProverState.Initializing:
         return (
           <Btn disabled={!provingEnabled} onClick={startProving}>
             {' '}
             Request Aadhaar Proof{' '}
           </Btn>
         )
-      case 'logging-in':
-        switch (proverState) {
-          case ProverState.FetchingWasm:
-            return (
-              <Btn>
-                Searching for wasm file...
-                {'\u2003'}
-                <Spinner />
-              </Btn>
-            )
-          case ProverState.FetchingZkey:
-            return (
-              <Btn>
-                Searching for zkey file...
-                {'\u2003'}
-                <Spinner />
-              </Btn>
-            )
-          case ProverState.Proving:
-            return (
-              <Btn>
-                Generating proof...
-                {'\u2003'}
-                <Spinner />
-              </Btn>
-            )
-        }
+      case ProverState.Completed:
+        return (
+          <Btn disabled={!provingEnabled} onClick={startProving}>
+            {' '}
+            Request Aadhaar Proof{' '}
+          </Btn>
+        )
+      case ProverState.FetchingWasm:
+        return (
+          <Btn>
+            Searching for wasm file...
+            {'\u2003'}
+            <Spinner />
+          </Btn>
+        )
+      case ProverState.FetchingZkey:
+        return (
+          <Btn>
+            Searching for zkey file...
+            {'\u2003'}
+            <Spinner />
+          </Btn>
+        )
+      case ProverState.Proving:
+        return (
+          <Btn>
+            Generating proof...
+            {'\u2003'}
+            <Spinner />
+          </Btn>
+        )
+      case ProverState.Error:
+        return (
+          <Btn>
+            Oups something went wrong...
+            {'\u2003'}
+            <Spinner />
+          </Btn>
+        )
     }
   })()
 }
