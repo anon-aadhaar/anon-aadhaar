@@ -143,11 +143,12 @@ const MenuItem = styled.button`
   cursor: pointer;
 
   &:hover {
-    background-color: #f2f2f2; // Slight background on hover for better UX
+    border-radius: 0.5rem;
+    background-color: #f2f2f2;
   }
 
   &:last-child {
-    border-bottom: none; // No border for the last item
+    border-bottom: none;
   }
 `
 
@@ -160,6 +161,7 @@ const MenuContainer = styled.div<{ $isopen?: boolean }>`
   width: 130%;
   background: #fff;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  border-radius: 0.5rem;
   z-index: 10;
 `
 const RelativeContainer = styled.div`

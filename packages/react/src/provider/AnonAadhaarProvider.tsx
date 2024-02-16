@@ -17,6 +17,12 @@ import React, { Dispatch, SetStateAction } from 'react'
 import { proveAndSerialize } from '../prove'
 import { SerializedPCD } from '@pcd/pcd-types'
 
+type ArtifactsLinks = {
+  zkey_url: string
+  wasm_url: string
+  vkey_url: string
+}
+
 // Props for the AnonAadhaarProvider
 export type AnonAadhaarProviderProps = {
   /**
@@ -31,6 +37,13 @@ export type AnonAadhaarProviderProps = {
    * Defaults to `false` if not explicitly set.
    */
   _useTestAadhaar?: boolean
+
+  /**
+   * `_artifactslinks`: Here you can specify your own artifacts.
+   * It can be either file located in your public directory by specifying the root (e.g. "./circuit_final.zkey")
+   * or the url of artifacts that you stored on your own server.
+   */
+  _artifactslinks?: ArtifactsLinks
 }
 
 /**
@@ -68,13 +81,25 @@ export function AnonAadhaarProvider(
   }, [anonAadhaarProviderProps._useTestAadhaar])
 
   useEffect(() => {
-    const anonAadhaarInitArgs: InitArgs = {
-      wasmURL: useTestAadhaar ? artifactUrls.test.wasm : artifactUrls.prod.wasm,
-      zkeyURL: useTestAadhaar
-        ? artifactUrls.test.chunked
-        : artifactUrls.prod.chunked,
-      vkeyURL: useTestAadhaar ? artifactUrls.test.vk : artifactUrls.prod.vk,
-      artifactsOrigin: ArtifactsOrigin.chunked,
+    let anonAadhaarInitArgs: InitArgs
+    if (anonAadhaarProviderProps._artifactslinks) {
+      anonAadhaarInitArgs = {
+        wasmURL: anonAadhaarProviderProps._artifactslinks.wasm_url,
+        zkeyURL: anonAadhaarProviderProps._artifactslinks.zkey_url,
+        vkeyURL: anonAadhaarProviderProps._artifactslinks.vkey_url,
+        artifactsOrigin: ArtifactsOrigin.server,
+      }
+    } else {
+      anonAadhaarInitArgs = {
+        wasmURL: useTestAadhaar
+          ? artifactUrls.test.wasm
+          : artifactUrls.prod.wasm,
+        zkeyURL: useTestAadhaar
+          ? artifactUrls.test.chunked
+          : artifactUrls.prod.chunked,
+        vkeyURL: useTestAadhaar ? artifactUrls.test.vk : artifactUrls.prod.vk,
+        artifactsOrigin: ArtifactsOrigin.chunked,
+      }
     }
 
     init(anonAadhaarInitArgs)
@@ -82,7 +107,7 @@ export function AnonAadhaarProvider(
       .catch(e => {
         throw Error(e)
       })
-  }, [useTestAadhaar])
+  }, [useTestAadhaar, anonAadhaarProviderProps._artifactslinks])
 
   // Write state to local storage whenever a login starts, succeeds, or fails
   const setAndWriteState = (newState: AnonAadhaarState) => {
