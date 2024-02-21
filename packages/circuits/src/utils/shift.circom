@@ -1,6 +1,6 @@
-pragma circom 2.1.6;
+pragma circom 2.1.5;
 
-include "circomlib/comparators.circom";
+include "circomlib/circuits/comparators.circom";
 include "circomlib/circuits/bitify.circom";
 
 function log2(a) {

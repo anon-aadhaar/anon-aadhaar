@@ -1,9 +1,11 @@
-pragma circom 2.1.6;
+pragma circom 2.1.5;
 
-include "circomlib/comparators.circom";
+include "circomlib/circuits/comparators.circom";
 include "circomlib/circuits/bitify.circom";
 include "../utils/timestamp.circom";
 include "../utils/utils.circom";
+include "../utils/shift.circom";
+include "../utils/pack.circom";
 
 template ExtractDataAtDelimiter(maxDataLength, maxExtractedDataLength) {
     signal input data[maxDataLength];
@@ -63,7 +65,7 @@ template QRDataExctractor(maxLen) {
     }
     dateOfBirth <== dobToUnixTime.out;
 
-    component genderSelector <== QuinSelector(maxLen, 16);
+    component genderSelector = QuinSelector(maxLen, 16);
     genderSelector.in <== data;
     genderSelector.index <== delimitterIndices[genderDelimiterIndex()];
     gender <== genderSelector.out;

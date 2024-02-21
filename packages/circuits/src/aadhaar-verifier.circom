@@ -1,9 +1,11 @@
-pragma circom 2.1.6;
+pragma circom 2.1.5;
 
-include "./helpers/rsa.circom";
-include "./helpers/sha.circom";
-include "./helpers/timestamp.circom";
-include "./extractor.circom";
+include "circomlib/circuits/poseidon.circom";
+include "./helpers/extractor.circom";
+include "./utils/rsa.circom";
+include "./utils/sha.circom";
+include "./utils/timestamp.circom";
+
 
 // Circuit to verify Aadhaar signature
 // n: RSA pubic key size per chunk
@@ -11,6 +13,7 @@ include "./extractor.circom";
 // maxDataLength: Maximum length of the data
 template AadhaarVerifier(n, k, maxDataLength) {
     signal input aadhaarData[maxDataLength];    // Aadhaar data padded (the data that is SHA hashed and signed)
+    signal input delimitterIndices[16];         // Indices of delimiters (255) in the QR text data
     signal input aadhaarDataLength;             // length of the padded data
     signal input signature[k];                  // RSA signature
     signal input pubKey[k];                     // RSA public key (of the government)
@@ -53,26 +56,23 @@ template AadhaarVerifier(n, k, maxDataLength) {
         rsa.modulus[i] <== pubKey[i];
         rsa.signature[i] <== signature[i];
     }
+
+    // 917344 constraints till here
     
+    component qrDataExtractor = QRDataExctractor(maxLen);
+    qrDataExtractor.data <== aadhaarData;
+    qrDataExtractor.delimitterIndices <== delimitterIndices;
 
-    component extractor = Extractor(maxDataLength);
-    extractor.dataLen <== aadhaarDataLength;
-    extractor.data <== aadhaarData;
+    signal name <== qrDataExtractor.name;
+    signal dateOfBirth <== qrDataExtractor.dateOfBirth;
+    signal gender <== qrDataExtractor.gender;
 
-    signal last4Digits[4] <== extractor.last4Digits;
-    signal photoHash <== extractor.photoHash;
-    signal basicIdentityHash <== extractor.basicIdentityHash;
+    component identityNullifierHasher = Poseidon(3)(name, dateOfBirth, gender);
+    identityNullifier <== identityNullifierHasher.out;
 
-    component poseidonHasher[2]; 
-    poseidonHasher[0] = Poseidon(5); 
-    poseidonHasher[0].inputs <== [last4Digits[0], last4Digits[1], last4Digits[2], last4Digits[3], photoHash];
-
-    poseidonHasher[1] = Poseidon(5); 
-    poseidonHasher[1].inputs <== [last4Digits[0], last4Digits[1], last4Digits[2], last4Digits[3], basicIdentityHash];
-
-    userNullifier <== poseidonHasher[0].out;
-    identityNullifier <== poseidonHasher[1].out;
-
+    // TODO: Compute userNullifier properly
+    userNullifier <== identityNullifierHasher.out;
+    
 
     // Output the timestamp rounded to nearest hour
     component dateToUnixTime = DateStringToTimestamp(2030, 1, 0, 0);
@@ -82,7 +82,7 @@ template AadhaarVerifier(n, k, maxDataLength) {
     timestamp <== dateToUnixTime.out - 19800; // 19800 is the offset for IST
 
 
-    // Calculate Poseidon hash of the public key.
+    // Calculate Poseidon hash of the public key. 609 constraints
     // Poseidon component can take only 16 inputs, so we convert k chunks to k/2 chunks.
     // We are assuming k is  > 16 and <= 32 (i.e we merge two consecutive item in array to bring down the size)
     var poseidonInputSize = k \ 2;
@@ -103,8 +103,8 @@ template AadhaarVerifier(n, k, maxDataLength) {
     pubkeyHash <== pubkeyHasher.out;
 
 
-    signal signalHashSquare; 
-    signalHashSquare <== signalHash * signalHash;
+    // Dummy square to prevent singal tampering (in case when using different prover)
+    signal signalHashSquare <== signalHash * signalHash;
 }
 
 

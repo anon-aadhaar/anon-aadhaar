@@ -1,4 +1,4 @@
-pragma circom 2.1.6;
+pragma circom 2.1.5;
 
 function pack_bytes_const() {
     return 31;
