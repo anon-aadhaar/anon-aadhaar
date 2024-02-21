@@ -22,7 +22,18 @@ template DigitsToNumber(length) {
 // includeMinutes - 1 to include minutes, 0 to round down to hour
 // includeSeconds - 1 to include seconds, 0 to round down to minute
 template DateStringToTimestamp(maxYears, includeHours, includeMinutes, includeSeconds) {
-    signal input in[14];
+    var inputLength = 8;
+    if (includeHours == 1) {
+        inputLength += 2;
+    }
+    if (includeMinutes == 1) {
+        inputLength += 2;
+    }
+    if (includeSeconds == 1) {
+        inputLength += 2;
+    }
+
+    signal input in[inputLength];
     signal output out;
 
     signal daysTillPreviousMonth[12] <== [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
@@ -114,4 +125,3 @@ template DateStringToTimestamp(maxYears, includeHours, includeMinutes, includeSe
 
     out <== secondsPassed[0] + secondsPassed[1] + secondsPassed[2] + secondsPassed[3];
 }
-

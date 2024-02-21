@@ -59,7 +59,7 @@ template AadhaarVerifier(n, k, maxDataLength) {
 
     // 917344 constraints till here
     
-    component qrDataExtractor = QRDataExctractor(maxLen);
+    component qrDataExtractor = QRDataExctractor(maxDataLength);
     qrDataExtractor.data <== aadhaarData;
     qrDataExtractor.delimitterIndices <== delimitterIndices;
 
@@ -67,16 +67,14 @@ template AadhaarVerifier(n, k, maxDataLength) {
     signal dateOfBirth <== qrDataExtractor.dateOfBirth;
     signal gender <== qrDataExtractor.gender;
 
-    component identityNullifierHasher = Poseidon(3)(name, dateOfBirth, gender);
-    identityNullifier <== identityNullifierHasher.out;
+    identityNullifier <== Poseidon(3)([name, dateOfBirth, gender]);
 
     // TODO: Compute userNullifier properly
-    userNullifier <== identityNullifierHasher.out;
-    
+    userNullifier <== Poseidon(3)([name, dateOfBirth, gender]);
 
     // Output the timestamp rounded to nearest hour
     component dateToUnixTime = DateStringToTimestamp(2030, 1, 0, 0);
-    for (var i = 0; i < 14; i++) {
+    for (var i = 0; i < 10; i++) {
         dateToUnixTime.in[i] <== aadhaarData[i + 9];
     }
     timestamp <== dateToUnixTime.out - 19800; // 19800 is the offset for IST

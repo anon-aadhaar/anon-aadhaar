@@ -2,6 +2,7 @@ pragma circom 2.1.6;
 
 include "circomlib/circuits/comparators.circom";
 include "circomlib/circuits/bitify.circom";
+include "../helpers/constants.circom";
 include "../utils/timestamp.circom";
 include "../utils/utils.circom";
 include "../utils/shift.circom";
@@ -47,22 +48,27 @@ template QRDataExctractor(maxLen) {
         dataDelimiterN255[i] <== is255[i].out * n255Filter[i] + data[i];
     }
 
-    var nameDelimiterIndex = nameIndex();
+    var nameDelimiterIndex = nameDelimiterIndex();
     signal nameBytes[31] <== ExtractDataAtDelimiter(maxLen, 31)(dataDelimiterN255, nameDelimiterIndex, delimitterIndices[nameDelimiterIndex], delimitterIndices[nameDelimiterIndex + 1]);
     component outInt = Bytes2Ints(31);
     for (var i = 0; i < 31; i ++) {
         outInt.bytes[i] <== nameBytes[i];
     }
-    signal output name <== outInt.ints[0];
+    name <== outInt.ints[0];
 
     var dobDelimiterIndex = dobDelimiterIndex();
     signal dobBytes[10] <== ExtractDataAtDelimiter(maxLen, 10)(dataDelimiterN255, dobDelimiterIndex, delimitterIndices[dobDelimiterIndex], delimitterIndices[dobDelimiterIndex + 1]);
     
     // Convert dod bytes to unix timestamp
     component dobToUnixTime = DateStringToTimestamp(2030, 0, 0, 0);
-    for (var i = 0; i < 10; i++) {
-        dobToUnixTime.in[i] <== dobBytes[i];
-    }
+    dobToUnixTime.in[0] <== dobBytes[6];
+    dobToUnixTime.in[1] <== dobBytes[7];
+    dobToUnixTime.in[2] <== dobBytes[8];
+    dobToUnixTime.in[3] <== dobBytes[9];
+    dobToUnixTime.in[4] <== dobBytes[3];
+    dobToUnixTime.in[5] <== dobBytes[4];
+    dobToUnixTime.in[6] <== dobBytes[0];
+    dobToUnixTime.in[7] <== dobBytes[1];
     dateOfBirth <== dobToUnixTime.out;
 
     component genderSelector = QuinSelector(maxLen, 16);

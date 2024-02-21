@@ -44,8 +44,7 @@ template VarShiftLeft(in_array_len, out_array_len) {
     }
 
     // Return last row
-    // TODO: Assert the rest of the values are 0
-     component ge_A[out_array_len];
+    component ge_A[out_array_len];
     for (var i = 0; i < out_array_len; i++) {
 
             ge_A[i] = GreaterThan(8);

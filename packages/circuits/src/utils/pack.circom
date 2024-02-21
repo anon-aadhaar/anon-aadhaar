@@ -1,11 +1,11 @@
 pragma circom 2.1.6;
 
-function pack_bytes_const() {
+function constPackSize() {
     return 31;
 }
 
 function compute_ints_size(bytes_size) {
-    var pack_bytes = pack_bytes_const();
+    var pack_bytes = constPackSize();
     var remain = bytes_size % pack_bytes;
     var num_chunk = (bytes_size - remain) / pack_bytes;
     if(remain>0) {
@@ -19,7 +19,7 @@ template Bytes2Ints(bytes_size) {
     signal input bytes[bytes_size];
     signal output ints[num_chunk];
 
-    var pack_bytes = pack_bytes_const();
+    var pack_bytes = constPackSize();
     signal ints_sums[num_chunk][pack_bytes];
     for(var i=0; i<num_chunk; i++) {
         for(var j=0; j<pack_bytes; j++) {
