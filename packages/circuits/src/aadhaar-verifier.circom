@@ -7,31 +7,40 @@ include "./utils/sha.circom";
 include "./utils/timestamp.circom";
 
 
-// Circuit to verify Aadhaar signature
-// n: RSA pubic key size per chunk
-// k: Number of chunks the RSA public key is split into
-// maxDataLength: Maximum length of the data
+/// @title Circuit to verify Aadhaar signature
+/// @param n - RSA pubic key size per chunk
+/// @param k - Number of chunks the RSA public key is split into
+/// @param maxDataLength - Maximum length of the data
+/// @input aadhaarData - QR data without the signature; each number represent ascii byte; remaining space is padded with 0
+/// @input aadhaarDataLength - Length of actual data
+/// @input delimitterIndices - Indices of delimiters (255) in the QR text data. 18 delimiters including photo
+/// @input signature - RSA signature
+/// @input pubKey - RSA public key (of the government)
+/// @input signalHash - An external signal to make it part of the proof
+/// @output identityNullifier - PosidonHash(name, dob, gender)
+/// @output userNullifier - PosidonHash(photo)
+/// @output timestamp - Timestamp of when the data was signed - extracted and converted to Unix timestamp
+/// @output pubkeyHash - Poseidon hash of the RSA public key
 template AadhaarVerifier(n, k, maxDataLength) {
-    signal input aadhaarData[maxDataLength];    // Aadhaar data padded - no signature - each item represent ascii byte
-    signal input delimitterIndices[17];         // Indices of delimiters (255) in the QR text data
-    signal input aadhaarDataLength;             // length of the padded data
-    signal input signature[k];                  // RSA signature
-    signal input pubKey[k];                     // RSA public key (of the government)
+    signal input aadhaarData[maxDataLength];
+    signal input aadhaarDataLength;
+    signal input delimitterIndices[18];
+    signal input signature[k];
+    signal input pubKey[k];
     signal input signalHash;
 
-    signal output identityNullifier;            // Hash of last 4 digits of Aadhaar number, name, DOB, gender and pin code
-    signal output userNullifier;                // Hash of last 4 digits of Aadhaar number and photo
-    signal output timestamp;                    // Timestamp of when the data was signed - extracted and converted to Unix timestamp
-    signal output pubkeyHash;                   // Poseidon hash of the RSA public key
+    signal output identityNullifier;
+    signal output userNullifier;
+    signal output timestamp;
+    signal output pubkeyHash;
 
-
+    // Hash the data and verify RSA signature - 917344 constraints
     component shaHasher = Sha256Bytes(maxDataLength);
     shaHasher.in_padded <== aadhaarData;
     shaHasher.in_len_padded_bytes <== aadhaarDataLength;
     signal sha[256];
     sha <== shaHasher.out;
-
-
+    
     component rsa = RSAVerify65537(n, k);
     var rsaMsgLength = (256 + n) \ n;
     component rsaBaseMsg[rsaMsgLength];
@@ -56,21 +65,29 @@ template AadhaarVerifier(n, k, maxDataLength) {
         rsa.modulus[i] <== pubKey[i];
         rsa.signature[i] <== signature[i];
     }
-
-    // 917344 constraints till here
     
-    component qrDataExtractor = QRDataExctractor(maxDataLength);
+
+    // Extract data from QR
+    component qrDataExtractor = QRDataExtractor(maxDataLength);
     qrDataExtractor.data <== aadhaarData;
+    qrDataExtractor.dataLength <== aadhaarDataLength;
     qrDataExtractor.delimitterIndices <== delimitterIndices;
 
     signal name <== qrDataExtractor.name;
     signal dateOfBirth <== qrDataExtractor.dateOfBirth;
     signal gender <== qrDataExtractor.gender;
+    signal photo[photoPackSize()] <== qrDataExtractor.photo;
 
+    // TODO: Make signal part of nullifier?
     identityNullifier <== Poseidon(3)([name, dateOfBirth, gender]);
 
-    // TODO: Compute userNullifier properly
-    userNullifier <== Poseidon(3)([name, dateOfBirth, gender]);
+    // TODO: Is it significantly cheaper to extract fewer bytes of photo?
+    signal userNullifierHasherInput[16];
+    for (var i = 0; i < 16; i++) {
+        userNullifierHasherInput.in[i] <== photo[i];
+    }
+    userNullifier <== Poseidon(16)(userNullifierHasherInput);
+
 
     // Output the timestamp rounded to nearest hour
     component dateToUnixTime = DateStringToTimestamp(2030, 1, 0, 0);
