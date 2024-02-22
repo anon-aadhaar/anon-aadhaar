@@ -10,6 +10,9 @@ template DigitsToNumber(length) {
     sum[0] <== 0;
 
     for (var i = 1; i <= length; i++) {
+        assert(in[i - 1] >= 48);    // Ensure input is a digit
+        assert(in[i - 1] <= 57);
+
         sum[i] <== sum[i - 1] * 10 + (in[i - 1] - 48);
     }
 

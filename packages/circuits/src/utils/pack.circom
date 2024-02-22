@@ -4,7 +4,7 @@ function constPackSize() {
     return 31;
 }
 
-function compute_ints_size(bytes_size) {
+function computeIntSize(bytes_size) {
     var pack_bytes = constPackSize();
     var remain = bytes_size % pack_bytes;
     var num_chunk = (bytes_size - remain) / pack_bytes;
@@ -15,7 +15,7 @@ function compute_ints_size(bytes_size) {
 }
 
 template Bytes2Ints(bytes_size) {
-    var num_chunk = compute_ints_size(bytes_size);
+    var num_chunk = computeIntSize(bytes_size);
     signal input bytes[bytes_size];
     signal output ints[num_chunk];
 
