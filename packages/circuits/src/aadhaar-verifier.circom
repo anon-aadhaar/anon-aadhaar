@@ -2,6 +2,7 @@ pragma circom 2.1.6;
 
 include "circomlib/circuits/poseidon.circom";
 include "./helpers/extractor.circom";
+include "./helpers/nullifier.circom";
 include "./utils/rsa.circom";
 include "./utils/sha.circom";
 include "./utils/timestamp.circom";
@@ -67,7 +68,7 @@ template AadhaarVerifier(n, k, maxDataLength) {
     }
     
 
-    // Extract data from QR
+    // Extract data from QR and compute nullifiers
     component qrDataExtractor = QRDataExtractor(maxDataLength);
     qrDataExtractor.data <== aadhaarData;
     qrDataExtractor.dataLength <== aadhaarDataLength;
@@ -78,15 +79,8 @@ template AadhaarVerifier(n, k, maxDataLength) {
     signal gender <== qrDataExtractor.gender;
     signal photo[photoPackSize()] <== qrDataExtractor.photo;
 
-    // TODO: Make signal part of nullifier?
-    identityNullifier <== Poseidon(3)([name, dateOfBirth, gender]);
-
-    // TODO: Is it significantly cheaper to extract fewer bytes of photo?
-    signal userNullifierHasherInput[16];
-    for (var i = 0; i < 16; i++) {
-        userNullifierHasherInput.in[i] <== photo[i];
-    }
-    userNullifier <== Poseidon(16)(userNullifierHasherInput);
+    identityNullifier <== IdentityNullifier()(name, dateOfBirth, gender);
+    userNullifier <== UserNullifier()(photo);
 
 
     // Output the timestamp rounded to nearest hour
