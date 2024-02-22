@@ -35,16 +35,20 @@ Aadhar QR code data schema (V2)
 **/
 
 
-// Index of the delimiter before the name data
-// i.e, name will appear after 3rd delimiter
-function nameDelimiterIndex() {
-  return 2;
-}
-
-function dobDelimiterIndex() {
+// Position of name field in the data
+// i.e, name bytes will appear after 3rd 255
+function namePosition() {
   return 3;
 }
 
-function genderDelimiterIndex() {
+function dobPosition() {
   return 4;
+}
+
+function genderPosition() {
+  return 5;
+}
+
+function nameMaxLength() {
+  return 31;
 }
