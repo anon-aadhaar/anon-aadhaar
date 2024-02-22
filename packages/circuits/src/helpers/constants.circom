@@ -26,9 +26,9 @@ Aadhar QR code data schema (V2)
   14. Address > Street
   15. Address > Sub district
   16. VTC
-  17 (data after 17th 255). Last 4 digits of mobile number
+  17. Last 4 digits of mobile number
+  18. The data after 18th 255 till end (-256 ofthe signature) it the photo.
 
-- After mobile number, there is another delimiter. The data after this 255 till (length - 256) is the photo.
 - Last 256 bytes is the signature.
 
 - TODO: Find out if there is any different for people who has not verified mobile number.
@@ -51,6 +51,10 @@ function dobPosition() {
 
 function genderPosition() {
   return 5;
+}
+
+function photoPosition() {
+  return 18;
 }
 
 function nameMaxLength() {
