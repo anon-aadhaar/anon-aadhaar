@@ -8,42 +8,65 @@ include "../utils/utils.circom";
 include "../utils/shift.circom";
 include "../utils/pack.circom";
 
-template ExtractDataAtDelimiter(maxDataLength, maxExtractedDataLength) {
-    signal input data[maxDataLength];
-    signal input delimiterIndex;
-    signal input dataStartIndex;
-    signal input dataEndIndex;
 
-    signal output outBytes[maxExtractedDataLength];
+// template ExtractAndPack(maxDataLength, maxExtractedDataLength) {
+//     signal input nDelimitedData[maxDataLength];
+//     signal input startDelimiterIndex;
+//     signal input endDelimiterIndex;
+//     signal input dataPosition;
 
-    signal shiftedBytes[maxExtractedDataLength + 1] <== VarShiftLeft(maxDataLength, maxExtractedDataLength + 1)(data, dataStartIndex, dataEndIndex - dataStartIndex);
-    shiftedBytes[0] === (delimiterIndex + 1) * 255;
+//     var numPacks = computeIntSize(maxExtractedDataLength);
 
-    for (var i = 1; i <= maxExtractedDataLength; i++) {
-        assert(shiftedBytes[i] < 255);
-        outBytes[i - 1] <== shiftedBytes[i];
-    }
-}
+//     signal output packedData[numPacks];
 
-// Extract name from the data
-// Returns single field (int) element representing the name in little endian order
-// Assumes that name can fit in 31 bytes
+//     var byteLength = maxExtractedDataLength() + 1;  // +1 for the delimiter
+
+//     component shifter = VarShiftLeft(maxDataLength, byteLength);
+//     shifter.in <== nDelimitedData;
+//     shifter.shift <== startDelimiterIndex;  // We want delimiter to be the first byte
+//     shifter.len <== endDelimiterIndex - startDelimiterIndex;
+//     signal shiftedBytes[byteLength] <== shifter.out;
+    
+//     // Assert that the first byte is the delimiter (255 * position of name field)
+//     shiftedBytes[0] === dataPosition * 255;
+
+//     // Pack byte[] to int[] where int is field element which take up to 31 bytes
+//     component bytesPacker = Bytes2Ints(maxExtractedDataLength);
+//     for (var i = 0; i < nameMaxLength; i ++) {
+//         outInt.bytes[i] <== shiftedBytes[i + 1]; // +1 to skip the delimiter
+
+//         // Assert that each value is less than 255 - ensures no delimiter in between
+//         assert(shiftedBytes[i + 1] < 255);
+//     }
+
+//     packedData <== bytesPacker.ints;
+// }
+
+
+/// @title NameExtractor
+/// @notice Extracts the name from the Aadhaar QR data and return a single number representing name
+/// @notice Assumes that name can fit in 31 bytes
+/// @input nDelimitedData[maxDataLength] - QR data where each delimiter is 255 * n where n is order of the data
+/// @input startDelimiterIndex - index of the delimiter after which the name start
+/// @input endDelimiterIndex - index of the delimiter up to which the name is present
+/// @output name - single field (int) element representing the name in little endian order
 template NameExtractor(maxDataLength) {
-    signal input nDelimitedData[maxDataLength];  // QR data where each delimiter is 255 * n where n is order of the data
-    signal input nameDelimiterIndex;    // index of the delimiter after which the name start
-    signal input nameEndIndex;  // index of the last byte of the name
+    signal input nDelimitedData[maxDataLength];
+    signal input startDelimiterIndex;
+    signal input endDelimiterIndex;
 
-    signal output name;
+    signal output out;
     
     var nameMaxLength = nameMaxLength();
-    var byteLength = nameMaxLength() + 1; // +1 for the delimiter
+    var byteLength = nameMaxLength() + 1;
     
     // Shift the data to the right to until the name delimiter start
     component shifter = VarShiftLeft(maxDataLength, byteLength);
     shifter.in <== nDelimitedData;
-    shifter.shift <== nameDelimiterIndex; // We want delimiter to be the first byte
-    shifter.len <== nameEndIndex - nameDelimiterIndex;
-    shiftedBytes[byteLength] <== shifter.out;
+    shifter.shift <== startDelimiterIndex; // We want delimiter to be the first byte
+    shifter.len <== endDelimiterIndex - startDelimiterIndex;
+    
+    signal shiftedBytes[byteLength] <== shifter.out;
     
     // Assert that the first byte is the delimiter (255 * position of name field)
     shiftedBytes[0] === namePosition() * 255;
@@ -53,28 +76,103 @@ template NameExtractor(maxDataLength) {
     for (var i = 0; i < nameMaxLength; i ++) {
         outInt.bytes[i] <== shiftedBytes[i + 1]; // +1 to skip the delimiter
 
-        // Assert that each value is less than 255
-        // This will prevent two fields being merged by tampering with delimiterIndices input
+        // Assert that each value is less than 255 - ensures no delimiter in between
         assert(shiftedBytes[i + 1] < 255);
     }
 
-    name <== outInt.ints[0];
+    out <== outInt.ints[0];
 }
 
+
+/// @title DOBExtractor 
+/// @notice Extract date of birth from the Aadhaar QR data and returns as Unix timestamp
+/// @input nDelimitedData[maxDataLength] - QR data where each delimiter is 255 * n where n is order of the data
+/// @input startDelimiterIndex - index of the delimiter after which the date of birth start
+/// @input endDelimiterIndex - index of the delimiter up to which the date of birth is present
+/// @output dob - Unix timestamp representing the date of birth
+template DOBExtractor(maxDataLength) {
+    signal input nDelimitedData[maxDataLength];
+    signal input startDelimiterIndex;
+
+    signal output out;
+    
+    var dobDelimiterIndex = dobPosition();
+    var byteLength = 10 + 1; // DD-MM-YYYY + delimiter
+
+    component shifter = VarShiftLeft(maxDataLength, byteLength);
+    shifter.in <== nDelimitedData;
+    shifter.shift <== startDelimiterIndex; // We want delimiter to be the first byte
+    shifter.len <== startDelimiterIndex + 10;
+
+    signal shiftedBytes[byteLength] <== shifter.out;
+
+    shiftedBytes[0] === dobPosition() * 255;
+
+    // Convert DOB bytes to unix timestamp. 
+    // DD-MM-YYYY to YYYYMMDD input
+    component dobToUnixTime = DateStringToTimestamp(2030, 0, 0, 0);
+    dobToUnixTime.in[0] <== shiftedBytes[6];
+    dobToUnixTime.in[1] <== shiftedBytes[7];
+    dobToUnixTime.in[2] <== shiftedBytes[8];
+    dobToUnixTime.in[3] <== shiftedBytes[9];
+    dobToUnixTime.in[4] <== shiftedBytes[3];
+    dobToUnixTime.in[5] <== shiftedBytes[4];
+    dobToUnixTime.in[6] <== shiftedBytes[0];
+    dobToUnixTime.in[7] <== shiftedBytes[1];
+    
+    out <== dobToUnixTime.out;
+}
+
+
+/// @title GenderExtractor
+/// @notice Extracts the DOB from the Aadhaar QR data and returns as Unix timestamp
+/// @input nDelimitedData[maxDataLength] - QR data where each delimiter is 255 * n where n is order of the data
+/// @input startDelimiterIndex - index of the delimiter after
+/// @output gender Single byte number representing gender
+template GenderExtractor(maxDataLength) {
+    signal input nDelimitedData[maxDataLength];
+    signal input startDelimiterIndex;
+
+    signal output out;
+
+    component startDelimiterSelector = QuinSelector(maxDataLength, 16);
+    startDelimiterSelector.in <== nDelimitedData;
+    startDelimiterSelector.index <== startDelimiterIndex;
+
+    // Assert delimiter value
+    startDelimiterSelector.out === genderPosition() * 255;
+
+    component genderSelector = QuinSelector(maxDataLength, 16);
+    genderSelector.in <== nDelimitedData;
+    genderSelector.index <== startDelimiterIndex + 1;
+    out <== genderSelector.out;
+
+    assert(out < 255);
+}
+
+
+/// @title QRDataExctractor
+/// @notice Extracts the name, date, gender, photo from the Aadhaar QR data
+/// @input data[maxDataLength] - QR data without the signature
+/// @input delimitterIndices[17] - Indices of the delimiters in the QR data
+/// @output name - single field (int) element representing the name in little endian order
+/// @output dateOfBirth - Unix timestamp representing the date of birth
+/// @output gender - Single byte number representing gender
+/// @output photo - Photo of the user
 template QRDataExctractor(maxDataLength) {
     signal input data[maxDataLength];
-    signal input delimitterIndices[16];
+    signal input delimitterIndices[17];
 
     signal output name;
     signal output dateOfBirth;
     signal output gender;
+    // signal output photo[photoPackSize()];
 
-    // Create `nDelimitedData` - same as `data` but each delimiter replaces with n * 255
-    // where n is the nth occurance of 255
+    // Create `nDelimitedData` - same as `data` but each delimiter is replaced with n * 255
+    // where n means the nth occurance of 255
     component is255[maxDataLength];
     signal nDelimitedData[maxDataLength];
     signal n255Filter[maxDataLength + 1];
-
     n255Filter[0] <== 0;
     for (var i = 0; i < maxDataLength; i++) {
         is255[i] = IsEqual();
@@ -86,32 +184,21 @@ template QRDataExctractor(maxDataLength) {
     }
 
     // Extract name
-    var nameDelimiterIndex = nameDelimiterIndex();
     component nameExtractor = NameExtractor(maxDataLength);
     nameExtractor.nDelimitedData <== nDelimitedData;
-    nameExtractor.nameDelimiterIndex <== delimitterIndices[nameDelimiterIndex];
-    nameExtractor.nameEndIndex <== delimitterIndices[nameDelimiterIndex + 1];
-    name <== nameExtractor.name;
-
+    nameExtractor.startDelimiterIndex <== delimitterIndices[namePosition()];
+    nameExtractor.endDelimiterIndex <== delimitterIndices[namePosition() + 1];
+    name <== nameExtractor.out;
    
     // Extract date of birth
-    var dobDelimiterIndex = dobDelimiterIndex();
-    signal dobBytes[10] <== ExtractDataAtDelimiter(maxDataLength, 10)(nDelimitedData, dobDelimiterIndex, delimitterIndices[dobDelimiterIndex], delimitterIndices[dobDelimiterIndex + 1]);
-    
-    // Convert dod bytes to unix timestamp
-    component dobToUnixTime = DateStringToTimestamp(2030, 0, 0, 0);
-    dobToUnixTime.in[0] <== dobBytes[6];
-    dobToUnixTime.in[1] <== dobBytes[7];
-    dobToUnixTime.in[2] <== dobBytes[8];
-    dobToUnixTime.in[3] <== dobBytes[9];
-    dobToUnixTime.in[4] <== dobBytes[3];
-    dobToUnixTime.in[5] <== dobBytes[4];
-    dobToUnixTime.in[6] <== dobBytes[0];
-    dobToUnixTime.in[7] <== dobBytes[1];
-    dateOfBirth <== dobToUnixTime.out;
+    component dobExtractor = DOBExtractor(maxDataLength);
+    dobExtractor.nDelimitedData <== nDelimitedData;
+    dobExtractor.startDelimiterIndex <== delimitterIndices[dobPosition()];
+    dateOfBirth <== dobExtractor.out;
 
-    component genderSelector = QuinSelector(maxDataLength, 16);
-    genderSelector.in <== data;
-    genderSelector.index <== delimitterIndices[genderDelimiterIndex()];
-    gender <== genderSelector.out;
+    // Extract gender
+    component genderExtractor = GenderExtractor(maxDataLength);
+    genderExtractor.nDelimitedData <== nDelimitedData;
+    genderExtractor.startDelimiterIndex <== delimitterIndices[genderPosition()];
+    gender <== genderExtractor.out;
 }

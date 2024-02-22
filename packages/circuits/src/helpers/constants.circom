@@ -35,6 +35,10 @@ Aadhar QR code data schema (V2)
 **/
 
 
+function maxBytesInField() {
+  return 31;
+}
+
 // Position of name field in the data
 // i.e, name bytes will appear after 3rd 255
 function namePosition() {
@@ -51,4 +55,12 @@ function genderPosition() {
 
 function nameMaxLength() {
   return 31;
+}
+
+function photoPackSize() {
+  return 33;
+}
+
+function photoMaxLength() {
+  return maxBytesInField() * 33;
 }
