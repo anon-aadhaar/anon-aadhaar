@@ -17,6 +17,7 @@ include "./utils/timestamp.circom";
 /// @input delimiterIndices - Indices of delimiters (255) in the QR text data. 18 delimiters including photo
 /// @input signature - RSA signature
 /// @input pubKey - RSA public key (of the government)
+/// @input appId - Application ID which will be included in identityNullifier
 /// @input signalHash - An external signal to make it part of the proof
 /// @output identityNullifier - PosidonHash(name, dob, gender)
 /// @output userNullifier - PosidonHash(photo)
@@ -28,6 +29,7 @@ template AadhaarVerifier(n, k, maxDataLength) {
     signal input delimiterIndices[18];
     signal input signature[k];
     signal input pubKey[k];
+    signal input appId;
     signal input signalHash;
 
     signal output identityNullifier;
@@ -81,7 +83,7 @@ template AadhaarVerifier(n, k, maxDataLength) {
     signal last4Digits <== qrDataExtractor.last4Digits;
     signal timestamp <== qrDataExtractor.timestamp;
 
-    identityNullifier <== IdentityNullifier()(name, dateOfBirth, gender, last4Digits);
+    identityNullifier <== IdentityNullifier()(appId, last4Digits, name, dateOfBirth, gender);
     userNullifier <== UserNullifier()(photo);
 
     // Calculate Poseidon hash of the public key. 609 constraints

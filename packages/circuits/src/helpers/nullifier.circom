@@ -5,19 +5,22 @@ include "../helpers/constants.circom";
 
 /// @title IdentityNullifier
 /// @notice Computes the identityNullifier - hash(name, dateOfBirth, gender)
+/// @input appId The application id
+/// @input last4Digits The last 4 digits of the Aadhaar number
 /// @input name The name of the user
 /// @input dateOfBirth The date of birth of the user
 /// @input gender Gender of the user
 /// @output userNullifier hash(photo)
 template IdentityNullifier() {
+    signal input appId;
+    signal input last4Digits;
     signal input name;
     signal input dateOfBirth;
     signal input gender;
-    signal input last4Digits;
 
     signal output out;
 
-    out <== Poseidon(4)([name, dateOfBirth, gender, last4Digits]);
+    out <== Poseidon(4)([appId, last4Digits, name, dateOfBirth, gender]);
 }
 
 /// @title UserNullifier
