@@ -31,11 +31,15 @@ template NameExtractor(maxDataLength) {
     shifter.in <== nDelimitedData;
     shifter.shift <== startDelimiterIndex; // We want delimiter to be the first byte
     shifter.len <== endDelimiterIndex - startDelimiterIndex;
-    
     signal shiftedBytes[byteLength] <== shifter.out;
     
     // Assert that the first byte is the delimiter (255 * position of name field)
     shiftedBytes[0] === namePosition() * 255;
+
+    component endDelimiterSelector = QuinSelector(maxDataLength, 16);
+    endDelimiterSelector.in <== nDelimitedData;
+    endDelimiterSelector.index <== endDelimiterIndex;
+    endDelimiterSelector.out === (namePosition() + 1) * 255;
 
     // Pack byte[] to int[] where int is field element which take up to 31 bytes
     component outInt = Bytes2Ints(nameMaxLength);
@@ -52,6 +56,7 @@ template NameExtractor(maxDataLength) {
 
 /// @title DOBExtractor 
 /// @notice Extract date of birth from the Aadhaar QR data and returns as Unix timestamp
+/// @notice The timestamp will correspond to 00:00 of the date in UTC timezone
 /// @input nDelimitedData[maxDataLength] - QR data where each delimiter is 255 * n where n is order of the data
 /// @input startDelimiterIndex - index of the delimiter after which the date of birth start
 /// @input endDelimiterIndex - index of the delimiter up to which the date of birth is present
@@ -63,7 +68,7 @@ template DOBExtractor(maxDataLength) {
     signal output out;
     
     var dobDelimiterIndex = dobPosition();
-    var byteLength = 10 + 1; // DD-MM-YYYY + delimiter
+    var byteLength = 10 + 2; // DD-MM-YYYY + 2 delimiter
 
     component shifter = VarShiftLeft(maxDataLength, byteLength);
     shifter.in <== nDelimitedData;
@@ -73,18 +78,20 @@ template DOBExtractor(maxDataLength) {
     signal shiftedBytes[byteLength] <== shifter.out;
 
     shiftedBytes[0] === dobPosition() * 255;
+    shiftedBytes[11] === (dobPosition() + 1) * 255;
 
     // Convert DOB bytes to unix timestamp. 
-    // DD-MM-YYYY to YYYYMMDD input
+    // 255DD-MM-YYYY to YYYYMMDD input
+    // DateStringToTimestamp ensures all inputs are numeric values 
     component dobToUnixTime = DateStringToTimestamp(2030, 0, 0, 0);
-    dobToUnixTime.in[0] <== shiftedBytes[6];
-    dobToUnixTime.in[1] <== shiftedBytes[7];
-    dobToUnixTime.in[2] <== shiftedBytes[8];
-    dobToUnixTime.in[3] <== shiftedBytes[9];
-    dobToUnixTime.in[4] <== shiftedBytes[3];
-    dobToUnixTime.in[5] <== shiftedBytes[4];
-    dobToUnixTime.in[6] <== shiftedBytes[0];
-    dobToUnixTime.in[7] <== shiftedBytes[1];
+    dobToUnixTime.in[0] <== shiftedBytes[7];
+    dobToUnixTime.in[1] <== shiftedBytes[8];
+    dobToUnixTime.in[2] <== shiftedBytes[9];
+    dobToUnixTime.in[3] <== shiftedBytes[10];
+    dobToUnixTime.in[4] <== shiftedBytes[4];
+    dobToUnixTime.in[5] <== shiftedBytes[5];
+    dobToUnixTime.in[6] <== shiftedBytes[1];
+    dobToUnixTime.in[7] <== shiftedBytes[2];
     
     out <== dobToUnixTime.out;
 }
@@ -101,17 +108,21 @@ template GenderExtractor(maxDataLength) {
 
     signal output out;
 
+    // Assert delimiter value
     component startDelimiterSelector = QuinSelector(maxDataLength, 16);
     startDelimiterSelector.in <== nDelimitedData;
     startDelimiterSelector.index <== startDelimiterIndex;
-
-    // Assert delimiter value
     startDelimiterSelector.out === genderPosition() * 255;
 
     component genderSelector = QuinSelector(maxDataLength, 16);
     genderSelector.in <== nDelimitedData;
     genderSelector.index <== startDelimiterIndex + 1;
     out <== genderSelector.out;
+
+    component endDelimiterSelector = QuinSelector(maxDataLength, 16);
+    endDelimiterSelector.in <== nDelimitedData;
+    endDelimiterSelector.index <== startDelimiterIndex + 2;
+    endDelimiterSelector.out === (genderPosition() + 1) * 255;
 
     assert(out < 255);
 }
@@ -158,7 +169,7 @@ template PhotoExtractor(maxDataLength) {
 /// @notice Extracts the name, date, gender, photo from the Aadhaar QR data
 /// @input data[maxDataLength] - QR data without the signature
 /// @input dataLength - Length of the QR data
-/// @input delimitterIndices[17] - Indices of the delimiters in the QR data
+/// @input delimiterIndices[17] - Indices of the delimiters in the QR data
 /// @output name - single field (int) element representing the name in little endian order
 /// @output dateOfBirth - Unix timestamp representing the date of birth
 /// @output gender - Single byte number representing gender
@@ -166,7 +177,7 @@ template PhotoExtractor(maxDataLength) {
 template QRDataExtractor(maxDataLength) {
     signal input data[maxDataLength];
     signal input dataLength;
-    signal input delimitterIndices[18];
+    signal input delimiterIndices[18];
 
     signal output name;
     signal output dateOfBirth;
@@ -191,26 +202,26 @@ template QRDataExtractor(maxDataLength) {
     // Extract name
     component nameExtractor = NameExtractor(maxDataLength);
     nameExtractor.nDelimitedData <== nDelimitedData;
-    nameExtractor.startDelimiterIndex <== delimitterIndices[namePosition() - 1];
-    nameExtractor.endDelimiterIndex <== delimitterIndices[namePosition()];
+    nameExtractor.startDelimiterIndex <== delimiterIndices[namePosition() - 1];
+    nameExtractor.endDelimiterIndex <== delimiterIndices[namePosition()];
     name <== nameExtractor.out;
    
     // Extract date of birth
     component dobExtractor = DOBExtractor(maxDataLength);
     dobExtractor.nDelimitedData <== nDelimitedData;
-    dobExtractor.startDelimiterIndex <== delimitterIndices[dobPosition() - 1];
+    dobExtractor.startDelimiterIndex <== delimiterIndices[dobPosition() - 1];
     dateOfBirth <== dobExtractor.out;
 
     // Extract gender
     component genderExtractor = GenderExtractor(maxDataLength);
     genderExtractor.nDelimitedData <== nDelimitedData;
-    genderExtractor.startDelimiterIndex <== delimitterIndices[genderPosition() - 1];
+    genderExtractor.startDelimiterIndex <== delimiterIndices[genderPosition() - 1];
     gender <== genderExtractor.out;
 
     // Extract photo
     component photoExtractor = PhotoExtractor(maxDataLength);
     photoExtractor.nDelimitedData <== nDelimitedData;
-    photoExtractor.startDelimiterIndex <== delimitterIndices[photoPosition() - 1];
+    photoExtractor.startDelimiterIndex <== delimiterIndices[photoPosition() - 1];
     photoExtractor.endIndex <== dataLength - 1;
     photo <== photoExtractor.out;
 }
