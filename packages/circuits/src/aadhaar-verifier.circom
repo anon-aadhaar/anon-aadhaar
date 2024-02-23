@@ -12,8 +12,9 @@ include "./utils/timestamp.circom";
 /// @param n - RSA pubic key size per chunk
 /// @param k - Number of chunks the RSA public key is split into
 /// @param maxDataLength - Maximum length of the data
-/// @input aadhaarData - QR data without the signature; each number represent ascii byte; remaining space is padded with 0
-/// @input aadhaarDataLength - Length of actual data
+/// @input qrDataPadded - QR data without the signature; each number represent ascii byte; remaining space is padded with 0
+/// @input qrDataPaddedLength - Length of padded QR data
+/// @input nonPaddedDataLength - Length of actual data without padding
 /// @input delimiterIndices - Indices of delimiters (255) in the QR text data. 18 delimiters including photo
 /// @input signature - RSA signature
 /// @input pubKey - RSA public key (of the government)
@@ -24,8 +25,9 @@ include "./utils/timestamp.circom";
 /// @output timestamp - Timestamp of when the data was signed - extracted and converted to Unix timestamp
 /// @output pubkeyHash - Poseidon hash of the RSA public key
 template AadhaarVerifier(n, k, maxDataLength) {
-    signal input aadhaarData[maxDataLength];
-    signal input aadhaarDataLength;
+    signal input qrDataPadded[maxDataLength];
+    signal input qrDataPaddedLength;
+    signal input nonPaddedDataLength;
     signal input delimiterIndices[18];
     signal input signature[k];
     signal input pubKey[k];
@@ -39,8 +41,8 @@ template AadhaarVerifier(n, k, maxDataLength) {
 
     // Hash the data and verify RSA signature - 917344 constraints
     component shaHasher = Sha256Bytes(maxDataLength);
-    shaHasher.in_padded <== aadhaarData;
-    shaHasher.in_len_padded_bytes <== aadhaarDataLength;
+    shaHasher.in_padded <== qrDataPadded;
+    shaHasher.in_len_padded_bytes <== qrDataPaddedLength;
     signal sha[256];
     sha <== shaHasher.out;
     
@@ -72,8 +74,8 @@ template AadhaarVerifier(n, k, maxDataLength) {
 
     // Extract data from QR and compute nullifiers
     component qrDataExtractor = QRDataExtractor(maxDataLength);
-    qrDataExtractor.data <== aadhaarData;
-    qrDataExtractor.dataLength <== aadhaarDataLength;
+    qrDataExtractor.data <== qrDataPadded;
+    qrDataExtractor.nonPaddedDataLength <== nonPaddedDataLength;
     qrDataExtractor.delimiterIndices <== delimiterIndices;
 
     signal name <== qrDataExtractor.name;
