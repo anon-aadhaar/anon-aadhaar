@@ -39,6 +39,10 @@ function maxBytesInField() {
   return 31;
 }
 
+function referenceIdPosition() {
+  return 2;
+}
+
 // Position of name field in the data
 // i.e, name bytes will appear after 3rd 255
 function namePosition() {

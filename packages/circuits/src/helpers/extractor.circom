@@ -9,6 +9,33 @@ include "../utils/shift.circom";
 include "../utils/pack.circom";
 
 
+/// @title ReferenceIDExtractor
+/// @notice Extracts the last four digits of the Aadhaar number and timestamp from the QR data
+/// @input nDelimitedData[maxDataLength] - QR data where each delimiter is 255 * n where n is order of the data
+/// @output last4Digits - single field (int) element representing the name in little endian order
+/// @output timestamp - Unix timestamp on signature
+template ReferenceIDExtractor(maxDataLength) {
+    signal input nDelimitedData[maxDataLength];
+
+    signal output last4Digits;
+    signal output timestamp;
+    
+    signal last4DigitsBytes[4];
+    for (var i = 0; i < 4; i++) {
+        last4DigitsBytes[i] <== nDelimitedData[i + 3];
+    }
+
+    last4Digits <== Bytes2Int(4)(last4DigitsBytes)[0];
+
+    // Extract the timestamp rounded to nearest hour
+    component dateToUnixTime = DateStringToTimestamp(2030, 1, 0, 0);
+    for (var i = 0; i < 10; i++) {
+        dateToUnixTime.in[i] <== aadhaarData[i + 9];
+    }
+    timestamp <== dateToUnixTime.out - 19800; // 19800 is the offset for IST
+}
+
+
 /// @title NameExtractor
 /// @notice Extracts the name from the Aadhaar QR data and return a single number representing name
 /// @notice Assumes that name can fit in 31 bytes
@@ -36,6 +63,8 @@ template NameExtractor(maxDataLength) {
     // Assert that the first byte is the delimiter (255 * position of name field)
     shiftedBytes[0] === namePosition() * 255;
 
+    // Check that the last byte is the delimiter (255 * (position of name field + 1))
+    // Note: This isn't really necessary as we are checking this in DOBExtractor (4624 constraints)
     component endDelimiterSelector = QuinSelector(maxDataLength, 16);
     endDelimiterSelector.in <== nDelimitedData;
     endDelimiterSelector.index <== endDelimiterIndex;
@@ -77,6 +106,7 @@ template DOBExtractor(maxDataLength) {
 
     signal shiftedBytes[byteLength] <== shifter.out;
 
+    // Assert delimiters around the data is correct
     shiftedBytes[0] === dobPosition() * 255;
     shiftedBytes[11] === (dobPosition() + 1) * 255;
 
@@ -108,21 +138,23 @@ template GenderExtractor(maxDataLength) {
 
     signal output out;
 
-    // Assert delimiter value
+    // Assert start delimiter value
     component startDelimiterSelector = QuinSelector(maxDataLength, 16);
     startDelimiterSelector.in <== nDelimitedData;
     startDelimiterSelector.index <== startDelimiterIndex;
     startDelimiterSelector.out === genderPosition() * 255;
 
-    component genderSelector = QuinSelector(maxDataLength, 16);
-    genderSelector.in <== nDelimitedData;
-    genderSelector.index <== startDelimiterIndex + 1;
-    out <== genderSelector.out;
-
+    // Assert end delimiter value
     component endDelimiterSelector = QuinSelector(maxDataLength, 16);
     endDelimiterSelector.in <== nDelimitedData;
     endDelimiterSelector.index <== startDelimiterIndex + 2;
     endDelimiterSelector.out === (genderPosition() + 1) * 255;
+
+    // Get gender byte
+    component genderSelector = QuinSelector(maxDataLength, 16);
+    genderSelector.in <== nDelimitedData;
+    genderSelector.index <== startDelimiterIndex + 1;
+    out <== genderSelector.out;
 
     assert(out < 255);
 }
@@ -179,6 +211,8 @@ template QRDataExtractor(maxDataLength) {
     signal input dataLength;
     signal input delimiterIndices[18];
 
+    signal output last4Digits;
+    signal output timestamp;
     signal output name;
     signal output dateOfBirth;
     signal output gender;
@@ -198,6 +232,12 @@ template QRDataExtractor(maxDataLength) {
         n255Filter[i + 1] <== is255[i].out * 255 + n255Filter[i];
         nDelimitedData[i] <== is255[i].out * n255Filter[i] + data[i];
     }
+
+    // Extract last 4 digits of Aadhaar number and timestamp
+    component refIDExtractor = ReferenceIDExtractor(maxDataLength);
+    refIDExtractor.nDelimitedData <== nDelimitedData;
+    last4Digits <== refIDExtractor.last4Digits;
+    timestamp <== refIDExtractor.timestamp;
 
     // Extract name
     component nameExtractor = NameExtractor(maxDataLength);
