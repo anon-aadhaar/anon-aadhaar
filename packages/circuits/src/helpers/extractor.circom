@@ -20,17 +20,17 @@ template ReferenceIDExtractor(maxDataLength) {
     signal output last4Digits;
     signal output timestamp;
     
-    signal last4DigitsBytes[4];
+    component bytes2Ints = Bytes2Ints(4);
     for (var i = 0; i < 4; i++) {
-        last4DigitsBytes[i] <== nDelimitedData[i + 3];
+        bytes2Ints.bytes[i] <== nDelimitedData[i + 3];
     }
 
-    last4Digits <== Bytes2Int(4)(last4DigitsBytes)[0];
+    last4Digits <== bytes2Ints.ints[0];
 
     // Extract the timestamp rounded to nearest hour
     component dateToUnixTime = DateStringToTimestamp(2030, 1, 0, 0);
     for (var i = 0; i < 10; i++) {
-        dateToUnixTime.in[i] <== aadhaarData[i + 9];
+        dateToUnixTime.in[i] <== nDelimitedData[i + 9];
     }
     timestamp <== dateToUnixTime.out - 19800; // 19800 is the offset for IST
 }
