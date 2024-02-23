@@ -78,18 +78,11 @@ template AadhaarVerifier(n, k, maxDataLength) {
     signal dateOfBirth <== qrDataExtractor.dateOfBirth;
     signal gender <== qrDataExtractor.gender;
     signal photo[photoPackSize()] <== qrDataExtractor.photo;
+    signal last4Digits <== qrDataExtractor.last4Digits;
+    signal timestamp <== qrDataExtractor.timestamp;
 
-    identityNullifier <== IdentityNullifier()(name, dateOfBirth, gender);
+    identityNullifier <== IdentityNullifier()(name, dateOfBirth, gender, last4Digits);
     userNullifier <== UserNullifier()(photo);
-
-
-    // Output the timestamp rounded to nearest hour
-    component dateToUnixTime = DateStringToTimestamp(2030, 1, 0, 0);
-    for (var i = 0; i < 10; i++) {
-        dateToUnixTime.in[i] <== aadhaarData[i + 9];
-    }
-    timestamp <== dateToUnixTime.out - 19800; // 19800 is the offset for IST
-
 
     // Calculate Poseidon hash of the public key. 609 constraints
     // Poseidon component can take only 16 inputs, so we convert k chunks to k/2 chunks.

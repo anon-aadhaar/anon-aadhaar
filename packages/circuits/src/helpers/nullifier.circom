@@ -13,11 +13,11 @@ template IdentityNullifier() {
     signal input name;
     signal input dateOfBirth;
     signal input gender;
+    signal input last4Digits;
 
     signal output out;
 
-    // TODO: Make signal part of nullifier?
-    out <== Poseidon(3)([name, dateOfBirth, gender]);
+    out <== Poseidon(4)([name, dateOfBirth, gender, last4Digits]);
 }
 
 /// @title UserNullifier
@@ -29,10 +29,12 @@ template UserNullifier() {
 
     signal output out;
 
-    // TODO: Is it significantly cheaper to extract fewer bytes of photo since we only use 16
-    signal userNullifierHasherInput[16];
-    for (var i = 0; i < 16; i++) {
-        userNullifierHasherInput[i] <== photo[i];
+    signal hashChain[photoPackSize() - 1];
+    hashChain[0] <== Poseidon(2)([photo[0], photo[1]]);
+
+    for (var i = 2; i < photoPackSize() - 1; i++) {
+        hashChain[i] <== Poseidon(2)([hashChain[i - 1], photo[i]]);
     }
-    out <== Poseidon(16)(userNullifierHasherInput);
+
+    out <== hashChain[photoPackSize() - 2];
 }
