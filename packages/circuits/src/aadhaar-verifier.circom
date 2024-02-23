@@ -14,7 +14,7 @@ include "./utils/timestamp.circom";
 /// @param maxDataLength - Maximum length of the data
 /// @input aadhaarData - QR data without the signature; each number represent ascii byte; remaining space is padded with 0
 /// @input aadhaarDataLength - Length of actual data
-/// @input delimitterIndices - Indices of delimiters (255) in the QR text data. 18 delimiters including photo
+/// @input delimiterIndices - Indices of delimiters (255) in the QR text data. 18 delimiters including photo
 /// @input signature - RSA signature
 /// @input pubKey - RSA public key (of the government)
 /// @input signalHash - An external signal to make it part of the proof
@@ -25,7 +25,7 @@ include "./utils/timestamp.circom";
 template AadhaarVerifier(n, k, maxDataLength) {
     signal input aadhaarData[maxDataLength];
     signal input aadhaarDataLength;
-    signal input delimitterIndices[18];
+    signal input delimiterIndices[18];
     signal input signature[k];
     signal input pubKey[k];
     signal input signalHash;
@@ -72,7 +72,7 @@ template AadhaarVerifier(n, k, maxDataLength) {
     component qrDataExtractor = QRDataExtractor(maxDataLength);
     qrDataExtractor.data <== aadhaarData;
     qrDataExtractor.dataLength <== aadhaarDataLength;
-    qrDataExtractor.delimitterIndices <== delimitterIndices;
+    qrDataExtractor.delimiterIndices <== delimiterIndices;
 
     signal name <== qrDataExtractor.name;
     signal dateOfBirth <== qrDataExtractor.dateOfBirth;
