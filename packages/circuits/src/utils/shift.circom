@@ -47,7 +47,7 @@ template VarShiftLeft(in_array_len, out_array_len) {
     component ge_A[out_array_len];
     for (var i = 0; i < out_array_len; i++) {
 
-            ge_A[i] = GreaterThan(8);
+            ge_A[i] = GreaterThan(len_bits);
             ge_A[i].in[0] <== len;
             ge_A[i].in[1] <== i;
 
