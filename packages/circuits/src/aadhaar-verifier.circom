@@ -83,7 +83,7 @@ template AadhaarVerifier(n, k, maxDataLength) {
     signal gender <== qrDataExtractor.gender;
     signal photo[photoPackSize()] <== qrDataExtractor.photo;
     signal last4Digits <== qrDataExtractor.last4Digits;
-    signal timestamp <== qrDataExtractor.timestamp;
+    timestamp <== qrDataExtractor.timestamp;
 
     identityNullifier <== IdentityNullifier()(appId, last4Digits, name, dateOfBirth, gender);
     userNullifier <== UserNullifier()(photo);

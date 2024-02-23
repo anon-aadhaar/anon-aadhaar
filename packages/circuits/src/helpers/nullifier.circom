@@ -20,7 +20,7 @@ template IdentityNullifier() {
 
     signal output out;
 
-    out <== Poseidon(4)([appId, last4Digits, name, dateOfBirth, gender]);
+    out <== Poseidon(5)([appId, last4Digits, name, dateOfBirth, gender]);
 }
 
 /// @title UserNullifier
@@ -35,8 +35,8 @@ template UserNullifier() {
     signal hashChain[photoPackSize() - 1];
     hashChain[0] <== Poseidon(2)([photo[0], photo[1]]);
 
-    for (var i = 2; i < photoPackSize() - 1; i++) {
-        hashChain[i] <== Poseidon(2)([hashChain[i - 1], photo[i]]);
+    for (var i = 1; i < photoPackSize() - 1; i++) {
+        hashChain[i] <== Poseidon(2)([hashChain[i - 1], photo[i + 1]]);
     }
 
     out <== hashChain[photoPackSize() - 2];
