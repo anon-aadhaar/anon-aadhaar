@@ -66,9 +66,9 @@ function nameMaxLength() {
 }
 
 function photoPackSize() {
-  return 33;
+  return 35;
 }
 
 function photoMaxLength() {
-  return maxBytesInField() * 33;
+  return maxBytesInField() * photoPackSize();
 }
