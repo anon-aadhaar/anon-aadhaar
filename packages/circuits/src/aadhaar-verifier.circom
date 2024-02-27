@@ -1,11 +1,10 @@
 pragma circom 2.1.6;
 
 include "circomlib/circuits/poseidon.circom";
-include "./helpers/extractor.circom";
+include "./helpers/rsa/rsa.circom";
+include "./helpers/rsa/sha.circom";
 include "./helpers/nullifier.circom";
-include "./utils/rsa.circom";
-include "./utils/sha.circom";
-include "./utils/timestamp.circom";
+include "./helpers/extractor.circom";
 
 
 /// @title Circuit to verify Aadhaar signature

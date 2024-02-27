@@ -14,6 +14,7 @@ function computeIntSize(bytes_size) {
     return num_chunk;
 }
 
+// From @zkemail/email-wallet
 template Bytes2Ints(bytes_size) {
     var num_chunk = computeIntSize(bytes_size);
     signal input bytes[bytes_size];

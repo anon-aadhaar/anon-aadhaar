@@ -4,8 +4,7 @@ include "circomlib/circuits/comparators.circom";
 include "circomlib/circuits/bitify.circom";
 include "../helpers/constants.circom";
 include "../utils/timestamp.circom";
-include "../utils/utils.circom";
-include "../utils/shift.circom";
+include "../utils/array.circom";
 include "../utils/pack.circom";
 
 
