@@ -16,6 +16,7 @@ function log2(a) {
     return r;
 }
 
+
 /// @title SubarraySelector
 /// @notice Select a subarray from `startIndex` index and size of `length`
 /// @notice Output array will have same length with remaining elements set to 0
@@ -99,6 +100,11 @@ template ArraySelector(maxLength, bits) {
     out <== calcTotal.sum;
 }
 
+/// @title CalculateTotal
+/// @notice Calculate the sum of an array
+/// @param n The number of elements in the array
+/// @input nums The input array
+/// @output sum The sum of the input array
 template CalculateTotal(n) {
     signal input nums[n];
     signal output sum;

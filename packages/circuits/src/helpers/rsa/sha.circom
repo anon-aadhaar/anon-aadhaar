@@ -1,7 +1,10 @@
 pragma circom 2.1.6;
 
 include "circomlib/circuits/bitify.circom";
-include "../utils/array.circom";
+include "circomlib/circuits/sha256/constants.circom";
+include "circomlib/circuits/sha256/sha256compression.circom";
+include "circomlib/circuits/comparators.circom";
+include "../../utils/array.circom";
 
 function log2_ceil(a) {
     var n = a+1;

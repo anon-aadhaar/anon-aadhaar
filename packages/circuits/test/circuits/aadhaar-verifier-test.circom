@@ -75,7 +75,7 @@ template AadhaarVerifier(n, k, maxDataLength) {
 
 
     // Output the timestamp rounded to nearest hour
-    component dateToUnixTime = DateStringToTimestamp(2030, 1, 0, 0);
+    component dateToUnixTime = DigitBytesToTimestamp(2030, 1, 0, 0);
     for (var i = 0; i < 14; i++) {
         dateToUnixTime.in[i] <== aadhaarData[i + 6];
     }

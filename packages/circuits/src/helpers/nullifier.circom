@@ -3,6 +3,7 @@ pragma circom 2.1.6;
 include "circomlib/circuits/poseidon.circom";
 include "../helpers/constants.circom";
 
+
 /// @title IdentityNullifier
 /// @notice Computes the identityNullifier - hash(name, dateOfBirth, gender)
 /// @input appId The application id
@@ -22,6 +23,7 @@ template IdentityNullifier() {
 
     out <== Poseidon(5)([appId, last4Digits, name, dateOfBirth, gender]);
 }
+
 
 /// @title UserNullifier
 /// @notice Computes the userNullifier for an Aadhaar identity - hash(photo)

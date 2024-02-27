@@ -35,10 +35,6 @@ Aadhar QR code data schema (V2)
 **/
 
 
-function maxBytesInField() {
-  return 31;
-}
-
 function referenceIdPosition() {
   return 2;
 }
@@ -70,5 +66,5 @@ function photoPackSize() {
 }
 
 function photoMaxLength() {
-  return maxBytesInField() * photoPackSize();
+  return 31 * photoPackSize(); // 31 bytes can fit in the field
 }

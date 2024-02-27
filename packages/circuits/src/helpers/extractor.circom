@@ -3,7 +3,6 @@ pragma circom 2.1.6;
 include "circomlib/circuits/comparators.circom";
 include "circomlib/circuits/bitify.circom";
 include "../helpers/constants.circom";
-include "../utils/timestamp.circom";
 include "../utils/array.circom";
 include "../utils/pack.circom";
 
@@ -19,15 +18,15 @@ template ReferenceIDExtractor(maxDataLength) {
     signal output last4Digits;
     signal output timestamp;
     
-    component bytes2Ints = Bytes2Ints(4);
+    component BytesToInts = BytesToInts(4);
     for (var i = 0; i < 4; i++) {
-        bytes2Ints.bytes[i] <== nDelimitedData[i + 3];
+        BytesToInts.bytes[i] <== nDelimitedData[i + 3];
     }
 
-    last4Digits <== bytes2Ints.ints[0];
+    last4Digits <== BytesToInts.ints[0];
 
     // Extract the timestamp rounded to nearest hour
-    component dateToUnixTime = DateStringToTimestamp(2030, 1, 0, 0);
+    component dateToUnixTime = DigitBytesToTimestamp(2030, 1, 0, 0);
     for (var i = 0; i < 10; i++) {
         dateToUnixTime.in[i] <== nDelimitedData[i + 9];
     }
@@ -70,7 +69,7 @@ template NameExtractor(maxDataLength) {
     endDelimiterSelector.out === (namePosition() + 1) * 255;
 
     // Pack byte[] to int[] where int is field element which take up to 31 bytes
-    component outInt = Bytes2Ints(nameMaxLength);
+    component outInt = BytesToInts(nameMaxLength);
     for (var i = 0; i < nameMaxLength; i ++) {
         outInt.bytes[i] <== shiftedBytes[i + 1]; // +1 to skip the delimiter
 
@@ -111,8 +110,8 @@ template DOBExtractor(maxDataLength) {
 
     // Convert DOB bytes to unix timestamp. 
     // 255DD-MM-YYYY to YYYYMMDD input
-    // DateStringToTimestamp ensures all inputs are numeric values 
-    component dobToUnixTime = DateStringToTimestamp(2030, 0, 0, 0);
+    // DigitBytesToTimestamp ensures all inputs are numeric values 
+    component dobToUnixTime = DigitBytesToTimestamp(2030, 0, 0, 0);
     dobToUnixTime.in[0] <== shiftedBytes[7];
     dobToUnixTime.in[1] <== shiftedBytes[8];
     dobToUnixTime.in[2] <== shiftedBytes[9];
@@ -187,7 +186,7 @@ template PhotoExtractor(maxDataLength) {
     shiftedBytes[0] === photoPosition() * 255;
 
     // Pack byte[] to int[] where int is field element which take up to 31 bytes
-    component outInt = Bytes2Ints(photoMaxLength);
+    component outInt = BytesToInts(photoMaxLength);
     for (var i = 0; i < photoMaxLength; i ++) {
         outInt.bytes[i] <== shiftedBytes[i + 1]; // +1 to skip the delimiter
     }
