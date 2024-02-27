@@ -18,12 +18,12 @@ template ReferenceIDExtractor(maxDataLength) {
     signal output last4Digits;
     signal output timestamp;
     
-    component BytesToInts = BytesToInts(4);
+    component BytesToInts = DigitBytesToNumber(4);
     for (var i = 0; i < 4; i++) {
-        BytesToInts.bytes[i] <== nDelimitedData[i + 3];
+        BytesToInts.in[i] <== nDelimitedData[i + 5];
     }
 
-    last4Digits <== BytesToInts.ints[0];
+    last4Digits <== BytesToInts.out;
 
     // Extract the timestamp rounded to nearest hour
     component dateToUnixTime = DigitBytesToTimestamp(2030, 1, 0, 0);
@@ -83,7 +83,7 @@ template NameExtractor(maxDataLength) {
 
 /// @title DOBExtractor 
 /// @notice Extract date of birth from the Aadhaar QR data and returns as Unix timestamp
-/// @notice The timestamp will correspond to 00:00 of the date in UTC timezone
+/// @notice The timestamp will correspond to 00:00 of the date in IST timezone
 /// @input nDelimitedData[maxDataLength] - QR data where each delimiter is 255 * n where n is order of the data
 /// @input startDelimiterIndex - index of the delimiter after which the date of birth start
 /// @input endDelimiterIndex - index of the delimiter up to which the date of birth is present
@@ -121,7 +121,7 @@ template DOBExtractor(maxDataLength) {
     dobToUnixTime.in[6] <== shiftedBytes[1];
     dobToUnixTime.in[7] <== shiftedBytes[2];
     
-    out <== dobToUnixTime.out;
+    out <== dobToUnixTime.out + 19800; // 19800 is the offset for IST
 }
 
 
