@@ -153,7 +153,7 @@ function setup_contract() {
 
 function generate_witness() {
     echo "Gen witness..."
-    npx ts-node ./scripts/generateInput.ts
+    QR_DATA=$QR_DATA npx ts-node ./scripts/generateInput.ts
     node $BUILD_DIR/aadhaar-verifier_js/generate_witness.js "$BUILD_DIR"/aadhaar-verifier_js/aadhaar-verifier.wasm  $BUILD_DIR/input.json $BUILD_DIR/witness.wtns
     echo "Done!"
 }
