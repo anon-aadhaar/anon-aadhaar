@@ -53,10 +53,10 @@ template NameExtractor(maxDataLength) {
     var byteLength = nameMaxLength() + 1;
     
     // Shift the data to the right to until the name delimiter start
-    component shifter = VarShiftLeft(maxDataLength, byteLength);
+    component shifter = SubarraySelector(maxDataLength, byteLength);
     shifter.in <== nDelimitedData;
-    shifter.shift <== startDelimiterIndex; // We want delimiter to be the first byte
-    shifter.len <== endDelimiterIndex - startDelimiterIndex;
+    shifter.startIndex <== startDelimiterIndex; // We want delimiter to be the first byte
+    shifter.length <== endDelimiterIndex - startDelimiterIndex;
     signal shiftedBytes[byteLength] <== shifter.out;
     
     // Assert that the first byte is the delimiter (255 * position of name field)
@@ -64,7 +64,7 @@ template NameExtractor(maxDataLength) {
 
     // Check that the last byte is the delimiter (255 * (position of name field + 1))
     // Note: This isn't really necessary as we are checking this in DOBExtractor (4624 constraints)
-    component endDelimiterSelector = QuinSelector(maxDataLength, 16);
+    component endDelimiterSelector = ArraySelector(maxDataLength, 16);
     endDelimiterSelector.in <== nDelimitedData;
     endDelimiterSelector.index <== endDelimiterIndex;
     endDelimiterSelector.out === (namePosition() + 1) * 255;
@@ -98,10 +98,10 @@ template DOBExtractor(maxDataLength) {
     var dobDelimiterIndex = dobPosition();
     var byteLength = 10 + 2; // DD-MM-YYYY + 2 delimiter
 
-    component shifter = VarShiftLeft(maxDataLength, byteLength);
+    component shifter = SubarraySelector(maxDataLength, byteLength);
     shifter.in <== nDelimitedData;
-    shifter.shift <== startDelimiterIndex; // We want delimiter to be the first byte
-    shifter.len <== startDelimiterIndex + 10;
+    shifter.startIndex <== startDelimiterIndex; // We want delimiter to be the first byte
+    shifter.length <== startDelimiterIndex + 10;
 
     signal shiftedBytes[byteLength] <== shifter.out;
 
@@ -138,19 +138,19 @@ template GenderExtractor(maxDataLength) {
     signal output out;
 
     // Assert start delimiter value
-    component startDelimiterSelector = QuinSelector(maxDataLength, 16);
+    component startDelimiterSelector = ArraySelector(maxDataLength, 16);
     startDelimiterSelector.in <== nDelimitedData;
     startDelimiterSelector.index <== startDelimiterIndex;
     startDelimiterSelector.out === genderPosition() * 255;
 
     // Assert end delimiter value
-    component endDelimiterSelector = QuinSelector(maxDataLength, 16);
+    component endDelimiterSelector = ArraySelector(maxDataLength, 16);
     endDelimiterSelector.in <== nDelimitedData;
     endDelimiterSelector.index <== startDelimiterIndex + 2;
     endDelimiterSelector.out === (genderPosition() + 1) * 255;
 
     // Get gender byte
-    component genderSelector = QuinSelector(maxDataLength, 16);
+    component genderSelector = ArraySelector(maxDataLength, 16);
     genderSelector.in <== nDelimitedData;
     genderSelector.index <== startDelimiterIndex + 1;
     out <== genderSelector.out;
@@ -176,10 +176,10 @@ template PhotoExtractor(maxDataLength) {
     var bytesLength = photoMaxLength() + 1;
 
     // Shift the data to the right to until the photo index
-    component shifter = VarShiftLeft(maxDataLength, bytesLength);
+    component shifter = SubarraySelector(maxDataLength, bytesLength);
     shifter.in <== nDelimitedData;
-    shifter.shift <== startDelimiterIndex; // We want delimiter to be the first byte
-    shifter.len <== endIndex - startDelimiterIndex + 1;
+    shifter.startIndex <== startDelimiterIndex; // We want delimiter to be the first byte
+    shifter.length <== endIndex - startDelimiterIndex + 1;
     
     signal shiftedBytes[bytesLength] <== shifter.out;
     

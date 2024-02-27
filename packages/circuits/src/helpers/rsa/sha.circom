@@ -1,7 +1,7 @@
 pragma circom 2.1.6;
 
 include "circomlib/circuits/bitify.circom";
-include "./array.circom";
+include "../utils/array.circom";
 
 function log2_ceil(a) {
     var n = a+1;
@@ -140,7 +140,7 @@ template Sha256General(maxBitsPadded) {
     // Select the correct compression output for the given length, instead of just the last one.
     component arraySelectors[256];
     for (k=0; k<256; k++) {
-        arraySelectors[k] = QuinSelector(maxBlocks, maxBlocksBits);
+        arraySelectors[k] = ArraySelector(maxBlocks, maxBlocksBits);
         for (j=0; j<maxBlocks; j++) {
             arraySelectors[k].in[j] <== sha256compression[j].out[k];
         }

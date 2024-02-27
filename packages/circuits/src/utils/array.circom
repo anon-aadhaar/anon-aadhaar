@@ -16,24 +16,32 @@ function log2(a) {
     return r;
 }
 
-// Based on https://demo.hedgedoc.org/s/Le0R3xUhB
-// Shifts the input array left by `shift` indices
-template VarShiftLeft(in_array_len, out_array_len) {
-    var len_bits = log2(in_array_len);
-    assert(in_array_len <= (1 << len_bits));
-    signal input in[in_array_len]; // x
-    signal input shift; // k
-    signal input len;
+/// @title SubarraySelector
+/// @notice Select a subarray from `startIndex` index and size of `length`
+/// @notice Output array will have same length with remaining elements set to 0
+/// @notice Based on https://demo.hedgedoc.org/s/Le0R3xUhB
+/// @param maxArrayLen The maximum length of the input array
+/// @param maxSubArrayLen The maximum length of the output array
+/// @input in The input array
+/// @input startIndex The index of the first element of the subarray
+/// @input length The length of the subarray
+/// @output out The selected subarray, zero padded
+template SubarraySelector(maxArrayLen, maxSubArrayLen) {
+    var bitLength = log2(maxArrayLen);
+    assert(maxArrayLen <= (1 << bitLength));
+    signal input in[maxArrayLen];
+    signal input startIndex;
+    signal input length;
 
-    signal output out[out_array_len]; // y
+    signal output out[maxSubArrayLen];
 
-    component n2b = Num2Bits(len_bits);
-    n2b.in <== shift;
+    component n2b = Num2Bits(bitLength);
+    n2b.in <== startIndex;
 
-    signal tmp[len_bits][in_array_len];
-    for (var j = 0; j < len_bits; j++) {
-        for (var i = 0; i < in_array_len; i++) {
-            var offset = (i + (1 << j)) % in_array_len;
+    signal tmp[bitLength][maxArrayLen];
+    for (var j = 0; j < bitLength; j++) {
+        for (var i = 0; i < maxArrayLen; i++) {
+            var offset = (i + (1 << j)) % maxArrayLen;
             // Shift left by 2^j indices if bit is 1
             if (j == 0) {
                 tmp[j][i] <== n2b.out[j] * (in[offset] - in[i]) + in[i];
@@ -43,37 +51,41 @@ template VarShiftLeft(in_array_len, out_array_len) {
         }
     }
 
-    // Return last row
-    component ge_A[out_array_len];
-    for (var i = 0; i < out_array_len; i++) {
-
-            ge_A[i] = GreaterThan(len_bits);
-            ge_A[i].in[0] <== len;
-            ge_A[i].in[1] <== i;
-
-        out[i] <==  ge_A[i].out * tmp[len_bits - 1][i];
+    // Return last row value or 0 depending on index
+    component gtLengths[maxSubArrayLen];
+    for (var i = 0; i < maxSubArrayLen; i++) {
+        gtLengths[i] = GreaterThan(bitLength);
+        gtLengths[i].in[0] <== length;
+        gtLengths[i].in[1] <== i;
+        out[i] <==  gtLengths[i].out * tmp[bitLength - 1][i];
     }
 }
 
 
-// Lifted from MACI https://github.com/privacy-scaling-explorations/maci/blob/v1/circuits/circom/trees/incrementalQuinTree.circom#L29
-// Bits is ceil(log2 choices)
-template QuinSelector(choices, bits) {
-    signal input in[choices];
+/// @title ArraySelector
+/// @notice Select an element from an array based on index
+/// From MACI https://github.com/privacy-scaling-explorations/maci/blob/v1/circuits/circom/trees/incrementalQuinTree.circom#L29
+/// @param maxLength The number of elements in the array
+/// @param bits The number of bits required to represent the number of elements - ceil(log2 maxLength)
+/// @input in The input array
+/// @input index The index of the element to select
+/// @output out The selected element
+template ArraySelector(maxLength, bits) {
+    signal input in[maxLength];
     signal input index;
     signal output out;
 
-    // Ensure that index < choices
+    // Ensure that index < maxLength
     component lessThan = LessThan(bits);
     lessThan.in[0] <== index;
-    lessThan.in[1] <== choices;
+    lessThan.in[1] <== maxLength;
     lessThan.out === 1;
 
-    component calcTotal = CalculateTotal(choices);
-    component eqs[choices];
+    component calcTotal = CalculateTotal(maxLength);
+    component eqs[maxLength];
 
     // For each item, check whether its index equals the input index.
-    for (var i = 0; i < choices; i ++) {
+    for (var i = 0; i < maxLength; i ++) {
         eqs[i] = IsEqual();
         eqs[i].in[0] <== i;
         eqs[i].in[1] <== index;
