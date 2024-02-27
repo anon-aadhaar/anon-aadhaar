@@ -1,6 +1,6 @@
 pragma circom 2.1.6; 
 
-include "../../src/extractor.circom";
+include "../../src/helpers/extractor.circom";
 
 
-component main = Extractor(3 * 512); 
+component main = QRDataExtractor(3 * 512); 

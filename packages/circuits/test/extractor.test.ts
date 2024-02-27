@@ -32,6 +32,26 @@ function decompressByteArray(byteArray: Uint8Array) {
   return decompressedArray
 }
 
+function bigIntToByteArray(bigIntChunks: bigint[]) {
+  const bytes: number[] = []
+
+  bigIntChunks.forEach(bigInt => {
+    while (bigInt > 0n) {
+      bytes.unshift(Number(bigInt & 0xffn))
+      bigInt >>= 8n
+    }
+  })
+
+  return bytes
+}
+
+function bigIntToString(bigIntChunks: bigint[]) {
+  return bigIntToByteArray(bigIntChunks)
+    .reverse()
+    .map(byte => String.fromCharCode(byte))
+    .join('')
+}
+
 describe('Extractor testcases', function () {
   this.timeout(0)
 
@@ -57,20 +77,45 @@ describe('Extractor testcases', function () {
 
     const signedData = QRDataDecode.slice(0, QRDataDecode.length - 256)
 
-    const [paddedMsg, dataLen] = sha256Pad(signedData, 512 * 3)
+    const [paddedMsg] = sha256Pad(signedData, 512 * 3)
+
+    const delimiterIndices = []
+    for (let i = 0; i < paddedMsg.length; i++) {
+      if (paddedMsg[i] === 255) {
+        delimiterIndices.push(i)
+      }
+      if (delimiterIndices.length === 18) {
+        break
+      }
+    }
 
     const witness: any[] = await circuit.calculateWitness({
       data: Uint8ArrayToCharArray(paddedMsg),
-      dataLen,
+      nonPaddedDataLength: QRDataDecode.length - 256,
+      delimiterIndices: delimiterIndices,
     })
 
-    const { begin, end } = extractPhoto(Array.from(signedData))
+    // Last 4 Digits
+    assert(witness[1] === 2697n)
 
-    let hash = 0
-    for (let i = begin; i <= end; ++i) {
-      hash = poseidon([hash, BigInt(paddedMsg[i])])
-    }
+    // Timestamp
+    assert(
+      new Date(Number(witness[2]) * 1000).getTime() ===
+        new Date('2019-03-08T05:30:00.000Z').getTime(),
+    )
 
-    assert(witness[1] == BigInt(poseidon.F.toString(hash)))
+    // Name
+    assert(bigIntToString([witness[3]]) === 'Sumit Kumar')
+
+    // Date of birth
+    assert(
+      new Date(Number(witness[4]) * 1000).getTime() ===
+        new Date('1984-01-01T05:30:00.000Z').getTime(),
+    )
+
+    // Gender
+    assert(bigIntToString([witness[5]]) === 'M')
+
+    // const photoWitness = bigIntToByteArray(witness.slice(6, 6 + 36));
   })
 })
