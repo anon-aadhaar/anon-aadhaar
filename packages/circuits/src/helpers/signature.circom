@@ -1,22 +1,28 @@
 pragma circom 2.1.6;
 
+include "circomlib/circuits/poseidon.circom";
 include "./rsa/rsa.circom";
 include "./rsa/sha.circom";
 
 
 /// @title SignatureVerifier
 /// @notice Verifies Aadhaar signature
-/// @input appId The application id
-/// @input last4Digits The last 4 digits of the Aadhaar number
-/// @input name The name of the user
-/// @input dateOfBirth The date of birth of the user
-/// @input gender Gender of the user
-/// @output userNullifier hash(photo)
+/// @param n - RSA pubic key size per chunk
+/// @param k - Number of chunks the RSA public key is split into
+/// @param maxDataLength - Maximum length of the data
+/// @input qrDataPadded - QR data without the signature; each number represent ascii byte; remaining space is padded with 0
+/// @input qrDataPaddedLength - Length of padded QR data
+/// @input signature - RSA signature
+/// @input pubKey - RSA public key
+/// @output pubkeyHash - Poseidon hash of the public key
 template SignatureVerifier(n, k, maxDataLength) {
   signal input qrDataPadded[maxDataLength];
   signal input qrDataPaddedLength;
   signal input signature[k];
   signal input pubKey[k];
+
+  signal output pubkeyHash;
+
 
   // Hash the data and verify RSA signature - 917344 constraints
   component shaHasher = Sha256Bytes(maxDataLength);
@@ -49,5 +55,25 @@ template SignatureVerifier(n, k, maxDataLength) {
       rsa.modulus[i] <== pubKey[i];
       rsa.signature[i] <== signature[i];
   }
-  
+
+
+  // Calculate Poseidon hash of the public key (609 constraints)
+  // Poseidon component can take only 16 inputs, so we convert k chunks to k/2 chunks.
+  // We are assuming k is  > 16 and <= 32 (i.e we merge two consecutive item in array to bring down the size)
+  var poseidonInputSize = k \ 2;
+  if (k % 2 == 1) {
+      poseidonInputSize++;
+  }
+  assert(poseidonInputSize <= 16);
+  signal pubkeyHasherInput[poseidonInputSize];
+  for (var i = 0; i < poseidonInputSize; i++) {
+      if (i == poseidonInputSize - 1 && poseidonInputSize % 2 == 1) {
+          pubkeyHasherInput[i] <== pubKey[i * 2];
+      } else {
+          pubkeyHasherInput[i] <== pubKey[i * 2] + (1 << n) * pubKey[i * 2 + 1];
+      }
+  }
+  component pubkeyHasher = Poseidon(poseidonInputSize);
+  pubkeyHasher.inputs <== pubkeyHasherInput;
+  pubkeyHash <== pubkeyHasher.out;
 }

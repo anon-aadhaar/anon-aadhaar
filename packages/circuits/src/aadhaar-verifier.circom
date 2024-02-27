@@ -18,7 +18,7 @@ include "./helpers/extractor.circom";
 /// @input signature - RSA signature
 /// @input pubKey - RSA public key (of the government)
 /// @input appId - Application ID which will be included in identityNullifier
-/// @input signalHash - An external signal to make it part of the proof
+/// @input public signalHash - An external signal to make it part of the proof
 /// @output identityNullifier - PosidonHash(name, dob, gender)
 /// @output userNullifier - PosidonHash(photo)
 /// @output timestamp - Timestamp of when the data was signed - extracted and converted to Unix timestamp
@@ -45,6 +45,7 @@ template AadhaarVerifier(n, k, maxDataLength) {
     signatureVerifier.qrDataPaddedLength <== qrDataPaddedLength;
     signatureVerifier.pubKey <== pubKey;
     signatureVerifier.signature <== signature;
+    pubkeyHash <== signatureVerifier.pubkeyHash;
     
 
     // Extract data from QR and compute nullifiers
@@ -63,27 +64,7 @@ template AadhaarVerifier(n, k, maxDataLength) {
     identityNullifier <== IdentityNullifier()(appId, last4Digits, name, dateOfBirth, gender);
     userNullifier <== UserNullifier()(photo);
 
-    // Calculate Poseidon hash of the public key. 609 constraints
-    // Poseidon component can take only 16 inputs, so we convert k chunks to k/2 chunks.
-    // We are assuming k is  > 16 and <= 32 (i.e we merge two consecutive item in array to bring down the size)
-    var poseidonInputSize = k \ 2;
-    if (k % 2 == 1) {
-        poseidonInputSize++;
-    }
-    assert(poseidonInputSize <= 16);
-    signal pubkeyHasherInput[poseidonInputSize];
-    for (var i = 0; i < poseidonInputSize; i++) {
-        if (i == poseidonInputSize - 1 && poseidonInputSize % 2 == 1) {
-            pubkeyHasherInput[i] <== pubKey[i * 2];
-        } else {
-            pubkeyHasherInput[i] <== pubKey[i * 2] + (1 << n) * pubKey[i * 2 + 1];
-        }
-    }
-    component pubkeyHasher = Poseidon(poseidonInputSize);
-    pubkeyHasher.inputs <== pubkeyHasherInput;
-    pubkeyHash <== pubkeyHasher.out;
-
-
+    
     // Dummy square to prevent singal tampering (in case when using different prover)
     signal signalHashSquare <== signalHash * signalHash;
 }
