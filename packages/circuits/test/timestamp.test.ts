@@ -85,13 +85,13 @@ describe('date-to-timestamp > rounded', function () {
     )
   })
 
-  it('should calculate timetamp rounded to hour correctly', async () => {
+  it('should calculate timestamp rounded to hour correctly', async () => {
     const now = new Date()
     const timestamp = Math.floor(now.getTime() / 1000)
     const roundedTimestamp = Math.floor(timestamp / 3600) * 3600
 
     const witness = await circuit.calculateWitness({
-      in: formatDate(now),
+      in: formatDate(now).slice(0, 10),
     })
 
     await circuit.assertOut(witness, {
