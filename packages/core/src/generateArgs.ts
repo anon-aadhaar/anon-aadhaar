@@ -9,6 +9,7 @@ import {
   Uint8ArrayToCharArray,
 } from '@zk-email/helpers/dist/binaryFormat'
 import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
+import { BytesLike, Hexable } from '@ethersproject/bytes'
 import { Buffer } from 'buffer'
 import { pki } from 'node-forge'
 import { ArgumentTypeName } from '@pcd/pcd-types'
@@ -22,7 +23,7 @@ import { hash } from './hash'
 export const generateArgs = async (
   qrData: string,
   certificateFile: string,
-  signal?: string
+  signal?: BytesLike | Hexable | number | bigint
 ): Promise<AnonAadhaarArgs> => {
   const bigIntData = BigInt(qrData)
 
