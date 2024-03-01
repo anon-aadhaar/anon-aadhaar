@@ -51,7 +51,7 @@ const main = () => {
     '0x' + bufferToHex(Buffer.from(signatureBytes)).toString(),
   )
 
-  const delimiterIndices = []
+  const delimiterIndices: number[] = []
   for (let i = 0; i < paddedMsg.length; i++) {
     if (paddedMsg[i] === 255) {
       delimiterIndices.push(i)
