@@ -1,9 +1,43 @@
-pragma circom 2.1.5;
+pragma circom 2.1.6;
 
+include "circomlib/circuits/bitify.circom";
 include "circomlib/circuits/sha256/constants.circom";
 include "circomlib/circuits/sha256/sha256compression.circom";
 include "circomlib/circuits/comparators.circom";
-include "./utils.circom";
+include "../../utils/array.circom";
+
+function log2_ceil(a) {
+    var n = a+1;
+    var r = 0;
+    while (n>0) {
+        r++;
+        n \= 2;
+    }
+    return r;
+}
+
+template Sha256Bytes(max_num_bytes) {
+    signal input in_padded[max_num_bytes];
+    signal input in_len_padded_bytes;
+    signal output out[256];
+
+    var num_bits = max_num_bytes * 8;
+    component sha = Sha256General(num_bits);
+
+    component bytes[max_num_bytes];
+    for (var i = 0; i < max_num_bytes; i++) {
+        bytes[i] = Num2Bits(8);
+        bytes[i].in <== in_padded[i];
+        for (var j = 0; j < 8; j++) {
+            sha.paddedIn[i*8+j] <== bytes[i].out[7-j];
+        }
+    }
+    sha.in_len_padded_bits <== in_len_padded_bytes * 8;
+
+    for (var i = 0; i < 256; i++) {
+        out[i] <== sha.out[i];
+    }
+}
 
 // A modified version of the SHA256 circuit that allows specified length messages up to a max to all work via array indexing on the SHA256 compression circuit.
 template Sha256General(maxBitsPadded) {
@@ -109,7 +143,7 @@ template Sha256General(maxBitsPadded) {
     // Select the correct compression output for the given length, instead of just the last one.
     component arraySelectors[256];
     for (k=0; k<256; k++) {
-        arraySelectors[k] = QuinSelector(maxBlocks, maxBlocksBits);
+        arraySelectors[k] = ArraySelector(maxBlocks, maxBlocksBits);
         for (j=0; j<maxBlocks; j++) {
             arraySelectors[k].in[j] <== sha256compression[j].out[k];
         }

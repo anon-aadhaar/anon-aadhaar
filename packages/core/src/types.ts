@@ -9,6 +9,12 @@ export type BigNumberish = string | bigint
 
 export const AnonAadhaarTypeName = 'anon-aadhaar'
 
+export enum ArtifactsOrigin {
+  'server',
+  'local',
+  'chunked',
+}
+
 /**
  * @dev all the arguments needed to initalize the Core package.
  * You can find these URLs in ./constants.ts
@@ -17,7 +23,7 @@ export interface InitArgs {
   wasmURL: string
   zkeyURL: string
   vkeyURL: string
-  isWebEnv: boolean
+  artifactsOrigin: ArtifactsOrigin
 }
 
 /**

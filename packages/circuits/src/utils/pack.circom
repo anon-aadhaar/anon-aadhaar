@@ -2,7 +2,58 @@ pragma circom 2.1.6;
 
 include "circomlib/circuits/comparators.circom";
 
-template DigitsToNumber(length) {
+function maxBytesInField() {
+    return 31;
+}
+
+function computeIntSize(byteSize) {
+    var packSize = maxBytesInField();
+    var remain = byteSize % packSize;
+    var numChunks = (byteSize - remain) / packSize;
+    if(remain>0) {
+        numChunks += 1;
+    }
+    return numChunks;
+}
+
+
+/// @title BytesToInts
+/// @notice Converts a byte array to an array of integers where each byte represent a ASCII character
+/// @dev This is based on Bytes2Ints component from zkemail/email-wallet
+/// @param byteSize The size of the input byte array
+/// @input bytes The input byte array
+/// @output ints The output integer array
+template BytesToInts(byteSize) {
+    var numChunks = computeIntSize(byteSize);
+    signal input bytes[byteSize];
+    signal output ints[numChunks];
+
+    var packBytes = maxBytesInField();
+    signal intsSums[numChunks][packBytes];
+    for(var i=0; i<numChunks; i++) {
+        for(var j=0; j<packBytes; j++) {
+            var idx = packBytes*i+j;
+            if(idx>=byteSize) {
+                intsSums[i][j] <== intsSums[i][j-1];
+            } else if (j==0){
+                intsSums[i][j] <== bytes[idx];
+            } else {
+                intsSums[i][j] <== intsSums[i][j-1] + (1<<(8*j)) * bytes[idx];
+            }
+        }
+    }
+    for(var i=0; i<numChunks; i++) {
+        ints[i] <== intsSums[i][packBytes-1];
+    }
+}
+
+
+/// @title DigitBytesToNumber
+/// @notice Converts a byte array to an integer where each byte represent a ASCII digit
+/// @param length The size of the input byte array
+/// @input in The input byte array
+/// @output out The output integer
+template DigitBytesToNumber(length) {
     signal input in[length];
     signal output out;
 
@@ -10,32 +61,52 @@ template DigitsToNumber(length) {
     sum[0] <== 0;
 
     for (var i = 1; i <= length; i++) {
+        assert(in[i - 1] >= 48);    // Ensure input is a digit
+        assert(in[i - 1] <= 57);
+
         sum[i] <== sum[i - 1] * 10 + (in[i - 1] - 48);
     }
 
     out <== sum[length];
 }
 
-// Converts a date string of format YYYYMMDDHHMMSS to a unix time
-// Assumes the input time is in UTC
-// includeHours - 1 to include hours, 0 to round down to day
-// includeMinutes - 1 to include minutes, 0 to round down to hour
-// includeSeconds - 1 to include seconds, 0 to round down to minute
-template DateStringToTimestamp(maxYears, includeHours, includeMinutes, includeSeconds) {
-    signal input in[14];
+
+/// @title DigitBytesToTimestamp
+/// @notice Converts a date string of format YYYYMMDDHHMMSS to a unix time
+/// @notice Each byte is expected to be a ASCII character representing a digit
+/// @notice Assumes the input time is in UTC
+/// @param maxYears The maximum year that can be represented
+/// @param includeHours 1 to include hours, 0 to round down to day
+/// @param includeMinutes 1 to include minutes, 0 to round down to hour
+/// @param includeSeconds 1 to include seconds, 0 to round down to minute
+/// @input in The input byte array
+/// @output out The output integer representing the unix time
+template DigitBytesToTimestamp(maxYears, includeHours, includeMinutes, includeSeconds) {
+    var inputLength = 8;
+    if (includeHours == 1) {
+        inputLength += 2;
+    }
+    if (includeMinutes == 1) {
+        inputLength += 2;
+    }
+    if (includeSeconds == 1) {
+        inputLength += 2;
+    }
+
+    signal input in[inputLength];
     signal output out;
 
     signal daysTillPreviousMonth[12] <== [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
 
-    component yearNum = DigitsToNumber(4);
+    component yearNum = DigitBytesToNumber(4);
     yearNum.in <== [in[0], in[1], in[2], in[3]];
     signal year <== yearNum.out;
 
-    component monthNum = DigitsToNumber(2);
+    component monthNum = DigitBytesToNumber(2);
     monthNum.in <== [in[4], in[5]];
     signal month <== monthNum.out;
 
-    component dayNum = DigitsToNumber(2);
+    component dayNum = DigitBytesToNumber(2);
     dayNum.in <== [in[6], in[7]];
     signal day <== dayNum.out;
 
@@ -89,7 +160,7 @@ template DateStringToTimestamp(maxYears, includeHours, includeMinutes, includeSe
     secondsPassed[0] <== totalDaysPassed[arrLength -1] * 86400;
 
     if (includeHours == 1) {
-        component hoursNum = DigitsToNumber(2);
+        component hoursNum = DigitBytesToNumber(2);
         hoursNum.in <== [in[8], in[9]];
         secondsPassed[1] <== hoursNum.out * 3600;
     } else {
@@ -97,7 +168,7 @@ template DateStringToTimestamp(maxYears, includeHours, includeMinutes, includeSe
     }
 
     if (includeMinutes == 1) {
-        component minutesNum = DigitsToNumber(2);
+        component minutesNum = DigitBytesToNumber(2);
         minutesNum.in <== [in[10], in[11]];
         secondsPassed[2] <== minutesNum.out * 60;
     } else {
@@ -105,7 +176,7 @@ template DateStringToTimestamp(maxYears, includeHours, includeMinutes, includeSe
     }
 
     if (includeSeconds == 1) {
-        component secondsNum = DigitsToNumber(2);
+        component secondsNum = DigitBytesToNumber(2);
         secondsNum.in <== [in[12], in[13]];
         secondsPassed[3] <== secondsNum.out;
     } else {
@@ -114,4 +185,3 @@ template DateStringToTimestamp(maxYears, includeHours, includeMinutes, includeSe
 
     out <== secondsPassed[0] + secondsPassed[1] + secondsPassed[2] + secondsPassed[3];
 }
-

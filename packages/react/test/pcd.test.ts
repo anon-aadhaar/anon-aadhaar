@@ -1,18 +1,24 @@
 import { describe } from 'mocha'
-import { InitArgs, artifactUrls, init, verify } from '@anon-aadhaar/core'
+import {
+  ArtifactsOrigin,
+  InitArgs,
+  artifactUrls,
+  init,
+  verify,
+} from '@anon-aadhaar/core'
 import { assert } from 'chai'
 import { processAadhaarArgs, proveAndSerialize } from '../src/prove'
 import { testQRData } from '../../circuits/assets/dataInput.json'
 
-describe('PCD tests', function () {
+describe('AnonAadhaar prover react tests', function () {
   this.timeout(0)
 
-  it('PCD flow web prover', async function () {
+  it('Generate and verify a proof from react', async function () {
     const anonAadhaarInitArgs: InitArgs = {
       wasmURL: artifactUrls.test.wasm,
       zkeyURL: artifactUrls.test.zkey,
       vkeyURL: artifactUrls.test.vk,
-      isWebEnv: true,
+      artifactsOrigin: ArtifactsOrigin.server,
     }
 
     await init(anonAadhaarInitArgs)
