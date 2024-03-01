@@ -103,24 +103,25 @@ export function decompressByteArray(byteArray: Uint8Array) {
   return decompressedArray
 }
 
-export const enum SELECTOR_ID {
-  null = 0,
-  emailOrPhone,
-  referenceId,
-  name,
-  dob,
-  gender,
-  careOf,
-  district,
-  landmark,
-  house,
-  location,
-  pinCode,
-  postOffice,
-  state,
-  street,
-  subDistrict,
-  VTC,
+export enum IdFields {
+  'Version',
+  'Email_mobile_present_bit_indicator_value',
+  'ReferenceId',
+  'Name',
+  'DOB',
+  'Gender',
+  'CareOf',
+  'Distrcit',
+  'Landmark',
+  'House',
+  'Location',
+  'PinCode',
+  'PostOffice',
+  'State',
+  'Street',
+  'SubDisctrict',
+  'VTC',
+  'PhoneNumberLast4',
 }
 
 export function readData(data: number[], index: number) {
