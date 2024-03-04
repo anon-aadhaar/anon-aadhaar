@@ -22,6 +22,21 @@ export function timestampToUTCUnix(rawData: Uint8Array) {
   return Math.floor(dateObj.getTime() / 1000)
 }
 
+export function dateToUnixTimestamp(dateStr: string): number {
+  // Parse the date string into a Date object
+  const parts = dateStr.split('-')
+  const day = parseInt(parts[0], 10)
+  const month = parseInt(parts[1], 10) - 1 // Month is 0-indexed in JavaScript Date
+  const year = parseInt(parts[2], 10)
+
+  const date = new Date(Date.UTC(year, month, day, 0, 0, 0, 0))
+
+  // Convert the Date object to a UNIX timestamp
+  const unixTimestamp = date.getTime() / 1000
+
+  return unixTimestamp + 19800
+}
+
 export function returnFullId(signedData: Uint8Array) {
   const allDataParsed: number[][] = []
   let countDelimiter = 0
@@ -48,4 +63,54 @@ export function returnFullId(signedData: Uint8Array) {
   }
 
   console.log(ID)
+}
+
+export function extractFieldByIndex(
+  data: Uint8Array,
+  index: number,
+): Uint8Array | null {
+  let start = -1
+  let end = data.length
+  let fieldIndex = -1
+
+  for (let i = 0; i < data.length; i++) {
+    if (data[i] === 255) {
+      fieldIndex++
+      if (fieldIndex === index) {
+        start = i
+      } else if (fieldIndex === index + 1) {
+        end = i
+        break
+      }
+    }
+  }
+
+  if (start !== -1 && start < end) {
+    // Include the starting delimiter in the result
+    return data.slice(start, end)
+  }
+
+  return null // Field not found
+}
+
+export function bytesToInts(
+  bytes: Uint8Array,
+  maxBytesInField: number,
+): bigint[] {
+  const numChunks = Math.ceil(bytes.length / maxBytesInField)
+  const ints: bigint[] = new Array(numChunks).fill(BigInt(0))
+
+  for (let i = 0; i < numChunks; i++) {
+    let intSum = BigInt(0)
+    for (let j = 0; j < maxBytesInField; j++) {
+      const idx = maxBytesInField * i + j
+      if (idx >= bytes.length) break // Stop if we've processed all bytes
+
+      // Shift byte into position and add to current integer sum
+      intSum += BigInt(bytes[idx]) * BigInt(256) ** BigInt(j)
+    }
+    ints[i] = intSum
+  }
+
+  return ints
 }

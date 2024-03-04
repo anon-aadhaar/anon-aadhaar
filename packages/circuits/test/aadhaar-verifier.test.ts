@@ -12,17 +12,21 @@ import {
 import {
   convertBigIntToByteArray,
   decompressByteArray,
-  extractPhoto,
   splitToWords,
   IdFields,
-  readData,
 } from '@anon-aadhaar/core'
 import fs from 'fs'
 import crypto from 'crypto'
 import assert from 'assert'
 import { buildPoseidon } from 'circomlibjs'
 import { testQRData } from '../assets/dataInput.json'
-import { timestampToUTCUnix } from './util'
+import {
+  bytesToInts,
+  dateToUnixTimestamp,
+  extractFieldByIndex,
+  returnFullId,
+  timestampToUTCUnix,
+} from './util'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config()
 
@@ -112,16 +116,14 @@ describe('Test QR Verify circuit', function () {
   })
 
   it('Compute nullifier must correct', async () => {
+    const appId = 12345678
     // load public key
     const pkData = fs.readFileSync(
       path.join(__dirname, '../assets', getCertificate(testAadhaar)),
     )
     const pk = crypto.createPublicKey(pkData)
 
-    // data on https://uidai.gov.in/en/ecosystem/authentication-devices-documents/qr-code-reader.html
-    const QRDataBigInt = BigInt(QRData)
-
-    const QRDataBytes = convertBigIntToByteArray(QRDataBigInt)
+    const QRDataBytes = convertBigIntToByteArray(BigInt(QRData))
     const QRDataDecode = decompressByteArray(QRDataBytes)
 
     const signatureBytes = QRDataDecode.slice(
@@ -131,7 +133,33 @@ describe('Test QR Verify circuit', function () {
 
     const signedData = QRDataDecode.slice(0, QRDataDecode.length - 256)
 
+    returnFullId(signedData)
+
     const [paddedMsg, messageLen] = sha256Pad(signedData, 512 * 3)
+
+    const delimiterIndices = []
+    for (let i = 0; i < paddedMsg.length; i++) {
+      if (paddedMsg[i] === 255) {
+        delimiterIndices.push(i)
+      }
+      if (delimiterIndices.length === 18) {
+        break
+      }
+    }
+
+    const last4Digits = extractFieldByIndex(
+      paddedMsg,
+      IdFields['ReferenceId'] - 1,
+    )?.slice(1, 5)
+    if (last4Digits === undefined) throw Error('last4Digits not found')
+    const name = extractFieldByIndex(paddedMsg, IdFields['Name'] - 1)
+    if (name === null) throw Error('Name not found')
+    const nameAsNumber = bytesToInts(name.slice(1), 31)
+    const dob = extractFieldByIndex(paddedMsg, IdFields['DOB'] - 1)
+    if (dob === null) throw Error('DOB not found')
+    const dobStr = String.fromCharCode(...dob.slice(1))
+    const gender = extractFieldByIndex(paddedMsg, IdFields['Gender'] - 1)
+    if (gender === null) throw Error('Gender not found')
 
     const pubKey = BigInt(
       '0x' +
@@ -145,49 +173,43 @@ describe('Test QR Verify circuit', function () {
     )
 
     const witness = await circuit.calculateWitness({
-      aadhaarData: Uint8ArrayToCharArray(paddedMsg),
-      aadhaarDataLength: messageLen,
+      qrDataPadded: Uint8ArrayToCharArray(paddedMsg),
+      qrDataPaddedLength: messageLen,
+      nonPaddedDataLength: signedData.length,
+      delimiterIndices: delimiterIndices,
       signature: splitToWords(signature, BigInt(64), BigInt(32)),
       pubKey: splitToWords(pubKey, BigInt(64), BigInt(32)),
-      signalHash: 4,
+      appId: appId,
+      signalHash: 0,
     })
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const poseidon: any = await buildPoseidon()
 
-    const { photo } = extractPhoto(Array.from(signedData))
+    // const { photo } = extractPhoto(Array.from(signedData))
 
-    let basicData: number[] = []
-    const offsetId = testAadhaar ? -1 : 0
-    for (const id of [
-      IdFields.name + offsetId,
-      IdFields.dob + offsetId,
-      IdFields.gender + offsetId,
-      IdFields.pinCode + offsetId,
-    ].sort((x, y) => x - y)) {
-      basicData = basicData.concat([
-        255,
-        ...readData(Array.from(signedData), id),
-      ])
-    }
+    const identityNullifier = poseidon([
+      appId,
+      String.fromCharCode(...last4Digits),
+      nameAsNumber,
+      dateToUnixTimestamp(dobStr),
+      gender[1],
+    ])
 
-    let basicHash = 0
-    for (let i = 0; i < basicData.length; ++i) {
-      basicHash = poseidon([basicHash, BigInt(basicData[i])])
-    }
+    // basicHash = poseidon([basicHash, BigInt(basicData[i])])
 
-    let photoHash = 0
-    for (let i = 0; i < photo.length; ++i) {
-      photoHash = poseidon([photoHash, BigInt(photo[i])])
-    }
+    // let photoHash = 0
+    // for (let i = 0; i < photo.length; ++i) {
+    //   photoHash = poseidon([photoHash, BigInt(photo[i])])
+    // }
 
-    const offset = testAadhaar ? -3 : 0
-    const four_digit = paddedMsg.slice(5 + offset, 9 + offset)
-    const userNullifier = poseidon([...four_digit, photoHash])
-    const identityNullifier = poseidon([...four_digit, basicHash])
-
+    // const offset = testAadhaar ? -3 : 0
+    // const four_digit = paddedMsg.slice(5 + offset, 9 + offset)
+    // const userNullifier = poseidon([...four_digit, photoHash])
+    // const identityNullifier = poseidon([...four_digit, basicHash])
     assert(witness[1] == BigInt(poseidon.F.toString(identityNullifier)))
-    assert(witness[2] == BigInt(poseidon.F.toString(userNullifier)))
+
+    // assert(witness[2] == BigInt(poseidon.F.toString(userNullifier)))
   })
 
   it('should output timestamp of when data is generated', async () => {

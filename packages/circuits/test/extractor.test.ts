@@ -7,10 +7,10 @@ const circom_tester = require('circom_tester/wasm/tester')
 import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
 import { Uint8ArrayToCharArray } from '@zk-email/helpers/dist/binaryFormat'
 
-import { buildPoseidon } from 'circomlibjs'
+// import { buildPoseidon } from 'circomlibjs'
 import pako from 'pako'
 
-import { extractPhoto } from '@anon-aadhaar/core'
+// import { extractPhoto } from '@anon-aadhaar/core'
 import assert from 'assert'
 import { testQRData as QRData } from '../assets/dataInput.json'
 
@@ -56,7 +56,7 @@ describe('Extractor testcases', function () {
   this.timeout(0)
 
   let circuit: any
-  let poseidon: any
+  // let poseidon: any
 
   this.beforeAll(async () => {
     circuit = await circom_tester(
@@ -66,7 +66,7 @@ describe('Extractor testcases', function () {
         include: path.join(__dirname, '../node_modules'),
       },
     )
-    poseidon = await buildPoseidon()
+    // poseidon = await buildPoseidon()
   })
 
   it('Should extract data', async () => {
