@@ -17,7 +17,6 @@ import {
   IdFields,
   readData,
 } from '@anon-aadhaar/core'
-import { genData } from '../../core/test/utils'
 import fs from 'fs'
 import crypto from 'crypto'
 import assert from 'assert'
@@ -194,11 +193,10 @@ describe('Test QR Verify circuit', function () {
   it('should output timestamp of when data is generated', async () => {
     // load public key
     const pkData = fs.readFileSync(
-      path.join(__dirname, '../assets', getCertificate(testAadhaar)),
+      path.join(__dirname, '../assets', 'testPublicKey.pem'),
     )
     const pk = crypto.createPublicKey(pkData)
 
-    // data on https://uidai.gov.in/en/ecosystem/authentication-devices-documents/qr-code-reader.html
     const qrDataBytes = convertBigIntToByteArray(BigInt(QRData))
     const decodedData = decompressByteArray(qrDataBytes)
 
@@ -221,43 +219,89 @@ describe('Test QR Verify circuit', function () {
       '0x' + bufferToHex(Buffer.from(signatureBytes)).toString(),
     )
 
+    const delimiterIndices = []
+    for (let i = 0; i < paddedMsg.length; i++) {
+      if (paddedMsg[i] === 255) {
+        delimiterIndices.push(i)
+      }
+      if (delimiterIndices.length === 18) {
+        break
+      }
+    }
+
     const witness = await circuit.calculateWitness({
-      aadhaarData: Uint8ArrayToCharArray(paddedMsg),
-      aadhaarDataLength: messageLen,
+      qrDataPadded: Uint8ArrayToCharArray(paddedMsg),
+      qrDataPaddedLength: messageLen,
+      nonPaddedDataLength: signedData.length,
+      delimiterIndices: delimiterIndices,
       signature: splitToWords(signature, BigInt(64), BigInt(32)),
       pubKey: splitToWords(pubKey, BigInt(64), BigInt(32)),
+      appId: 12345678,
       signalHash: 0,
     })
 
     // This is the time in the QR data above is 20190308114407437.
     // 2019-03-08 11:44:07.437 rounded down to nearest hour is 2019-03-08 11:00:00.000
     // Converting this IST to UTC gives 2019-03-08T05:30:00.000Z
-    const expectedTimestamp = timestampToUTCUnix(decodedData, testAadhaar)
+    const expectedTimestamp = timestampToUTCUnix(decodedData)
 
     assert(witness[3] === BigInt(expectedTimestamp))
   })
 
   it('should output hash of pubkey', async () => {
-    const signedData = 'HelloWor-20240116140412'
+    // load public key
+    const pkData = fs.readFileSync(
+      path.join(__dirname, '../assets', 'testPublicKey.pem'),
+    )
+    const pk = crypto.createPublicKey(pkData)
 
-    const data = await genData(signedData, 'SHA-256')
+    const QRDataBytes = convertBigIntToByteArray(BigInt(QRData))
+    const QRDataDecode = decompressByteArray(QRDataBytes)
 
-    const [paddedMsg, messageLen] = sha256Pad(
-      Buffer.from(signedData, 'ascii'),
-      512 * 3,
+    const signatureBytes = QRDataDecode.slice(
+      QRDataDecode.length - 256,
+      QRDataDecode.length,
     )
 
+    const signedData = QRDataDecode.slice(0, QRDataDecode.length - 256)
+
+    const [paddedMsg, messageLen] = sha256Pad(signedData, 512 * 3)
+
+    const pubKey = BigInt(
+      '0x' +
+        bufferToHex(
+          Buffer.from(pk.export({ format: 'jwk' }).n as string, 'base64url'),
+        ),
+    )
+
+    const signature = BigInt(
+      '0x' + bufferToHex(Buffer.from(signatureBytes)).toString(),
+    )
+
+    const delimiterIndices = []
+    for (let i = 0; i < paddedMsg.length; i++) {
+      if (paddedMsg[i] === 255) {
+        delimiterIndices.push(i)
+      }
+      if (delimiterIndices.length === 18) {
+        break
+      }
+    }
+
     const witness = await circuit.calculateWitness({
-      aadhaarData: Uint8ArrayToCharArray(paddedMsg),
-      aadhaarDataLength: messageLen,
-      signature: splitToWords(data[1], BigInt(64), BigInt(32)),
-      pubKey: splitToWords(data[2], BigInt(64), BigInt(32)),
+      qrDataPadded: Uint8ArrayToCharArray(paddedMsg),
+      qrDataPaddedLength: messageLen,
+      nonPaddedDataLength: signedData.length,
+      delimiterIndices: delimiterIndices,
+      signature: splitToWords(signature, BigInt(64), BigInt(32)),
+      pubKey: splitToWords(pubKey, BigInt(64), BigInt(32)),
+      appId: 12345678,
       signalHash: 0,
     })
 
     // Calculate the Poseidon hash with pubkey chunked to 9*242 like in circuit
     const poseidon = await buildPoseidon()
-    const pubkeyChunked = bigIntToChunkedBytes(data[2], 128, 16)
+    const pubkeyChunked = bigIntToChunkedBytes(pubKey, 128, 16)
     const hash = poseidon(pubkeyChunked)
 
     assert(witness[4] === BigInt(poseidon.F.toObject(hash)))

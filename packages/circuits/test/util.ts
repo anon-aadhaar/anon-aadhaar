@@ -1,12 +1,10 @@
-export function timestampToUTCUnix(
-  rawData: Uint8Array,
-  useTestAadhaar: boolean,
-) {
-  const offset = useTestAadhaar ? 6 : 9
+import { IdFields } from '@anon-aadhaar/core'
+
+export function timestampToUTCUnix(rawData: Uint8Array) {
   const extractedArray: Uint8Array = new Uint8Array(10)
 
   for (let i = 0; i < 10; i++) {
-    extractedArray[i] = rawData[i + offset]
+    extractedArray[i] = rawData[i + 9]
   }
 
   const timestampString = Buffer.from(extractedArray).toString()
@@ -22,4 +20,32 @@ export function timestampToUTCUnix(
   dateObj.setUTCMinutes(dateObj.getUTCMinutes() - 30)
 
   return Math.floor(dateObj.getTime() / 1000)
+}
+
+export function returnFullId(signedData: Uint8Array) {
+  const allDataParsed: number[][] = []
+  let countDelimiter = 0
+  let temp: number[] = []
+  for (let i = 0; i < signedData.length; i++) {
+    if (countDelimiter < 18) {
+      if (signedData[i] !== 255) {
+        temp.push(signedData[i])
+      } else {
+        countDelimiter += 1
+        allDataParsed.push(temp)
+        temp = []
+      }
+    }
+  }
+
+  const ID: { [key: string]: string } = {}
+  for (let i = 0; i < allDataParsed.length; i++) {
+    let result = ''
+    for (let j = 0; j < allDataParsed[i].length; j++) {
+      result += String.fromCharCode(allDataParsed[i][j])
+    }
+    ID[IdFields[i]] = result
+  }
+
+  console.log(ID)
 }
