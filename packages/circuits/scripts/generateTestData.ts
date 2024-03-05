@@ -34,7 +34,7 @@ const addPrefixAnd4Digits = (signedData: Uint8Array) => {
   }
 
   const versionSpecifier = new Uint8Array([86, 50, 255]) // 'V2' in ASCII followed by 255
-  const number1234 = new Uint8Array([49, 50, 51, 52]) // '1234' in ASCII
+  const number1234 = new Uint8Array([49, 50, 51, 52, 255]) // '1234' in ASCII
   const beforeInsertion = new Uint8Array(signedData.slice(0, endIndex))
   const afterInsertion = new Uint8Array(signedData.slice(endIndex))
 

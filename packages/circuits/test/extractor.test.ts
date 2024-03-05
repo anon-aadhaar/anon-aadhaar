@@ -10,7 +10,7 @@ import { Uint8ArrayToCharArray } from '@zk-email/helpers/dist/binaryFormat'
 // import { buildPoseidon } from 'circomlibjs'
 import pako from 'pako'
 
-// import { extractPhoto } from '@anon-aadhaar/core'
+import { extractPhoto } from '@anon-aadhaar/core'
 import assert from 'assert'
 import { testQRData as QRData } from '../assets/dataInput.json'
 
@@ -70,9 +70,7 @@ describe('Extractor testcases', function () {
   })
 
   it('Should extract data', async () => {
-    const QRDataBigInt = BigInt(QRData)
-
-    const QRDataBytes = convertBigIntToByteArray(QRDataBigInt)
+    const QRDataBytes = convertBigIntToByteArray(BigInt(QRData))
     const QRDataDecode = decompressByteArray(QRDataBytes)
 
     const signedData = QRDataDecode.slice(0, QRDataDecode.length - 256)
@@ -116,6 +114,10 @@ describe('Extractor testcases', function () {
     // Gender
     assert(bigIntToString([witness[5]]) === 'M')
 
-    // const photoWitness = bigIntToByteArray(witness.slice(6, 6 + 36));
+    const photoWitness = bigIntToByteArray(witness.slice(6, 6 + 35))
+    const photo = extractPhoto(Array.from(signedData))
+
+    // Photo
+    assert(photoWitness === photo.photo)
   })
 })

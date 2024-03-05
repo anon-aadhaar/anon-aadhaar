@@ -104,7 +104,6 @@ export function decompressByteArray(byteArray: Uint8Array) {
 }
 
 export enum IdFields {
-  'Version',
   'Email_mobile_present_bit_indicator_value',
   'ReferenceId',
   'Name',
@@ -140,7 +139,7 @@ export function readData(data: number[], index: number) {
 
 export function extractPhoto(qrData: number[]) {
   let begin = 0
-  for (let i = 0; i < 16; ++i) {
+  for (let i = 0; i < 18; ++i) {
     begin = qrData.indexOf(255, begin + 1)
   }
 
@@ -148,7 +147,7 @@ export function extractPhoto(qrData: number[]) {
   return {
     begin,
     end,
-    photo: qrData.slice(begin, end + 1),
+    photo: qrData.slice(begin + 1, end),
   }
 }
 

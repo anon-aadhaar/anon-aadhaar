@@ -62,13 +62,13 @@ export function returnFullId(signedData: Uint8Array) {
     ID[IdFields[i]] = result
   }
 
-  console.log(ID)
+  return ID
 }
 
 export function extractFieldByIndex(
   data: Uint8Array,
   index: number,
-): Uint8Array | null {
+): Uint8Array {
   let start = -1
   let end = data.length
   let fieldIndex = -1
@@ -90,7 +90,7 @@ export function extractFieldByIndex(
     return data.slice(start, end)
   }
 
-  return null // Field not found
+  return new Uint8Array() // Field not found
 }
 
 export function bytesToInts(
