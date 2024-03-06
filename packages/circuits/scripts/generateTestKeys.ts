@@ -111,9 +111,9 @@ const pem = {
   certificate: forge.pki.certificateToPem(cert),
 }
 
-// Optionally save to files
+// Save to files
 fs.writeFileSync('../assets/testPrivateKey.pem', pem.privateKey)
 fs.writeFileSync('../assets/testPublicKey.pem', pem.publicKey)
 fs.writeFileSync('../assets/testCertificate.pem', pem.certificate)
 
-console.log('Generated and saved a self-signed certificate with node-forge.')
+console.log('Generated and saved a pair of RSA signing keys.')

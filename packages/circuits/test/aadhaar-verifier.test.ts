@@ -115,7 +115,7 @@ describe('Test QR Verify circuit', function () {
     })
   })
 
-  it.only('Compute nullifier must correct', async () => {
+  it('Compute nullifier must correct', async () => {
     const appId = 12345678
     // load public key
     const pkData = fs.readFileSync(
