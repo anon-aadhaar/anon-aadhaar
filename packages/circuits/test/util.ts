@@ -37,6 +37,7 @@ export function dateToUnixTimestamp(dateStr: string): number {
   return unixTimestamp + 19800
 }
 
+// Will return an object with all the ID fields in string format
 export function returnFullId(signedData: Uint8Array) {
   const allDataParsed: number[][] = []
   let countDelimiter = 0
@@ -59,7 +60,7 @@ export function returnFullId(signedData: Uint8Array) {
     for (let j = 0; j < allDataParsed[i].length; j++) {
       result += String.fromCharCode(allDataParsed[i][j])
     }
-    ID[IdFields[i]] = result
+    ID[IdFields[i - 1]] = result
   }
 
   return ID

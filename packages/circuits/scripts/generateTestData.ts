@@ -2,9 +2,11 @@ import {
   convertBigIntToByteArray,
   decompressByteArray,
 } from '@anon-aadhaar/core'
+import { returnFullId } from '../test/util'
 import pako from 'pako'
 import crypto from 'crypto'
 import fs from 'fs'
+import path from 'path'
 
 // This is the official test data issued by the UIDAI
 // In this script we'll change the signed data to emulate the specs of the Aadhaar QR V2
@@ -33,10 +35,24 @@ const addPrefixAnd4Digits = (signedData: Uint8Array) => {
     }
   }
 
+  // Set new timestamp to the time of the signature
+  const newDateString = returnNewDateString()
+  const newTimestamp = new TextEncoder().encode(newDateString)
+  const signedDataWithNewTimestamp = replaceBytesBetween(
+    signedData,
+    newTimestamp,
+    6,
+    5 + newTimestamp.length,
+  )
+
   const versionSpecifier = new Uint8Array([86, 50, 255]) // 'V2' in ASCII followed by 255
-  const number1234 = new Uint8Array([49, 50, 51, 52, 255]) // '1234' in ASCII
-  const beforeInsertion = new Uint8Array(signedData.slice(0, endIndex))
-  const afterInsertion = new Uint8Array(signedData.slice(endIndex))
+  const number1234 = new Uint8Array([49, 50, 51, 52, 255]) // '1234' in ASCII followed by 255
+  const beforeInsertion = new Uint8Array(
+    signedDataWithNewTimestamp.slice(0, endIndex),
+  )
+  const afterInsertion = new Uint8Array(
+    signedDataWithNewTimestamp.slice(endIndex),
+  )
 
   // Combine all parts together
   const newData = new Uint8Array(
@@ -61,6 +77,36 @@ export function compressByteArray(byteArray: Uint8Array): Uint8Array {
   return new Uint8Array(compressedArray)
 }
 
+export function replaceBytesBetween(
+  arr: Uint8Array,
+  replaceWith: Uint8Array,
+  start: number,
+  end: number,
+) {
+  if (end - start === replaceWith.length - 1) {
+    for (let i = start; i <= end; i++) {
+      arr[i] = replaceWith[i - start]
+    }
+  } else {
+    console.error('Replacement range and replaceWith length do not match.')
+  }
+  return arr
+}
+
+// Return timestamp in format “DDMMYYYYHHMMSSsss” (including milliseconds)
+export function returnNewDateString(): string {
+  const newDate = new Date()
+  return (
+    newDate.getUTCFullYear().toString() +
+    newDate.getUTCMonth().toString().padStart(2, '0') +
+    newDate.getUTCDay().toString().padStart(2, '0') +
+    newDate.getUTCHours().toString().padStart(2, '0') +
+    newDate.getUTCMinutes().toString().padStart(2, '0') +
+    newDate.getUTCSeconds().toString().padStart(2, '0') +
+    newDate.getUTCMilliseconds().toString().padStart(3, '0')
+  )
+}
+
 export function convertByteArrayToBigInt(byteArray: Uint8Array): bigint {
   let result = BigInt(0)
   for (let i = 0; i < byteArray.length; i++) {
@@ -75,10 +121,14 @@ const rawDataToCompressedQR = (data: Uint8Array) => {
   return compressedBigInt
 }
 
+// Will sign the data with the keys generated for test
 const signNewTestData = (newSignedData: Uint8Array) => {
-  const privateKey = fs.readFileSync('../assets/testPrivateKey.pem', {
-    encoding: 'utf8',
-  })
+  const privateKey = fs.readFileSync(
+    path.join(__dirname, '..', 'assets', 'testPrivateKey.pem'),
+    {
+      encoding: 'utf8',
+    },
+  )
 
   const bufferData = Buffer.from(newSignedData)
 
@@ -106,11 +156,20 @@ const main = (data: string) => {
   // Signing the newly generated testData
   const signature = signNewTestData(signedData)
 
+  // Reconstructing the whole QR data
   const tempData = Buffer.concat([signedData, signature])
 
   // Compressing the data to have it in the same format as the QR code
   const newStringData = rawDataToCompressedQR(tempData)
-  console.log(newStringData.toString())
+  const newQrData = {
+    testQRData: newStringData.toString(),
+    ...returnFullId(signedData),
+  }
+
+  fs.writeFileSync(
+    path.join(__dirname, '..', 'assets', 'newTestData.json'),
+    JSON.stringify(newQrData, null, 2),
+  )
 }
 
 main(data)
