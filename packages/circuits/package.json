@@ -29,8 +29,10 @@
     "circom_tester": "^0.0.20",
     "circomlib": "^2.0.5",
     "circomlibjs": "^0.1.1",
+    "jpeg2000": "^1.1.1",
     "mocha": "^10.2.0",
     "prettier": "^3.1.1",
+    "sharp": "^0.33.2",
     "snarkjs": "^0.7.0"
   },
   "devDependencies": {

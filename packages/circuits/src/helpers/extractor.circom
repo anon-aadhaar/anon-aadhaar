@@ -261,6 +261,6 @@ template QRDataExtractor(maxDataLength) {
     component photoExtractor = PhotoExtractor(maxDataLength);
     photoExtractor.nDelimitedData <== nDelimitedData;
     photoExtractor.startDelimiterIndex <== delimiterIndices[photoPosition() - 1];
-    photoExtractor.endIndex <== nonPaddedDataLength - 1;
+    photoExtractor.endIndex <== nonPaddedDataLength - 65;
     photo <== photoExtractor.out;
 }

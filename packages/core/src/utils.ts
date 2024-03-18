@@ -103,24 +103,24 @@ export function decompressByteArray(byteArray: Uint8Array) {
   return decompressedArray
 }
 
-export const enum SELECTOR_ID {
-  null = 0,
-  emailOrPhone,
-  referenceId,
-  name,
-  dob,
-  gender,
-  careOf,
-  district,
-  landmark,
-  house,
-  location,
-  pinCode,
-  postOffice,
-  state,
-  street,
-  subDistrict,
-  VTC,
+export enum IdFields {
+  'Email_mobile_present_bit_indicator_value',
+  'ReferenceId',
+  'Name',
+  'DOB',
+  'Gender',
+  'CareOf',
+  'District',
+  'Landmark',
+  'House',
+  'Location',
+  'PinCode',
+  'PostOffice',
+  'State',
+  'Street',
+  'SubDistrict',
+  'VTC',
+  'PhoneNumberLast4',
 }
 
 export function readData(data: number[], index: number) {
@@ -139,15 +139,28 @@ export function readData(data: number[], index: number) {
 
 export function extractPhoto(qrData: number[]) {
   let begin = 0
-  for (let i = 0; i < 16; ++i) {
+  for (let i = 0; i < 18; ++i) {
     begin = qrData.indexOf(255, begin + 1)
   }
 
-  const end = qrData.length - 65
+  // qrData[3] being Email_mobile_present_bit_indicator_value in the Aadhaar QR data
+  if (qrData[3] < 48 || qrData[3] > 51)
+    throw Error('QR Data Email_mobile_present_bit_indicator_value not correct!')
+
+  let endIndex = 0
+  if (qrData[3] === 51) {
+    endIndex = 2 * 32 - 1
+  } else if (qrData[3] === 49 || qrData[3] === 50) {
+    endIndex = 32 - 1
+  } else if (qrData[3] === 48) {
+    endIndex = -1
+  }
+
+  const end = qrData.length - endIndex
   return {
     begin,
     end,
-    photo: qrData.slice(begin, end + 1),
+    bytes: qrData.slice(begin + 1, end),
   }
 }
 
