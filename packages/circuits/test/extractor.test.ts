@@ -10,7 +10,7 @@ import { Uint8ArrayToCharArray } from '@zk-email/helpers/dist/binaryFormat'
 // import { buildPoseidon } from 'circomlibjs'
 import pako from 'pako'
 
-// import { extractPhoto } from '@anon-aadhaar/core'
+import { extractPhoto } from '@anon-aadhaar/core'
 import assert from 'assert'
 import { testQRData as QRData } from '../assets/dataInput.json'
 
@@ -32,27 +32,49 @@ function decompressByteArray(byteArray: Uint8Array) {
   return decompressedArray
 }
 
-function bigIntToByteArray(bigIntChunks: bigint[]) {
+function bigIntsToByteArray(bigIntChunks: bigint[], bytesPerChunk = 31) {
   const bytes: number[] = []
 
-  bigIntChunks.forEach(bigInt => {
+  // Remove last chunks that are 0n
+  const cleanChunks = bigIntChunks
+    .reverse()
+    .reduce(
+      (acc: bigint[], item) =>
+        acc.length || item !== 0n ? [...acc, item] : [],
+      [],
+    )
+    .reverse()
+
+  cleanChunks.forEach((bigInt, i) => {
+    let byteCount = 0
+
     while (bigInt > 0n) {
       bytes.unshift(Number(bigInt & 0xffn))
       bigInt >>= 8n
+      byteCount++
+    }
+
+    // Except for the last chunk, each chunk should be of size bytesPerChunk
+    // This will add 0s that were removed during the conversion because they are LSB
+    if (i < cleanChunks.length - 1) {
+      if (byteCount < bytesPerChunk) {
+        for (let j = 0; j < bytesPerChunk - byteCount; j++) {
+          bytes.unshift(0)
+        }
+      }
     }
   })
 
-  return bytes
+  return bytes.reverse() // reverse to convert little endian to big endian
 }
 
-function bigIntToString(bigIntChunks: bigint[]) {
-  return bigIntToByteArray(bigIntChunks)
-    .reverse()
+function bigIntsToString(bigIntChunks: bigint[]) {
+  return bigIntsToByteArray(bigIntChunks)
     .map(byte => String.fromCharCode(byte))
     .join('')
 }
 
-describe('Extractor testcases', function () {
+describe.only('Extractor testcases', function () {
   this.timeout(0)
 
   let circuit: any
@@ -103,7 +125,7 @@ describe('Extractor testcases', function () {
     )
 
     // Name
-    assert(bigIntToString([witness[3]]) === 'Sumit Kumar')
+    assert(bigIntsToString([witness[3]]) === 'Sumit Kumar')
 
     // Date of birth
     assert(
@@ -112,12 +134,15 @@ describe('Extractor testcases', function () {
     )
 
     // Gender
-    assert(bigIntToString([witness[5]]) === 'M')
-
-    // const photoWitness = bigIntToByteArray(witness.slice(6, 6 + 35))
-    // const photo = extractPhoto(Array.from(signedData))
+    assert(bigIntsToString([witness[5]]) === 'M')
 
     // Photo
-    // assert(photoWitness === photo.bytes)
+    const photoWitness = bigIntsToByteArray(witness.slice(6, 6 + 35))
+    const photo = extractPhoto(Array.from(signedData))
+
+    assert(photoWitness.length === photo.bytes.length)
+    for (let i = 0; i < photoWitness.length; i++) {
+      assert(photoWitness[i] === photo.bytes[i])
+    }
   })
 })

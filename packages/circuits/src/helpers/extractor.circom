@@ -186,6 +186,8 @@ template PhotoExtractor(maxDataLength) {
     shiftedBytes[0] === photoPosition() * 255;
 
     // Pack byte[] to int[] where int is field element which take up to 31 bytes
+    // When packing like this the trailing 0s in each chunk would be removed as they are LSB
+    // This is ok for being used in nullifiers as the behaviour would be consistent
     component outInt = BytesToInts(photoMaxLength);
     for (var i = 0; i < photoMaxLength; i ++) {
         outInt.bytes[i] <== shiftedBytes[i + 1]; // +1 to skip the delimiter
@@ -219,7 +221,10 @@ template QRDataExtractor(maxDataLength) {
 
     // Create `nDelimitedData` - same as `data` but each delimiter is replaced with n * 255
     // where n means the nth occurance of 255
+    // This is to verify `delimiterIndices` is correctly set for each extraction
     component is255[maxDataLength];
+    component indexBeforePhoto[maxDataLength];
+    signal is255AndIndexBeforePhoto[maxDataLength];
     signal nDelimitedData[maxDataLength];
     signal n255Filter[maxDataLength + 1];
     n255Filter[0] <== 0;
@@ -228,8 +233,16 @@ template QRDataExtractor(maxDataLength) {
         is255[i].in[0] <== 255;
         is255[i].in[1] <== data[i];
 
-        n255Filter[i + 1] <== is255[i].out * 255 + n255Filter[i];
-        nDelimitedData[i] <== is255[i].out * n255Filter[i] + data[i];
+        indexBeforePhoto[i] = LessThan(12);
+        indexBeforePhoto[i].in[0] <== i;
+        indexBeforePhoto[i].in[1] <== delimiterIndices[photoPosition() - 1] + 1;
+
+        is255AndIndexBeforePhoto[i] <== is255[i].out * indexBeforePhoto[i].out;
+
+        // Each value is n * 255 where n the count of 255s before it
+        n255Filter[i + 1] <== is255AndIndexBeforePhoto[i] * 255 + n255Filter[i];
+
+        nDelimitedData[i] <== is255AndIndexBeforePhoto[i] * n255Filter[i] + data[i];
     }
 
     // Extract last 4 digits of Aadhaar number and timestamp
@@ -261,6 +274,6 @@ template QRDataExtractor(maxDataLength) {
     component photoExtractor = PhotoExtractor(maxDataLength);
     photoExtractor.nDelimitedData <== nDelimitedData;
     photoExtractor.startDelimiterIndex <== delimiterIndices[photoPosition() - 1];
-    photoExtractor.endIndex <== nonPaddedDataLength - 65;
+    photoExtractor.endIndex <== nonPaddedDataLength - 1;
     photo <== photoExtractor.out;
 }
