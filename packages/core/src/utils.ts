@@ -143,20 +143,7 @@ export function extractPhoto(qrData: number[]) {
     begin = qrData.indexOf(255, begin + 1)
   }
 
-  // qrData[3] being Email_mobile_present_bit_indicator_value in the Aadhaar QR data
-  if (qrData[3] < 48 || qrData[3] > 51)
-    throw Error('QR Data Email_mobile_present_bit_indicator_value not correct!')
-
-  let endIndex = 0
-  if (qrData[3] === 51) {
-    endIndex = 2 * 32 - 1
-  } else if (qrData[3] === 49 || qrData[3] === 50) {
-    endIndex = 32 - 1
-  } else if (qrData[3] === 48) {
-    endIndex = -1
-  }
-
-  const end = qrData.length - endIndex
+  const end = qrData.length
   return {
     begin,
     end,
