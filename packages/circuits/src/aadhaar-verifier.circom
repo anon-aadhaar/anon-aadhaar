@@ -17,10 +17,9 @@ include "./helpers/extractor.circom";
 /// @input delimiterIndices - Indices of delimiters (255) in the QR text data. 18 delimiters including photo
 /// @input signature - RSA signature
 /// @input pubKey - RSA public key (of the government)
-/// @input appId - Application ID which will be included in identityNullifier
+/// @input nullifierSeed - A random value that is part of the nullifier; for example: applicationId, actionId
 /// @input public signalHash - An external signal to make it part of the proof
-/// @output identityNullifier - PosidonHash(name, dob, gender)
-/// @output userNullifier - PosidonHash(photo)
+/// @output nullifier - A unique value derived from nullifierSeed and Aadhaar data to nullify the proof/user
 /// @output timestamp - Timestamp of when the data was signed - extracted and converted to Unix timestamp
 /// @output pubkeyHash - Poseidon hash of the RSA public key
 template AadhaarVerifier(n, k, maxDataLength) {
@@ -30,11 +29,10 @@ template AadhaarVerifier(n, k, maxDataLength) {
     signal input delimiterIndices[18];
     signal input signature[k];
     signal input pubKey[k];
-    signal input appId;
+    signal input nullifierSeed;
     signal input signalHash;
 
-    signal output identityNullifier;
-    signal output userNullifier;
+    signal output nullifier;
     signal output timestamp;
     signal output pubkeyHash;
 
@@ -54,15 +52,11 @@ template AadhaarVerifier(n, k, maxDataLength) {
     qrDataExtractor.nonPaddedDataLength <== nonPaddedDataLength;
     qrDataExtractor.delimiterIndices <== delimiterIndices;
 
-    signal name <== qrDataExtractor.name;
-    signal dateOfBirth <== qrDataExtractor.dateOfBirth;
-    signal gender <== qrDataExtractor.gender;
-    signal photo[photoPackSize()] <== qrDataExtractor.photo;
-    signal last4Digits <== qrDataExtractor.last4Digits;
     timestamp <== qrDataExtractor.timestamp;
+    signal photo[photoPackSize()] <== qrDataExtractor.photo;
 
-    identityNullifier <== IdentityNullifier()(appId, last4Digits, name, dateOfBirth, gender);
-    userNullifier <== UserNullifier()(photo);
+    // Calculate nullifier
+    nullifier <== Nullifier()(nullifierSeed, photo);
 
     
     // Dummy square to prevent singal tampering (in case when using different prover)
@@ -70,4 +64,4 @@ template AadhaarVerifier(n, k, maxDataLength) {
 }
 
 
-component main { public [signalHash] } = AadhaarVerifier(64, 32, 512 * 3);
+component main { public [nullifierSeed, signalHash] } = AadhaarVerifier(64, 32, 512 * 3);
