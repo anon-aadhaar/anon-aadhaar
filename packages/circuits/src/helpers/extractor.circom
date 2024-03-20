@@ -10,18 +10,18 @@ include "../utils/pack.circom";
 /// @title TimetampExtractor
 /// @notice Extracts the timetamp when the QR was signed
 /// @input nDelimitedData[maxDataLength] - QR data where each delimiter is 255 * n where n is order of the data
-/// @output timestamp - Unix timestamp on signature
+/// @output out - Unix timestamp on signature
 template TimetampExtractor(maxDataLength) {
     signal input nDelimitedData[maxDataLength];
 
-    signal output timestamp;
+    signal output out;
 
-    // Extract the timestamp rounded to nearest hour
+    // Extract the out rounded to nearest hour
     component dateToUnixTime = DigitBytesToTimestamp(2030, 1, 0, 0);
     for (var i = 0; i < 10; i++) {
         dateToUnixTime.in[i] <== nDelimitedData[i + 9];
     }
-    timestamp <== dateToUnixTime.out - 19800; // 19800 is the offset for IST
+    out <== dateToUnixTime.out - 19800; // 19800 is the offset for IST
 }
 
 
@@ -31,7 +31,7 @@ template TimetampExtractor(maxDataLength) {
 // /// @input nDelimitedData[maxDataLength] - QR data where each delimiter is 255 * n where n is order of the data
 // /// @input startDelimiterIndex - index of the delimiter after which the name start
 // /// @input endDelimiterIndex - index of the delimiter up to which the name is present
-// /// @output name - single field (int) element representing the name in little endian order
+// /// @output out - single field (int) element representing the name in little endian order
 // template NameExtractor(maxDataLength) {
 //     signal input nDelimitedData[maxDataLength];
 //     signal input startDelimiterIndex;
@@ -207,6 +207,7 @@ template QRDataExtractor(maxDataLength) {
     // signal output dateOfBirth;
     // signal output gender;
     signal output photo[photoPackSize()];
+    signal output timestamp;
 
     // Create `nDelimitedData` - same as `data` but each delimiter is replaced with n * 255
     // where n means the nth occurance of 255
@@ -237,7 +238,7 @@ template QRDataExtractor(maxDataLength) {
     // Extract timestamp
     component timestampExtractor = TimetampExtractor(maxDataLength);
     timestampExtractor.nDelimitedData <== nDelimitedData;
-    timestamp <== timestampExtractor.timestamp;
+    timestamp <== timestampExtractor.out;
 
     // // Extract name
     // component nameExtractor = NameExtractor(maxDataLength);

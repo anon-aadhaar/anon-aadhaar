@@ -8,24 +8,22 @@ include "../helpers/constants.circom";
 /// @notice Computes the userNullifier for an Aadhaar identity
 /// @input photo The photo of the user
 /// @output userNullifier = hash(nullifierSeed, hash(photo[0:15]), hash(photo[16:31]))
-/// @dev Poseidon template only support 16 inputs
 template Nullifier() {
     signal input nullifierSeed;
     signal input photo[photoPackSize()]; // 32 elements
 
     signal output out;
 
-    signal first16Hasher <== Poseidon(16);
+    // Poseidon template only support 16 inputs - so we do in two chunks (photo is 32 chunks)
+    component first16Hasher = Poseidon(16);
     for (var i = 0; i < 16; i++) {
         first16Hasher.inputs[i] <== photo[i];
     }
 
-    signal last16Hasher <== Poseidon(16);
+    component last16Hasher = Poseidon(16);
     for (var i = 0; i < 16; i++) {
         last16Hasher.inputs[i] <== photo[i + 16];
     }
 
-    signal hasher <== Poseidon(3)(nullifierSeed, first16Hasher, last16Hasher);
-    
-    out <== hasher.out;
+    out <== Poseidon(3)([nullifierSeed, first16Hasher.out, last16Hasher.out]);
 }
