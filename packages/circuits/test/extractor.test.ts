@@ -17,20 +17,18 @@ describe('Extractor', function () {
   this.timeout(0)
 
   let circuit: any
-  // let poseidon: any
 
   this.beforeAll(async () => {
     circuit = await circom_tester(
-      path.join(__dirname, './', 'circuits', 'filter-test.circom'),
+      path.join(__dirname, './', 'circuits', 'extractor-test.circom'),
       {
         recompile: true,
         include: path.join(__dirname, '../node_modules'),
       },
     )
-    // poseidon = await buildPoseidon()
   })
 
-  it('Should extract data', async () => {
+  it('should extract data', async () => {
     const QRDataBytes = convertBigIntToByteArray(BigInt(QRData))
     const QRDataDecode = decompressByteArray(QRDataBytes)
 
@@ -59,9 +57,6 @@ describe('Extractor', function () {
       new Date(Number(witness[1]) * 1000).getTime() ===
         new Date('2019-03-08T05:30:00.000Z').getTime(),
     )
-
-    // Name
-    // assert(bigIntsToString([witness[3]]) === 'Sumit Kumar')
 
     // Date of birth
     assert(

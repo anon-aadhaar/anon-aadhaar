@@ -19,7 +19,7 @@ const main = () => {
     throw new Error('QR_DATA env is not set')
   }
 
-  const appId = 12345678
+  const nullifierSeed = 12345678
 
   // We are using produciton public key here (v2)
   // Change to uidai_prod_cdup.cer to use the test data provided by UIDAI (v1)
@@ -70,7 +70,7 @@ const main = () => {
     delimiterIndices: delimiterIndices,
     signature: splitToWords(signature, BigInt(64), BigInt(32)),
     pubKey: splitToWords(pubKey, BigInt(64), BigInt(32)),
-    appId: appId,
+    nullifierSeed: nullifierSeed,
     signalHash: hash(1),
   }
   writeFileSync('build/input.json', JSON.stringify(input))

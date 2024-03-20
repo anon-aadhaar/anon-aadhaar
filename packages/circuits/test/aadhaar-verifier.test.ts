@@ -48,7 +48,7 @@ const getCertificate = (_isTest: boolean) => {
     : 'uidai_offline_publickey_26022021.cer'
 }
 
-describe('Test QR Verify circuit', function () {
+describe('AadhaarVerifier', function () {
   this.timeout(0)
 
   let circuit: any
@@ -65,7 +65,7 @@ describe('Test QR Verify circuit', function () {
     })
   })
 
-  it('Test circuit with Sha256RSA signature', async () => {
+  it('should generate witness for circuit with Sha256RSA signature', async () => {
     const qrDataBytes = convertBigIntToByteArray(BigInt(testQRData))
     const decodedData = decompressByteArray(qrDataBytes)
 
@@ -111,13 +111,13 @@ describe('Test QR Verify circuit', function () {
       delimiterIndices: delimiterIndices,
       signature: splitToWords(signature, BigInt(64), BigInt(32)),
       pubKey: splitToWords(pubKey, BigInt(64), BigInt(32)),
-      appId: 12345678,
+      nullifierSeed: 12345678,
       signalHash: 0,
     })
   })
 
-  it('Compute nullifier must correct', async () => {
-    const appId = 12345678
+  it('should compute nullifier correctly', async () => {
+    const nullifierSeed = 12345678
     // load public key
     const pkData = fs.readFileSync(
       path.join(__dirname, '../assets', getCertificate(testAadhaar)),
@@ -146,26 +146,6 @@ describe('Test QR Verify circuit', function () {
       }
     }
 
-    // Last4Digits
-    const last4Digits = extractFieldByIndex(
-      paddedMsg,
-      IdFields['ReferenceId'],
-    )?.slice(1, 5)
-    const last4DigitsStr = String.fromCharCode(...last4Digits)
-
-    // Name
-    const name = extractFieldByIndex(paddedMsg, IdFields['Name'])
-    const nameAsNumber = bytesToIntChunks(name.slice(1), 31)
-
-    // DOB
-    const dob = extractFieldByIndex(paddedMsg, IdFields['DOB'])
-    const dobStr = String.fromCharCode(...dob.slice(1))
-    const dobAsUnix = dateToUnixTimestamp(dobStr)
-
-    // Gender
-    const gender = extractFieldByIndex(paddedMsg, IdFields['Gender'])
-    const genderAsNumber = gender[1]
-
     const pubKey = BigInt(
       '0x' +
         bufferToHex(
@@ -184,36 +164,24 @@ describe('Test QR Verify circuit', function () {
       delimiterIndices: delimiterIndices,
       signature: splitToWords(signature, BigInt(64), BigInt(32)),
       pubKey: splitToWords(pubKey, BigInt(64), BigInt(32)),
-      appId: appId,
+      nullifierSeed: nullifierSeed,
       signalHash: 0,
     })
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const poseidon: any = await buildPoseidon()
 
-    const identityNullifier = poseidon([
-      appId,
-      last4DigitsStr,
-      nameAsNumber,
-      dobAsUnix,
-      genderAsNumber,
-    ])
-
     const { bytes: photoBytes } = extractPhoto(Array.from(signedData))
     const photoBytesPacked = padArrayWithZeros(
       bytesToIntChunks(new Uint8Array(photoBytes), 31),
-      35,
+      32,
     )
 
-    const hashChain = []
-    hashChain[0] = poseidon([photoBytesPacked[0], photoBytesPacked[1]])
-    for (let i = 1; i < photoBytesPacked.length - 1; ++i) {
-      hashChain[i] = poseidon([hashChain[i - 1], photoBytesPacked[i + 1]])
-    }
-    const userNullifier = hashChain[photoBytesPacked.length - 2]
+    const first16 = poseidon([...photoBytesPacked.slice(0, 16)])
+    const last16 = poseidon([...photoBytesPacked.slice(16, 32)])
+    const nullifier = poseidon([nullifierSeed, first16, last16])
 
-    assert(witness[1] == BigInt(poseidon.F.toString(identityNullifier)))
-    assert(witness[2] == BigInt(poseidon.F.toString(userNullifier)))
+    assert(witness[1] == BigInt(poseidon.F.toString(nullifier)))
   })
 
   it('should output timestamp of when data is generated', async () => {
@@ -262,7 +230,7 @@ describe('Test QR Verify circuit', function () {
       delimiterIndices: delimiterIndices,
       signature: splitToWords(signature, BigInt(64), BigInt(32)),
       pubKey: splitToWords(pubKey, BigInt(64), BigInt(32)),
-      appId: 12345678,
+      nullifierSeed: 12345678,
       signalHash: 0,
     })
 
@@ -271,7 +239,7 @@ describe('Test QR Verify circuit', function () {
     // Converting this IST to UTC gives 2019-03-08T05:30:00.000Z
     const expectedTimestamp = timestampToUTCUnix(decodedData)
 
-    assert(witness[3] === BigInt(expectedTimestamp))
+    assert(witness[2] === BigInt(expectedTimestamp))
   })
 
   it('should output hash of pubkey', async () => {
@@ -321,7 +289,7 @@ describe('Test QR Verify circuit', function () {
       delimiterIndices: delimiterIndices,
       signature: splitToWords(signature, BigInt(64), BigInt(32)),
       pubKey: splitToWords(pubKey, BigInt(64), BigInt(32)),
-      appId: 12345678,
+      nullifierSeed: 12345678,
       signalHash: 0,
     })
 
@@ -330,6 +298,6 @@ describe('Test QR Verify circuit', function () {
     const pubkeyChunked = bigIntToChunkedBytes(pubKey, 128, 16)
     const hash = poseidon(pubkeyChunked)
 
-    assert(witness[4] === BigInt(poseidon.F.toObject(hash)))
+    assert(witness[3] === BigInt(poseidon.F.toObject(hash)))
   })
 })
