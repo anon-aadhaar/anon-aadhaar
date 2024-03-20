@@ -23,7 +23,7 @@ import { buildPoseidon } from 'circomlibjs'
 import { testQRData } from '../assets/dataInput.json'
 import {
   bytesToIntChunks,
-  completeArrayWithZeros,
+  padArrayWithZeros,
   dateToUnixTimestamp,
   extractFieldByIndex,
   timestampToUTCUnix,
@@ -200,7 +200,7 @@ describe('Test QR Verify circuit', function () {
     ])
 
     const { bytes: photoBytes } = extractPhoto(Array.from(signedData))
-    const photoBytesPacked = completeArrayWithZeros(
+    const photoBytesPacked = padArrayWithZeros(
       bytesToIntChunks(new Uint8Array(photoBytes), 31),
       35,
     )

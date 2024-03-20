@@ -204,10 +204,10 @@ template QRDataExtractor(maxDataLength) {
     signal input delimiterIndices[18];
 
     // signal output name;
+    signal output timestamp;
     signal output dateOfBirth;
     signal output gender;
     signal output photo[photoPackSize()];
-    signal output timestamp;
 
     // Create `nDelimitedData` - same as `data` but each delimiter is replaced with n * 255
     // where n means the nth occurance of 255
