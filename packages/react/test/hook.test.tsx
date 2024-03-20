@@ -72,11 +72,11 @@ describe('useAnonAadhaar Hook', () => {
       },
       signature: {
         argumentType: ArgumentTypeName.StringArray,
-        value: splitToWords(testData[1], BigInt(64), BigInt(32)),
+        value: splitToWords(testData[1], BigInt(121), BigInt(17)),
       },
       pubKey: {
         argumentType: ArgumentTypeName.StringArray,
-        value: splitToWords(testData[2], BigInt(64), BigInt(32)),
+        value: splitToWords(testData[2], BigInt(121), BigInt(17)),
       },
       signalHash: {
         argumentType: ArgumentTypeName.String,

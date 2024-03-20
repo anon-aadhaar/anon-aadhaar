@@ -66,11 +66,11 @@ export const generateArgs = async (
     },
     signature: {
       argumentType: ArgumentTypeName.StringArray,
-      value: splitToWords(signatureBigint, BigInt(64), BigInt(32)),
+      value: splitToWords(signatureBigint, BigInt(121), BigInt(17)),
     },
     pubKey: {
       argumentType: ArgumentTypeName.StringArray,
-      value: splitToWords(pubKeyBigInt, BigInt(64), BigInt(32)),
+      value: splitToWords(pubKeyBigInt, BigInt(121), BigInt(17)),
     },
     signalHash: {
       argumentType: ArgumentTypeName.String,

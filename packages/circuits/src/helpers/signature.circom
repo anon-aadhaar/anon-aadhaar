@@ -59,7 +59,7 @@ template SignatureVerifier(n, k, maxDataLength) {
 
   // Calculate Poseidon hash of the public key (609 constraints)
   // Poseidon component can take only 16 inputs, so we convert k chunks to k/2 chunks.
-  // We are assuming k is  > 16 and <= 32 (i.e we merge two consecutive item in array to bring down the size)
+  // We are assuming k is > 16 and <= 32 (i.e we merge two consecutive item in array to bring down the size)
   var poseidonInputSize = k \ 2;
   if (k % 2 == 1) {
       poseidonInputSize++;
