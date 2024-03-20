@@ -125,19 +125,19 @@ describe.only('Extractor testcases', function () {
     )
 
     // Name
-    assert(bigIntsToString([witness[3]]) === 'Sumit Kumar')
+    // assert(bigIntsToString([witness[3]]) === 'Sumit Kumar')
 
     // Date of birth
     assert(
-      new Date(Number(witness[4]) * 1000).getTime() ===
+      new Date(Number(witness[3]) * 1000).getTime() ===
         new Date('1984-01-01T05:30:00.000Z').getTime(),
     )
 
     // Gender
-    assert(bigIntsToString([witness[5]]) === 'M')
+    assert(bigIntsToString([witness[4]]) === 'M')
 
     // Photo
-    const photoWitness = bigIntsToByteArray(witness.slice(6, 6 + 35))
+    const photoWitness = bigIntsToByteArray(witness.slice(5, 5 + 35))
     const photo = extractPhoto(Array.from(signedData))
 
     assert(photoWitness.length === photo.bytes.length)
