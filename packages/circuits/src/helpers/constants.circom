@@ -61,10 +61,12 @@ function nameMaxLength() {
   return 31;
 }
 
+// Number of int chunks to pack the photo to
 function photoPackSize() {
-  return 35;
+  return 32;
 }
 
+// Field support 31 byte int - so max 992 (31 * 32) bytes for the photo
 function photoMaxLength() {
-  return 31 * photoPackSize(); // 31 bytes can fit in the field
+  return 31 * photoPackSize();
 }
