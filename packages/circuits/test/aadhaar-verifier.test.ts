@@ -14,7 +14,7 @@ import {
   decompressByteArray,
   splitToWords,
   IdFields,
-  //   extractPhoto,
+  extractPhoto,
 } from '@anon-aadhaar/core'
 import fs from 'fs'
 import crypto from 'crypto'
@@ -22,7 +22,8 @@ import assert from 'assert'
 import { buildPoseidon } from 'circomlibjs'
 import { testQRData } from '../assets/dataInput.json'
 import {
-  BytesToIntChunks,
+  bytesToIntChunks,
+  completeArrayWithZeros,
   dateToUnixTimestamp,
   extractFieldByIndex,
   timestampToUTCUnix,
@@ -154,7 +155,7 @@ describe('Test QR Verify circuit', function () {
 
     // Name
     const name = extractFieldByIndex(paddedMsg, IdFields['Name'])
-    const nameAsNumber = BytesToIntChunks(name.slice(1), 31)
+    const nameAsNumber = bytesToIntChunks(name.slice(1), 31)
 
     // DOB
     const dob = extractFieldByIndex(paddedMsg, IdFields['DOB'])
@@ -198,15 +199,21 @@ describe('Test QR Verify circuit', function () {
       genderAsNumber,
     ])
 
-    // const { photo } = extractPhoto(Array.from(signedData))
-    // let photoHash = 0
-    // for (let i = 0; i < photo.length; ++i) {
-    //   photoHash = poseidon([photoHash, BigInt(photo[i])])
-    // }
-    // const userNullifier = poseidon([photoHash])
+    const { bytes: photoBytes } = extractPhoto(Array.from(signedData))
+    const photoBytesPacked = completeArrayWithZeros(
+      bytesToIntChunks(new Uint8Array(photoBytes), 31),
+      35,
+    )
+
+    const hashChain = []
+    hashChain[0] = poseidon([photoBytesPacked[0], photoBytesPacked[1]])
+    for (let i = 1; i < photoBytesPacked.length - 1; ++i) {
+      hashChain[i] = poseidon([hashChain[i - 1], photoBytesPacked[i + 1]])
+    }
+    const userNullifier = hashChain[photoBytesPacked.length - 2]
 
     assert(witness[1] == BigInt(poseidon.F.toString(identityNullifier)))
-    // assert(witness[2] == BigInt(poseidon.F.toString(userNullifier)))
+    assert(witness[2] == BigInt(poseidon.F.toString(userNullifier)))
   })
 
   it('should output timestamp of when data is generated', async () => {
