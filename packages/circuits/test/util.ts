@@ -115,3 +115,17 @@ export function bytesToInts(
 
   return ints
 }
+
+export function completeArrayWithZeros(
+  bigIntArray: bigint[],
+  requiredLength: number,
+) {
+  const currentLength = bigIntArray.length
+  const zerosToFill = requiredLength - currentLength
+
+  if (zerosToFill > 0) {
+    return [...bigIntArray, ...Array(zerosToFill).fill(BigInt(0))]
+  }
+
+  return bigIntArray
+}

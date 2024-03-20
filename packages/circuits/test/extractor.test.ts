@@ -74,7 +74,7 @@ function bigIntsToString(bigIntChunks: bigint[]) {
     .join('')
 }
 
-describe.only('Extractor testcases', function () {
+describe('Extractor testcases', function () {
   this.timeout(0)
 
   let circuit: any
