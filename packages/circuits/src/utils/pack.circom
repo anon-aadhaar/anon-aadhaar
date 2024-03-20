@@ -17,14 +17,14 @@ function computeIntSize(byteSize) {
 }
 
 
-/// @title BytesToInts
+/// @title BytesToIntChunks
 /// @notice Converts a byte array to an array of integers where each byte represent a ASCII character
 /// @dev This is based on Bytes2Ints component from zkemail/email-wallet
 /// @dev Trailing 0 (LSB) in each int chunk will be removed. Each int should be padded to 32 bytes during reconversion
 /// @param byteSize The size of the input byte array
 /// @input bytes The input byte array
 /// @output ints The output integer array
-template BytesToInts(byteSize) {
+template BytesToIntChunks(byteSize) {
     var numChunks = computeIntSize(byteSize);
     signal input bytes[byteSize];
     signal output ints[numChunks];

@@ -22,7 +22,7 @@ import assert from 'assert'
 import { buildPoseidon } from 'circomlibjs'
 import { testQRData } from '../assets/dataInput.json'
 import {
-  bytesToInts,
+  BytesToIntChunks,
   dateToUnixTimestamp,
   extractFieldByIndex,
   timestampToUTCUnix,
@@ -154,7 +154,7 @@ describe('Test QR Verify circuit', function () {
 
     // Name
     const name = extractFieldByIndex(paddedMsg, IdFields['Name'])
-    const nameAsNumber = bytesToInts(name.slice(1), 31)
+    const nameAsNumber = BytesToIntChunks(name.slice(1), 31)
 
     // DOB
     const dob = extractFieldByIndex(paddedMsg, IdFields['DOB'])

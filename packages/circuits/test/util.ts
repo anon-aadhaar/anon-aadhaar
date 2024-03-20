@@ -94,7 +94,7 @@ export function extractFieldByIndex(
   return new Uint8Array() // Field not found
 }
 
-export function bytesToInts(
+export function BytesToIntChunks(
   bytes: Uint8Array,
   maxBytesInField: number,
 ): bigint[] {

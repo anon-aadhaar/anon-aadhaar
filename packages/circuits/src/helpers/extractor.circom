@@ -60,7 +60,7 @@ template TimetampExtractor(maxDataLength) {
 //     endDelimiterSelector.out === (namePosition() + 1) * 255;
 
 //     // Pack byte[] to int[] where int is field element which take up to 31 bytes
-//     component outInt = BytesToInts(nameMaxLength);
+//     component outInt = BytesToIntChunks(nameMaxLength);
 //     for (var i = 0; i < nameMaxLength; i ++) {
 //         outInt.bytes[i] <== shiftedBytes[i + 1]; // +1 to skip the delimiter
 
@@ -179,7 +179,7 @@ template PhotoExtractor(maxDataLength) {
     // Pack byte[] to int[] where int is field element which take up to 31 bytes
     // When packing like this the trailing 0s in each chunk would be removed as they are LSB
     // This is ok for being used in nullifiers as the behaviour would be consistent
-    component outInt = BytesToInts(photoMaxLength);
+    component outInt = BytesToIntChunks(photoMaxLength);
     for (var i = 0; i < photoMaxLength; i ++) {
         outInt.bytes[i] <== shiftedBytes[i + 1]; // +1 to skip the delimiter
     }
