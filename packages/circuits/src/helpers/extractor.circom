@@ -204,8 +204,8 @@ template QRDataExtractor(maxDataLength) {
     signal input delimiterIndices[18];
 
     // signal output name;
-    // signal output dateOfBirth;
-    // signal output gender;
+    signal output dateOfBirth;
+    signal output gender;
     signal output photo[photoPackSize()];
     signal output timestamp;
 
@@ -247,17 +247,17 @@ template QRDataExtractor(maxDataLength) {
     // nameExtractor.endDelimiterIndex <== delimiterIndices[namePosition()];
     // name <== nameExtractor.out;
    
-    // // Extract date of birth
-    // component dobExtractor = DOBExtractor(maxDataLength);
-    // dobExtractor.nDelimitedData <== nDelimitedData;
-    // dobExtractor.startDelimiterIndex <== delimiterIndices[dobPosition() - 1];
-    // dateOfBirth <== dobExtractor.out;
+    // Extract date of birth
+    component dobExtractor = DOBExtractor(maxDataLength);
+    dobExtractor.nDelimitedData <== nDelimitedData;
+    dobExtractor.startDelimiterIndex <== delimiterIndices[dobPosition() - 1];
+    dateOfBirth <== dobExtractor.out;
 
-    // // Extract gender
-    // component genderExtractor = GenderExtractor(maxDataLength);
-    // genderExtractor.nDelimitedData <== nDelimitedData;
-    // genderExtractor.startDelimiterIndex <== delimiterIndices[genderPosition() - 1];
-    // gender <== genderExtractor.out;
+    // Extract gender
+    component genderExtractor = GenderExtractor(maxDataLength);
+    genderExtractor.nDelimitedData <== nDelimitedData;
+    genderExtractor.startDelimiterIndex <== delimiterIndices[genderPosition() - 1];
+    gender <== genderExtractor.out;
 
     // Extract photo
     component photoExtractor = PhotoExtractor(maxDataLength);
