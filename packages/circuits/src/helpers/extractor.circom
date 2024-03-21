@@ -8,14 +8,14 @@ include "../utils/pack.circom";
 
 
 
-/// @title DistrictExtractor
-/// @notice Extracts the district from the Aadhaar QR data and return a single number representing district
-/// @notice Assumes that district can fit in 31 bytes
+/// @title ExtractAndPackAsInt
+/// @notice Helper function to exract data at a position to a single int (assumes data is less than 31 bytes)
+/// @param maxDataLength - Maximum length of the data
+/// @param extractPosition - Position of the data to extract (after which delimiter does the data start)
 /// @input nDelimitedData[maxDataLength] - QR data where each delimiter is 255 * n where n is order of the data
-/// @input startDelimiterIndex - index of the delimiter after which the district start
-/// @input endDelimiterIndex - index of the delimiter up to which the district is present
-/// @output out - single field (int) element representing the district in little endian order
-template ExtractAndPackAsInt(maxDataLength, extractPosition, extractMaxLength) {
+/// @input delimiterIndices - indices of the delimiters in the QR data
+/// @output out - single field (int) element representing the data in little endian order (reverse string when decoded)
+template ExtractAndPackAsInt(maxDataLength, extractPosition) {
     signal input nDelimitedData[maxDataLength];
     signal input delimiterIndices[18];
 
@@ -24,6 +24,7 @@ template ExtractAndPackAsInt(maxDataLength, extractPosition, extractMaxLength) {
     signal startDelimiterIndex <== delimiterIndices[extractPosition - 1];
     signal endDelimiterIndex <== delimiterIndices[extractPosition];
 
+    var extractMaxLength = maxFieldByteSize(); // Packing data only a single int
     var byteLength = extractMaxLength + 1;
     
     // Shift the data to the right to until the the delimiter start
@@ -210,8 +211,8 @@ template PhotoExtractor(maxDataLength) {
 
     signal output out[photoPackSize()];
     
-    var photoMaxLength = photoMaxLength();
-    var bytesLength = photoMaxLength() + 1;
+    var photoMaxLength = photoPackSize() * maxFieldByteSize();
+    var bytesLength = photoMaxLength + 1;
 
     // Shift the data to the right to until the photo index
     component shifter = SubarraySelector(maxDataLength, bytesLength);
@@ -256,6 +257,7 @@ template QRDataExtractor(maxDataLength) {
     signal output dateOfBirth;
     signal output gender;
     signal output district;
+    signal output state;
     signal output photo[photoPackSize()];
 
     // Create `nDelimitedData` - same as `data` but each delimiter is replaced with n * 255
@@ -309,13 +311,13 @@ template QRDataExtractor(maxDataLength) {
     gender <== genderExtractor.out;
 
     // Extract disctrict
-    component districtExtractor = ExtractAndPackAsInt(maxDataLength, districtPosition(), districtMaxLength());
+    component districtExtractor = ExtractAndPackAsInt(maxDataLength, districtPosition());
     districtExtractor.nDelimitedData <== nDelimitedData;
     districtExtractor.delimiterIndices <== delimiterIndices;
     district <== districtExtractor.out;
 
     // Extract state
-    component stateExtractor = ExtractAndPackAsInt(maxDataLength, statePosition(), stateMaxLength());
+    component stateExtractor = ExtractAndPackAsInt(maxDataLength, statePosition());
     stateExtractor.nDelimitedData <== nDelimitedData;
     stateExtractor.delimiterIndices <== delimiterIndices;
     state <== stateExtractor.out;

@@ -39,16 +39,11 @@ function referenceIdPosition() {
   return 2;
 }
 
-// Position of name field in the data
+// Position/order (not index) of name field in the data
 // i.e, name bytes will appear after 3rd 255
 function namePosition() {
   return 3;
 }
-
-function nameMaxLength() {
-  return 31;
-}
-
 
 function dobPosition() {
   return 4;
@@ -58,22 +53,24 @@ function genderPosition() {
   return 5;
 }
 
-
-function districtMaxLength() {
-  return 31;
+function districtPosition() {
+  return 7;
 }
 
+function statePosition() {
+  return 13;
+}
 
 function photoPosition() {
   return 18;
 }
 
-// Number of int chunks to pack the photo to
-function photoPackSize() {
-  return 32;
+function maxFieldByteSize() {
+  return 31;
 }
 
-// Field support 31 byte int - so max 992 (31 * 32) bytes for the photo
-function photoMaxLength() {
-  return 31 * photoPackSize();
+// Number of int chunks to pack the photo to
+// Photo can only be of max 32  * 31 bytes (packSize * fieldByteSize)
+function photoPackSize() {
+  return 32;
 }
