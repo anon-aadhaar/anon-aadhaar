@@ -28,7 +28,7 @@ describe('Extractor', function () {
     )
   })
 
-  it.only('should extract data', async () => {
+  it('should extract data', async () => {
     const QRDataBytes = convertBigIntToByteArray(BigInt(QRData))
     const QRDataDecode = decompressByteArray(QRDataBytes)
 
@@ -58,11 +58,8 @@ describe('Extractor', function () {
         new Date('2019-03-08T05:30:00.000Z').getTime(),
     )
 
-    // Date of birth
-    assert(
-      new Date(Number(witness[2]) * 1000).getTime() ===
-        new Date('1984-01-01T05:30:00.000Z').getTime(),
-    )
+    // Age above 18
+    assert(Number(witness[2]) === 1)
 
     // Gender
     assert(bigIntsToString([witness[3]]) === 'M')

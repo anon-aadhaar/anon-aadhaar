@@ -92,6 +92,7 @@ function prepareTestData() {
     pubKey: splitToWords(pubKey, BigInt(121), BigInt(17)),
     nullifierSeed: 12345678,
     signalHash: 1001,
+    revealAgeAbove18: 0,
     revealGender: 0,
     revealDistrict: 0,
     revealState: 0,
@@ -177,6 +178,7 @@ describe('AadhaarVerifier', function () {
   it('should output extracted data if reveal is true', async () => {
     const { inputs } = prepareTestData()
 
+    inputs.revealAgeAbove18 = 1
     inputs.revealDistrict = 1
     inputs.revealGender = 1
     inputs.revealState = 1
@@ -184,18 +186,22 @@ describe('AadhaarVerifier', function () {
     const witness = await circuit.calculateWitness(inputs)
 
     // Gender
-    assert(bigIntsToString([witness[4]]) === 'M')
+    assert(Number(witness[4]) === 1)
+
+    // Gender
+    assert(bigIntsToString([witness[5]]) === 'M')
 
     // District
-    assert(bigIntsToString([witness[5]]) === 'East Delhi')
+    assert(bigIntsToString([witness[6]]) === 'East Delhi')
 
     // State
-    assert(bigIntsToString([witness[6]]) === 'Delhi')
+    assert(bigIntsToString([witness[7]]) === 'Delhi')
   })
 
   it('should not output extracted data if reveal is false', async () => {
     const { inputs } = prepareTestData()
 
+    inputs.revealAgeAbove18 = 0
     inputs.revealDistrict = 0
     inputs.revealGender = 0
     inputs.revealState = 0
@@ -205,5 +211,6 @@ describe('AadhaarVerifier', function () {
     assert(Number(witness[4]) === 0)
     assert(Number(witness[5]) === 0)
     assert(Number(witness[6]) === 0)
+    assert(Number(witness[7]) === 0)
   })
 })
