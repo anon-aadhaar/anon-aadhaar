@@ -7,6 +7,54 @@ include "../utils/array.circom";
 include "../utils/pack.circom";
 
 
+
+/// @title DistrictExtractor
+/// @notice Extracts the district from the Aadhaar QR data and return a single number representing district
+/// @notice Assumes that district can fit in 31 bytes
+/// @input nDelimitedData[maxDataLength] - QR data where each delimiter is 255 * n where n is order of the data
+/// @input startDelimiterIndex - index of the delimiter after which the district start
+/// @input endDelimiterIndex - index of the delimiter up to which the district is present
+/// @output out - single field (int) element representing the district in little endian order
+template ExtractAndPackAsInt(maxDataLength, extractPosition, extractMaxLength) {
+    signal input nDelimitedData[maxDataLength];
+    signal input delimiterIndices[18];
+
+    signal output out;
+    
+    signal startDelimiterIndex <== delimiterIndices[extractPosition - 1];
+    signal endDelimiterIndex <== delimiterIndices[extractPosition];
+
+    var byteLength = extractMaxLength + 1;
+    
+    // Shift the data to the right to until the the delimiter start
+    component shifter = SubarraySelector(maxDataLength, byteLength);
+    shifter.in <== nDelimitedData;
+    shifter.startIndex <== startDelimiterIndex; // We want delimiter to be the first byte
+    shifter.length <== endDelimiterIndex - startDelimiterIndex;
+    signal shiftedBytes[byteLength] <== shifter.out;
+    
+    // Assert that the first byte is the delimiter (255 * position of the field)
+    shiftedBytes[0] === extractPosition * 255;
+
+    // Assert that last byte is the delimiter (255 * (position of the field + 1))
+    component endDelimiterSelector = ArraySelector(maxDataLength, 16);
+    endDelimiterSelector.in <== nDelimitedData;
+    endDelimiterSelector.index <== endDelimiterIndex;
+    endDelimiterSelector.out === (extractPosition + 1) * 255;
+
+    // Pack byte[] to int[] where int is field element which take up to 31 bytes
+    component outInt = BytesToIntChunks(extractMaxLength);
+    for (var i = 0; i < extractMaxLength; i ++) {
+        outInt.bytes[i] <== shiftedBytes[i + 1]; // +1 to skip the delimiter
+
+        // Assert that each value is less than 255 - ensures no delimiter in between
+        assert(shiftedBytes[i + 1] < 255);
+    }
+
+    out <== outInt.ints[0];
+}
+
+
 /// @title TimetampExtractor
 /// @notice Extracts the timetamp when the QR was signed
 /// @input nDelimitedData[maxDataLength] - QR data where each delimiter is 255 * n where n is order of the data
@@ -207,6 +255,7 @@ template QRDataExtractor(maxDataLength) {
     signal output timestamp;
     signal output dateOfBirth;
     signal output gender;
+    signal output district;
     signal output photo[photoPackSize()];
 
     // Create `nDelimitedData` - same as `data` but each delimiter is replaced with n * 255
@@ -258,6 +307,18 @@ template QRDataExtractor(maxDataLength) {
     genderExtractor.nDelimitedData <== nDelimitedData;
     genderExtractor.startDelimiterIndex <== delimiterIndices[genderPosition() - 1];
     gender <== genderExtractor.out;
+
+    // Extract disctrict
+    component districtExtractor = ExtractAndPackAsInt(maxDataLength, districtPosition(), districtMaxLength());
+    districtExtractor.nDelimitedData <== nDelimitedData;
+    districtExtractor.delimiterIndices <== delimiterIndices;
+    district <== districtExtractor.out;
+
+    // Extract state
+    component stateExtractor = ExtractAndPackAsInt(maxDataLength, statePosition(), stateMaxLength());
+    stateExtractor.nDelimitedData <== nDelimitedData;
+    stateExtractor.delimiterIndices <== delimiterIndices;
+    state <== stateExtractor.out;
 
     // Extract photo
     component photoExtractor = PhotoExtractor(maxDataLength);

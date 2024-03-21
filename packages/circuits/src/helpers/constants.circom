@@ -45,6 +45,11 @@ function namePosition() {
   return 3;
 }
 
+function nameMaxLength() {
+  return 31;
+}
+
+
 function dobPosition() {
   return 4;
 }
@@ -53,12 +58,14 @@ function genderPosition() {
   return 5;
 }
 
-function photoPosition() {
-  return 18;
+
+function districtMaxLength() {
+  return 31;
 }
 
-function nameMaxLength() {
-  return 31;
+
+function photoPosition() {
+  return 18;
 }
 
 // Number of int chunks to pack the photo to
