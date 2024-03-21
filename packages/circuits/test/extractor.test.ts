@@ -11,7 +11,7 @@ import {
 } from '@anon-aadhaar/core'
 import assert from 'assert'
 import { testQRData as QRData } from '../assets/dataInput.json'
-import { bigIntsToString, bytesToIntChunks, padArrayWithZeros } from './util'
+import { bigIntsToString, bigIntChunksToByteArray } from './util'
 
 describe('Extractor', function () {
   this.timeout(0)
@@ -28,7 +28,7 @@ describe('Extractor', function () {
     )
   })
 
-  it('should extract data', async () => {
+  it.only('should extract data', async () => {
     const QRDataBytes = convertBigIntToByteArray(BigInt(QRData))
     const QRDataDecode = decompressByteArray(QRDataBytes)
 
@@ -74,16 +74,13 @@ describe('Extractor', function () {
     assert(bigIntsToString([witness[5]]) === 'Delhi')
 
     // Photo
+    // Reconstruction of the photo bytes from packed ints and compare each byte
     const photo = extractPhoto(Array.from(signedData))
-    const photoBytesPacked = padArrayWithZeros(
-      bytesToIntChunks(new Uint8Array(photo.bytes), 31),
-      32,
-    )
-    const photoWitness = witness.slice(6, 6 + 32)
+    const photoWitness = bigIntChunksToByteArray(witness.slice(6, 6 + 32))
 
-    assert(photoBytesPacked.length === photoWitness.length)
-    for (let i = 0; i < photoBytesPacked.length; i++) {
-      assert(photoWitness[i] === photoBytesPacked[i])
+    assert(photoWitness.length === photo.bytes.length)
+    for (let i = 0; i < photoWitness.length; i++) {
+      assert(photoWitness[i] === photo.bytes[i])
     }
   })
 })

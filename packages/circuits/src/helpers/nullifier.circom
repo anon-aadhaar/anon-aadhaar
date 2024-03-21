@@ -5,9 +5,9 @@ include "../helpers/constants.circom";
 
 
 /// @title Nullifier
-/// @notice Computes the userNullifier for an Aadhaar identity
+/// @notice Computes the nullifier for an Aadhaar identity
 /// @input photo The photo of the user
-/// @output userNullifier = hash(nullifierSeed, hash(photo[0:15]), hash(photo[16:31]))
+/// @output nullifier = hash(nullifierSeed, hash(photo[0:15]), hash(photo[16:31]))
 template Nullifier() {
     signal input nullifierSeed;
     signal input photo[photoPackSize()]; // 32 elements

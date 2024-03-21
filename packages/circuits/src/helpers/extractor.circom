@@ -24,10 +24,10 @@ template ExtractAndPackAsInt(maxDataLength, extractPosition) {
     signal startDelimiterIndex <== delimiterIndices[extractPosition - 1];
     signal endDelimiterIndex <== delimiterIndices[extractPosition];
 
-    var extractMaxLength = maxFieldByteSize(); // Packing data only a single int
+    var extractMaxLength = maxFieldByteSize(); // Packing data only as a single int
     var byteLength = extractMaxLength + 1;
     
-    // Shift the data to the right to until the the delimiter start
+    // Shift the data to the right till the the delimiter start
     component shifter = SubarraySelector(maxDataLength, byteLength);
     shifter.in <== nDelimitedData;
     shifter.startIndex <== startDelimiterIndex; // We want delimiter to be the first byte

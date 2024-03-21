@@ -130,7 +130,7 @@ export function padArrayWithZeros(
   return bigIntArray
 }
 
-function bigIntsToByteArray(bigIntChunks: bigint[], bytesPerChunk = 31) {
+export function bigIntChunksToByteArray(bigIntChunks: bigint[], bytesPerChunk = 31) {
   const bytes: number[] = []
 
   // Remove last chunks that are 0n
@@ -167,7 +167,7 @@ function bigIntsToByteArray(bigIntChunks: bigint[], bytesPerChunk = 31) {
 }
 
 export function bigIntsToString(bigIntChunks: bigint[]) {
-  return bigIntsToByteArray(bigIntChunks)
+  return bigIntChunksToByteArray(bigIntChunks)
     .map(byte => String.fromCharCode(byte))
     .join('')
 }
