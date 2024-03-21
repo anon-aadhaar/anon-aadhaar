@@ -82,37 +82,20 @@ template DigitBytesToNumber(length) {
 /// @param includeSeconds 1 to include seconds, 0 to round down to minute
 /// @input in The input byte array
 /// @output out The output integer representing the unix time
-template DigitBytesToTimestamp(maxYears, includeHours, includeMinutes, includeSeconds) {
-    var inputLength = 8;
-    if (includeHours == 1) {
-        inputLength += 2;
-    }
-    if (includeMinutes == 1) {
-        inputLength += 2;
-    }
-    if (includeSeconds == 1) {
-        inputLength += 2;
-    }
+template DigitBytesToTimestamp(maxYears) {
+    signal input year;
+    signal input month;
+    signal input day;
+    signal input hour;
+    signal input minute;
+    signal input second;
 
-    signal input in[inputLength];
     signal output out;
-
-    signal daysTillPreviousMonth[12] <== [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
-
-    component yearNum = DigitBytesToNumber(4);
-    yearNum.in <== [in[0], in[1], in[2], in[3]];
-    signal year <== yearNum.out;
-
-    component monthNum = DigitBytesToNumber(2);
-    monthNum.in <== [in[4], in[5]];
-    signal month <== monthNum.out;
-
-    component dayNum = DigitBytesToNumber(2);
-    dayNum.in <== [in[6], in[7]];
-    signal day <== dayNum.out;
 
     assert(year >= 1970);
     assert(year <= maxYears);
+
+    signal daysTillPreviousMonth[12] <== [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
 
     var maxLeapYears = (maxYears - 1972) \ 4;   // 1972 is first leap year since epoch
     var arrLength = 14 + maxLeapYears + maxLeapYears;
@@ -157,32 +140,5 @@ template DigitBytesToTimestamp(maxYears, includeHours, includeMinutes, includeSe
         totalDaysPassed[i]  <== totalDaysPassed[i - 1] + daysPassed[i];
     }
 
-    signal secondsPassed[4];
-    secondsPassed[0] <== totalDaysPassed[arrLength -1] * 86400;
-
-    if (includeHours == 1) {
-        component hoursNum = DigitBytesToNumber(2);
-        hoursNum.in <== [in[8], in[9]];
-        secondsPassed[1] <== hoursNum.out * 3600;
-    } else {
-        secondsPassed[1] <== 0;
-    }
-
-    if (includeMinutes == 1) {
-        component minutesNum = DigitBytesToNumber(2);
-        minutesNum.in <== [in[10], in[11]];
-        secondsPassed[2] <== minutesNum.out * 60;
-    } else {
-        secondsPassed[2] <== 0;
-    }
-
-    if (includeSeconds == 1) {
-        component secondsNum = DigitBytesToNumber(2);
-        secondsNum.in <== [in[12], in[13]];
-        secondsPassed[3] <== secondsNum.out;
-    } else {
-        secondsPassed[3] <== 0;
-    }
-
-    out <== secondsPassed[0] + secondsPassed[1] + secondsPassed[2] + secondsPassed[3];
+    out <== totalDaysPassed[arrLength -1] * 86400 + hour * 3600 + minute * 60 + second;
 }

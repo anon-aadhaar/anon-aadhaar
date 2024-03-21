@@ -57,33 +57,47 @@ template ExtractAndPackAsInt(maxDataLength, extractPosition) {
 
 
 /// @title TimetampExtractor
-/// @notice Extracts the timetamp when the QR was signed
+/// @notice Extracts the timetamp when the QR was signed rounded to nearest hour
+/// @dev We ignore minutes and seconds to avoid identifying the user based on the precise timestamp
 /// @input nDelimitedData[maxDataLength] - QR data where each delimiter is 255 * n where n is order of the data
-/// @output out - Unix timestamp on signature
+/// @output timestamp - Unix timestamp on signature
+/// @output year - Year of the signature
+/// @output month - Month of the signature
+/// @output day - Day of the signature
 template TimetampExtractor(maxDataLength) {
     signal input nDelimitedData[maxDataLength];
 
-    signal output out;
+    signal output timestamp;
+    signal output year <== DigitBytesToNumber(4)([nDelimitedData[9], nDelimitedData[10], nDelimitedData[11], nDelimitedData[12]]);
+    signal output month <== DigitBytesToNumber(2)([nDelimitedData[13], nDelimitedData[14]]);
+    signal output day <== DigitBytesToNumber(2)([nDelimitedData[15], nDelimitedData[16]]);
+    signal hour <== DigitBytesToNumber(2)([nDelimitedData[17], nDelimitedData[18]]);
 
-    // Extract the out rounded to nearest hour
-    component dateToUnixTime = DigitBytesToTimestamp(2030, 1, 0, 0);
-    for (var i = 0; i < 10; i++) {
-        dateToUnixTime.in[i] <== nDelimitedData[i + 9];
-    }
-    out <== dateToUnixTime.out - 19800; // 19800 is the offset for IST
+    component dateToUnixTime = DigitBytesToTimestamp(2032);
+    dateToUnixTime.year <== year;
+    dateToUnixTime.month <== month;
+    dateToUnixTime.day <== day;
+    dateToUnixTime.hour <== hour;
+    dateToUnixTime.minute <== 0;
+    dateToUnixTime.second <== 0;
+
+    timestamp <== dateToUnixTime.out - 19800; // 19800 is the offset for IST
 }
 
 
-/// @title DOBExtractor 
+/// @title AgeExtractor 
 /// @notice Extract date of birth from the Aadhaar QR data and returns as Unix timestamp
 /// @notice The timestamp will correspond to 00:00 of the date in IST timezone
 /// @input nDelimitedData[maxDataLength] - QR data where each delimiter is 255 * n where n is order of the data
 /// @input startDelimiterIndex - index of the delimiter after which the date of birth start
 /// @input endDelimiterIndex - index of the delimiter up to which the date of birth is present
 /// @output out - Unix timestamp representing the date of birth
-template DOBExtractor(maxDataLength) {
+template AgeExtractor(maxDataLength) {
     signal input nDelimitedData[maxDataLength];
     signal input startDelimiterIndex;
+    signal input currentYear;
+    signal input currentMonth;
+    signal input currentDay;
 
     signal output out;
     
@@ -102,19 +116,28 @@ template DOBExtractor(maxDataLength) {
     shiftedBytes[11] === (dobPosition() + 1) * 255;
 
     // Convert DOB bytes to unix timestamp. 
-    // DD-MM-YYYY to YYYYMMDD input
-    // DigitBytesToTimestamp ensures all inputs are numeric values 
-    component dobToUnixTime = DigitBytesToTimestamp(2030, 0, 0, 0);
-    dobToUnixTime.in[0] <== shiftedBytes[7];
-    dobToUnixTime.in[1] <== shiftedBytes[8];
-    dobToUnixTime.in[2] <== shiftedBytes[9];
-    dobToUnixTime.in[3] <== shiftedBytes[10];
-    dobToUnixTime.in[4] <== shiftedBytes[4];
-    dobToUnixTime.in[5] <== shiftedBytes[5];
-    dobToUnixTime.in[6] <== shiftedBytes[1];
-    dobToUnixTime.in[7] <== shiftedBytes[2];
-    
-    out <== dobToUnixTime.out + 19800; // 19800 is the offset for IST
+    // Get year, month, name as ints (DD-MM-YYYY format and starts from shiftedBytes[0])
+    signal year <== DigitBytesToNumber(4)([shiftedBytes[7], shiftedBytes[8], shiftedBytes[9], shiftedBytes[10]]);
+    signal month <== DigitBytesToNumber(2)([shiftedBytes[4], shiftedBytes[5]]);
+    signal day <== DigitBytesToNumber(2)([shiftedBytes[1], shiftedBytes[2]]);
+
+    assert(currentYear > year);
+    assert(currentMonth > month);
+    assert(currentDay >= day);
+
+    // Completed age based on year value
+    signal ageByYear <== currentYear - year - 1;
+
+    // +1 if month and day is greater than or equal to the current month and day
+    component monthGt = GreaterThan(4);
+    monthGt.in[0] <== currentMonth + 1;
+    monthGt.in[1] <== month;
+
+    component dayGt = GreaterThan(4);
+    dayGt.in[0] <== currentDay + 1;
+    dayGt.in[1] <== day;
+
+    out <== ageByYear + monthGt.out + dayGt.out;
 }
 
 
@@ -199,7 +222,7 @@ template PhotoExtractor(maxDataLength) {
 /// @input nonPaddedDataLength - Length of the non-padded QR data
 /// @input delimiterIndices[17] - Indices of the delimiters in the QR data
 /// @output name - single field (int) element representing the name in little endian order
-/// @output dateOfBirth - Unix timestamp representing the date of birth
+/// @output age - Unix timestamp representing the date of birth
 /// @output gender - Single byte number representing gender
 /// @output photo - Photo of the user
 template QRDataExtractor(maxDataLength) {
@@ -209,7 +232,7 @@ template QRDataExtractor(maxDataLength) {
 
     // signal output name;
     signal output timestamp;
-    signal output dateOfBirth;
+    signal output ageAbove18;
     signal output gender;
     signal output district;
     signal output state;
@@ -244,13 +267,23 @@ template QRDataExtractor(maxDataLength) {
     // Extract timestamp
     component timestampExtractor = TimetampExtractor(maxDataLength);
     timestampExtractor.nDelimitedData <== nDelimitedData;
-    timestamp <== timestampExtractor.out;
+    timestamp <== timestampExtractor.timestamp;
    
-    // Extract date of birth
-    component dobExtractor = DOBExtractor(maxDataLength);
-    dobExtractor.nDelimitedData <== nDelimitedData;
-    dobExtractor.startDelimiterIndex <== delimiterIndices[dobPosition() - 1];
-    dateOfBirth <== dobExtractor.out;
+    // Extract age - and calculate if above 18
+    // We use the year, month, day from the timestamp to calculate the age
+    // This wont be precise but avoid the need for additional `currentTime` input
+    // User can generate fresh Aadhaar QR (which is recommended anyway) for accurate age
+    component ageExtractor = AgeExtractor(maxDataLength);
+    ageExtractor.nDelimitedData <== nDelimitedData;
+    ageExtractor.startDelimiterIndex <== delimiterIndices[dobPosition() - 1];
+    ageExtractor.currentYear <== timestampExtractor.year;
+    ageExtractor.currentMonth <== timestampExtractor.month;
+    ageExtractor.currentDay <== timestampExtractor.day;
+    
+    component ageAbove18Checker = GreaterThan(8);
+    ageAbove18Checker.in[0] <== ageExtractor.out;
+    ageAbove18Checker.in[1] <== 18;
+    ageAbove18 <== ageAbove18Checker.out;
 
     // Extract gender
     component genderExtractor = GenderExtractor(maxDataLength);
