@@ -22,6 +22,7 @@ import { hash } from './hash'
 export const generateArgs = async (
   qrData: string,
   certificateFile: string,
+  nullifierSeed: number,
   signal?: string
 ): Promise<AnonAadhaarArgs> => {
   const bigIntData = BigInt(qrData)
@@ -63,6 +64,10 @@ export const generateArgs = async (
     aadhaarDataLength: {
       argumentType: ArgumentTypeName.Number,
       value: messageLength.toString(),
+    },
+    nullifierSeed: {
+      argumentType: ArgumentTypeName.Number,
+      value: nullifierSeed.toString(),
     },
     signature: {
       argumentType: ArgumentTypeName.StringArray,

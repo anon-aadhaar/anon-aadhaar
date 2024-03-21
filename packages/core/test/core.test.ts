@@ -46,7 +46,7 @@ describe('PCD tests', function () {
 
     await init(anonAadhaarInitArgs)
 
-    const args = await generateArgs(QRData, certificate)
+    const args = await generateArgs(QRData, certificate, 1234)
 
     const anonAadhaarProof = await prove(args)
 
@@ -64,7 +64,7 @@ describe('PCD tests', function () {
 
     await init(anonAadhaarInitArgs)
 
-    const args = await generateArgs(QRData, certificate)
+    const args = await generateArgs(QRData, certificate, 1234)
 
     const anonAadhaarProof = await prove(args)
 
@@ -83,7 +83,7 @@ describe('PCD tests', function () {
 
     await init(anonAadhaarInitArgs)
 
-    const args = await generateArgs(QRData, certificate)
+    const args = await generateArgs(QRData, certificate, 1234)
 
     const anonAadhaarProof = await prove(args)
 

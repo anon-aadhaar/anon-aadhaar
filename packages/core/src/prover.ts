@@ -143,6 +143,10 @@ export class BackendProver implements ProverInferace {
       signature: witness.signature.value,
       pubKey: witness.pubKey.value,
       signalHash: witness.signalHash.value,
+      revealAgeAbove18: 0,
+      revealGender: 0,
+      revealDistrict: 0,
+      revealState: 0,
     }
 
     const { proof, publicSignals } = await groth16.fullProve(
@@ -152,10 +156,9 @@ export class BackendProver implements ProverInferace {
     )
 
     return {
-      identityNullifier: publicSignals[0],
-      userNullifier: publicSignals[1],
+      pubkeyHash: publicSignals[0],
+      nullifier: publicSignals[1],
       timestamp: publicSignals[2],
-      pubkeyHash: publicSignals[3],
       signalHash: witness.signalHash.value,
       groth16Proof: proof,
     }
@@ -210,10 +213,9 @@ export class WebProver implements ProverInferace {
     )
 
     return {
-      identityNullifier: publicSignals[0],
-      userNullifier: publicSignals[1],
+      pubkeyHash: publicSignals[0],
+      nullifier: publicSignals[1],
       timestamp: publicSignals[2],
-      pubkeyHash: publicSignals[3],
       signalHash: witness.signalHash.value,
       groth16Proof: proof,
     }
@@ -268,10 +270,9 @@ export class ChunkedProver implements ProverInferace {
     )
 
     return {
-      identityNullifier: publicSignals[0],
-      userNullifier: publicSignals[1],
+      pubkeyHash: publicSignals[0],
+      nullifier: publicSignals[1],
       timestamp: publicSignals[2],
-      pubkeyHash: publicSignals[3],
       signalHash: witness.signalHash.value,
       groth16Proof: proof,
     }

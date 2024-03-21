@@ -48,6 +48,7 @@ export const proveAndSerialize = async (
 export const processAadhaarArgs = async (
   qrData: string,
   useTestAadhaar: boolean,
+  nullifierSeed: number,
   signal?: string,
 ): Promise<AnonAadhaarArgs> => {
   let certificate: string | null = null
@@ -63,7 +64,7 @@ export const processAadhaarArgs = async (
 
   if (!certificate) throw Error('Error while fetching public key.')
 
-  const args = await generateArgs(qrData, certificate, signal)
+  const args = await generateArgs(qrData, certificate, nullifierSeed, signal)
 
   return args
 }

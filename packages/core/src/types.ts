@@ -32,6 +32,10 @@ export interface InitArgs {
 export type AnonAadhaarClaim = {
   pubKey: string[]
   signalHash: string
+  ageAbove18: boolean
+  gender: string
+  district: string
+  state: string
 }
 
 /**
@@ -39,10 +43,10 @@ export type AnonAadhaarClaim = {
  */
 export type AnonAadhaarProof = {
   groth16Proof: Groth16Proof // 3 points on curve if we use groth16
-  identityNullifier: string
-  userNullifier: string
-  timestamp: string
   pubkeyHash: string
+  nullifier: string
+  timestamp: string
+  nullifierSeed: string
   signalHash: string
 }
 
@@ -52,8 +56,9 @@ export type AnonAadhaarProof = {
 export type AnonAadhaarArgs = {
   aadhaarData: StringArrayArgument // private
   aadhaarDataLength: NumberArgument // private
-  signature: StringArrayArgument // private
   pubKey: StringArrayArgument // public
+  signature: StringArrayArgument // private
+  nullifierSeed: NumberArgument // private
   signalHash: StringArgument // public
 }
 

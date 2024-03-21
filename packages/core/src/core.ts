@@ -111,11 +111,14 @@ export async function verify(pcd: AnonAadhaarCore): Promise<boolean> {
   return groth16.verify(
     vk,
     [
-      pcd.proof.identityNullifier,
-      pcd.proof.userNullifier,
-      pcd.proof.timestamp,
       pcd.proof.pubkeyHash,
-      pcd.proof.signalHash,
+      pcd.proof.nullifier,
+      pcd.proof.timestamp,
+      pcd.proof.nullifierSeed,
+      '0',
+      '0',
+      '0',
+      '0',
     ],
     pcd.proof.groth16Proof
   )
@@ -139,11 +142,13 @@ export async function verifyLocal(pcd: AnonAadhaarCore): Promise<boolean> {
   return groth16.verify(
     vk,
     [
-      pcd.proof.identityNullifier,
-      pcd.proof.userNullifier,
-      pcd.proof.timestamp,
       pcd.proof.pubkeyHash,
-      pcd.proof.signalHash,
+      pcd.proof.nullifier,
+      pcd.proof.timestamp,
+      pcd.proof.ageAbove18,
+      pcd.proof.gender,
+      pcd.proof.district,
+      pcd.proof.state,
     ],
     pcd.proof.groth16Proof
   )
