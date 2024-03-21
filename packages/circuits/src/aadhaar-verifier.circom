@@ -29,12 +29,20 @@ template AadhaarVerifier(n, k, maxDataLength) {
     signal input delimiterIndices[18];
     signal input signature[k];
     signal input pubKey[k];
+
+    // Public inputs
     signal input nullifierSeed;
     signal input signalHash;
+    signal input revealGender;
+    signal input revealDistrict;
+    signal input revealState;
 
+    signal output pubkeyHash;
     signal output nullifier;
     signal output timestamp;
-    signal output pubkeyHash;
+    signal output gender;
+    signal output district;
+    signal output state;
 
 
     // Verify the RSA signature
@@ -52,10 +60,15 @@ template AadhaarVerifier(n, k, maxDataLength) {
     qrDataExtractor.nonPaddedDataLength <== nonPaddedDataLength;
     qrDataExtractor.delimiterIndices <== delimiterIndices;
 
+    // Reveal extracted data
     timestamp <== qrDataExtractor.timestamp;
-    signal photo[photoPackSize()] <== qrDataExtractor.photo;
+    gender <== revealGender * qrDataExtractor.gender;
+    district <== revealDistrict * qrDataExtractor.district;
+    state <== revealState * qrDataExtractor.state;
+
 
     // Calculate nullifier
+    signal photo[photoPackSize()] <== qrDataExtractor.photo;
     nullifier <== Nullifier()(nullifierSeed, photo);
 
     
