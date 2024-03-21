@@ -13,7 +13,6 @@ import {
   convertBigIntToByteArray,
   decompressByteArray,
   splitToWords,
-  IdFields,
   extractPhoto,
 } from '@anon-aadhaar/core'
 import fs from 'fs'
@@ -24,9 +23,8 @@ import { testQRData } from '../assets/dataInput.json'
 import {
   bytesToIntChunks,
   padArrayWithZeros,
-  dateToUnixTimestamp,
-  extractFieldByIndex,
   timestampToUTCUnix,
+  bigIntsToString,
 } from './util'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config()
@@ -43,9 +41,63 @@ if (process.env.REAL_DATA === 'true') {
 }
 
 const getCertificate = (_isTest: boolean) => {
-  return _isTest
-    ? 'testCertificate.pem'
-    : 'uidai_offline_publickey_26022021.cer'
+  return _isTest ? 'testPublicKey.pem' : 'uidai_offline_publickey_26022021.cer'
+}
+
+function prepareTestData() {
+  const qrDataBytes = convertBigIntToByteArray(BigInt(QRData))
+  const decodedData = decompressByteArray(qrDataBytes)
+
+  const signatureBytes = decodedData.slice(
+    decodedData.length - 256,
+    decodedData.length,
+  )
+
+  const signedData = decodedData.slice(0, decodedData.length - 256)
+
+  const [paddedMsg, messageLen] = sha256Pad(signedData, 512 * 3)
+
+  const delimiterIndices = []
+  for (let i = 0; i < paddedMsg.length; i++) {
+    if (paddedMsg[i] === 255) {
+      delimiterIndices.push(i)
+    }
+    if (delimiterIndices.length === 18) {
+      break
+    }
+  }
+
+  const signature = BigInt(
+    '0x' + bufferToHex(Buffer.from(signatureBytes)).toString(),
+  )
+
+  const pkPem = fs.readFileSync(
+    path.join(__dirname, '../assets', getCertificate(testAadhaar)),
+  )
+  const pk = crypto.createPublicKey(pkPem)
+
+  const pubKey = BigInt(
+    '0x' +
+      bufferToHex(
+        Buffer.from(pk.export({ format: 'jwk' }).n as string, 'base64url'),
+      ),
+  )
+
+  const inputs = {
+    qrDataPadded: Uint8ArrayToCharArray(paddedMsg),
+    qrDataPaddedLength: messageLen,
+    nonPaddedDataLength: signedData.length,
+    delimiterIndices: delimiterIndices,
+    signature: splitToWords(signature, BigInt(121), BigInt(17)),
+    pubKey: splitToWords(pubKey, BigInt(121), BigInt(17)),
+    nullifierSeed: 12345678,
+    signalHash: 1001,
+    revealGender: 0,
+    revealDistrict: 0,
+    revealState: 0,
+  }
+
+  return { inputs, signedData, decodedData, pubKey }
 }
 
 describe('AadhaarVerifier', function () {
@@ -61,112 +113,37 @@ describe('AadhaarVerifier', function () {
     )
     circuit = await circom_tester(pathToCircuit, {
       recompile: true,
+      // output: path.join(__dirname, '../build'),
       include: path.join(__dirname, '../node_modules'),
     })
   })
 
   it('should generate witness for circuit with Sha256RSA signature', async () => {
-    const qrDataBytes = convertBigIntToByteArray(BigInt(testQRData))
-    const decodedData = decompressByteArray(qrDataBytes)
+    const { inputs } = prepareTestData()
 
-    const signatureBytes = decodedData.slice(
-      decodedData.length - 256,
-      decodedData.length,
-    )
+    await circuit.calculateWitness(inputs)
+  })
 
-    const signedData = decodedData.slice(0, decodedData.length - 256)
+  it('should output hash of pubkey', async () => {
+    const { inputs, pubKey } = prepareTestData()
 
-    const [paddedMsg, messageLen] = sha256Pad(signedData, 512 * 3)
+    const witness = await circuit.calculateWitness(inputs)
 
-    const delimiterIndices = []
-    for (let i = 0; i < paddedMsg.length; i++) {
-      if (paddedMsg[i] === 255) {
-        delimiterIndices.push(i)
-      }
-      if (delimiterIndices.length === 18) {
-        break
-      }
-    }
+    // Calculate the Poseidon hash with pubkey chunked to 9*242 like in circuit
+    const poseidon = await buildPoseidon()
+    const pubkeyChunked = bigIntToChunkedBytes(pubKey, 242, 9)
+    const hash = poseidon(pubkeyChunked)
 
-    const signature = BigInt(
-      '0x' + bufferToHex(Buffer.from(signatureBytes)).toString(),
-    )
-
-    const pkPem = fs.readFileSync(
-      path.join(__dirname, '../assets', 'testPublicKey.pem'),
-    )
-    const pk = crypto.createPublicKey(pkPem)
-
-    const pubKey = BigInt(
-      '0x' +
-        bufferToHex(
-          Buffer.from(pk.export({ format: 'jwk' }).n as string, 'base64url'),
-        ),
-    )
-
-    await circuit.calculateWitness({
-      qrDataPadded: Uint8ArrayToCharArray(paddedMsg),
-      qrDataPaddedLength: messageLen,
-      nonPaddedDataLength: signedData.length,
-      delimiterIndices: delimiterIndices,
-      signature: splitToWords(signature, BigInt(121), BigInt(17)),
-      pubKey: splitToWords(pubKey, BigInt(121), BigInt(17)),
-      nullifierSeed: 12345678,
-      signalHash: 0,
-    })
+    assert(witness[1] === BigInt(poseidon.F.toObject(hash)))
   })
 
   it('should compute nullifier correctly', async () => {
     const nullifierSeed = 12345678
-    // load public key
-    const pkData = fs.readFileSync(
-      path.join(__dirname, '../assets', getCertificate(testAadhaar)),
-    )
-    const pk = crypto.createPublicKey(pkData)
 
-    const QRDataBytes = convertBigIntToByteArray(BigInt(QRData))
-    const QRDataDecode = decompressByteArray(QRDataBytes)
+    const { inputs, signedData } = prepareTestData()
+    inputs.nullifierSeed = nullifierSeed
 
-    const signatureBytes = QRDataDecode.slice(
-      QRDataDecode.length - 256,
-      QRDataDecode.length,
-    )
-
-    const signedData = QRDataDecode.slice(0, QRDataDecode.length - 256)
-
-    const [paddedMsg, messageLen] = sha256Pad(signedData, 512 * 3)
-
-    const delimiterIndices = []
-    for (let i = 0; i < paddedMsg.length; i++) {
-      if (paddedMsg[i] === 255) {
-        delimiterIndices.push(i)
-      }
-      if (delimiterIndices.length === 18) {
-        break
-      }
-    }
-
-    const pubKey = BigInt(
-      '0x' +
-        bufferToHex(
-          Buffer.from(pk.export({ format: 'jwk' }).n as string, 'base64url'),
-        ),
-    )
-
-    const signature = BigInt(
-      '0x' + bufferToHex(Buffer.from(signatureBytes)).toString(),
-    )
-
-    const witness = await circuit.calculateWitness({
-      qrDataPadded: Uint8ArrayToCharArray(paddedMsg),
-      qrDataPaddedLength: messageLen,
-      nonPaddedDataLength: signedData.length,
-      delimiterIndices: delimiterIndices,
-      signature: splitToWords(signature, BigInt(121), BigInt(17)),
-      pubKey: splitToWords(pubKey, BigInt(121), BigInt(17)),
-      nullifierSeed: nullifierSeed,
-      signalHash: 0,
-    })
+    const witness = await circuit.calculateWitness(inputs)
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const poseidon: any = await buildPoseidon()
@@ -181,123 +158,52 @@ describe('AadhaarVerifier', function () {
     const last16 = poseidon([...photoBytesPacked.slice(16, 32)])
     const nullifier = poseidon([nullifierSeed, first16, last16])
 
-    assert(witness[1] == BigInt(poseidon.F.toString(nullifier)))
+    assert(witness[2] == BigInt(poseidon.F.toString(nullifier)))
   })
 
   it('should output timestamp of when data is generated', async () => {
-    // load public key
-    const pkData = fs.readFileSync(
-      path.join(__dirname, '../assets', 'testPublicKey.pem'),
-    )
-    const pk = crypto.createPublicKey(pkData)
+    const { inputs, decodedData } = prepareTestData()
 
-    const qrDataBytes = convertBigIntToByteArray(BigInt(QRData))
-    const decodedData = decompressByteArray(qrDataBytes)
-
-    const signatureBytes = decodedData.slice(
-      decodedData.length - 256,
-      decodedData.length,
-    )
-
-    const signedData = decodedData.slice(0, decodedData.length - 256)
-    const [paddedMsg, messageLen] = sha256Pad(signedData, 512 * 3)
-
-    const pubKey = BigInt(
-      '0x' +
-        bufferToHex(
-          Buffer.from(pk.export({ format: 'jwk' }).n as string, 'base64url'),
-        ),
-    )
-
-    const signature = BigInt(
-      '0x' + bufferToHex(Buffer.from(signatureBytes)).toString(),
-    )
-
-    const delimiterIndices = []
-    for (let i = 0; i < paddedMsg.length; i++) {
-      if (paddedMsg[i] === 255) {
-        delimiterIndices.push(i)
-      }
-      if (delimiterIndices.length === 18) {
-        break
-      }
-    }
-
-    const witness = await circuit.calculateWitness({
-      qrDataPadded: Uint8ArrayToCharArray(paddedMsg),
-      qrDataPaddedLength: messageLen,
-      nonPaddedDataLength: signedData.length,
-      delimiterIndices: delimiterIndices,
-      signature: splitToWords(signature, BigInt(121), BigInt(17)),
-      pubKey: splitToWords(pubKey, BigInt(121), BigInt(17)),
-      nullifierSeed: 12345678,
-      signalHash: 0,
-    })
+    const witness = await circuit.calculateWitness(inputs)
 
     // This is the time in the QR data above is 20190308114407437.
     // 2019-03-08 11:44:07.437 rounded down to nearest hour is 2019-03-08 11:00:00.000
     // Converting this IST to UTC gives 2019-03-08T05:30:00.000Z
     const expectedTimestamp = timestampToUTCUnix(decodedData)
 
-    assert(witness[2] === BigInt(expectedTimestamp))
+    assert(witness[3] === BigInt(expectedTimestamp))
   })
 
-  it('should output hash of pubkey', async () => {
-    // load public key
-    const pkData = fs.readFileSync(
-      path.join(__dirname, '../assets', 'testPublicKey.pem'),
-    )
-    const pk = crypto.createPublicKey(pkData)
+  it('should output extracted data if reveal is true', async () => {
+    const { inputs } = prepareTestData()
 
-    const QRDataBytes = convertBigIntToByteArray(BigInt(QRData))
-    const QRDataDecode = decompressByteArray(QRDataBytes)
+    inputs.revealDistrict = 1
+    inputs.revealGender = 1
+    inputs.revealState = 1
 
-    const signatureBytes = QRDataDecode.slice(
-      QRDataDecode.length - 256,
-      QRDataDecode.length,
-    )
+    const witness = await circuit.calculateWitness(inputs)
 
-    const signedData = QRDataDecode.slice(0, QRDataDecode.length - 256)
+    // Gender
+    assert(bigIntsToString([witness[4]]) === 'M')
 
-    const [paddedMsg, messageLen] = sha256Pad(signedData, 512 * 3)
+    // District
+    assert(bigIntsToString([witness[5]]) === 'East Delhi')
 
-    const pubKey = BigInt(
-      '0x' +
-        bufferToHex(
-          Buffer.from(pk.export({ format: 'jwk' }).n as string, 'base64url'),
-        ),
-    )
+    // State
+    assert(bigIntsToString([witness[6]]) === 'Delhi')
+  })
 
-    const signature = BigInt(
-      '0x' + bufferToHex(Buffer.from(signatureBytes)).toString(),
-    )
+  it('should not output extracted data if reveal is false', async () => {
+    const { inputs } = prepareTestData()
 
-    const delimiterIndices = []
-    for (let i = 0; i < paddedMsg.length; i++) {
-      if (paddedMsg[i] === 255) {
-        delimiterIndices.push(i)
-      }
-      if (delimiterIndices.length === 18) {
-        break
-      }
-    }
+    inputs.revealDistrict = 0
+    inputs.revealGender = 0
+    inputs.revealState = 0
 
-    const witness = await circuit.calculateWitness({
-      qrDataPadded: Uint8ArrayToCharArray(paddedMsg),
-      qrDataPaddedLength: messageLen,
-      nonPaddedDataLength: signedData.length,
-      delimiterIndices: delimiterIndices,
-      signature: splitToWords(signature, BigInt(121), BigInt(17)),
-      pubKey: splitToWords(pubKey, BigInt(121), BigInt(17)),
-      nullifierSeed: 12345678,
-      signalHash: 0,
-    })
+    const witness = await circuit.calculateWitness(inputs)
 
-    // Calculate the Poseidon hash with pubkey chunked to 9*242 like in circuit
-    const poseidon = await buildPoseidon()
-    const pubkeyChunked = bigIntToChunkedBytes(pubKey, 128, 16)
-    const hash = poseidon(pubkeyChunked)
-
-    assert(witness[3] === BigInt(poseidon.F.toObject(hash)))
+    assert(Number(witness[4]) === 0)
+    assert(Number(witness[5]) === 0)
+    assert(Number(witness[6]) === 0)
   })
 })

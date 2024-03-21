@@ -13,7 +13,7 @@ import assert from 'assert'
 import { testQRData as QRData } from '../assets/dataInput.json'
 import { bigIntsToString, bytesToIntChunks, padArrayWithZeros } from './util'
 
-describe.only('Extractor', function () {
+describe('Extractor', function () {
   this.timeout(0)
 
   let circuit: any
