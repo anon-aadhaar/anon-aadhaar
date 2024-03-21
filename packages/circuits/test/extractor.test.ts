@@ -67,13 +67,19 @@ describe.only('Extractor', function () {
     // Gender
     assert(bigIntsToString([witness[3]]) === 'M')
 
+    // District
+    assert(bigIntsToString([witness[4]]) === 'East Delhi')
+
+    // State
+    assert(bigIntsToString([witness[5]]) === 'Delhi')
+
     // Photo
     const photo = extractPhoto(Array.from(signedData))
     const photoBytesPacked = padArrayWithZeros(
       bytesToIntChunks(new Uint8Array(photo.bytes), 31),
       32,
     )
-    const photoWitness = witness.slice(4, 4 + 32)
+    const photoWitness = witness.slice(6, 6 + 32)
 
     assert(photoBytesPacked.length === photoWitness.length)
     for (let i = 0; i < photoBytesPacked.length; i++) {
