@@ -33,6 +33,7 @@ template AadhaarVerifier(n, k, maxDataLength) {
     // Public inputs
     signal input nullifierSeed;
     signal input signalHash;
+    signal input revealAgeAbove18;
     signal input revealGender;
     signal input revealDistrict;
     signal input revealState;
@@ -40,6 +41,7 @@ template AadhaarVerifier(n, k, maxDataLength) {
     signal output pubkeyHash;
     signal output nullifier;
     signal output timestamp;
+    signal output ageAbove18;
     signal output gender;
     signal output district;
     signal output state;
@@ -61,6 +63,7 @@ template AadhaarVerifier(n, k, maxDataLength) {
     qrDataExtractor.delimiterIndices <== delimiterIndices;
 
     // Reveal extracted data
+    ageAbove18 <== revealAgeAbove18 * qrDataExtractor.ageAbove18;
     timestamp <== qrDataExtractor.timestamp;
     gender <== revealGender * qrDataExtractor.gender;
     district <== revealDistrict * qrDataExtractor.district;
