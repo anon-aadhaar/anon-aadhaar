@@ -145,7 +145,7 @@ export class BackendProver implements ProverInferace {
       signalHash: witness.signalHash.value,
       revealAgeAbove18: 0,
       revealGender: 0,
-      revealDistrict: 0,
+      revealPinCode: 0,
       revealState: 0,
     }
 
