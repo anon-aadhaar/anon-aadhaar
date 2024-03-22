@@ -35,7 +35,7 @@ template AadhaarVerifier(n, k, maxDataLength) {
     signal input signalHash;
     signal input revealAgeAbove18;
     signal input revealGender;
-    signal input revealDistrict;
+    signal input revealPinCode;
     signal input revealState;
 
     signal output pubkeyHash;
@@ -43,8 +43,8 @@ template AadhaarVerifier(n, k, maxDataLength) {
     signal output timestamp;
     signal output ageAbove18;
     signal output gender;
-    signal output district;
     signal output state;
+    signal output pinCode;
 
 
     // Verify the RSA signature
@@ -66,7 +66,7 @@ template AadhaarVerifier(n, k, maxDataLength) {
     ageAbove18 <== revealAgeAbove18 * qrDataExtractor.ageAbove18;
     timestamp <== qrDataExtractor.timestamp;
     gender <== revealGender * qrDataExtractor.gender;
-    district <== revealDistrict * qrDataExtractor.district;
+    pinCode <== revealPinCode * qrDataExtractor.pinCode;
     state <== revealState * qrDataExtractor.state;
 
 

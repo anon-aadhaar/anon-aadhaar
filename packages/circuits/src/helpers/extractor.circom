@@ -174,6 +174,42 @@ template GenderExtractor(maxDataLength) {
     assert(out < 255);
 }
 
+/// @title PinCodeExtractor
+/// @notice Extracts the pin code from the Aadhaar QR data
+/// @input nDelimitedData[maxDataLength] - QR data where each delimiter is 255 * n where n is order of the data
+/// @input startDelimiterIndex - index of the delimiter after which the pin code start
+/// @input endDelimiterIndex - index of the delimiter up to which the pin code is present
+/// @output out - int representing the pin code string in little endian order
+template PinCodeExtractor(maxDataLength) {
+    signal input nDelimitedData[maxDataLength];
+    signal input startDelimiterIndex;
+    signal input endDelimiterIndex;
+
+    signal output out;
+
+    var pinCodeMaxLength = 6;
+    var byteLength = pinCodeMaxLength + 1;
+
+    component shifter = SubarraySelector(maxDataLength, byteLength);
+    shifter.in <== nDelimitedData;
+    shifter.startIndex <== startDelimiterIndex;
+    shifter.length <== endDelimiterIndex - startDelimiterIndex;
+
+    signal shiftedBytes[byteLength] <== shifter.out;
+
+    // Assert delimiters around the data is correct
+    shiftedBytes[0] === pinCodePosition() * 255;
+    shiftedBytes[7] === (pinCodePosition() + 1) * 255;
+
+    // Pack byte[] to int[] where int is field element which take up to 31 bytes
+    component outInt = BytesToIntChunks(pinCodeMaxLength);
+    for (var i = 0; i < pinCodeMaxLength; i ++) {
+        outInt.bytes[i] <== shiftedBytes[i + 1]; // +1 to skip the delimiter
+    }
+
+    out <== outInt.ints[0];
+}
+
 
 /// @title PhotoExtractor
 /// @notice Extracts the photo from the Aadhaar QR data
@@ -234,6 +270,7 @@ template QRDataExtractor(maxDataLength) {
     signal output timestamp;
     signal output ageAbove18;
     signal output gender;
+    signal output pinCode;
     signal output district;
     signal output state;
     signal output photo[photoPackSize()];
@@ -291,17 +328,18 @@ template QRDataExtractor(maxDataLength) {
     genderExtractor.startDelimiterIndex <== delimiterIndices[genderPosition() - 1];
     gender <== genderExtractor.out;
 
-    // Extract disctrict
-    component districtExtractor = ExtractAndPackAsInt(maxDataLength, districtPosition());
-    districtExtractor.nDelimitedData <== nDelimitedData;
-    districtExtractor.delimiterIndices <== delimiterIndices;
-    district <== districtExtractor.out;
-
     // Extract state
     component stateExtractor = ExtractAndPackAsInt(maxDataLength, statePosition());
     stateExtractor.nDelimitedData <== nDelimitedData;
     stateExtractor.delimiterIndices <== delimiterIndices;
     state <== stateExtractor.out;
+
+    // Extract PIN code
+    component pinCodeExtractor = PinCodeExtractor(maxDataLength);
+    pinCodeExtractor.nDelimitedData <== nDelimitedData;
+    pinCodeExtractor.startDelimiterIndex <== delimiterIndices[pinCodePosition() - 1];
+    pinCodeExtractor.endDelimiterIndex <== delimiterIndices[pinCodePosition()];
+    pinCode <== pinCodeExtractor.out;
 
     // Extract photo
     component photoExtractor = PhotoExtractor(maxDataLength);

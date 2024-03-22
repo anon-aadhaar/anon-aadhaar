@@ -53,6 +53,10 @@ function genderPosition() {
   return 5;
 }
 
+function pinCodePosition() {
+  return 10;
+}
+
 function districtPosition() {
   return 7;
 }
