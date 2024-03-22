@@ -10,6 +10,7 @@ include "../utils/pack.circom";
 
 /// @title ExtractAndPackAsInt
 /// @notice Helper function to exract data at a position to a single int (assumes data is less than 31 bytes)
+/// @dev This is only used for state now; but can work for district, name, etc if needed
 /// @param maxDataLength - Maximum length of the data
 /// @param extractPosition - Position of the data to extract (after which delimiter does the data start)
 /// @input nDelimitedData[maxDataLength] - QR data where each delimiter is 255 * n where n is order of the data
@@ -179,7 +180,7 @@ template GenderExtractor(maxDataLength) {
 /// @input nDelimitedData[maxDataLength] - QR data where each delimiter is 255 * n where n is order of the data
 /// @input startDelimiterIndex - index of the delimiter after which the pin code start
 /// @input endDelimiterIndex - index of the delimiter up to which the pin code is present
-/// @output out - int representing the pin code string in little endian order
+/// @output out - pincode as integer
 template PinCodeExtractor(maxDataLength) {
     signal input nDelimitedData[maxDataLength];
     signal input startDelimiterIndex;
@@ -188,12 +189,12 @@ template PinCodeExtractor(maxDataLength) {
     signal output out;
 
     var pinCodeMaxLength = 6;
-    var byteLength = pinCodeMaxLength + 1;
+    var byteLength = pinCodeMaxLength + 2; // 2 delimiters
 
     component shifter = SubarraySelector(maxDataLength, byteLength);
     shifter.in <== nDelimitedData;
     shifter.startIndex <== startDelimiterIndex;
-    shifter.length <== endDelimiterIndex - startDelimiterIndex;
+    shifter.length <== endDelimiterIndex - startDelimiterIndex + 1;
 
     signal shiftedBytes[byteLength] <== shifter.out;
 
@@ -201,13 +202,7 @@ template PinCodeExtractor(maxDataLength) {
     shiftedBytes[0] === pinCodePosition() * 255;
     shiftedBytes[7] === (pinCodePosition() + 1) * 255;
 
-    // Pack byte[] to int[] where int is field element which take up to 31 bytes
-    component outInt = BytesToIntChunks(pinCodeMaxLength);
-    for (var i = 0; i < pinCodeMaxLength; i ++) {
-        outInt.bytes[i] <== shiftedBytes[i + 1]; // +1 to skip the delimiter
-    }
-
-    out <== outInt.ints[0];
+    out <== DigitBytesToNumber(6)([shiftedBytes[1], shiftedBytes[2], shiftedBytes[3], shiftedBytes[4], shiftedBytes[5], shiftedBytes[6]]);
 }
 
 
@@ -270,9 +265,8 @@ template QRDataExtractor(maxDataLength) {
     signal output timestamp;
     signal output ageAbove18;
     signal output gender;
-    signal output pinCode;
-    signal output district;
     signal output state;
+    signal output pinCode;
     signal output photo[photoPackSize()];
 
     // Create `nDelimitedData` - same as `data` but each delimiter is replaced with n * 255
@@ -309,7 +303,7 @@ template QRDataExtractor(maxDataLength) {
     // Extract age - and calculate if above 18
     // We use the year, month, day from the timestamp to calculate the age
     // This wont be precise but avoid the need for additional `currentTime` input
-    // User can generate fresh Aadhaar QR (which is recommended anyway) for accurate age
+    // User can generate fresh QR for accuracy if needed (on their 18th birthday)
     component ageExtractor = AgeExtractor(maxDataLength);
     ageExtractor.nDelimitedData <== nDelimitedData;
     ageExtractor.startDelimiterIndex <== delimiterIndices[dobPosition() - 1];

@@ -64,11 +64,11 @@ describe('Extractor', function () {
     // Gender
     assert(bigIntsToString([witness[3]]) === 'M')
 
-    // District
-    assert(bigIntsToString([witness[4]]) === 'East Delhi')
-
     // State
-    assert(bigIntsToString([witness[5]]) === 'Delhi')
+    assert(bigIntsToString([witness[4]]) === 'Delhi')
+
+    // Pin code
+    assert(Number(witness[5]) === 110051)
 
     // Photo
     // Reconstruction of the photo bytes from packed ints and compare each byte
