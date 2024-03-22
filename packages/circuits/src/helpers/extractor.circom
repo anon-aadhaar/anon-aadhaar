@@ -341,4 +341,9 @@ template QRDataExtractor(maxDataLength) {
     photoExtractor.startDelimiterIndex <== delimiterIndices[photoPosition() - 1];
     photoExtractor.endIndex <== nonPaddedDataLength - 1;
     photo <== photoExtractor.out;
+
+    // TODO: We might be able to optimize the extraction by left shifting data to delimiter
+    // before DOB (rotating data and not seting remamining to 0 like in VarShiftLeft), 
+    // and then extracting DOB, gender simply by using indices
+    // Pincode also only needs shift (without setting remaining to 0) as size is fixed
 }
