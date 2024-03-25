@@ -59,7 +59,7 @@ describe('VerifyProof', function () {
     this.beforeAll(async () => {
       const certificateDirName = __dirname + '/../../circuits/assets'
       certificate = fs
-        .readFileSync(certificateDirName + '/uidai_prod_cdup.cer')
+        .readFileSync(certificateDirName + '/testCertificate.pem')
         .toString()
 
       const anonAadhaarInitArgs: InitArgs = {
@@ -77,7 +77,11 @@ describe('VerifyProof', function () {
       const args = await generateArgs(
         testQRData,
         certificate,
-        nullifierSeed,
+        1234,
+        false,
+        false,
+        false,
+        false,
         user1addres,
       )
 
@@ -153,6 +157,10 @@ describe('VerifyProof', function () {
         testQRData,
         certificate,
         nullifierSeed,
+        false,
+        false,
+        false,
+        false,
         user1addres,
       )
 
