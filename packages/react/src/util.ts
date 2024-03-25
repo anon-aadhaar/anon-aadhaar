@@ -100,3 +100,27 @@ export const fetchCertificateFile = async (
     return null
   }
 }
+
+export async function fetchKey(keyURL: string, maxRetries = 3) {
+  let attempts = 0
+  while (attempts < maxRetries) {
+    try {
+      const response = await fetch(keyURL)
+      if (!response.ok) {
+        throw new Error(
+          `Error while fetching ${keyURL} artifacts from prover: ${response.statusText}`,
+        )
+      }
+
+      const data = await response.text()
+      return data
+    } catch (error) {
+      attempts++
+      if (attempts >= maxRetries) {
+        throw error
+      }
+      await new Promise(resolve => setTimeout(resolve, 1000 * attempts))
+    }
+  }
+  return keyURL
+}

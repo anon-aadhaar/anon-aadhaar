@@ -26,6 +26,7 @@ interface ModalProps {
   qrStatus: AadhaarQRValidation | null
   setQrStatus: Dispatch<SetStateAction<AadhaarQRValidation | null>>
   fieldsToReveal: FieldsToReveal
+  nullifierSeed: number
   signal?: string
 }
 
@@ -39,6 +40,7 @@ export const ProveModal: React.FC<ModalProps> = ({
   setQrStatus,
   signal,
   fieldsToReveal,
+  nullifierSeed,
 }) => {
   const [qrData, setQrData] = useState<string | null>(null)
   const [provingEnabled, setProvingEnabled] = useState<boolean>(false)
@@ -142,6 +144,8 @@ export const ProveModal: React.FC<ModalProps> = ({
             setErrorMessage={setErrorMessage}
             signal={signal}
             setQrStatus={setQrStatus}
+            nullifierSeed={nullifierSeed}
+            fieldsToReveal={fieldsToReveal}
           />
         </ModalContent>
       </BrowserView>

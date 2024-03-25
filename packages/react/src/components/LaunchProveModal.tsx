@@ -4,13 +4,15 @@ import styled from 'styled-components'
 import { useEffect, useContext } from 'react'
 import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
 import { icon } from './ButtonLogo'
-import { AadhaarQRValidation } from '../interface'
+import { AadhaarQRValidation, FieldsToReveal } from '../interface'
 import { ProverState } from '@anon-aadhaar/core'
 
 interface LogInWithAnonAadhaarProps {
   signal?: string
   buttonStyle?: CSSProperties
   buttonTitle?: string
+  fieldsToReveal?: FieldsToReveal
+  nullifierSeed: number
 }
 
 /**
@@ -24,6 +26,8 @@ interface LogInWithAnonAadhaarProps {
 export const LaunchProveModal = ({
   signal,
   buttonStyle,
+  fieldsToReveal,
+  nullifierSeed,
   buttonTitle = 'Generate a proof',
 }: LogInWithAnonAadhaarProps) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
@@ -48,6 +52,15 @@ export const LaunchProveModal = ({
     setQrStatus(null)
   }
 
+  if (!fieldsToReveal) {
+    fieldsToReveal = {
+      revealAgeAbove18: false,
+      revealGender: false,
+      revealState: false,
+      revealPinCode: false,
+    }
+  }
+
   return (
     <div>
       <Btn style={buttonStyle} onClick={openModal}>
@@ -63,6 +76,8 @@ export const LaunchProveModal = ({
         qrStatus={qrStatus}
         setQrStatus={setQrStatus}
         signal={signal}
+        fieldsToReveal={fieldsToReveal}
+        nullifierSeed={nullifierSeed}
       ></ProveModal>
     </div>
   )

@@ -37,3 +37,6 @@ export const artifactUrls = {
   //   vk: BaseUrlArtifacts.Test + Artifacts.VK_URL,
   // },
 }
+
+export const testCertificateUrl =
+  'https://anon-aadhaar.s3.ap-south-1.amazonaws.com/testCertificate.pem'

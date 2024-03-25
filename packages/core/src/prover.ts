@@ -133,15 +133,21 @@ export class AnonAadhaarProver implements ProverInferace {
     let zkeyBuffer: ZKArtifact
     switch (this.proverType) {
       case ArtifactsOrigin.local:
+        if (updateState) updateState(ProverState.FetchingWasm)
         wasmBuffer = await this.wasm.getKey()
+        if (updateState) updateState(ProverState.FetchingZkey)
         zkeyBuffer = await this.zkey.getKey()
         break
       case ArtifactsOrigin.server:
+        if (updateState) updateState(ProverState.FetchingWasm)
         wasmBuffer = new Uint8Array((await this.wasm.getKey()) as ArrayBuffer)
+        if (updateState) updateState(ProverState.FetchingZkey)
         zkeyBuffer = new Uint8Array((await this.zkey.getKey()) as ArrayBuffer)
         break
       case ArtifactsOrigin.chunked:
+        if (updateState) updateState(ProverState.FetchingWasm)
         wasmBuffer = new Uint8Array((await this.wasm.getKey()) as ArrayBuffer)
+        if (updateState) updateState(ProverState.FetchingZkey)
         zkeyBuffer = await this.zkey.getKey()
         break
     }
