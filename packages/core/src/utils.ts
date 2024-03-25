@@ -153,14 +153,11 @@ export function extractPhoto(qrData: number[]) {
 
 export const searchZkeyChunks = async (
   zkeyPath: string,
-  storageService = defaultStorageService,
-  useTestAadhaar = false
+  storageService = defaultStorageService
 ) => {
   const filePromises = []
   for (let i = 0; i < 10; i++) {
-    const fileName = useTestAadhaar
-      ? `circuit_final_test_${i}.zkey`
-      : `circuit_final_prod_${i}.zkey`
+    const fileName = `circuit_final_${i}.zkey`
     const item = await storageService.getItem(fileName)
     if (item) {
       continue

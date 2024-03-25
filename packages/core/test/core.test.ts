@@ -24,7 +24,7 @@ describe('PCD tests', function () {
 
     sinon.stub(proverModule, 'loadZkeyChunks').callsFake(async () => {
       return originalLoadZkeyChunks(
-        artifactUrls.test.chunked,
+        artifactUrls.v2.chunked,
         mockedStorageService
       )
     })
@@ -91,9 +91,9 @@ describe('PCD tests', function () {
 
   it('Proving flow with chunked artifacts fetched from server', async function () {
     const anonAadhaarInitArgs: InitArgs = {
-      wasmURL: artifactUrls.test.wasm,
-      zkeyURL: artifactUrls.test.chunked,
-      vkeyURL: artifactUrls.test.vk,
+      wasmURL: artifactUrls.v2.wasm,
+      zkeyURL: artifactUrls.v2.chunked,
+      vkeyURL: artifactUrls.v2.vk,
       artifactsOrigin: ArtifactsOrigin.chunked,
     }
 

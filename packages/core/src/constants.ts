@@ -28,6 +28,8 @@ export const artifactUrls = {
     wasm: 'https://anon-aadhaar.s3.ap-south-1.amazonaws.com/v2.0.0/aadhaar-verifier.wasm',
     zkey: 'https://anon-aadhaar.s3.ap-south-1.amazonaws.com/v2.0.0/circuit_final.zkey',
     vk: 'https://anon-aadhaar.s3.ap-south-1.amazonaws.com/v2.0.0/vkey.json',
+    chunked:
+      'https://anon-aadhaar.s3.ap-south-1.amazonaws.com/v2.0.0/chunked_zkey',
   },
   // staging: {
   //   wasm: BaseUrlArtifacts.Test + Artifacts.WASM_URL,

@@ -2,7 +2,6 @@ import { isWebUri } from 'valid-url'
 import { AnonAadhaarArgs, AnonAadhaarProof, ArtifactsOrigin } from './types'
 import { ZKArtifact, groth16 } from 'snarkjs'
 import { storageService as defaultStorageService } from './storage'
-import { artifactUrls } from './constants'
 import { handleError, retrieveFileExtension, searchZkeyChunks } from './utils'
 
 type Witness = AnonAadhaarArgs
@@ -12,9 +11,8 @@ export const loadZkeyChunks = async (
   zkeyUrl: string,
   storageService = defaultStorageService
 ): Promise<Uint8Array> => {
-  const isTest = zkeyUrl === artifactUrls.test.chunked
   try {
-    await searchZkeyChunks(zkeyUrl, storageService, isTest)
+    await searchZkeyChunks(zkeyUrl, storageService)
   } catch (e) {
     handleError(e, 'Error while searching for the zkey chunks')
   }
@@ -23,9 +21,7 @@ export const loadZkeyChunks = async (
   try {
     // Fetch zkey chunks from localForage
     for (let i = 0; i < 10; i++) {
-      const fileName = isTest
-        ? `circuit_final_test_${i}.zkey`
-        : `circuit_final_prod_${i}.zkey`
+      const fileName = `circuit_final_${i}.zkey`
       const item: Uint8Array | null = await storageService.getItem(fileName)
       if (!item) throw Error(`${fileName} missing in LocalForage!`)
       buffers.push(item)
