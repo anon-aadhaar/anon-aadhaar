@@ -5,7 +5,6 @@ import { useEffect, useContext } from 'react'
 import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
 import { icon } from './ButtonLogo'
 import { AadhaarQRValidation } from '../interface'
-import React from 'react'
 
 interface LogInWithAnonAadhaarProps {
   signal?: string
@@ -18,13 +17,18 @@ interface LogInWithAnonAadhaarProps {
  * initiate user login using the anon aadhaar zk circuit. The component utilizes
  * the authentication state and login request function from the context.
  *
- * @returns A JSX element representing the LogInWithAnonAadhaarV2 component.
+ * @returns A JSX element representing the LogInWithAnonAadhaar component.
  */
 export const LogInWithAnonAadhaar = ({ signal }: LogInWithAnonAadhaarProps) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [qrStatus, setQrStatus] = useState<null | AadhaarQRValidation>(null)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
   const { state, startReq } = useContext(AnonAadhaarContext)
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen)
+  }
 
   const blob = new Blob([icon], { type: 'image/svg+xml' })
   const anonAadhaarLogo = useMemo(() => URL.createObjectURL(blob), [icon])
@@ -64,12 +68,28 @@ export const LogInWithAnonAadhaar = ({ signal }: LogInWithAnonAadhaarProps) => {
         </div>
       )}
       {state.status === 'logged-in' && (
-        <div>
-          <Btn onClick={() => startReq({ type: 'logout' })}>
+        <RelativeContainer>
+          <Btn onClick={toggleMenu}>
             <Logo src={anonAadhaarLogo} />
-            Logout
+            Menu
           </Btn>
-        </div>
+          <MenuContainer $isopen={isMenuOpen}>
+            <MenuItem onClick={openModal}>Create a proof</MenuItem>
+            <ProveModal
+              isOpen={isModalOpen}
+              onClose={closeModal}
+              errorMessage={errorMessage}
+              setErrorMessage={setErrorMessage}
+              logo={anonAadhaarLogo}
+              qrStatus={qrStatus}
+              setQrStatus={setQrStatus}
+              signal={signal}
+            ></ProveModal>
+            <MenuItem onClick={() => startReq({ type: 'logout' })}>
+              Logout
+            </MenuItem>
+          </MenuContainer>
+        </RelativeContainer>
       )}
     </div>
   )
@@ -108,4 +128,43 @@ const Btn = styled.button`
     background: #e8e8e8;
     cursor: default;
   }
+`
+
+const MenuItem = styled.button`
+  display: block;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  color: #000000;
+  text-align: left;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #cccccc;
+  cursor: pointer;
+
+  &:hover {
+    border-radius: 0.5rem;
+    background-color: #f2f2f2;
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+`
+
+const MenuContainer = styled.div<{ $isopen?: boolean }>`
+  display: ${props => (props.$isopen ? 'block' : 'none')};
+  position: absolute;
+  margin-top: 0.5rem;
+  top: 100%;
+  right: 0;
+  width: 130%;
+  background: #fff;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  border-radius: 0.5rem;
+  z-index: 10;
+`
+const RelativeContainer = styled.div`
+  position: relative;
+  display: inline-block;
 `

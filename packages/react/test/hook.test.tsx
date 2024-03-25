@@ -9,10 +9,11 @@ import {
 } from '../src/hooks/useAnonAadhaar'
 import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
 import { Uint8ArrayToCharArray } from '@zk-email/helpers/dist/binaryFormat'
-import { AnonAadhaarArgs, splitToWords } from '@anon-aadhaar/core'
+import { ProverState, AnonAadhaarArgs, splitToWords } from '@anon-aadhaar/core'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import { AnonAadhaarProvider } from '../src/provider/AnonAadhaarProvider'
 import { genData } from '../../core/test/utils'
+import { useProver } from '../src/hooks/useProver'
 
 describe('useAnonAadhaar Hook', () => {
   let testData: [bigint, bigint, bigint, bigint]
@@ -46,6 +47,7 @@ describe('useAnonAadhaar Hook', () => {
           state: initialState,
           startReq: startReqFunction,
           useTestAadhaar: true,
+          proverState: ProverState.Initializing,
         }}
       >
         {children}
@@ -92,7 +94,9 @@ describe('useAnonAadhaar Hook', () => {
 
     // Verify initial state
     const statusElement = screen.getByTestId('status')
+    const proverElement = screen.getByTestId('proverState')
     expect(statusElement.textContent).to.equal('logged-out')
+    expect(proverElement.textContent).to.equal(ProverState.Initializing)
 
     // Simulate a button click
     const button = screen.getByText('Trigger Login')
@@ -100,6 +104,7 @@ describe('useAnonAadhaar Hook', () => {
 
     // Verify that the login request was triggered and state is updated
     expect(statusElement.textContent).to.equal('logging-in')
+    expect(proverElement.textContent).to.equal(ProverState.FetchingWasm)
   })
 })
 
@@ -109,10 +114,12 @@ function TestComponent({
   anonAadhaarArgs: AnonAadhaarArgs
 }) {
   const [state, startReq] = useAnonAadhaar()
+  const [proverState] = useProver()
 
   return (
     <div>
       <span data-testid="status">{state.status}</span>
+      <span data-testid="proverState">{proverState}</span>
       <button
         onClick={() => startReq({ type: 'login', args: anonAadhaarArgs })}
       >

@@ -1,3 +1,11 @@
+## 1.0.2
+
+- Fix QR code verification state bug
+- Manages multiple AnonAadhaarProofs
+- Adds LaunchProveModal component that abstracts login flow with button custom styles
+- Adds prover hook, to check prover state and latest proof
+- Custom artifacts links
+
 ## 1.0.1
 
 - Adds chunked prover, which enables caching the zkey in the browser

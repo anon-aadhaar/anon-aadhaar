@@ -141,6 +141,7 @@ export const ProveModal: React.FC<ModalProps> = ({
             provingEnabled={provingEnabled}
             setErrorMessage={setErrorMessage}
             signal={signal}
+            setQrStatus={setQrStatus}
           />
         </ModalContent>
       </BrowserView>

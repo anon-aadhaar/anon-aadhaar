@@ -5,6 +5,8 @@ import { Spinner } from './LoadingSpinner'
 import React from 'react'
 import { processAadhaarArgs } from '../prove'
 import { FieldsToReveal } from '../interface'
+import { AadhaarQRValidation } from '../interface'
+import { ProverState } from '@anon-aadhaar/core'
 
 interface ProveButtonProps {
   qrData: string | null
@@ -12,6 +14,7 @@ interface ProveButtonProps {
   setErrorMessage: Dispatch<SetStateAction<string | null>>
   fieldsToReveal: FieldsToReveal
   nullifierSeed: number
+  setQrStatus: Dispatch<SetStateAction<AadhaarQRValidation | null>>
   signal?: string
 }
 
@@ -22,12 +25,14 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
   signal,
   fieldsToReveal,
   nullifierSeed,
+  setQrStatus,
 }) => {
-  const { state, startReq, useTestAadhaar } = useContext(AnonAadhaarContext)
+  const { startReq, useTestAadhaar, proverState } =
+    useContext(AnonAadhaarContext)
 
   const startProving = async () => {
     try {
-      if (qrData === null) throw new Error('Missing application Id!')
+      if (qrData === null) throw new Error('Missing QR code data.')
 
       const args = await processAadhaarArgs(
         qrData,
@@ -38,6 +43,7 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
       )
 
       startReq({ type: 'login', args })
+      setQrStatus(null)
     } catch (error) {
       console.log(error)
       if (error instanceof Error) setErrorMessage(error.message)
@@ -45,18 +51,49 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
   }
 
   return (() => {
-    switch (state.status) {
-      case 'logged-out':
+    switch (proverState) {
+      case ProverState.Initializing:
         return (
           <Btn disabled={!provingEnabled} onClick={startProving}>
             {' '}
             Request Aadhaar Proof{' '}
           </Btn>
         )
-      case 'logging-in':
+      case ProverState.Completed:
+        return (
+          <Btn disabled={!provingEnabled} onClick={startProving}>
+            {' '}
+            Request Aadhaar Proof{' '}
+          </Btn>
+        )
+      case ProverState.FetchingWasm:
+        return (
+          <Btn>
+            Searching for wasm file...
+            {'\u2003'}
+            <Spinner />
+          </Btn>
+        )
+      case ProverState.FetchingZkey:
+        return (
+          <Btn>
+            Searching for zkey file...
+            {'\u2003'}
+            <Spinner />
+          </Btn>
+        )
+      case ProverState.Proving:
         return (
           <Btn>
             Generating proof...
+            {'\u2003'}
+            <Spinner />
+          </Btn>
+        )
+      case ProverState.Error:
+        return (
+          <Btn>
+            Oups something went wrong...
             {'\u2003'}
             <Spinner />
           </Btn>

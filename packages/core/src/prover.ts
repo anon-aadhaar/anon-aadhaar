@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { isWebUri } from 'valid-url'
-import { AnonAadhaarArgs, AnonAadhaarProof, ArtifactsOrigin } from './types'
+import {
+  AnonAadhaarArgs,
+  AnonAadhaarProof,
+  ArtifactsOrigin,
+  ProverState,
+} from './types'
 import { ZKArtifact, groth16 } from 'snarkjs'
 import { storageService as defaultStorageService } from './storage'
 import { handleError, retrieveFileExtension, searchZkeyChunks } from './utils'
@@ -45,28 +49,26 @@ export const loadZkeyChunks = async (
 }
 
 async function fetchKey(keyURL: string, maxRetries = 3): Promise<ZKArtifact> {
-  if (isWebUri(keyURL)) {
-    let attempts = 0
-    while (attempts < maxRetries) {
-      try {
-        const response = await fetch(keyURL)
-        if (!response.ok) {
-          throw new Error(
-            `Error while fetching ${retrieveFileExtension(
-              keyURL
-            )} artifacts from prover: ${response.statusText}`
-          )
-        }
-
-        const data = await response.arrayBuffer()
-        return data as Buffer
-      } catch (error) {
-        attempts++
-        if (attempts >= maxRetries) {
-          throw error
-        }
-        await new Promise(resolve => setTimeout(resolve, 1000 * attempts))
+  let attempts = 0
+  while (attempts < maxRetries) {
+    try {
+      const response = await fetch(keyURL)
+      if (!response.ok) {
+        throw new Error(
+          `Error while fetching ${retrieveFileExtension(
+            keyURL
+          )} artifacts from prover: ${response.statusText}`
+        )
       }
+
+      const data = await response.arrayBuffer()
+      return data as Buffer
+    } catch (error) {
+      attempts++
+      if (attempts >= maxRetries) {
+        throw error
+      }
+      await new Promise(resolve => setTimeout(resolve, 1000 * attempts))
     }
   }
   return keyURL
@@ -101,7 +103,10 @@ export class KeyPath implements KeyPathInterface {
 export interface ProverInferace {
   wasm: KeyPath
   zkey: KeyPath
-  proving: (witness: Witness) => Promise<AnonAadhaarProof>
+  proving: (
+    witness: Witness,
+    updateState?: (state: ProverState) => void
+  ) => Promise<AnonAadhaarProof>
 }
 
 export class AnonAadhaarProver implements ProverInferace {
@@ -120,7 +125,10 @@ export class AnonAadhaarProver implements ProverInferace {
     this.proverType = proverType
   }
 
-  async proving(witness: Witness): Promise<AnonAadhaarProof> {
+  async proving(
+    witness: Witness,
+    updateState?: (state: ProverState) => void
+  ): Promise<AnonAadhaarProof> {
     let wasmBuffer: ZKArtifact
     let zkeyBuffer: ZKArtifact
     switch (this.proverType) {
@@ -152,12 +160,14 @@ export class AnonAadhaarProver implements ProverInferace {
       revealState: witness.revealState.value!,
     }
 
+    if (updateState) updateState(ProverState.Proving)
     const { proof, publicSignals } = await groth16.fullProve(
       input,
       wasmBuffer,
       zkeyBuffer
     )
 
+    if (updateState) updateState(ProverState.Completed)
     return {
       groth16Proof: proof,
       pubkeyHash: publicSignals[0],
@@ -171,10 +181,4 @@ export class AnonAadhaarProver implements ProverInferace {
       pincode: publicSignals[6],
     }
   }
-}
-
-export interface ProverInferace {
-  wasm: KeyPath
-  zkey: KeyPath
-  proving: (witness: Witness) => Promise<AnonAadhaarProof>
 }

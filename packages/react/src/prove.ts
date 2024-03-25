@@ -6,7 +6,9 @@ import {
   AnonAadhaarCore,
   generateArgs,
   handleError,
+  ProverState,
 } from '@anon-aadhaar/core'
+import { Dispatch, SetStateAction } from 'react'
 import { fetchCertificateFile } from './util'
 import { FieldsToReveal } from './interface'
 
@@ -24,11 +26,12 @@ import { FieldsToReveal } from './interface'
  */
 export const proveAndSerialize = async (
   anonAadhaarArgs: AnonAadhaarArgs,
+  setProverState?: Dispatch<SetStateAction<ProverState>>,
 ): Promise<{
   anonAadhaarProof: AnonAadhaarCore
   serialized: SerializedPCD<AnonAadhaarCore>
 }> => {
-  const anonAadhaarProof = await prove(anonAadhaarArgs)
+  const anonAadhaarProof = await prove(anonAadhaarArgs, setProverState)
   const serialized = await serialize(anonAadhaarProof)
 
   return { anonAadhaarProof, serialized }
