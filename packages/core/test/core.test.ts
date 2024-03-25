@@ -35,7 +35,7 @@ describe('PCD tests', function () {
     sinon.restore()
   })
 
-  it.only('Proving flow with artifacts fetched locally', async function () {
+  it('Proving flow with artifacts fetched locally', async function () {
     const artifactsDirName = __dirname + '/../../circuits/artifacts'
     const anonAadhaarInitArgs: InitArgs = {
       wasmURL: artifactsDirName + '/aadhaar-verifier.wasm',
@@ -64,9 +64,9 @@ describe('PCD tests', function () {
 
   it('Proving flow with artifacts fetched from server', async function () {
     const anonAadhaarInitArgs: InitArgs = {
-      wasmURL: artifactUrls.test.wasm,
-      zkeyURL: artifactUrls.test.zkey,
-      vkeyURL: artifactUrls.test.vk,
+      wasmURL: artifactUrls.v2.wasm,
+      zkeyURL: artifactUrls.v2.zkey,
+      vkeyURL: artifactUrls.v2.vk,
       artifactsOrigin: ArtifactsOrigin.server,
     }
 

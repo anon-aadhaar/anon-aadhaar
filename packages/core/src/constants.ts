@@ -24,6 +24,11 @@ export const artifactUrls = {
     vk: BaseUrlArtifacts.Prod + Artifacts.VK_URL,
     chunked: BaseUrlArtifacts.Prod + Artifacts.ZKEY_CHUNKS,
   },
+  v2: {
+    wasm: 'https://anon-aadhaar.s3.ap-south-1.amazonaws.com/v2.0.0/aadhaar-verifier.wasm',
+    zkey: 'https://anon-aadhaar.s3.ap-south-1.amazonaws.com/v2.0.0/circuit_final.zkey',
+    vk: 'https://anon-aadhaar.s3.ap-south-1.amazonaws.com/v2.0.0/vkey.json',
+  },
   // staging: {
   //   wasm: BaseUrlArtifacts.Test + Artifacts.WASM_URL,
   //   zkey: BaseUrlArtifacts.Staging + Artifacts.ZKEY_CHUNKS,
