@@ -37,11 +37,11 @@ jobs:
         run: yarn lint
 
       - name: Cache power of tau
-        id: powersOfTau28_hez_final_21
+        id: powersOfTau28_hez_final_20
         uses: actions/cache@v3
         with:
-          path: packages/circuits/build/powersOfTau28_hez_final_21.ptau
-          key: powersOfTau28_hez_final_21.ptau
+          path: packages/circuits/build/powersOfTau28_hez_final_20.ptau
+          key: powersOfTau28_hez_final_20.ptau
       - name: Cache Circom
         id: Circom
         uses: actions/cache@v3
@@ -72,7 +72,7 @@ jobs:
           PROVIDER_KEY_SECRET: ${{secrets.PROVIDER_KEY}}
 
       - name: 'Dev trusted setup'
-        run: 'yarn dev-setup-test:circuit'
+        run: 'yarn dev-setup:circuit'
 
       - name: Build packages
         run: yarn build:libraries
