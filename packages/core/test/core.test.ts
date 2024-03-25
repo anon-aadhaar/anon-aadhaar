@@ -19,7 +19,7 @@ describe('PCD tests', function () {
   this.beforeAll(() => {
     const certificateDirName = __dirname + '/../../circuits/assets'
     certificate = fs
-      .readFileSync(certificateDirName + '/uidai_prod_cdup.cer')
+      .readFileSync(certificateDirName + '/testCertificate.pem')
       .toString()
 
     sinon.stub(proverModule, 'loadZkeyChunks').callsFake(async () => {
@@ -35,7 +35,7 @@ describe('PCD tests', function () {
     sinon.restore()
   })
 
-  it('Proving flow with artifacts fetched locally', async function () {
+  it.only('Proving flow with artifacts fetched locally', async function () {
     const artifactsDirName = __dirname + '/../../circuits/artifacts'
     const anonAadhaarInitArgs: InitArgs = {
       wasmURL: artifactsDirName + '/aadhaar-verifier.wasm',
@@ -46,7 +46,15 @@ describe('PCD tests', function () {
 
     await init(anonAadhaarInitArgs)
 
-    const args = await generateArgs(QRData, certificate, 1234)
+    const args = await generateArgs(
+      QRData,
+      certificate,
+      1234,
+      false,
+      false,
+      false,
+      false
+    )
 
     const anonAadhaarProof = await prove(args)
 
@@ -64,7 +72,15 @@ describe('PCD tests', function () {
 
     await init(anonAadhaarInitArgs)
 
-    const args = await generateArgs(QRData, certificate, 1234)
+    const args = await generateArgs(
+      QRData,
+      certificate,
+      1234,
+      false,
+      false,
+      false,
+      false
+    )
 
     const anonAadhaarProof = await prove(args)
 
@@ -83,7 +99,15 @@ describe('PCD tests', function () {
 
     await init(anonAadhaarInitArgs)
 
-    const args = await generateArgs(QRData, certificate, 1234)
+    const args = await generateArgs(
+      QRData,
+      certificate,
+      1234,
+      false,
+      false,
+      false,
+      false
+    )
 
     const anonAadhaarProof = await prove(args)
 

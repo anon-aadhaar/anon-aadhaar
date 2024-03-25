@@ -104,20 +104,20 @@ export const generateArgs = async (
       value: signalHash,
     },
     revealGender: {
-      argumentType: ArgumentTypeName.Boolean,
-      value: revealGender,
+      argumentType: ArgumentTypeName.Number,
+      value: revealGender ? '1' : '0',
     },
     revealAgeAbove18: {
-      argumentType: ArgumentTypeName.Boolean,
-      value: revealAgeAbove18,
+      argumentType: ArgumentTypeName.Number,
+      value: revealAgeAbove18 ? '1' : '0',
     },
     revealState: {
-      argumentType: ArgumentTypeName.Boolean,
-      value: revealState,
+      argumentType: ArgumentTypeName.Number,
+      value: revealState ? '1' : '0',
     },
     revealPinCode: {
-      argumentType: ArgumentTypeName.Boolean,
-      value: revealPinCode,
+      argumentType: ArgumentTypeName.Number,
+      value: revealPinCode ? '1' : '0',
     },
   }
 

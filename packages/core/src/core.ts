@@ -114,11 +114,12 @@ export async function verify(pcd: AnonAadhaarCore): Promise<boolean> {
       pcd.proof.pubkeyHash,
       pcd.proof.nullifier,
       pcd.proof.timestamp,
+      pcd.proof.ageAbove18,
+      pcd.proof.gender,
+      pcd.proof.state,
+      pcd.proof.pincode,
       pcd.proof.nullifierSeed,
-      '0',
-      '0',
-      '0',
-      '0',
+      pcd.proof.signalHash,
     ],
     pcd.proof.groth16Proof
   )
