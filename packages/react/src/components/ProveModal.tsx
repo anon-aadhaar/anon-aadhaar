@@ -9,7 +9,7 @@ import styled from 'styled-components'
 import { FileInput } from './FileInput'
 import { ProveButton } from './ProveButton'
 import { uploadQRpng } from '../util'
-import { AadhaarQRValidation } from '../interface'
+import { AadhaarQRValidation, FieldsToReveal } from '../interface'
 import { ErrorToast } from './ErrorToast'
 import { BrowserView, MobileView } from 'react-device-detect'
 import { Logo } from './LogInWithAnonAadhaar'
@@ -25,6 +25,7 @@ interface ModalProps {
   logo: string
   qrStatus: AadhaarQRValidation | null
   setQrStatus: Dispatch<SetStateAction<AadhaarQRValidation | null>>
+  fieldsToReveal: FieldsToReveal
   signal?: string
 }
 
@@ -37,6 +38,7 @@ export const ProveModal: React.FC<ModalProps> = ({
   qrStatus,
   setQrStatus,
   signal,
+  fieldsToReveal,
 }) => {
   const [qrData, setQrData] = useState<string | null>(null)
   const [provingEnabled, setProvingEnabled] = useState<boolean>(false)

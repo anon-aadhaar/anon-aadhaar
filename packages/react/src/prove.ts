@@ -8,6 +8,7 @@ import {
   handleError,
 } from '@anon-aadhaar/core'
 import { fetchCertificateFile } from './util'
+import { FieldsToReveal } from './interface'
 
 /**
  * `proveAndSerialize` is a function that generates proofs using the web-based proving system of Anon Aadhaar.
@@ -49,6 +50,7 @@ export const processAadhaarArgs = async (
   qrData: string,
   useTestAadhaar: boolean,
   nullifierSeed: number,
+  fieldsToReveal: FieldsToReveal,
   signal?: string,
 ): Promise<AnonAadhaarArgs> => {
   let certificate: string | null = null
@@ -64,7 +66,16 @@ export const processAadhaarArgs = async (
 
   if (!certificate) throw Error('Error while fetching public key.')
 
-  const args = await generateArgs(qrData, certificate, nullifierSeed, signal)
+  const args = await generateArgs(
+    qrData,
+    certificate,
+    nullifierSeed,
+    fieldsToReveal.revealGender,
+    fieldsToReveal.revealAgeAbove18,
+    fieldsToReveal.revealState,
+    fieldsToReveal.revealPinCode,
+    signal,
+  )
 
   return args
 }

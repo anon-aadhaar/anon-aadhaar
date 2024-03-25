@@ -3,3 +3,10 @@ export enum AadhaarQRValidation {
   SIGNATURE_VERIFIED = 'Signature verified ✅',
   ERROR_PARSING_QR = 'QR code invalid ❌',
 }
+
+export type FieldsToReveal = {
+  revealAgeAbove18: boolean
+  revealGender: boolean
+  revealState: boolean
+  revealPinCode: boolean
+}
