@@ -104,65 +104,39 @@ export interface ProverInferace {
   proving: (witness: Witness) => Promise<AnonAadhaarProof>
 }
 
-export class BackendProver implements ProverInferace {
+export class AnonAadhaarProver implements ProverInferace {
   wasm: KeyPath
   zkey: KeyPath
+  proverType: ArtifactsOrigin
 
-  constructor(wasmURL: string, zkey: string) {
-    this.wasm = new KeyPath(wasmURL, ArtifactsOrigin.local)
-    this.zkey = new KeyPath(zkey, ArtifactsOrigin.local)
-  }
-
-  async proving(witness: Witness): Promise<AnonAadhaarProof> {
-    const input = {
-      qrDataPadded: witness.qrDataPadded.value!,
-      qrDataPaddedLength: witness.qrDataPaddedLength.value!,
-      nonPaddedDataLength: witness.qrDataPaddedLength.value!,
-      delimiterIndices: witness.delimiterIndices.value!,
-      signature: witness.signature.value!,
-      pubKey: witness.pubKey.value!,
-      nullifierSeed: witness.nullifierSeed.value!,
-      signalHash: witness.signalHash.value!,
-      revealAgeAbove18: witness.revealAgeAbove18.value!,
-      revealGender: witness.revealGender.value!,
-      revealPinCode: witness.revealPinCode.value!,
-      revealState: witness.revealState.value!,
-    }
-
-    const { proof, publicSignals } = await groth16.fullProve(
-      input,
-      await this.wasm.getKey(),
-      await this.zkey.getKey()
+  constructor(wasmURL: string, zkey: string, proverType: ArtifactsOrigin) {
+    this.wasm = new KeyPath(
+      wasmURL,
+      proverType === ArtifactsOrigin.chunked
+        ? ArtifactsOrigin.server
+        : proverType
     )
-
-    return {
-      groth16Proof: proof,
-      pubkeyHash: publicSignals[0],
-      timestamp: publicSignals[2],
-      nullifierSeed: witness.nullifierSeed.value!,
-      nullifier: publicSignals[1],
-      signalHash: witness.signalHash.value!,
-      ageAbove18: publicSignals[3],
-      gender: publicSignals[4],
-      state: publicSignals[5],
-      pincode: publicSignals[6],
-    }
-  }
-}
-
-export class WebProver implements ProverInferace {
-  wasm: KeyPathInterface
-  zkey: KeyPathInterface
-
-  constructor(wasmURL: string, zkey: string) {
-    this.wasm = new KeyPath(wasmURL, ArtifactsOrigin.server)
-    this.zkey = new KeyPath(zkey, ArtifactsOrigin.server)
+    this.zkey = new KeyPath(zkey, proverType)
+    this.proverType = proverType
   }
 
   async proving(witness: Witness): Promise<AnonAadhaarProof> {
-    const wasmBuffer = (await this.wasm.getKey()) as ArrayBuffer
-    const zkeyBuffer = (await this.zkey.getKey()) as ArrayBuffer
-
+    let wasmBuffer: ZKArtifact
+    let zkeyBuffer: ZKArtifact
+    switch (this.proverType) {
+      case ArtifactsOrigin.local:
+        wasmBuffer = await this.wasm.getKey()
+        zkeyBuffer = await this.zkey.getKey()
+        break
+      case ArtifactsOrigin.server:
+        wasmBuffer = new Uint8Array((await this.wasm.getKey()) as ArrayBuffer)
+        zkeyBuffer = new Uint8Array((await this.zkey.getKey()) as ArrayBuffer)
+        break
+      case ArtifactsOrigin.chunked:
+        wasmBuffer = new Uint8Array((await this.wasm.getKey()) as ArrayBuffer)
+        zkeyBuffer = await this.zkey.getKey()
+        break
+    }
     const input = {
       qrDataPadded: witness.qrDataPadded.value!,
       qrDataPaddedLength: witness.qrDataPaddedLength.value!,
@@ -180,56 +154,7 @@ export class WebProver implements ProverInferace {
 
     const { proof, publicSignals } = await groth16.fullProve(
       input,
-      new Uint8Array(wasmBuffer),
-      new Uint8Array(zkeyBuffer)
-    )
-
-    return {
-      groth16Proof: proof,
-      pubkeyHash: publicSignals[0],
-      timestamp: publicSignals[2],
-      nullifierSeed: witness.nullifierSeed.value!,
-      nullifier: publicSignals[1],
-      signalHash: witness.signalHash.value!,
-      ageAbove18: publicSignals[3],
-      gender: publicSignals[4],
-      state: publicSignals[5],
-      pincode: publicSignals[6],
-    }
-  }
-}
-
-export class ChunkedProver implements ProverInferace {
-  wasm: KeyPathInterface
-  zkey: KeyPathInterface
-
-  constructor(wasmURL: string, zkey: string) {
-    this.wasm = new KeyPath(wasmURL, ArtifactsOrigin.server)
-    this.zkey = new KeyPath(zkey, ArtifactsOrigin.chunked)
-  }
-
-  async proving(witness: Witness): Promise<AnonAadhaarProof> {
-    const wasmBuffer = await this.wasm.getKey()
-    const zkeyBuffer = await this.zkey.getKey()
-
-    const input = {
-      qrDataPadded: witness.qrDataPadded.value!,
-      qrDataPaddedLength: witness.qrDataPaddedLength.value!,
-      nonPaddedDataLength: witness.qrDataPaddedLength.value!,
-      delimiterIndices: witness.delimiterIndices.value!,
-      signature: witness.signature.value!,
-      pubKey: witness.pubKey.value!,
-      nullifierSeed: witness.nullifierSeed.value!,
-      signalHash: witness.signalHash.value!,
-      revealAgeAbove18: witness.revealAgeAbove18.value!,
-      revealGender: witness.revealGender.value!,
-      revealPinCode: witness.revealPinCode.value!,
-      revealState: witness.revealState.value!,
-    }
-
-    const { proof, publicSignals } = await groth16.fullProve(
-      input,
-      new Uint8Array(wasmBuffer as ArrayBuffer),
+      wasmBuffer,
       zkeyBuffer
     )
 
@@ -246,4 +171,10 @@ export class ChunkedProver implements ProverInferace {
       pincode: publicSignals[6],
     }
   }
+}
+
+export interface ProverInferace {
+  wasm: KeyPath
+  zkey: KeyPath
+  proving: (witness: Witness) => Promise<AnonAadhaarProof>
 }

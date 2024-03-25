@@ -11,12 +11,7 @@ import {
 import { v4 as uuidv4 } from 'uuid'
 import { groth16 } from 'snarkjs'
 import JSONBig from 'json-bigint'
-import {
-  BackendProver,
-  ChunkedProver,
-  ProverInferace,
-  WebProver,
-} from './prover'
+import { AnonAadhaarProver, ProverInferace } from './prover'
 
 export class AnonAadhaarCore
   implements PCD<AnonAadhaarClaim, AnonAadhaarProof>
@@ -65,19 +60,11 @@ export async function prove(args: AnonAadhaarArgs): Promise<AnonAadhaarCore> {
     signalHash: args.signalHash.value,
   }
 
-  let prover: ProverInferace
-
-  switch (initArgs.artifactsOrigin) {
-    case ArtifactsOrigin.local:
-      prover = new BackendProver(initArgs.wasmURL, initArgs.zkeyURL)
-      break
-    case ArtifactsOrigin.server:
-      prover = new WebProver(initArgs.wasmURL, initArgs.zkeyURL)
-      break
-    case ArtifactsOrigin.chunked:
-      prover = new ChunkedProver(initArgs.wasmURL, initArgs.zkeyURL)
-      break
-  }
+  const prover: ProverInferace = new AnonAadhaarProver(
+    initArgs.wasmURL,
+    initArgs.zkeyURL,
+    initArgs.artifactsOrigin
+  )
 
   const anonAadhaarProof = await prover.proving(args)
 
