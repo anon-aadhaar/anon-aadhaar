@@ -3,7 +3,12 @@ import { AnonAadhaarArgs, AnonAadhaarProof, ArtifactsOrigin } from './types'
 import { ZKArtifact, groth16 } from 'snarkjs'
 import { storageService as defaultStorageService } from './storage'
 import { artifactUrls } from './constants'
-import { handleError, retrieveFileExtension, searchZkeyChunks } from './utils'
+import {
+  handleError,
+  retrieveFileExtension,
+  searchZkeyChunks,
+  verifyArgNonNull,
+} from './utils'
 
 type Witness = AnonAadhaarArgs
 
@@ -117,36 +122,67 @@ export class BackendProver implements ProverInferace {
   }
 
   async proving(witness: Witness): Promise<AnonAadhaarProof> {
-    if (!witness.pubKey.value) {
-      throw new Error('Cannot make proof: missing pubKey')
+    if (!witness.qrDataPadded.value) {
+      throw new Error('Cannot make proof: missing message')
+    }
+
+    if (!witness.qrDataPaddedLength.value) {
+      throw new Error('Cannot make proof: missing aadhaarDataLength')
+    }
+
+    if (!witness.nonPaddedDataLength.value) {
+      throw new Error('Cannot make proof: missing nonPaddedDataLength')
+    }
+
+    if (!witness.delimiterIndices.value) {
+      throw new Error('Cannot make proof: missing delimiterIndices')
     }
 
     if (!witness.signature.value) {
       throw new Error('Cannot make proof: missing signature')
     }
 
-    if (!witness.aadhaarData.value) {
-      throw new Error('Cannot make proof: missing message')
+    if (!witness.pubKey.value) {
+      throw new Error('Cannot make proof: missing pubKey')
     }
 
-    if (!witness.aadhaarDataLength.value) {
-      throw new Error('Cannot make proof: missing aadhaarDataLength')
+    if (!witness.nullifierSeed.value) {
+      throw new Error('Cannot make proof: missing nullifierSeed')
     }
 
     if (!witness.signalHash.value) {
       throw new Error('Cannot make proof: missing signalHash')
     }
 
+    if (!witness.revealAgeAbove18.value) {
+      throw new Error('Cannot make proof: missing revealAgeAbove18')
+    }
+
+    if (!witness.revealGender.value) {
+      throw new Error('Cannot make proof: missing revealGender')
+    }
+
+    if (!witness.revealPinCode.value) {
+      throw new Error('Cannot make proof: missing revealPinCode')
+    }
+
+    if (!witness.revealState.value) {
+      throw new Error('Cannot make proof: missing revealState')
+    }
+
     const input = {
-      aadhaarData: witness.aadhaarData.value,
-      aadhaarDataLength: witness.aadhaarDataLength.value,
+      qrDataPadded: witness.qrDataPadded.value,
+      qrDataPaddedLength: witness.qrDataPaddedLength.value,
+      nonPaddedDataLength: witness.qrDataPaddedLength.value,
+      delimiterIndices: witness.delimiterIndices.value,
       signature: witness.signature.value,
       pubKey: witness.pubKey.value,
+      nullifierSeed: witness.nullifierSeed.value,
       signalHash: witness.signalHash.value,
-      revealAgeAbove18: 0,
-      revealGender: 0,
-      revealPinCode: 0,
-      revealState: 0,
+      revealAgeAbove18: witness.revealAgeAbove18.value,
+      revealGender: witness.revealGender.value,
+      revealPinCode: witness.revealPinCode.value,
+      revealState: witness.revealState.value,
     }
 
     const { proof, publicSignals } = await groth16.fullProve(
@@ -156,11 +192,16 @@ export class BackendProver implements ProverInferace {
     )
 
     return {
-      pubkeyHash: publicSignals[0],
-      nullifier: publicSignals[1],
-      timestamp: publicSignals[2],
-      signalHash: witness.signalHash.value,
       groth16Proof: proof,
+      pubkeyHash: publicSignals[1],
+      timestamp: publicSignals[3],
+      nullifierSeed: publicSignals[0],
+      nullifier: publicSignals[2],
+      signalHash: witness.signalHash.value,
+      ageAbove18: publicSignals[4],
+      gender: publicSignals[5],
+      state: publicSignals[6],
+      pincode: publicSignals[7],
     }
   }
 }

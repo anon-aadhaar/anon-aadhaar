@@ -3,7 +3,7 @@
 
 # default dir
 BUILD_DIR=$(pwd)/build
-PTAU=powersOfTau28_hez_final_21.ptau
+PTAU=powersOfTau28_hez_final_20.ptau
 PTAU_PATH=$BUILD_DIR/$PTAU
 CIRCUIT=$(pwd)/src
 CIRCUIR_PATH=$(pwd)/src/aadhaar-verifier.circom

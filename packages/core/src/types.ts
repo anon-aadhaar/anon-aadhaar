@@ -31,12 +31,7 @@ export interface InitArgs {
  */
 export type AnonAadhaarClaim = {
   pubKey: string[]
-  nullifier: string
   signalHash: string
-  ageAbove18: boolean
-  gender: string
-  district: string
-  state: string
 }
 
 /**
@@ -49,18 +44,28 @@ export type AnonAadhaarProof = {
   nullifierSeed: string
   nullifier: string
   signalHash: string
+  ageAbove18: string
+  gender: string
+  state: string
+  pincode: string
 }
 
 /**
  * @dev Arguments needed to compute the witness.
  */
 export type AnonAadhaarArgs = {
-  aadhaarData: StringArrayArgument // private
-  aadhaarDataLength: NumberArgument // private
-  pubKey: StringArrayArgument // public
+  qrDataPadded: StringArrayArgument // private
+  qrDataPaddedLength: NumberArgument // private
+  nonPaddedDataLength: NumberArgument
+  delimiterIndices: StringArrayArgument
   signature: StringArrayArgument // private
-  nullifierSeed: NumberArgument // private
+  pubKey: StringArrayArgument // public
+  nullifierSeed: StringArgument // private
   signalHash: StringArgument // public
+  revealGender: NumberArgument
+  revealAgeAbove18: NumberArgument
+  revealState: NumberArgument
+  revealPinCode: NumberArgument
 }
 
 export type PackedGroth16Proof = [

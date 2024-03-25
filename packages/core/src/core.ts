@@ -147,7 +147,7 @@ export async function verifyLocal(pcd: AnonAadhaarCore): Promise<boolean> {
       pcd.proof.timestamp,
       pcd.proof.ageAbove18,
       pcd.proof.gender,
-      pcd.proof.district,
+      pcd.proof.pincode,
       pcd.proof.state,
     ],
     pcd.proof.groth16Proof

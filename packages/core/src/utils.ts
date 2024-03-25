@@ -1,4 +1,4 @@
-import { PackedGroth16Proof } from './types'
+import { PackedGroth16Proof, AnonAadhaarArgs } from './types'
 import { Groth16Proof } from 'snarkjs'
 import pako from 'pako'
 import { storageService as defaultStorageService } from './storage'
@@ -204,4 +204,23 @@ export const retrieveFileExtension = (str: string) => {
     parsedUrl.pathname.lastIndexOf('.') + 1
   )
   return fileExtension
+}
+
+type EnsureNonNullableValue<T> = T extends { value: infer U }
+  ? { value: NonNullable<U> }
+  : never
+
+type ValidatedAnonAadhaarArgs = {
+  [K in keyof AnonAadhaarArgs]: EnsureNonNullableValue<AnonAadhaarArgs[K]>
+}
+
+export function verifyArgNonNull(
+  args: AnonAadhaarArgs
+): ValidatedAnonAadhaarArgs {
+  Object.entries(args).forEach(([key, arg]) => {
+    if (arg.value === undefined) {
+      throw new Error(`Cannot make proof: missing ${key}`)
+    }
+  })
+  return args as ValidatedAnonAadhaarArgs
 }
