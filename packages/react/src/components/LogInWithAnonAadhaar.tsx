@@ -4,10 +4,12 @@ import styled from 'styled-components'
 import { useEffect, useContext } from 'react'
 import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
 import { icon } from './ButtonLogo'
-import { AadhaarQRValidation } from '../interface'
+import { AadhaarQRValidation, FieldsToReveal } from '../interface'
 
 interface LogInWithAnonAadhaarProps {
   signal?: string
+  fieldsToReveal?: FieldsToReveal
+  nullifierSeed: number
 }
 
 /**
@@ -19,7 +21,11 @@ interface LogInWithAnonAadhaarProps {
  *
  * @returns A JSX element representing the LogInWithAnonAadhaar component.
  */
-export const LogInWithAnonAadhaar = ({ signal }: LogInWithAnonAadhaarProps) => {
+export const LogInWithAnonAadhaar = ({
+  signal,
+  fieldsToReveal,
+  nullifierSeed,
+}: LogInWithAnonAadhaarProps) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [qrStatus, setQrStatus] = useState<null | AadhaarQRValidation>(null)
@@ -47,6 +53,15 @@ export const LogInWithAnonAadhaar = ({ signal }: LogInWithAnonAadhaarProps) => {
     setQrStatus(null)
   }
 
+  if (!fieldsToReveal) {
+    fieldsToReveal = {
+      revealAgeAbove18: false,
+      revealGender: false,
+      revealState: false,
+      revealPinCode: false,
+    }
+  }
+
   return (
     <div>
       {(state.status === 'logged-out' || state.status === 'logging-in') && (
@@ -64,6 +79,8 @@ export const LogInWithAnonAadhaar = ({ signal }: LogInWithAnonAadhaarProps) => {
             qrStatus={qrStatus}
             setQrStatus={setQrStatus}
             signal={signal}
+            fieldsToReveal={fieldsToReveal}
+            nullifierSeed={nullifierSeed}
           ></ProveModal>
         </div>
       )}
@@ -84,6 +101,8 @@ export const LogInWithAnonAadhaar = ({ signal }: LogInWithAnonAadhaarProps) => {
               qrStatus={qrStatus}
               setQrStatus={setQrStatus}
               signal={signal}
+              fieldsToReveal={fieldsToReveal}
+              nullifierSeed={nullifierSeed}
             ></ProveModal>
             <MenuItem onClick={() => startReq({ type: 'logout' })}>
               Logout
