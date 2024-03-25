@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { isWebUri } from 'valid-url'
 import { AnonAadhaarArgs, AnonAadhaarProof, ArtifactsOrigin } from './types'
 import { ZKArtifact, groth16 } from 'snarkjs'
@@ -113,67 +114,19 @@ export class BackendProver implements ProverInferace {
   }
 
   async proving(witness: Witness): Promise<AnonAadhaarProof> {
-    if (!witness.qrDataPadded.value) {
-      throw new Error('Cannot make proof: missing message')
-    }
-
-    if (!witness.qrDataPaddedLength.value) {
-      throw new Error('Cannot make proof: missing aadhaarDataLength')
-    }
-
-    if (!witness.nonPaddedDataLength.value) {
-      throw new Error('Cannot make proof: missing nonPaddedDataLength')
-    }
-
-    if (!witness.delimiterIndices.value) {
-      throw new Error('Cannot make proof: missing delimiterIndices')
-    }
-
-    if (!witness.signature.value) {
-      throw new Error('Cannot make proof: missing signature')
-    }
-
-    if (!witness.pubKey.value) {
-      throw new Error('Cannot make proof: missing pubKey')
-    }
-
-    if (!witness.nullifierSeed.value) {
-      throw new Error('Cannot make proof: missing nullifierSeed')
-    }
-
-    if (!witness.signalHash.value) {
-      throw new Error('Cannot make proof: missing signalHash')
-    }
-
-    if (!witness.revealAgeAbove18.value) {
-      throw new Error('Cannot make proof: missing revealAgeAbove18')
-    }
-
-    if (!witness.revealGender.value) {
-      throw new Error('Cannot make proof: missing revealGender')
-    }
-
-    if (!witness.revealPinCode.value) {
-      throw new Error('Cannot make proof: missing revealPinCode')
-    }
-
-    if (!witness.revealState.value) {
-      throw new Error('Cannot make proof: missing revealState')
-    }
-
     const input = {
-      qrDataPadded: witness.qrDataPadded.value,
-      qrDataPaddedLength: witness.qrDataPaddedLength.value,
-      nonPaddedDataLength: witness.qrDataPaddedLength.value,
-      delimiterIndices: witness.delimiterIndices.value,
-      signature: witness.signature.value,
-      pubKey: witness.pubKey.value,
-      nullifierSeed: witness.nullifierSeed.value,
-      signalHash: witness.signalHash.value,
-      revealAgeAbove18: witness.revealAgeAbove18.value,
-      revealGender: witness.revealGender.value,
-      revealPinCode: witness.revealPinCode.value,
-      revealState: witness.revealState.value,
+      qrDataPadded: witness.qrDataPadded.value!,
+      qrDataPaddedLength: witness.qrDataPaddedLength.value!,
+      nonPaddedDataLength: witness.qrDataPaddedLength.value!,
+      delimiterIndices: witness.delimiterIndices.value!,
+      signature: witness.signature.value!,
+      pubKey: witness.pubKey.value!,
+      nullifierSeed: witness.nullifierSeed.value!,
+      signalHash: witness.signalHash.value!,
+      revealAgeAbove18: witness.revealAgeAbove18.value!,
+      revealGender: witness.revealGender.value!,
+      revealPinCode: witness.revealPinCode.value!,
+      revealState: witness.revealState.value!,
     }
 
     const { proof, publicSignals } = await groth16.fullProve(
@@ -186,9 +139,9 @@ export class BackendProver implements ProverInferace {
       groth16Proof: proof,
       pubkeyHash: publicSignals[0],
       timestamp: publicSignals[2],
-      nullifierSeed: witness.nullifierSeed.value,
+      nullifierSeed: witness.nullifierSeed.value!,
       nullifier: publicSignals[1],
-      signalHash: witness.signalHash.value,
+      signalHash: witness.signalHash.value!,
       ageAbove18: publicSignals[3],
       gender: publicSignals[4],
       state: publicSignals[5],
@@ -210,67 +163,19 @@ export class WebProver implements ProverInferace {
     const wasmBuffer = (await this.wasm.getKey()) as ArrayBuffer
     const zkeyBuffer = (await this.zkey.getKey()) as ArrayBuffer
 
-    if (!witness.qrDataPadded.value) {
-      throw new Error('Cannot make proof: missing message')
-    }
-
-    if (!witness.qrDataPaddedLength.value) {
-      throw new Error('Cannot make proof: missing aadhaarDataLength')
-    }
-
-    if (!witness.nonPaddedDataLength.value) {
-      throw new Error('Cannot make proof: missing nonPaddedDataLength')
-    }
-
-    if (!witness.delimiterIndices.value) {
-      throw new Error('Cannot make proof: missing delimiterIndices')
-    }
-
-    if (!witness.signature.value) {
-      throw new Error('Cannot make proof: missing signature')
-    }
-
-    if (!witness.pubKey.value) {
-      throw new Error('Cannot make proof: missing pubKey')
-    }
-
-    if (!witness.nullifierSeed.value) {
-      throw new Error('Cannot make proof: missing nullifierSeed')
-    }
-
-    if (!witness.signalHash.value) {
-      throw new Error('Cannot make proof: missing signalHash')
-    }
-
-    if (!witness.revealAgeAbove18.value) {
-      throw new Error('Cannot make proof: missing revealAgeAbove18')
-    }
-
-    if (!witness.revealGender.value) {
-      throw new Error('Cannot make proof: missing revealGender')
-    }
-
-    if (!witness.revealPinCode.value) {
-      throw new Error('Cannot make proof: missing revealPinCode')
-    }
-
-    if (!witness.revealState.value) {
-      throw new Error('Cannot make proof: missing revealState')
-    }
-
     const input = {
-      qrDataPadded: witness.qrDataPadded.value,
-      qrDataPaddedLength: witness.qrDataPaddedLength.value,
-      nonPaddedDataLength: witness.qrDataPaddedLength.value,
-      delimiterIndices: witness.delimiterIndices.value,
-      signature: witness.signature.value,
-      pubKey: witness.pubKey.value,
-      nullifierSeed: witness.nullifierSeed.value,
-      signalHash: witness.signalHash.value,
-      revealAgeAbove18: witness.revealAgeAbove18.value,
-      revealGender: witness.revealGender.value,
-      revealPinCode: witness.revealPinCode.value,
-      revealState: witness.revealState.value,
+      qrDataPadded: witness.qrDataPadded.value!,
+      qrDataPaddedLength: witness.qrDataPaddedLength.value!,
+      nonPaddedDataLength: witness.qrDataPaddedLength.value!,
+      delimiterIndices: witness.delimiterIndices.value!,
+      signature: witness.signature.value!,
+      pubKey: witness.pubKey.value!,
+      nullifierSeed: witness.nullifierSeed.value!,
+      signalHash: witness.signalHash.value!,
+      revealAgeAbove18: witness.revealAgeAbove18.value!,
+      revealGender: witness.revealGender.value!,
+      revealPinCode: witness.revealPinCode.value!,
+      revealState: witness.revealState.value!,
     }
 
     const { proof, publicSignals } = await groth16.fullProve(
@@ -283,9 +188,9 @@ export class WebProver implements ProverInferace {
       groth16Proof: proof,
       pubkeyHash: publicSignals[0],
       timestamp: publicSignals[2],
-      nullifierSeed: witness.nullifierSeed.value,
+      nullifierSeed: witness.nullifierSeed.value!,
       nullifier: publicSignals[1],
-      signalHash: witness.signalHash.value,
+      signalHash: witness.signalHash.value!,
       ageAbove18: publicSignals[3],
       gender: publicSignals[4],
       state: publicSignals[5],
@@ -307,67 +212,19 @@ export class ChunkedProver implements ProverInferace {
     const wasmBuffer = await this.wasm.getKey()
     const zkeyBuffer = await this.zkey.getKey()
 
-    if (!witness.qrDataPadded.value) {
-      throw new Error('Cannot make proof: missing message')
-    }
-
-    if (!witness.qrDataPaddedLength.value) {
-      throw new Error('Cannot make proof: missing aadhaarDataLength')
-    }
-
-    if (!witness.nonPaddedDataLength.value) {
-      throw new Error('Cannot make proof: missing nonPaddedDataLength')
-    }
-
-    if (!witness.delimiterIndices.value) {
-      throw new Error('Cannot make proof: missing delimiterIndices')
-    }
-
-    if (!witness.signature.value) {
-      throw new Error('Cannot make proof: missing signature')
-    }
-
-    if (!witness.pubKey.value) {
-      throw new Error('Cannot make proof: missing pubKey')
-    }
-
-    if (!witness.nullifierSeed.value) {
-      throw new Error('Cannot make proof: missing nullifierSeed')
-    }
-
-    if (!witness.signalHash.value) {
-      throw new Error('Cannot make proof: missing signalHash')
-    }
-
-    if (!witness.revealAgeAbove18.value) {
-      throw new Error('Cannot make proof: missing revealAgeAbove18')
-    }
-
-    if (!witness.revealGender.value) {
-      throw new Error('Cannot make proof: missing revealGender')
-    }
-
-    if (!witness.revealPinCode.value) {
-      throw new Error('Cannot make proof: missing revealPinCode')
-    }
-
-    if (!witness.revealState.value) {
-      throw new Error('Cannot make proof: missing revealState')
-    }
-
     const input = {
-      qrDataPadded: witness.qrDataPadded.value,
-      qrDataPaddedLength: witness.qrDataPaddedLength.value,
-      nonPaddedDataLength: witness.qrDataPaddedLength.value,
-      delimiterIndices: witness.delimiterIndices.value,
-      signature: witness.signature.value,
-      pubKey: witness.pubKey.value,
-      nullifierSeed: witness.nullifierSeed.value,
-      signalHash: witness.signalHash.value,
-      revealAgeAbove18: witness.revealAgeAbove18.value,
-      revealGender: witness.revealGender.value,
-      revealPinCode: witness.revealPinCode.value,
-      revealState: witness.revealState.value,
+      qrDataPadded: witness.qrDataPadded.value!,
+      qrDataPaddedLength: witness.qrDataPaddedLength.value!,
+      nonPaddedDataLength: witness.qrDataPaddedLength.value!,
+      delimiterIndices: witness.delimiterIndices.value!,
+      signature: witness.signature.value!,
+      pubKey: witness.pubKey.value!,
+      nullifierSeed: witness.nullifierSeed.value!,
+      signalHash: witness.signalHash.value!,
+      revealAgeAbove18: witness.revealAgeAbove18.value!,
+      revealGender: witness.revealGender.value!,
+      revealPinCode: witness.revealPinCode.value!,
+      revealState: witness.revealState.value!,
     }
 
     const { proof, publicSignals } = await groth16.fullProve(
@@ -380,9 +237,9 @@ export class ChunkedProver implements ProverInferace {
       groth16Proof: proof,
       pubkeyHash: publicSignals[0],
       timestamp: publicSignals[2],
-      nullifierSeed: witness.nullifierSeed.value,
+      nullifierSeed: witness.nullifierSeed.value!,
       nullifier: publicSignals[1],
-      signalHash: witness.signalHash.value,
+      signalHash: witness.signalHash.value!,
       ageAbove18: publicSignals[3],
       gender: publicSignals[4],
       state: publicSignals[5],
