@@ -86,7 +86,7 @@ function dev_trusted_setup() {
         mkdir -p $ARTIFACTS_DIR
     fi
 
-    cp $JS_BUILD_DIR/aadhaar-verifier.wasm $ARTIFACTS_DIR
+    cp $BUILD_DIR/partial_zkeys/aadhaar-verifier_js/aadhaar-verifier.wasm $ARTIFACTS_DIR
     cp $PARTIAL_ZKEYS_DIR/circuit_final.zkey $ARTIFACTS_DIR
     cp $BUILD_DIR/vkey.json $ARTIFACTS_DIR
 
