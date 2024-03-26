@@ -1,11 +1,11 @@
 import styled from 'styled-components'
 import { Dispatch, useContext, SetStateAction } from 'react'
-import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
-import { Spinner } from './LoadingSpinner'
+import { AnonAadhaarContext } from '../../hooks/useAnonAadhaar'
+import { Spinner } from '../LoadingSpinner'
 import React from 'react'
-import { processAadhaarArgs } from '../prove'
-import { FieldsToReveal } from '../interface'
-import { AadhaarQRValidation } from '../interface'
+import { processAadhaarArgs } from '../../prove'
+import { FieldsToReveal } from '../../interface'
+import { AadhaarQRValidation } from '../../interface'
 import { ProverState } from '@anon-aadhaar/core'
 
 interface ProveButtonProps {

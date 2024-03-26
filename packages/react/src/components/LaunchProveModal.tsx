@@ -1,5 +1,5 @@
 import { CSSProperties, useMemo, useState } from 'react'
-import { ProveModal } from './ProveModal'
+import { Modal } from './ProveModal/Modal'
 import styled from 'styled-components'
 import { useEffect, useContext } from 'react'
 import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
@@ -67,7 +67,7 @@ export const LaunchProveModal = ({
         <Logo src={anonAadhaarLogo} />
         {buttonTitle}
       </Btn>
-      <ProveModal
+      <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
         errorMessage={errorMessage}
@@ -78,7 +78,7 @@ export const LaunchProveModal = ({
         signal={signal}
         fieldsToReveal={fieldsToReveal}
         nullifierSeed={nullifierSeed}
-      ></ProveModal>
+      ></Modal>
     </div>
   )
 }

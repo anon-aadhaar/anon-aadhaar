@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { ProveModal } from './ProveModal'
+import { Modal } from './ProveModal/Modal'
 import styled from 'styled-components'
 import { useEffect, useContext } from 'react'
 import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
@@ -70,7 +70,7 @@ export const LogInWithAnonAadhaar = ({
             <Logo src={anonAadhaarLogo} />
             Login
           </Btn>
-          <ProveModal
+          <Modal
             isOpen={isModalOpen}
             onClose={closeModal}
             errorMessage={errorMessage}
@@ -81,7 +81,7 @@ export const LogInWithAnonAadhaar = ({
             signal={signal}
             fieldsToReveal={fieldsToReveal}
             nullifierSeed={nullifierSeed}
-          ></ProveModal>
+          ></Modal>
         </div>
       )}
       {state.status === 'logged-in' && (
@@ -92,7 +92,7 @@ export const LogInWithAnonAadhaar = ({
           </Btn>
           <MenuContainer $isopen={isMenuOpen}>
             <MenuItem onClick={openModal}>Create a proof</MenuItem>
-            <ProveModal
+            <Modal
               isOpen={isModalOpen}
               onClose={closeModal}
               errorMessage={errorMessage}
@@ -103,7 +103,7 @@ export const LogInWithAnonAadhaar = ({
               signal={signal}
               fieldsToReveal={fieldsToReveal}
               nullifierSeed={nullifierSeed}
-            ></ProveModal>
+            ></Modal>
             <MenuItem onClick={() => startReq({ type: 'logout' })}>
               Logout
             </MenuItem>
