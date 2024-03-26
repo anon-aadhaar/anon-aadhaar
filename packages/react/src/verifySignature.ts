@@ -1,8 +1,9 @@
 import {
   convertBigIntToByteArray,
   decompressByteArray,
+  testCertificateUrl,
 } from '@anon-aadhaar/core'
-import { fetchCertificateFile, str2ab } from './util'
+import { fetchCertificateFile, fetchKey, str2ab } from './util'
 import { pki } from 'node-forge'
 
 /**
@@ -42,11 +43,11 @@ export const verifySignature = async (
     decompressedByteArray.length - 256,
   )
 
-  const certificate = await fetchCertificateFile(
-    `https://www.uidai.gov.in/images/authDoc/${
-      useTestAadhaar ? 'uidai_prod_cdup' : 'uidai_offline_publickey_26022021'
-    }.cer`,
-  )
+  const certificate = useTestAadhaar
+    ? await fetchKey(testCertificateUrl)
+    : await fetchCertificateFile(
+        `https://nodejs-serverless-function-express-eight-iota.vercel.app/api/get-raw-pk?url=https://www.uidai.gov.in/images/authDoc/uidai_offline_publickey_26022021.cer`,
+      )
 
   if (!certificate) throw Error('Error while fetching public key.')
 
