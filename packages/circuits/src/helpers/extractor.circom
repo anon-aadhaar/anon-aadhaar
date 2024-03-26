@@ -122,9 +122,7 @@ template AgeExtractor(maxDataLength) {
     signal month <== DigitBytesToNumber(2)([shiftedBytes[4], shiftedBytes[5]]);
     signal day <== DigitBytesToNumber(2)([shiftedBytes[1], shiftedBytes[2]]);
 
-    assert(currentYear > year);
-    assert(currentMonth > month);
-    assert(currentDay >= day);
+    assert(currentYear + currentMonth + currentDay >= year + month + day);
 
     // Completed age based on year value
     signal ageByYear <== currentYear - year - 1;

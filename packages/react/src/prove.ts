@@ -62,7 +62,7 @@ export const processAadhaarArgs = async (
     certificate = useTestAadhaar
       ? await fetchKey(testCertificateUrl)
       : await fetchCertificateFile(
-          `https://nodejs-serverless-function-express-eight-iota.vercel.app/api/get-raw-pk?url=https://www.uidai.gov.in/images/authDoc/uidai_offline_publickey_26022021.cer`,
+          `https://www.uidai.gov.in/images/authDoc/uidai_offline_publickey_26022021.cer`,
         )
   } catch (e) {
     handleError(e, 'Error while fetching public key.')
