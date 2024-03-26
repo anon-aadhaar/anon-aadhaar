@@ -1,5 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import forge from 'node-forge'
 import fs from 'fs'
+import { bigIntToChunkedBytes } from '@zk-email/helpers/dist/binaryFormat'
+import { buildPoseidon } from 'circomlibjs'
+
+// Function to convert a hexadecimal string to BigInt
+const hexToBigInt = (hex: string): bigint => BigInt(`0x${hex}`)
 
 function generateKeyPair() {
   // Generate an RSA key pair
@@ -98,22 +104,48 @@ function createSelfSignedCertificate(keys: forge.pki.rsa.KeyPair) {
   return cert
 }
 
-// Generate RSA key pair
-const keys = generateKeyPair()
+function main() {
+  // Generate RSA key pair
+  const keys = generateKeyPair()
 
-// Create a self-signed certificate
-const cert = createSelfSignedCertificate(keys)
+  // Create a self-signed certificate
+  const cert = createSelfSignedCertificate(keys)
 
-// PEM-format keys and certificate
-const pem = {
-  privateKey: forge.pki.privateKeyToPem(keys.privateKey),
-  publicKey: forge.pki.publicKeyToPem(keys.publicKey),
-  certificate: forge.pki.certificateToPem(cert),
+  // PEM-format keys and certificate
+  const pem = {
+    privateKey: forge.pki.privateKeyToPem(keys.privateKey),
+    publicKey: forge.pki.publicKeyToPem(keys.publicKey),
+    certificate: forge.pki.certificateToPem(cert),
+  }
+
+  // Save to files
+  fs.writeFileSync('../assets/testPrivateKey.pem', pem.privateKey)
+  fs.writeFileSync('../assets/testPublicKey.pem', pem.publicKey)
+  fs.writeFileSync('../assets/testCertificate.pem', pem.certificate)
+
+  console.log('Generated and saved a pair of RSA signing keys.')
 }
 
-// Save to files
-fs.writeFileSync('../assets/testPrivateKey.pem', pem.privateKey)
-fs.writeFileSync('../assets/testPublicKey.pem', pem.publicKey)
-fs.writeFileSync('../assets/testCertificate.pem', pem.certificate)
+// This function is useful when calculating the hash is needed
+// to update the AnonAadhaar.sol verifier stored publicKeyHash
+async function publicKeyHashFromPem() {
+  const publicKeyPem = fs.readFileSync('../assets/testPublicKey.pem', 'utf8')
 
-console.log('Generated and saved a pair of RSA signing keys.')
+  // Convert the PEM file to a forge public key object
+  const forgePublicKey = forge.pki.publicKeyFromPem(publicKeyPem)
+
+  // Assuming the key is an RSA key, extract the modulus (n) and exponent (e)
+  const { n } = forgePublicKey as forge.pki.rsa.PublicKey
+
+  // Convert the modulus (public key) to BigInt
+  const modulusBigInt = hexToBigInt(n.toString(16))
+
+  // Calculate the Poseidon hash with pubkey chunked to 9*242 like in circuit
+  const poseidon = await buildPoseidon()
+  const pubkeyChunked = bigIntToChunkedBytes(modulusBigInt, 242, 9)
+  const hash = poseidon(pubkeyChunked)
+  console.log(BigInt(poseidon.F.toObject(hash)).toString())
+}
+
+main()
+// publicKeyHashFromPem()

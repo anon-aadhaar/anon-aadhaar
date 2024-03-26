@@ -20,7 +20,7 @@ describe('VerifyProof', function () {
   this.timeout(0)
 
   async function deployOneYearLockFixture() {
-    const Verifier = await ethers.getContractFactory('VerifierTest')
+    const Verifier = await ethers.getContractFactory('Verifier')
     const verifier = await Verifier.deploy()
 
     const _verifierAddress = await verifier.getAddress()
@@ -48,7 +48,7 @@ describe('VerifyProof', function () {
     }
   }
 
-  describe('AnonAadhaarVote Contract', function () {
+  describe('AnonAadhaar Verifier Contract', function () {
     let packedGroth16Proof: PackedGroth16Proof
     let anonAadhaarProof: AnonAadhaarProof
     let certificate: string
@@ -63,9 +63,9 @@ describe('VerifyProof', function () {
         .toString()
 
       const anonAadhaarInitArgs: InitArgs = {
-        wasmURL: artifactUrls.test.wasm,
-        zkeyURL: artifactUrls.test.zkey,
-        vkeyURL: artifactUrls.test.vk,
+        wasmURL: artifactUrls.v2.wasm,
+        zkeyURL: artifactUrls.v2.zkey,
+        vkeyURL: artifactUrls.v2.vk,
         artifactsOrigin: ArtifactsOrigin.server,
       }
 
@@ -127,7 +127,7 @@ describe('VerifyProof', function () {
     })
   })
 
-  describe('AnonAadhaar Vote', function () {
+  describe('AnonAadhaarVote contract', function () {
     let packedGroth16Proof: PackedGroth16Proof
     let anonAadhaarProof: AnonAadhaarProof
     let certificate: string
@@ -138,13 +138,13 @@ describe('VerifyProof', function () {
     this.beforeAll(async () => {
       const certificateDirName = __dirname + '/../../circuits/assets'
       certificate = fs
-        .readFileSync(certificateDirName + '/uidai_prod_cdup.cer')
+        .readFileSync(certificateDirName + '/testCertificate.pem')
         .toString()
 
       const anonAadhaarInitArgs: InitArgs = {
-        wasmURL: artifactUrls.test.wasm,
-        zkeyURL: artifactUrls.test.zkey,
-        vkeyURL: artifactUrls.test.vk,
+        wasmURL: artifactUrls.v2.wasm,
+        zkeyURL: artifactUrls.v2.zkey,
+        vkeyURL: artifactUrls.v2.vk,
         artifactsOrigin: ArtifactsOrigin.server,
       }
 
