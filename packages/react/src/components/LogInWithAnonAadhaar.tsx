@@ -3,7 +3,7 @@ import { Modal } from './ProveModal/Modal'
 import styled from 'styled-components'
 import { useEffect, useContext } from 'react'
 import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
-import { icon } from './ButtonLogo'
+import { icons } from './ButtonLogo'
 import { AadhaarQRValidation, FieldsToReveal } from '../interface'
 
 interface LogInWithAnonAadhaarProps {
@@ -36,8 +36,11 @@ export const LogInWithAnonAadhaar = ({
     setIsMenuOpen(!isMenuOpen)
   }
 
-  const blob = new Blob([icon], { type: 'image/svg+xml' })
-  const anonAadhaarLogo = useMemo(() => URL.createObjectURL(blob), [icon])
+  const blob = new Blob([icons.aalogo], { type: 'image/svg+xml' })
+  const anonAadhaarLogo = useMemo(
+    () => URL.createObjectURL(blob),
+    [icons.aalogo],
+  )
 
   useEffect(() => {
     if (state.status === 'logged-in') setIsModalOpen(false)

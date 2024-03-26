@@ -3,7 +3,7 @@ import { Modal } from './ProveModal/Modal'
 import styled from 'styled-components'
 import { useEffect, useContext } from 'react'
 import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
-import { icon } from './ButtonLogo'
+import { icons } from './ButtonLogo'
 import { AadhaarQRValidation, FieldsToReveal } from '../interface'
 import { ProverState } from '@anon-aadhaar/core'
 
@@ -35,8 +35,11 @@ export const LaunchProveModal = ({
   const [qrStatus, setQrStatus] = useState<null | AadhaarQRValidation>(null)
   const { proverState } = useContext(AnonAadhaarContext)
 
-  const blob = new Blob([icon], { type: 'image/svg+xml' })
-  const anonAadhaarLogo = useMemo(() => URL.createObjectURL(blob), [icon])
+  const blob = new Blob([icons.aalogo], { type: 'image/svg+xml' })
+  const anonAadhaarLogo = useMemo(
+    () => URL.createObjectURL(blob),
+    [icons.aalogo],
+  )
 
   useEffect(() => {
     if (proverState === ProverState.Completed) setIsModalOpen(false)

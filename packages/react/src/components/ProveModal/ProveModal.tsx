@@ -1,9 +1,22 @@
-import React, { useEffect, useState, Dispatch, SetStateAction } from 'react'
+import React, {
+  useEffect,
+  useState,
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useMemo,
+} from 'react'
 import styled from 'styled-components'
 import { ProveButton } from './ProveButton'
-import { AadhaarQRValidation, FieldsToReveal } from '../../interface'
+import {
+  AadhaarQRValidation,
+  FieldsToReveal,
+  fieldsLabel,
+} from '../../interface'
 import { Logo } from '../LogInWithAnonAadhaar'
 import { SignalDisplay } from './SignalDisplay'
+import { AnonAadhaarContext } from '../../hooks/useAnonAadhaar'
+import { icons } from '../ButtonLogo'
 
 interface ProveModalProps {
   setErrorMessage: Dispatch<SetStateAction<string | null>>
@@ -27,6 +40,13 @@ export const ProveModal: React.FC<ProveModalProps> = ({
   nullifierSeed,
 }) => {
   const [provingEnabled, setProvingEnabled] = useState<boolean>(false)
+  const { appName } = useContext(AnonAadhaarContext)
+  const allFieldsFalse = Object.values(fieldsToReveal).every(value => !value)
+  const blob = new Blob([icons.illustration], { type: 'image/svg+xml' })
+  const noRevealillustration = useMemo(
+    () => URL.createObjectURL(blob),
+    [icons.illustration],
+  )
 
   useEffect(() => {
     if (qrStatus === AadhaarQRValidation.SIGNATURE_VERIFIED) {
@@ -44,45 +64,40 @@ export const ProveModal: React.FC<ProveModalProps> = ({
           Prove your Identity
         </Title>
         <Disclaimer>
-          Anon Aadhaar allows you to create a proof of your Aadhaar ID without
-          revealing any personal data. Generate a QR code using the mAadhaar app
-          (
-          <PhonePlatformLinks
-            href={'https://apps.apple.com/in/app/maadhaar/id1435469474'}
-            target="_blank"
-            rel="noreferrer"
-          >
-            iOS
-          </PhonePlatformLinks>{' '}
-          /{' '}
-          <PhonePlatformLinks
-            href={
-              'https://play.google.com/store/apps/details?id=in.gov.uidai.mAadhaarPlus&hl=en_IN&pli=1'
-            }
-            target="_blank"
-            rel="noreferrer"
-          >
-            Android
-          </PhonePlatformLinks>
-          ), by entering your Aadhaar number and OTP verification. You can then
-          save the QR as an image using the &apos;Share&apos; button for import.
-          <p>
-            This process is local to your browser for privacy, and QR images are
-            not uploaded to any server.
-          </p>
-          <p>&nbsp;</p>
-          <p>Note: Internet speed may affect processing time.</p>
+          The signature of your document has been verified, you can now
+          genereate your Proof of Identity.
         </Disclaimer>
       </TitleSection>
 
-      <UploadSection>
-        {signal && (
-          <>
-            <Label>Data you are signing: </Label>
-            <SignalDisplay signal={signal} />
-          </>
-        )}
-      </UploadSection>
+      {allFieldsFalse ? (
+        <Section>
+          <Label>{appName} doesn&apos;t requests you to share any data</Label>
+          <Illustration src={noRevealillustration} />
+        </Section>
+      ) : (
+        <Section>
+          <Label>{appName} requests you to share data: </Label>
+          <RevealSection>
+            {fieldsLabel.map(({ key, label }) =>
+              fieldsToReveal[key] ? (
+                <FieldRow key={key}>
+                  <CheckmarkIconWrapper>
+                    {/* <CheckmarkIcon /> */}✅
+                  </CheckmarkIconWrapper>
+                  <FieldLabel>{label}</FieldLabel>
+                </FieldRow>
+              ) : null,
+            )}
+          </RevealSection>
+        </Section>
+      )}
+
+      {signal && (
+        <Section>
+          <Label>Data you are signing: </Label>
+          <SignalDisplay signal={signal} />
+        </Section>
+      )}
 
       <ProveButton
         qrData={qrData}
@@ -124,7 +139,7 @@ const Disclaimer = styled.span`
   font-weight: normal;
 `
 
-const UploadSection = styled.div`
+const Section = styled.div`
   margin: 0 1rem 0;
   row-gap: 1rem;
   max-width: 100%;
@@ -136,10 +151,26 @@ const Label = styled.div`
   font-weight: 500;
   color: #111827;
 `
+const Illustration = styled.img`
+  height: 10rem;
+  margin-right: auto;
+  margin-left: auto;
+`
+const RevealSection = styled.div`
+  /* Add your styles here */
+`
 
-const PhonePlatformLinks = styled.a`
-  color: #1d24e0;
-  margin-top: 0.3rem;
-  font-size: small;
-  font-weight: normal;
+const FieldRow = styled.div`
+  display: flex;
+  align-items: center;
+  /* Add additional styles here */
+`
+
+const CheckmarkIconWrapper = styled.div`
+  margin-right: 8px; // or whatever spacing you prefer
+  // Styles for the checkmark icon wrapper
+`
+
+const FieldLabel = styled.span`
+  // Styles for the label
 `

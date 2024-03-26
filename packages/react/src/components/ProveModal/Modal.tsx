@@ -169,7 +169,7 @@ const ModalContent = styled.div`
 
   @media (min-width: 426px) {
     /* For screens > 426px (e.g., desktop) */
-    min-height: 450px;
+    min-height: 500px;
     max-width: 450px;
     width: 80%;
   }

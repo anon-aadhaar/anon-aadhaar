@@ -44,6 +44,11 @@ export type AnonAadhaarProviderProps = {
    * or the url of artifacts that you stored on your own server.
    */
   _artifactslinks?: ArtifactsLinks
+
+  /**
+   * `_appName`: Name of your app
+   */
+  _appName?: string
 }
 
 /**
@@ -67,6 +72,7 @@ export function AnonAadhaarProvider(
   const [anonAadhaarProof, setAnonAadhaarProof] =
     useState<AnonAadhaarCore | null>(null)
   const [useTestAadhaar, setUseTestAadhaar] = useState<boolean>(false)
+  const [appName, setAppName] = useState<string>('The current application')
   const [proverState, setProverState] = useState<ProverState>(
     ProverState.Initializing,
   )
@@ -79,6 +85,11 @@ export function AnonAadhaarProvider(
     if (anonAadhaarProviderProps._useTestAadhaar !== undefined)
       setUseTestAadhaar(anonAadhaarProviderProps._useTestAadhaar)
   }, [anonAadhaarProviderProps._useTestAadhaar])
+
+  useEffect(() => {
+    if (anonAadhaarProviderProps._appName !== undefined)
+      setAppName(anonAadhaarProviderProps._appName)
+  }, [anonAadhaarProviderProps._appName])
 
   useEffect(() => {
     let anonAadhaarInitArgs: InitArgs
@@ -153,8 +164,8 @@ export function AnonAadhaarProvider(
 
   // Provide context
   const val = React.useMemo(
-    () => ({ state, startReq, useTestAadhaar, proverState }),
-    [state, useTestAadhaar, proverState],
+    () => ({ state, startReq, useTestAadhaar, proverState, appName }),
+    [state, useTestAadhaar, proverState, appName],
   )
 
   return (
