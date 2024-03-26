@@ -1,8 +1,8 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.19;
 
-import "../interfaces/IAnonAadhaarGroth16Verifier.sol";
-import "../interfaces/IAnonAadhaar.sol";
+import '../interfaces/IAnonAadhaarGroth16Verifier.sol';
+import '../interfaces/IAnonAadhaar.sol';
 
 contract AnonAadhaar is IAnonAadhaar {
     address public verifier;
@@ -16,22 +16,46 @@ contract AnonAadhaar is IAnonAadhaar {
     /// @dev Verifies that the public key received is corresponding with the one stored in the contract.
     /// @param _receivedpubkeyHash: Public key received.
     /// @return Verified bool
-    function verifyPublicKeyHash(uint256 _receivedpubkeyHash) private view returns (bool) {
+    function verifyPublicKeyHash(
+        uint256 _receivedpubkeyHash
+    ) private view returns (bool) {
         return storedPublicKeyHash == _receivedpubkeyHash;
     }
 
     /// @dev Verifies the AnonAadhaar proof received.
-    /// @param identityNullifier: Hash of last the 4 digits + DOB, name, gender adn pin code.
-    /// @param userNullifier: Hash of the last 4 digits + photo.
+    /// @param nullifier: Nullifier for the users Aadhaar.
     /// @param timestamp: Timestamp of when the QR code was signed.
     /// @param signal: Signal committed while genereting the proof.
     /// @param groth16Proof: SNARK Groth16 proof.
     /// @return Verified bool
     function verifyAnonAadhaarProof(
-        uint identityNullifier, uint userNullifier, uint timestamp, uint signal, uint[8] memory groth16Proof 
+        uint nullifierSeed,
+        uint nullifier,
+        uint timestamp,
+        uint signal,
+        uint[8] memory groth16Proof
     ) public view returns (bool) {
         uint signalHash = _hash(signal);
-        return IAnonAadhaarGroth16Verifier(verifier).verifyProof([groth16Proof[0], groth16Proof[1]], [[groth16Proof[2], groth16Proof[3]], [groth16Proof[4], groth16Proof[5]]], [groth16Proof[6], groth16Proof[7]], [identityNullifier, userNullifier, timestamp, storedPublicKeyHash, signalHash]);
+        return
+            IAnonAadhaarGroth16Verifier(verifier).verifyProof(
+                [groth16Proof[0], groth16Proof[1]],
+                [
+                    [groth16Proof[2], groth16Proof[3]],
+                    [groth16Proof[4], groth16Proof[5]]
+                ],
+                [groth16Proof[6], groth16Proof[7]],
+                [
+                    storedPublicKeyHash,
+                    nullifier,
+                    timestamp,
+                    0,
+                    0,
+                    0,
+                    0,
+                    nullifierSeed,
+                    signalHash
+                ]
+            );
     }
 
     /// @dev Creates a keccak256 hash of a message compatible with the SNARK scalar modulus.

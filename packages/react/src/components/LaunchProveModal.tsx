@@ -1,16 +1,18 @@
 import { CSSProperties, useMemo, useState } from 'react'
-import { ProveModal } from './ProveModal'
+import { Modal } from './ProveModal/Modal'
 import styled from 'styled-components'
 import { useEffect, useContext } from 'react'
 import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
-import { icon } from './ButtonLogo'
-import { AadhaarQRValidation } from '../interface'
+import { icons } from './ButtonLogo'
+import { AadhaarQRValidation, FieldsToRevealArray } from '../types'
 import { ProverState } from '@anon-aadhaar/core'
 
 interface LogInWithAnonAadhaarProps {
   signal?: string
   buttonStyle?: CSSProperties
   buttonTitle?: string
+  fieldsToReveal?: FieldsToRevealArray
+  nullifierSeed: number
 }
 
 /**
@@ -24,6 +26,8 @@ interface LogInWithAnonAadhaarProps {
 export const LaunchProveModal = ({
   signal,
   buttonStyle,
+  fieldsToReveal,
+  nullifierSeed,
   buttonTitle = 'Generate a proof',
 }: LogInWithAnonAadhaarProps) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
@@ -31,8 +35,11 @@ export const LaunchProveModal = ({
   const [qrStatus, setQrStatus] = useState<null | AadhaarQRValidation>(null)
   const { proverState } = useContext(AnonAadhaarContext)
 
-  const blob = new Blob([icon], { type: 'image/svg+xml' })
-  const anonAadhaarLogo = useMemo(() => URL.createObjectURL(blob), [icon])
+  const blob = new Blob([icons.aalogo], { type: 'image/svg+xml' })
+  const anonAadhaarLogo = useMemo(
+    () => URL.createObjectURL(blob),
+    [icons.aalogo],
+  )
 
   useEffect(() => {
     if (proverState === ProverState.Completed) setIsModalOpen(false)
@@ -54,7 +61,7 @@ export const LaunchProveModal = ({
         <Logo src={anonAadhaarLogo} />
         {buttonTitle}
       </Btn>
-      <ProveModal
+      <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
         errorMessage={errorMessage}
@@ -63,7 +70,9 @@ export const LaunchProveModal = ({
         qrStatus={qrStatus}
         setQrStatus={setQrStatus}
         signal={signal}
-      ></ProveModal>
+        fieldsToReveal={fieldsToReveal}
+        nullifierSeed={nullifierSeed}
+      ></Modal>
     </div>
   )
 }

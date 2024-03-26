@@ -9,7 +9,6 @@ import {
   Uint8ArrayToCharArray,
 } from '@zk-email/helpers/dist/binaryFormat'
 import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
-import { BytesLike, Hexable } from '@ethersproject/bytes'
 import { Buffer } from 'buffer'
 import { pki } from 'node-forge'
 import { ArgumentTypeName } from '@pcd/pcd-types'
@@ -23,7 +22,12 @@ import { hash } from './hash'
 export const generateArgs = async (
   qrData: string,
   certificateFile: string,
-  signal?: BytesLike | Hexable | number | bigint
+  nullifierSeed: number,
+  revealGender: boolean,
+  revealAgeAbove18: boolean,
+  revealState: boolean,
+  revealPinCode: boolean,
+  signal?: string
 ): Promise<AnonAadhaarArgs> => {
   const bigIntData = BigInt(qrData)
 
@@ -53,29 +57,67 @@ export const generateArgs = async (
 
   const [paddedMessage, messageLength] = sha256Pad(signedData, 512 * 3)
 
+  const delimiterIndices: number[] = []
+  for (let i = 0; i < paddedMessage.length; i++) {
+    if (paddedMessage[i] === 255) {
+      delimiterIndices.push(i)
+    }
+    if (delimiterIndices.length === 18) {
+      break
+    }
+  }
+
   // Set signal to 1 by default if no signal setted up
   const signalHash = signal ? hash(signal) : hash(1)
 
   const anonAadhaarArgs: AnonAadhaarArgs = {
-    aadhaarData: {
+    qrDataPadded: {
       argumentType: ArgumentTypeName.StringArray,
       value: Uint8ArrayToCharArray(paddedMessage),
     },
-    aadhaarDataLength: {
+    qrDataPaddedLength: {
       argumentType: ArgumentTypeName.Number,
       value: messageLength.toString(),
     },
+    nonPaddedDataLength: {
+      argumentType: ArgumentTypeName.Number,
+      value: messageLength.toString(),
+    },
+    delimiterIndices: {
+      argumentType: ArgumentTypeName.StringArray,
+      value: delimiterIndices.map(elem => elem.toString()),
+    },
     signature: {
       argumentType: ArgumentTypeName.StringArray,
-      value: splitToWords(signatureBigint, BigInt(64), BigInt(32)),
+      value: splitToWords(signatureBigint, BigInt(121), BigInt(17)),
     },
     pubKey: {
       argumentType: ArgumentTypeName.StringArray,
-      value: splitToWords(pubKeyBigInt, BigInt(64), BigInt(32)),
+      value: splitToWords(pubKeyBigInt, BigInt(121), BigInt(17)),
+    },
+    nullifierSeed: {
+      argumentType: ArgumentTypeName.String,
+      value: nullifierSeed.toString(),
     },
     signalHash: {
       argumentType: ArgumentTypeName.String,
       value: signalHash,
+    },
+    revealGender: {
+      argumentType: ArgumentTypeName.Number,
+      value: revealGender ? '1' : '0',
+    },
+    revealAgeAbove18: {
+      argumentType: ArgumentTypeName.Number,
+      value: revealAgeAbove18 ? '1' : '0',
+    },
+    revealState: {
+      argumentType: ArgumentTypeName.Number,
+      value: revealState ? '1' : '0',
+    },
+    revealPinCode: {
+      argumentType: ArgumentTypeName.Number,
+      value: revealPinCode ? '1' : '0',
     },
   }
 

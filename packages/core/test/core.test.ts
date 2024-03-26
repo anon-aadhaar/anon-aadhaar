@@ -19,12 +19,12 @@ describe('PCD tests', function () {
   this.beforeAll(() => {
     const certificateDirName = __dirname + '/../../circuits/assets'
     certificate = fs
-      .readFileSync(certificateDirName + '/uidai_prod_cdup.cer')
+      .readFileSync(certificateDirName + '/testCertificate.pem')
       .toString()
 
     sinon.stub(proverModule, 'loadZkeyChunks').callsFake(async () => {
       return originalLoadZkeyChunks(
-        artifactUrls.test.chunked,
+        artifactUrls.v2.chunked,
         mockedStorageService
       )
     })
@@ -46,7 +46,15 @@ describe('PCD tests', function () {
 
     await init(anonAadhaarInitArgs)
 
-    const args = await generateArgs(QRData, certificate)
+    const args = await generateArgs(
+      QRData,
+      certificate,
+      1234,
+      false,
+      false,
+      false,
+      false
+    )
 
     const anonAadhaarProof = await prove(args)
 
@@ -56,15 +64,23 @@ describe('PCD tests', function () {
 
   it('Proving flow with artifacts fetched from server', async function () {
     const anonAadhaarInitArgs: InitArgs = {
-      wasmURL: artifactUrls.test.wasm,
-      zkeyURL: artifactUrls.test.zkey,
-      vkeyURL: artifactUrls.test.vk,
+      wasmURL: artifactUrls.v2.wasm,
+      zkeyURL: artifactUrls.v2.zkey,
+      vkeyURL: artifactUrls.v2.vk,
       artifactsOrigin: ArtifactsOrigin.server,
     }
 
     await init(anonAadhaarInitArgs)
 
-    const args = await generateArgs(QRData, certificate)
+    const args = await generateArgs(
+      QRData,
+      certificate,
+      1234,
+      false,
+      false,
+      false,
+      false
+    )
 
     const anonAadhaarProof = await prove(args)
 
@@ -75,15 +91,23 @@ describe('PCD tests', function () {
 
   it('Proving flow with chunked artifacts fetched from server', async function () {
     const anonAadhaarInitArgs: InitArgs = {
-      wasmURL: artifactUrls.test.wasm,
-      zkeyURL: artifactUrls.test.chunked,
-      vkeyURL: artifactUrls.test.vk,
+      wasmURL: artifactUrls.v2.wasm,
+      zkeyURL: artifactUrls.v2.chunked,
+      vkeyURL: artifactUrls.v2.vk,
       artifactsOrigin: ArtifactsOrigin.chunked,
     }
 
     await init(anonAadhaarInitArgs)
 
-    const args = await generateArgs(QRData, certificate)
+    const args = await generateArgs(
+      QRData,
+      certificate,
+      1234,
+      false,
+      false,
+      false,
+      false
+    )
 
     const anonAadhaarProof = await prove(args)
 

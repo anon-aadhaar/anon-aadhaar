@@ -15,7 +15,6 @@
     "build-circuit": "/bin/bash ./scripts/build.sh build",
     "dev-install": "/bin/bash ./scripts/build.sh install",
     "dev-setup": "/bin/bash ./scripts/build.sh setup",
-    "dev-setup-test": "/bin/bash ./scripts/build.sh setup-test",
     "gen-proof": "/bin/bash ./scripts/build.sh gen-proof",
     "gen-witness": "/bin/bash ./scripts/build.sh gen-witness",
     "gen-contracts": "/bin/bash ./scripts/build.sh gen-contracts",
@@ -29,8 +28,11 @@
     "circom_tester": "^0.0.20",
     "circomlib": "^2.0.5",
     "circomlibjs": "^0.1.1",
+    "dotenv": "^16.4.5",
+    "jpeg2000": "^1.1.1",
     "mocha": "^10.2.0",
     "prettier": "^3.1.1",
+    "sharp": "^0.33.2",
     "snarkjs": "^0.7.0"
   },
   "devDependencies": {

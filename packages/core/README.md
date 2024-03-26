@@ -35,7 +35,7 @@ The core package also provide helper methods such as:
 
 - **generateArgs**
   - **Description:** Generates the arguments to generate a proof, from the scanned QR data and the corresponding certificate file.
-  - **Usage:** `generateArgs(qrData: string,certificateFile: string,signal: string): Promise<AnonAadhaarCore>`
+  - **Usage:** `generateArgs(qrData: string,certificateFile: string,nullifierSeed: number,signal: string): Promise<AnonAadhaarCore>`
 - **hash**
   - **Description:** Hash the signal and makes sure that the output is compatible with the SNARK field.
   - **Usage:** `hash(message: BytesLike | Hexable | number | bigint): NumericString`
