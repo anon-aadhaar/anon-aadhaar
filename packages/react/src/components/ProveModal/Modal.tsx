@@ -6,7 +6,7 @@ import React, {
   useContext,
 } from 'react'
 import styled from 'styled-components'
-import { AadhaarQRValidation, FieldsToReveal } from '../../interface'
+import { AadhaarQRValidation, FieldsToRevealArray } from '../../types'
 import { ErrorToast } from './ErrorToast'
 import { BrowserView, MobileView } from 'react-device-detect'
 import { Logo } from '../LogInWithAnonAadhaar'
@@ -23,8 +23,8 @@ interface ModalProps {
   logo: string
   qrStatus: AadhaarQRValidation | null
   setQrStatus: Dispatch<SetStateAction<AadhaarQRValidation | null>>
-  fieldsToReveal: FieldsToReveal
   nullifierSeed: number
+  fieldsToReveal?: FieldsToRevealArray
   signal?: string
 }
 

@@ -11,7 +11,7 @@ import {
 } from '@anon-aadhaar/core'
 import { Dispatch, SetStateAction } from 'react'
 import { fetchCertificateFile, fetchKey } from './util'
-import { FieldsToReveal } from './interface'
+import { FieldsToRevealArray } from './types'
 
 /**
  * `proveAndSerialize` is a function that generates proofs using the web-based proving system of Anon Aadhaar.
@@ -54,7 +54,7 @@ export const processAadhaarArgs = async (
   qrData: string,
   useTestAadhaar: boolean,
   nullifierSeed: number,
-  fieldsToReveal: FieldsToReveal,
+  fieldsToRevealArray: FieldsToRevealArray,
   signal?: string,
 ): Promise<AnonAadhaarArgs> => {
   let certificate: string | null = null
@@ -69,6 +69,13 @@ export const processAadhaarArgs = async (
   }
 
   if (!certificate) throw Error('Error while fetching public key.')
+
+  const fieldsToReveal = {
+    revealGender: fieldsToRevealArray.includes('revealGender'),
+    revealAgeAbove18: fieldsToRevealArray.includes('revealAgeAbove18'),
+    revealState: fieldsToRevealArray.includes('revealState'),
+    revealPinCode: fieldsToRevealArray.includes('revealPinCode'),
+  }
 
   const args = await generateArgs(
     qrData,

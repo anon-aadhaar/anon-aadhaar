@@ -1,6 +1,6 @@
 import { ChangeEvent, Dispatch, SetStateAction } from 'react'
 import jsQR from 'jsqr'
-import { AadhaarQRValidation } from './interface'
+import { AadhaarQRValidation } from './types'
 
 export function text(emoji: string, text: string) {
   const msp = '\u2003' // 1em space

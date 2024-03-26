@@ -10,9 +10,9 @@ import styled from 'styled-components'
 import { ProveButton } from './ProveButton'
 import {
   AadhaarQRValidation,
-  FieldsToReveal,
+  FieldsToRevealArray,
   fieldsLabel,
-} from '../../interface'
+} from '../../types'
 import { Logo } from '../LogInWithAnonAadhaar'
 import { SignalDisplay } from './SignalDisplay'
 import { AnonAadhaarContext } from '../../hooks/useAnonAadhaar'
@@ -24,7 +24,7 @@ interface ProveModalProps {
   qrStatus: AadhaarQRValidation | null
   qrData: string | null
   setQrStatus: Dispatch<SetStateAction<AadhaarQRValidation | null>>
-  fieldsToReveal: FieldsToReveal
+  fieldsToReveal?: FieldsToRevealArray
   nullifierSeed: number
   signal?: string
 }
@@ -41,7 +41,6 @@ export const ProveModal: React.FC<ProveModalProps> = ({
 }) => {
   const [provingEnabled, setProvingEnabled] = useState<boolean>(false)
   const { appName } = useContext(AnonAadhaarContext)
-  const allFieldsFalse = Object.values(fieldsToReveal).every(value => !value)
   const blob = new Blob([icons.illustration], { type: 'image/svg+xml' })
   const noRevealillustration = useMemo(
     () => URL.createObjectURL(blob),
@@ -69,7 +68,7 @@ export const ProveModal: React.FC<ProveModalProps> = ({
         </Disclaimer>
       </TitleSection>
 
-      {allFieldsFalse ? (
+      {fieldsToReveal === undefined ? (
         <Section>
           <Label>{appName} doesn&apos;t requests you to share any data</Label>
           <Illustration src={noRevealillustration} />
@@ -79,11 +78,9 @@ export const ProveModal: React.FC<ProveModalProps> = ({
           <Label>{appName} requests you to share data: </Label>
           <RevealSection>
             {fieldsLabel.map(({ key, label }) =>
-              fieldsToReveal[key] ? (
+              fieldsToReveal.includes(key) ? (
                 <FieldRow key={key}>
-                  <CheckmarkIconWrapper>
-                    {/* <CheckmarkIcon /> */}✅
-                  </CheckmarkIconWrapper>
+                  <CheckmarkIconWrapper>✅</CheckmarkIconWrapper>
                   <FieldLabel>{label}</FieldLabel>
                 </FieldRow>
               ) : null,

@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction } from 'react'
 import styled from 'styled-components'
 import { FileInput } from '../FileInput'
 import { uploadQRpng } from '../../util'
-import { AadhaarQRValidation } from '../../interface'
+import { AadhaarQRValidation } from '../../types'
 import { Logo } from '../LogInWithAnonAadhaar'
 import { FaChevronRight } from 'react-icons/fa'
 

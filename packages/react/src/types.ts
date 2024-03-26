@@ -17,3 +17,11 @@ export const fieldsLabel: { key: keyof FieldsToReveal; label: string }[] = [
   { key: 'revealState', label: 'State' },
   { key: 'revealPinCode', label: 'PIN Code' },
 ]
+
+export type FieldKey =
+  | 'revealAgeAbove18'
+  | 'revealGender'
+  | 'revealState'
+  | 'revealPinCode'
+
+export type FieldsToRevealArray = FieldKey[]

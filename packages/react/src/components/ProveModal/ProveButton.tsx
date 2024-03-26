@@ -4,15 +4,15 @@ import { AnonAadhaarContext } from '../../hooks/useAnonAadhaar'
 import { Spinner } from '../LoadingSpinner'
 import React from 'react'
 import { processAadhaarArgs } from '../../prove'
-import { FieldsToReveal } from '../../interface'
-import { AadhaarQRValidation } from '../../interface'
+import { FieldsToRevealArray } from '../../types'
+import { AadhaarQRValidation } from '../../types'
 import { ProverState } from '@anon-aadhaar/core'
 
 interface ProveButtonProps {
   qrData: string | null
   provingEnabled: boolean
   setErrorMessage: Dispatch<SetStateAction<string | null>>
-  fieldsToReveal: FieldsToReveal
+  fieldsToReveal?: FieldsToRevealArray
   nullifierSeed: number
   setQrStatus: Dispatch<SetStateAction<AadhaarQRValidation | null>>
   signal?: string
@@ -33,6 +33,8 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
   const startProving = async () => {
     try {
       if (qrData === null) throw new Error('Missing QR code data.')
+
+      if (fieldsToReveal === undefined) fieldsToReveal = []
 
       const args = await processAadhaarArgs(
         qrData,
