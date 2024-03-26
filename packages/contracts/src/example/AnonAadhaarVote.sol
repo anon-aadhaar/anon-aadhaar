@@ -43,12 +43,14 @@ contract AnonAadhaarVote is IAnonAadhaarVote {
 
     /// @dev Register a vote in the contract.
     /// @param proposalIndex: Index of the proposal you want to vote for.
+    /// @param nullifierSeed: Nullifier Seed used while generating the proof.
     /// @param nullifier: Nullifier for the user's Aadhaar data.
     /// @param timestamp: Timestamp of when the QR code was signed.
     /// @param signal: signal used while generating the proof, should be equal to msg.sender.
     /// @param groth16Proof: SNARK Groth16 proof.
     function voteForProposal(
         uint256 proposalIndex,
+        uint nullifierSeed,
         uint nullifier,
         uint timestamp,
         uint signal,
@@ -68,7 +70,7 @@ contract AnonAadhaarVote is IAnonAadhaarVote {
         );
         require(
             IAnonAadhaar(anonAadhaarVerifierAddr).verifyAnonAadhaarProof(
-                proposalIndex, // nulifier seed
+                nullifierSeed, // nulifier seed
                 nullifier,
                 timestamp,
                 signal,

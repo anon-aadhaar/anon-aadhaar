@@ -182,7 +182,7 @@ describe('VerifyProof', function () {
             anonAadhaarVote.connect(user2) as typeof anonAadhaarVote
           ).voteForProposal(
             0, // proposal index
-            0, // proposal index as nullifierSeed,
+            0, // proposal index also used as nullifierSeed,
             anonAadhaarProof.nullifier,
             anonAadhaarProof.timestamp,
             user1addres,
@@ -196,8 +196,8 @@ describe('VerifyProof', function () {
 
         await expect(
           anonAadhaarVote.voteForProposal(
-            0,
-            0, // proposal index as nullifierSeed,
+            0, // proposal index
+            0, // proposal index also used as nullifierSeed,
             anonAadhaarProof.nullifier,
             anonAadhaarProof.timestamp,
             user1addres,
@@ -220,8 +220,8 @@ describe('VerifyProof', function () {
 
         await expect(
           anonAadhaarVote.voteForProposal(
-            0,
-            0, // nullifierSeed,
+            0, // proposal index
+            0, // proposal index also used as nullifierSeed,
             anonAadhaarProof.nullifier,
             anonAadhaarProof.timestamp,
             user1addres,
