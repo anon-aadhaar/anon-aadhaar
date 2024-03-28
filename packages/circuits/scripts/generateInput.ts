@@ -12,19 +12,25 @@ import {
   bufferToHex,
 } from '@zk-email/helpers/dist/binaryFormat'
 import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
+import { testQRData } from '../assets/newTestData.json'
 
-const main = () => {
-  const qrData = process.env.QR_DATA as string
+let qrData = testQRData
+let certificateName = 'testCertificate.pem'
+if (process.env.REAL_DATA === 'true') {
+  qrData = process.env.QR_DATA as string
+  certificateName = 'uidai_offline_publickey_26022021.cer'
   if (!qrData) {
     throw new Error('QR_DATA env is not set')
   }
+}
 
+const main = () => {
   const nullifierSeed = 12345678
 
   // We are using produciton public key here (v2)
   // Change to uidai_prod_cdup.cer to use the test data provided by UIDAI (v1)
   const pkData = readFileSync(
-    path.join(__dirname, '../assets', 'uidai_offline_publickey_26022021.cer'),
+    path.join(__dirname, '../assets', certificateName),
   )
   const pk = crypto.createPublicKey(pkData)
 
@@ -72,8 +78,12 @@ const main = () => {
     pubKey: splitToWords(pubKey, BigInt(121), BigInt(17)),
     nullifierSeed: nullifierSeed,
     signalHash: hash(1),
+    revealGender: '0',
+    revealAgeAbove18: '0',
+    revealState: '0',
+    revealPinCode: '0',
   }
-  writeFileSync('build/input.json', JSON.stringify(input))
+  writeFileSync('../build/temp.json', JSON.stringify(input))
 }
 
 main()
