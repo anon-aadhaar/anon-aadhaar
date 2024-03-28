@@ -33,6 +33,7 @@ export const LaunchProveModal = ({
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [qrStatus, setQrStatus] = useState<null | AadhaarQRValidation>(null)
+  const [currentView, setCurrentView] = useState<'Verify' | 'Prove'>('Verify')
   const { proverState } = useContext(AnonAadhaarContext)
 
   const blob = new Blob([icons.aalogo], { type: 'image/svg+xml' })
@@ -42,7 +43,7 @@ export const LaunchProveModal = ({
   )
 
   useEffect(() => {
-    if (proverState === ProverState.Completed) setIsModalOpen(false)
+    if (proverState === ProverState.Completed) closeModal()
   }, [proverState])
 
   const openModal = () => {
@@ -53,6 +54,7 @@ export const LaunchProveModal = ({
     setIsModalOpen(false)
     setErrorMessage(null)
     setQrStatus(null)
+    setCurrentView('Verify')
   }
 
   return (
@@ -72,6 +74,8 @@ export const LaunchProveModal = ({
         signal={signal}
         fieldsToReveal={fieldsToReveal}
         nullifierSeed={nullifierSeed}
+        setCurrentView={setCurrentView}
+        currentView={currentView}
       ></Modal>
     </div>
   )

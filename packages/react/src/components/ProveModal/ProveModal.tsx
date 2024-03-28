@@ -132,7 +132,7 @@ const Title = styled.h3`
 const Disclaimer = styled.span`
   color: #6d6d6d;
   margin-top: 0.3rem;
-  font-size: '16px';
+  font-size: 0.9rem;
   font-weight: normal;
 `
 

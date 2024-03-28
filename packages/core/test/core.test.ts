@@ -12,7 +12,7 @@ import sinon from 'sinon'
 const mockedStorageService = new MockLocalForage()
 const originalLoadZkeyChunks = proverModule.loadZkeyChunks
 
-describe('PCD tests', function () {
+describe('Core tests', function () {
   this.timeout(0)
 
   let certificate: string

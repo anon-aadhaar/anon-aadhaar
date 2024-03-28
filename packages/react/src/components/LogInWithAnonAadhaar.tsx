@@ -5,6 +5,7 @@ import { useEffect, useContext } from 'react'
 import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
 import { icons } from './ButtonLogo'
 import { AadhaarQRValidation, FieldsToRevealArray } from '../types'
+import { ProverState } from '@anon-aadhaar/core'
 
 interface LogInWithAnonAadhaarProps {
   signal?: string
@@ -29,8 +30,9 @@ export const LogInWithAnonAadhaar = ({
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [qrStatus, setQrStatus] = useState<null | AadhaarQRValidation>(null)
+  const [currentView, setCurrentView] = useState<'Verify' | 'Prove'>('Verify')
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const { state, startReq } = useContext(AnonAadhaarContext)
+  const { state, startReq, proverState } = useContext(AnonAadhaarContext)
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
@@ -43,8 +45,8 @@ export const LogInWithAnonAadhaar = ({
   )
 
   useEffect(() => {
-    if (state.status === 'logged-in') setIsModalOpen(false)
-  }, [state])
+    if (proverState === ProverState.Completed) closeModal()
+  }, [proverState])
 
   const openModal = () => {
     setIsModalOpen(true)
@@ -54,6 +56,7 @@ export const LogInWithAnonAadhaar = ({
     setIsModalOpen(false)
     setErrorMessage(null)
     setQrStatus(null)
+    setCurrentView('Verify')
   }
 
   return (
@@ -75,6 +78,8 @@ export const LogInWithAnonAadhaar = ({
             signal={signal}
             fieldsToReveal={fieldsToReveal}
             nullifierSeed={nullifierSeed}
+            setCurrentView={setCurrentView}
+            currentView={currentView}
           ></Modal>
         </div>
       )}
@@ -97,6 +102,8 @@ export const LogInWithAnonAadhaar = ({
               signal={signal}
               fieldsToReveal={fieldsToReveal}
               nullifierSeed={nullifierSeed}
+              setCurrentView={setCurrentView}
+              currentView={currentView}
             ></Modal>
             <MenuItem onClick={() => startReq({ type: 'logout' })}>
               Logout
