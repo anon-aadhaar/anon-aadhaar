@@ -13,14 +13,14 @@
   },
   "v2.0.0": {
     "testPublicKey": {
-      "VerifierTest": "0x49d7D4fE27bDe769F44e94312785D1C741a072D2",
-      "AnonAadhaarTest": "0x912213b442b67e63BD6eD199f9b95cD0Ae1ae68d",
-      "AnonAadhaarVote": "0x3Bc90E41738c076C66A92efDb82B2C4f5CBEa3c2"
+      "VerifierTest": "0x83b14D9eF0377417fe4d940F2699fCe081eA02F5",
+      "AnonAadhaarTest": "0xaC03047099602fDDe8c7F356ED78c60F7B249595",
+      "AnonAadhaarVote": "0x6766D000131C1d2831310f3Ca8547414d143a254"
     },
     "productionPublicKey": {
-      "Verifier": "0xdF15708F94E4b2355b288A47ac0043ADDd4330B7",
-      "AnonAadhaar": "0xbbacB9f9f726826cE629B60cff6C9022ca032E7f",
-      "AnonAadhaarVote": "0xA06a84109fBDdEEeea0129454B71e2590978BAA1"
+      "Verifier": "0x731d62C9065E4cF44F729eA5296A9B82DA481f39",
+      "AnonAadhaar": "0x27C1c035903786Cd8aB07b2D02dc487700C8660A",
+      "AnonAadhaarVote": "0x639c69440B13A3ebF60cb05658277e0f625Ea229"
     }
   }
 }
