@@ -4,9 +4,8 @@ import { AnonAadhaarContext } from '../../hooks/useAnonAadhaar'
 import { Spinner } from '../LoadingSpinner'
 import React from 'react'
 import { processAadhaarArgs } from '../../prove'
-import { FieldsToRevealArray } from '../../types'
 import { AadhaarQRValidation } from '../../types'
-import { ProverState } from '@anon-aadhaar/core'
+import { FieldsToRevealArray, ProverState } from '@anon-aadhaar/core'
 
 interface ProveButtonProps {
   qrData: string | null

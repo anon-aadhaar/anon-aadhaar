@@ -8,10 +8,10 @@ import {
   handleError,
   ProverState,
   testCertificateUrl,
+  FieldsToRevealArray,
 } from '@anon-aadhaar/core'
 import { Dispatch, SetStateAction } from 'react'
 import { fetchCertificateFile, fetchKey } from './util'
-import { FieldsToRevealArray } from './types'
 
 /**
  * `proveAndSerialize` is a function that generates proofs using the web-based proving system of Anon Aadhaar.
@@ -61,12 +61,12 @@ export const processAadhaarArgs = async (
   qrData: string,
   useTestAadhaar: boolean,
   nullifierSeed: number,
-  fieldsToRevealArray: FieldsToRevealArray,
+  fieldsToRevealArray?: FieldsToRevealArray,
   signal?: string,
 ): Promise<AnonAadhaarArgs> => {
-  let certificate: string | null = null
+  let certificateFile: string | null = null
   try {
-    certificate = useTestAadhaar
+    certificateFile = useTestAadhaar
       ? await fetchKey(testCertificateUrl)
       : await fetchCertificateFile(
           `https://www.uidai.gov.in/images/authDoc/uidai_offline_publickey_26022021.cer`,
@@ -75,25 +75,15 @@ export const processAadhaarArgs = async (
     handleError(e, 'Error while fetching public key.')
   }
 
-  if (!certificate) throw Error('Error while fetching public key.')
+  if (!certificateFile) throw Error('Error while fetching public key.')
 
-  const fieldsToReveal = {
-    revealGender: fieldsToRevealArray.includes('revealGender'),
-    revealAgeAbove18: fieldsToRevealArray.includes('revealAgeAbove18'),
-    revealState: fieldsToRevealArray.includes('revealState'),
-    revealPinCode: fieldsToRevealArray.includes('revealPinCode'),
-  }
-
-  const args = await generateArgs(
+  const args = await generateArgs({
     qrData,
-    certificate,
+    certificateFile,
     nullifierSeed,
-    fieldsToReveal.revealGender,
-    fieldsToReveal.revealAgeAbove18,
-    fieldsToReveal.revealState,
-    fieldsToReveal.revealPinCode,
+    fieldsToRevealArray,
     signal,
-  )
+  })
 
   return args
 }

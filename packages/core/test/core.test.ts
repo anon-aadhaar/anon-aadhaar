@@ -46,15 +46,11 @@ describe('Core tests', function () {
 
     await init(anonAadhaarInitArgs)
 
-    const args = await generateArgs(
-      QRData,
-      certificate,
-      1234,
-      false,
-      false,
-      false,
-      false
-    )
+    const args = await generateArgs({
+      qrData: QRData,
+      certificateFile: certificate,
+      nullifierSeed: 1234,
+    })
 
     const anonAadhaarProof = await prove(args)
 
@@ -72,15 +68,11 @@ describe('Core tests', function () {
 
     await init(anonAadhaarInitArgs)
 
-    const args = await generateArgs(
-      QRData,
-      certificate,
-      1234,
-      false,
-      false,
-      false,
-      false
-    )
+    const args = await generateArgs({
+      qrData: QRData,
+      certificateFile: certificate,
+      nullifierSeed: 1234,
+    })
 
     const anonAadhaarProof = await prove(args)
 
@@ -99,15 +91,11 @@ describe('Core tests', function () {
 
     await init(anonAadhaarInitArgs)
 
-    const args = await generateArgs(
-      QRData,
-      certificate,
-      1234,
-      false,
-      false,
-      false,
-      false
-    )
+    const args = await generateArgs({
+      qrData: QRData,
+      certificateFile: certificate,
+      nullifierSeed: 1234,
+    })
 
     const anonAadhaarProof = await prove(args)
 

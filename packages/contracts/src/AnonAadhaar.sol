@@ -33,6 +33,7 @@ contract AnonAadhaar is IAnonAadhaar {
         uint nullifier,
         uint timestamp,
         uint signal,
+        uint[4] memory revealArray,
         uint[8] memory groth16Proof
     ) public view returns (bool) {
         uint signalHash = _hash(signal);
@@ -48,10 +49,14 @@ contract AnonAadhaar is IAnonAadhaar {
                     storedPublicKeyHash,
                     nullifier,
                     timestamp,
-                    0,
-                    0,
-                    0,
-                    0,
+                    // revealAgeAbove18
+                    revealArray[0],
+                    // revealGender
+                    revealArray[1],
+                    // revealPincode
+                    revealArray[2],
+                    // revealState
+                    revealArray[3],
                     nullifierSeed,
                     signalHash
                 ]

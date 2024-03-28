@@ -7,6 +7,7 @@ interface IAnonAadhaar {
         uint nullifier,
         uint timestamp,
         uint signal,
+        uint[4] memory revealArray,
         uint[8] memory groth16Proof
     ) external view returns (bool);
 }

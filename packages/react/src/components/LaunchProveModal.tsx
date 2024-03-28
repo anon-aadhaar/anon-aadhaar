@@ -4,8 +4,8 @@ import styled from 'styled-components'
 import { useEffect, useContext } from 'react'
 import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
 import { icons } from './ButtonLogo'
-import { AadhaarQRValidation, FieldsToRevealArray } from '../types'
-import { ProverState } from '@anon-aadhaar/core'
+import { AadhaarQRValidation } from '../types'
+import { ProverState, FieldsToRevealArray } from '@anon-aadhaar/core'
 
 interface LogInWithAnonAadhaarProps {
   signal?: string

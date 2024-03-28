@@ -8,15 +8,12 @@ import React, {
 } from 'react'
 import styled from 'styled-components'
 import { ProveButton } from './ProveButton'
-import {
-  AadhaarQRValidation,
-  FieldsToRevealArray,
-  fieldsLabel,
-} from '../../types'
+import { AadhaarQRValidation } from '../../types'
 import { Logo } from '../LogInWithAnonAadhaar'
 import { SignalDisplay } from './SignalDisplay'
 import { AnonAadhaarContext } from '../../hooks/useAnonAadhaar'
 import { icons } from '../ButtonLogo'
+import { FieldsToRevealArray, fieldsLabel } from '@anon-aadhaar/core'
 
 interface ProveModalProps {
   setErrorMessage: Dispatch<SetStateAction<string | null>>

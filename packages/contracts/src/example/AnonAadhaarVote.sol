@@ -54,6 +54,7 @@ contract AnonAadhaarVote is IAnonAadhaarVote {
         uint nullifier,
         uint timestamp,
         uint signal,
+        uint[4] memory revealArray, 
         uint[8] memory groth16Proof
     ) public {
         require(
@@ -74,6 +75,7 @@ contract AnonAadhaarVote is IAnonAadhaarVote {
                 nullifier,
                 timestamp,
                 signal,
+                revealArray,
                 groth16Proof
             ) == true,
             '[AnonAadhaarVote]: proof sent is not valid.'

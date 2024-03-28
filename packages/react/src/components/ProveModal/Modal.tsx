@@ -6,7 +6,7 @@ import React, {
   useContext,
 } from 'react'
 import styled from 'styled-components'
-import { AadhaarQRValidation, FieldsToRevealArray } from '../../types'
+import { AadhaarQRValidation } from '../../types'
 import { ErrorToast } from './ErrorToast'
 import { BrowserView, MobileView } from 'react-device-detect'
 import { Logo } from '../LogInWithAnonAadhaar'
@@ -14,6 +14,7 @@ import { verifySignature } from '../../verifySignature'
 import { AnonAadhaarContext } from '../../hooks/useAnonAadhaar'
 import { VerifyModal } from './VerifyModal'
 import { ProveModal } from './ProveModal'
+import { FieldsToRevealArray } from '@anon-aadhaar/core'
 
 interface ModalProps {
   isOpen: boolean

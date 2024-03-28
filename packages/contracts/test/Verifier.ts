@@ -74,16 +74,12 @@ describe('VerifyProof', function () {
 
       await init(anonAadhaarInitArgs)
 
-      const args = await generateArgs(
-        testQRData,
-        certificate,
-        1234,
-        false,
-        false,
-        false,
-        false,
-        user1addres,
-      )
+      const args = await generateArgs({
+        qrData: testQRData,
+        certificateFile: certificate,
+        nullifierSeed: nullifierSeed,
+        signal: user1addres,
+      })
 
       const anonAadhaarCore = await prove(args)
 
@@ -104,6 +100,12 @@ describe('VerifyProof', function () {
             anonAadhaarProof.nullifier,
             anonAadhaarProof.timestamp,
             user1addres,
+            [
+              anonAadhaarProof.ageAbove18,
+              anonAadhaarProof.gender,
+              anonAadhaarProof.pincode,
+              anonAadhaarProof.state,
+            ],
             packedGroth16Proof,
           ),
         ).to.be.equal(true)
@@ -120,6 +122,12 @@ describe('VerifyProof', function () {
             anonAadhaarProof.nullifier,
             anonAadhaarProof.timestamp,
             40,
+            [
+              anonAadhaarProof.ageAbove18,
+              anonAadhaarProof.gender,
+              anonAadhaarProof.pincode,
+              anonAadhaarProof.state,
+            ],
             packedGroth16Proof,
           ),
         ).to.be.equal(false)
@@ -153,16 +161,12 @@ describe('VerifyProof', function () {
 
       await init(anonAadhaarInitArgs)
 
-      const args = await generateArgs(
-        testQRData,
-        certificate,
-        nullifierSeed,
-        false,
-        false,
-        false,
-        false,
-        user1addres,
-      )
+      const args = await generateArgs({
+        qrData: testQRData,
+        certificateFile: certificate,
+        nullifierSeed: nullifierSeed,
+        signal: user1addres,
+      })
 
       const anonAadhaarCore = await prove(args)
 
@@ -186,6 +190,12 @@ describe('VerifyProof', function () {
             anonAadhaarProof.nullifier,
             anonAadhaarProof.timestamp,
             user1addres,
+            [
+              anonAadhaarProof.ageAbove18,
+              anonAadhaarProof.gender,
+              anonAadhaarProof.pincode,
+              anonAadhaarProof.state,
+            ],
             packedGroth16Proof,
           ),
         ).to.be.revertedWith('[AnonAadhaarVote]: wrong user signal sent.')
@@ -201,6 +211,12 @@ describe('VerifyProof', function () {
             anonAadhaarProof.nullifier,
             anonAadhaarProof.timestamp,
             user1addres,
+            [
+              anonAadhaarProof.ageAbove18,
+              anonAadhaarProof.gender,
+              anonAadhaarProof.pincode,
+              anonAadhaarProof.state,
+            ],
             packedGroth16Proof,
           ),
         ).to.emit(anonAadhaarVote, 'Voted')
@@ -225,6 +241,12 @@ describe('VerifyProof', function () {
             anonAadhaarProof.nullifier,
             anonAadhaarProof.timestamp,
             user1addres,
+            [
+              anonAadhaarProof.ageAbove18,
+              anonAadhaarProof.gender,
+              anonAadhaarProof.pincode,
+              anonAadhaarProof.state,
+            ],
             packedGroth16Proof,
           ),
         ).to.be.revertedWith(

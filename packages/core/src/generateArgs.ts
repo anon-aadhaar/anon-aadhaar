@@ -3,7 +3,7 @@ import {
   decompressByteArray,
   splitToWords,
 } from './utils'
-import { AnonAadhaarArgs } from './types'
+import { AnonAadhaarArgs, FieldsToRevealArray } from './types'
 import {
   bufferToHex,
   Uint8ArrayToCharArray,
@@ -14,21 +14,26 @@ import { pki } from 'node-forge'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import { hash } from './hash'
 
+interface GenerateArgsOptions {
+  qrData: string
+  certificateFile: string
+  nullifierSeed: number
+  fieldsToRevealArray?: FieldsToRevealArray
+  signal?: string
+}
+
 /**
  * Extract all the information needed to generate the witness from the QRCode data.
  * @param qrData QrCode Data
  * @returns {witness}
  */
-export const generateArgs = async (
-  qrData: string,
-  certificateFile: string,
-  nullifierSeed: number,
-  revealGender: boolean,
-  revealAgeAbove18: boolean,
-  revealState: boolean,
-  revealPinCode: boolean,
-  signal?: string
-): Promise<AnonAadhaarArgs> => {
+export const generateArgs = async ({
+  qrData,
+  certificateFile,
+  nullifierSeed,
+  fieldsToRevealArray,
+  signal,
+}: GenerateArgsOptions): Promise<AnonAadhaarArgs> => {
   const bigIntData = BigInt(qrData)
 
   const byteArray = convertBigIntToByteArray(bigIntData)
@@ -65,6 +70,15 @@ export const generateArgs = async (
     if (delimiterIndices.length === 18) {
       break
     }
+  }
+
+  if (!fieldsToRevealArray) fieldsToRevealArray = []
+
+  const fieldsToReveal = {
+    revealGender: fieldsToRevealArray.includes('revealGender'),
+    revealAgeAbove18: fieldsToRevealArray.includes('revealAgeAbove18'),
+    revealState: fieldsToRevealArray.includes('revealState'),
+    revealPinCode: fieldsToRevealArray.includes('revealPinCode'),
   }
 
   // Set signal to 1 by default if no signal setted up
@@ -105,19 +119,19 @@ export const generateArgs = async (
     },
     revealGender: {
       argumentType: ArgumentTypeName.Number,
-      value: revealGender ? '1' : '0',
+      value: fieldsToReveal.revealGender ? '1' : '0',
     },
     revealAgeAbove18: {
       argumentType: ArgumentTypeName.Number,
-      value: revealAgeAbove18 ? '1' : '0',
+      value: fieldsToReveal.revealAgeAbove18 ? '1' : '0',
     },
     revealState: {
       argumentType: ArgumentTypeName.Number,
-      value: revealState ? '1' : '0',
+      value: fieldsToReveal.revealState ? '1' : '0',
     },
     revealPinCode: {
       argumentType: ArgumentTypeName.Number,
-      value: revealPinCode ? '1' : '0',
+      value: fieldsToReveal.revealPinCode ? '1' : '0',
     },
   }
 
