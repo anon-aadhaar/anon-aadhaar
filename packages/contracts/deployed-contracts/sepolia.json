@@ -1,12 +1,26 @@
 {
-  "testPublicKey": {
-    "VerifierTest": "0x465f2f1020140c495A599876d36405F8dCb271C9",
-    "AnonAadhaarTest": "0xa247Dee52445FD6c31fd35d685DC4BBE81B00885",
-    "AnonAadhaarVote": "0x823Dcb9Ff20a933A3Ba2D6d67d9aEd5796a58CBF"
+  "v1.0.0": {
+    "testPublicKey": {
+      "VerifierTest": "0x465f2f1020140c495A599876d36405F8dCb271C9",
+      "AnonAadhaarTest": "0xa247Dee52445FD6c31fd35d685DC4BBE81B00885",
+      "AnonAadhaarVote": "0x823Dcb9Ff20a933A3Ba2D6d67d9aEd5796a58CBF"
+    },
+    "productionPublicKey": {
+      "Verifier": "0x9C1fa6fb133152829553199e6Caf02B7c9418032",
+      "AnonAadhaar": "0x0a490C2C99a3002E5cf91caeB8049aE55f8F4EdD",
+      "AnonAadhaarVote": "0xD7648e607aFdda30591D34049C6ec502023A23Dc"
+    }
   },
-  "productionPublicKey": {
-    "Verifier": "0x9C1fa6fb133152829553199e6Caf02B7c9418032",
-    "AnonAadhaar": "0x0a490C2C99a3002E5cf91caeB8049aE55f8F4EdD",
-    "AnonAadhaarVote": "0xD7648e607aFdda30591D34049C6ec502023A23Dc"
+  "v2.0.0": {
+    "testPublicKey": {
+      "VerifierTest": "0x83b14D9eF0377417fe4d940F2699fCe081eA02F5",
+      "AnonAadhaarTest": "0xaC03047099602fDDe8c7F356ED78c60F7B249595",
+      "AnonAadhaarVote": "0x6766D000131C1d2831310f3Ca8547414d143a254"
+    },
+    "productionPublicKey": {
+      "Verifier": "0x731d62C9065E4cF44F729eA5296A9B82DA481f39",
+      "AnonAadhaar": "0x27C1c035903786Cd8aB07b2D02dc487700C8660A",
+      "AnonAadhaarVote": "0x639c69440B13A3ebF60cb05658277e0f625Ea229"
+    }
   }
 }

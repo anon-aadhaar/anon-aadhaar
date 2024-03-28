@@ -1,16 +1,18 @@
 import styled from 'styled-components'
 import { Dispatch, useContext, SetStateAction } from 'react'
-import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
-import { Spinner } from './LoadingSpinner'
+import { AnonAadhaarContext } from '../../hooks/useAnonAadhaar'
+import { Spinner } from '../LoadingSpinner'
 import React from 'react'
-import { processAadhaarArgs } from '../prove'
-import { AadhaarQRValidation } from '../interface'
-import { ProverState } from '@anon-aadhaar/core'
+import { processAadhaarArgs } from '../../prove'
+import { AadhaarQRValidation } from '../../types'
+import { FieldsToRevealArray, ProverState } from '@anon-aadhaar/core'
 
 interface ProveButtonProps {
   qrData: string | null
   provingEnabled: boolean
   setErrorMessage: Dispatch<SetStateAction<string | null>>
+  fieldsToReveal?: FieldsToRevealArray
+  nullifierSeed: number
   setQrStatus: Dispatch<SetStateAction<AadhaarQRValidation | null>>
   signal?: string
 }
@@ -20,6 +22,8 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
   provingEnabled,
   setErrorMessage,
   signal,
+  fieldsToReveal,
+  nullifierSeed,
   setQrStatus,
 }) => {
   const { startReq, useTestAadhaar, proverState } =
@@ -29,7 +33,15 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
     try {
       if (qrData === null) throw new Error('Missing QR code data.')
 
-      const args = await processAadhaarArgs(qrData, useTestAadhaar, signal)
+      if (fieldsToReveal === undefined) fieldsToReveal = []
+
+      const args = await processAadhaarArgs(
+        qrData,
+        useTestAadhaar,
+        nullifierSeed,
+        fieldsToReveal,
+        signal,
+      )
 
       startReq({ type: 'login', args })
       setQrStatus(null)
@@ -96,7 +108,7 @@ const Btn = styled.button`
   align-items: center;
   justify-content: center;
   padding: 0.5rem 1rem;
-  font-size: 1rem;
+  font-size: 1.15rem;
   cursor: pointer;
   color: #f8f8f8;
   font-weight: bold;

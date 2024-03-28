@@ -19,40 +19,8 @@ import { testPublicKeyHash } from './const'
 describe('VerifyProof', function () {
   this.timeout(0)
 
-  let packedGroth16Proof: PackedGroth16Proof
-  let anonAadhaarProof: AnonAadhaarProof
-  let certificate: string
-  let user1addres: string
-
-  this.beforeAll(async () => {
-    const certificateDirName = __dirname + '/../../circuits/assets'
-    certificate = fs
-      .readFileSync(certificateDirName + '/uidai_prod_cdup.cer')
-      .toString()
-
-    const anonAadhaarInitArgs: InitArgs = {
-      wasmURL: artifactUrls.test.wasm,
-      zkeyURL: artifactUrls.test.zkey,
-      vkeyURL: artifactUrls.test.vk,
-      artifactsOrigin: ArtifactsOrigin.server,
-    }
-
-    const [user1] = await ethers.getSigners()
-    user1addres = user1.address
-
-    await init(anonAadhaarInitArgs)
-
-    const args = await generateArgs(testQRData, certificate, user1addres)
-
-    const anonAadhaarCore = await prove(args)
-
-    anonAadhaarProof = anonAadhaarCore.proof
-
-    packedGroth16Proof = packGroth16Proof(anonAadhaarProof.groth16Proof)
-  })
-
   async function deployOneYearLockFixture() {
-    const Verifier = await ethers.getContractFactory('VerifierTest')
+    const Verifier = await ethers.getContractFactory('Verifier')
     const verifier = await Verifier.deploy()
 
     const _verifierAddress = await verifier.getAddress()
@@ -80,7 +48,46 @@ describe('VerifyProof', function () {
     }
   }
 
-  describe('AnonAadhaarVote Contract', function () {
+  describe('AnonAadhaar Verifier Contract', function () {
+    let packedGroth16Proof: PackedGroth16Proof
+    let anonAadhaarProof: AnonAadhaarProof
+    let certificate: string
+    let user1addres: string
+
+    const nullifierSeed = 1234
+
+    this.beforeAll(async () => {
+      const certificateDirName = __dirname + '/../../circuits/assets'
+      certificate = fs
+        .readFileSync(certificateDirName + '/testCertificate.pem')
+        .toString()
+
+      const anonAadhaarInitArgs: InitArgs = {
+        wasmURL: artifactUrls.v2.wasm,
+        zkeyURL: artifactUrls.v2.zkey,
+        vkeyURL: artifactUrls.v2.vk,
+        artifactsOrigin: ArtifactsOrigin.server,
+      }
+
+      const [user1] = await ethers.getSigners()
+      user1addres = user1.address
+
+      await init(anonAadhaarInitArgs)
+
+      const args = await generateArgs({
+        qrData: testQRData,
+        certificateFile: certificate,
+        nullifierSeed: nullifierSeed,
+        signal: user1addres,
+      })
+
+      const anonAadhaarCore = await prove(args)
+
+      anonAadhaarProof = anonAadhaarCore.proof
+
+      packedGroth16Proof = packGroth16Proof(anonAadhaarProof.groth16Proof)
+    })
+
     describe('verifyAnonAadhaarProof', function () {
       it('Should return true for a valid AnonAadhaar proof', async function () {
         const { anonAadhaarVerifier } = await loadFixture(
@@ -89,10 +96,16 @@ describe('VerifyProof', function () {
 
         expect(
           await anonAadhaarVerifier.verifyAnonAadhaarProof(
-            anonAadhaarProof.identityNullifier,
-            anonAadhaarProof.userNullifier,
+            nullifierSeed,
+            anonAadhaarProof.nullifier,
             anonAadhaarProof.timestamp,
             user1addres,
+            [
+              anonAadhaarProof.ageAbove18,
+              anonAadhaarProof.gender,
+              anonAadhaarProof.pincode,
+              anonAadhaarProof.state,
+            ],
             packedGroth16Proof,
           ),
         ).to.be.equal(true)
@@ -105,10 +118,16 @@ describe('VerifyProof', function () {
 
         expect(
           await anonAadhaarVerifier.verifyAnonAadhaarProof(
-            anonAadhaarProof.identityNullifier,
-            anonAadhaarProof.userNullifier,
+            nullifierSeed,
+            anonAadhaarProof.nullifier,
             anonAadhaarProof.timestamp,
             40,
+            [
+              anonAadhaarProof.ageAbove18,
+              anonAadhaarProof.gender,
+              anonAadhaarProof.pincode,
+              anonAadhaarProof.state,
+            ],
             packedGroth16Proof,
           ),
         ).to.be.equal(false)
@@ -116,7 +135,46 @@ describe('VerifyProof', function () {
     })
   })
 
-  describe('AnonAadhaar Vote', function () {
+  describe('AnonAadhaarVote contract', function () {
+    let packedGroth16Proof: PackedGroth16Proof
+    let anonAadhaarProof: AnonAadhaarProof
+    let certificate: string
+    let user1addres: string
+
+    const nullifierSeed = 0 // proposal index as nullifierSeed
+
+    this.beforeAll(async () => {
+      const certificateDirName = __dirname + '/../../circuits/assets'
+      certificate = fs
+        .readFileSync(certificateDirName + '/testCertificate.pem')
+        .toString()
+
+      const anonAadhaarInitArgs: InitArgs = {
+        wasmURL: artifactUrls.v2.wasm,
+        zkeyURL: artifactUrls.v2.zkey,
+        vkeyURL: artifactUrls.v2.vk,
+        artifactsOrigin: ArtifactsOrigin.server,
+      }
+
+      const [user1] = await ethers.getSigners()
+      user1addres = user1.address
+
+      await init(anonAadhaarInitArgs)
+
+      const args = await generateArgs({
+        qrData: testQRData,
+        certificateFile: certificate,
+        nullifierSeed: nullifierSeed,
+        signal: user1addres,
+      })
+
+      const anonAadhaarCore = await prove(args)
+
+      anonAadhaarProof = anonAadhaarCore.proof
+
+      packedGroth16Proof = packGroth16Proof(anonAadhaarProof.groth16Proof)
+    })
+
     describe('Vote for a proposal', function () {
       it('Should revert if signal is different from senderss address', async function () {
         const { anonAadhaarVote } = await loadFixture(deployOneYearLockFixture)
@@ -127,11 +185,17 @@ describe('VerifyProof', function () {
           (
             anonAadhaarVote.connect(user2) as typeof anonAadhaarVote
           ).voteForProposal(
-            0,
-            anonAadhaarProof.identityNullifier,
-            anonAadhaarProof.userNullifier,
+            0, // proposal index
+            0, // proposal index also used as nullifierSeed,
+            anonAadhaarProof.nullifier,
             anonAadhaarProof.timestamp,
             user1addres,
+            [
+              anonAadhaarProof.ageAbove18,
+              anonAadhaarProof.gender,
+              anonAadhaarProof.pincode,
+              anonAadhaarProof.state,
+            ],
             packedGroth16Proof,
           ),
         ).to.be.revertedWith('[AnonAadhaarVote]: wrong user signal sent.')
@@ -142,11 +206,17 @@ describe('VerifyProof', function () {
 
         await expect(
           anonAadhaarVote.voteForProposal(
-            0,
-            anonAadhaarProof.identityNullifier,
-            anonAadhaarProof.userNullifier,
+            0, // proposal index
+            0, // proposal index also used as nullifierSeed,
+            anonAadhaarProof.nullifier,
             anonAadhaarProof.timestamp,
             user1addres,
+            [
+              anonAadhaarProof.ageAbove18,
+              anonAadhaarProof.gender,
+              anonAadhaarProof.pincode,
+              anonAadhaarProof.state,
+            ],
             packedGroth16Proof,
           ),
         ).to.emit(anonAadhaarVote, 'Voted')
@@ -166,11 +236,17 @@ describe('VerifyProof', function () {
 
         await expect(
           anonAadhaarVote.voteForProposal(
-            0,
-            anonAadhaarProof.identityNullifier,
-            anonAadhaarProof.userNullifier,
+            0, // proposal index
+            0, // proposal index also used as nullifierSeed,
+            anonAadhaarProof.nullifier,
             anonAadhaarProof.timestamp,
             user1addres,
+            [
+              anonAadhaarProof.ageAbove18,
+              anonAadhaarProof.gender,
+              anonAadhaarProof.pincode,
+              anonAadhaarProof.state,
+            ],
             packedGroth16Proof,
           ),
         ).to.be.revertedWith(

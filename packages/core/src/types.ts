@@ -39,22 +39,33 @@ export type AnonAadhaarClaim = {
  */
 export type AnonAadhaarProof = {
   groth16Proof: Groth16Proof // 3 points on curve if we use groth16
-  identityNullifier: string
-  userNullifier: string
-  timestamp: string
   pubkeyHash: string
+  timestamp: string
+  nullifierSeed: string
+  nullifier: string
   signalHash: string
+  ageAbove18: string
+  gender: string
+  state: string
+  pincode: string
 }
 
 /**
  * @dev Arguments needed to compute the witness.
  */
 export type AnonAadhaarArgs = {
-  aadhaarData: StringArrayArgument // private
-  aadhaarDataLength: NumberArgument // private
+  qrDataPadded: StringArrayArgument // private
+  qrDataPaddedLength: NumberArgument // private
+  nonPaddedDataLength: NumberArgument
+  delimiterIndices: StringArrayArgument
   signature: StringArrayArgument // private
   pubKey: StringArrayArgument // public
+  nullifierSeed: StringArgument // private
   signalHash: StringArgument // public
+  revealGender: NumberArgument
+  revealAgeAbove18: NumberArgument
+  revealState: NumberArgument
+  revealPinCode: NumberArgument
 }
 
 export type PackedGroth16Proof = [
@@ -76,3 +87,25 @@ export enum ProverState {
   Completed = 'completed',
   Error = 'error',
 }
+
+export type FieldsToReveal = {
+  revealAgeAbove18: boolean
+  revealGender: boolean
+  revealState: boolean
+  revealPinCode: boolean
+}
+
+export const fieldsLabel: { key: keyof FieldsToReveal; label: string }[] = [
+  { key: 'revealAgeAbove18', label: 'Age Above 18' },
+  { key: 'revealGender', label: 'Gender' },
+  { key: 'revealState', label: 'State' },
+  { key: 'revealPinCode', label: 'PIN Code' },
+]
+
+export type FieldKey =
+  | 'revealAgeAbove18'
+  | 'revealGender'
+  | 'revealState'
+  | 'revealPinCode'
+
+export type FieldsToRevealArray = FieldKey[]

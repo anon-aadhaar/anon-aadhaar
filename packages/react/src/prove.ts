@@ -7,9 +7,11 @@ import {
   generateArgs,
   handleError,
   ProverState,
+  testCertificateUrl,
+  FieldsToRevealArray,
 } from '@anon-aadhaar/core'
 import { Dispatch, SetStateAction } from 'react'
-import { fetchCertificateFile } from './util'
+import { fetchCertificateFile, fetchKey } from './util'
 
 /**
  * `proveAndSerialize` is a function that generates proofs using the web-based proving system of Anon Aadhaar.
@@ -30,8 +32,15 @@ export const proveAndSerialize = async (
   anonAadhaarProof: AnonAadhaarCore
   serialized: SerializedPCD<AnonAadhaarCore>
 }> => {
-  const anonAadhaarProof = await prove(anonAadhaarArgs, setProverState)
-  const serialized = await serialize(anonAadhaarProof)
+  let anonAadhaarProof
+  let serialized
+  try {
+    anonAadhaarProof = await prove(anonAadhaarArgs, setProverState)
+    serialized = await serialize(anonAadhaarProof)
+  } catch (e) {
+    console.error(e)
+    throw new Error('Error while generating the proof')
+  }
 
   return { anonAadhaarProof, serialized }
 }
@@ -51,22 +60,30 @@ export const proveAndSerialize = async (
 export const processAadhaarArgs = async (
   qrData: string,
   useTestAadhaar: boolean,
+  nullifierSeed: number,
+  fieldsToRevealArray?: FieldsToRevealArray,
   signal?: string,
 ): Promise<AnonAadhaarArgs> => {
-  let certificate: string | null = null
+  let certificateFile: string | null = null
   try {
-    certificate = await fetchCertificateFile(
-      `https://www.uidai.gov.in/images/authDoc/${
-        useTestAadhaar ? 'uidai_prod_cdup' : 'uidai_offline_publickey_26022021'
-      }.cer`,
-    )
+    certificateFile = useTestAadhaar
+      ? await fetchKey(testCertificateUrl)
+      : await fetchCertificateFile(
+          `https://www.uidai.gov.in/images/authDoc/uidai_offline_publickey_26022021.cer`,
+        )
   } catch (e) {
     handleError(e, 'Error while fetching public key.')
   }
 
-  if (!certificate) throw Error('Error while fetching public key.')
+  if (!certificateFile) throw Error('Error while fetching public key.')
 
-  const args = await generateArgs(qrData, certificate, signal)
+  const args = await generateArgs({
+    qrData,
+    certificateFile,
+    nullifierSeed,
+    fieldsToRevealArray,
+    signal,
+  })
 
   return args
 }

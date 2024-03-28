@@ -12,12 +12,7 @@ import {
 import { v4 as uuidv4 } from 'uuid'
 import { groth16 } from 'snarkjs'
 import JSONBig from 'json-bigint'
-import {
-  BackendProver,
-  ChunkedProver,
-  ProverInferace,
-  WebProver,
-} from './prover'
+import { AnonAadhaarProver, ProverInferace } from './prover'
 
 export class AnonAadhaarCore
   implements PCD<AnonAadhaarClaim, AnonAadhaarProof>
@@ -69,19 +64,11 @@ export async function prove(
     signalHash: args.signalHash.value,
   }
 
-  let prover: ProverInferace
-
-  switch (initArgs.artifactsOrigin) {
-    case ArtifactsOrigin.local:
-      prover = new BackendProver(initArgs.wasmURL, initArgs.zkeyURL)
-      break
-    case ArtifactsOrigin.server:
-      prover = new WebProver(initArgs.wasmURL, initArgs.zkeyURL)
-      break
-    case ArtifactsOrigin.chunked:
-      prover = new ChunkedProver(initArgs.wasmURL, initArgs.zkeyURL)
-      break
-  }
+  const prover: ProverInferace = new AnonAadhaarProver(
+    initArgs.wasmURL,
+    initArgs.zkeyURL,
+    initArgs.artifactsOrigin
+  )
 
   const anonAadhaarProof = await prover.proving(args, updateState)
 
@@ -115,10 +102,14 @@ export async function verify(pcd: AnonAadhaarCore): Promise<boolean> {
   return groth16.verify(
     vk,
     [
-      pcd.proof.identityNullifier,
-      pcd.proof.userNullifier,
-      pcd.proof.timestamp,
       pcd.proof.pubkeyHash,
+      pcd.proof.nullifier,
+      pcd.proof.timestamp,
+      pcd.proof.ageAbove18,
+      pcd.proof.gender,
+      pcd.proof.state,
+      pcd.proof.pincode,
+      pcd.proof.nullifierSeed,
       pcd.proof.signalHash,
     ],
     pcd.proof.groth16Proof
@@ -143,11 +134,13 @@ export async function verifyLocal(pcd: AnonAadhaarCore): Promise<boolean> {
   return groth16.verify(
     vk,
     [
-      pcd.proof.identityNullifier,
-      pcd.proof.userNullifier,
-      pcd.proof.timestamp,
       pcd.proof.pubkeyHash,
-      pcd.proof.signalHash,
+      pcd.proof.nullifier,
+      pcd.proof.timestamp,
+      pcd.proof.ageAbove18,
+      pcd.proof.gender,
+      pcd.proof.pincode,
+      pcd.proof.state,
     ],
     pcd.proof.groth16Proof
   )

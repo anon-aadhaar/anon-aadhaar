@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
 import { AnonAadhaarContext } from './useAnonAadhaar'
-import { AnonAadhaarCore, ProverState, deserialize } from '@anon-aadhaar/core'
+import { ProverState } from '@anon-aadhaar/core'
 
 /**
  * `useProver` is a custom React hook that manages the state related to Anon Aadhaar authentication within the application.
@@ -13,20 +13,18 @@ import { AnonAadhaarCore, ProverState, deserialize } from '@anon-aadhaar/core'
  * The second element is `AnonAadhaarCore` or `undefined`, which represents the deserialized proof of the authentication
  * if available, signifying a successful login state.
  */
-export function useProver(): [ProverState, AnonAadhaarCore | undefined] {
-  const [latestProof, setLatestProof] = useState<AnonAadhaarCore>()
+export function useProver(): [ProverState, string | undefined] {
+  const [latestProof, setLatestProof] = useState<string>()
   const { proverState, state } = useContext(AnonAadhaarContext)
 
   useEffect(() => {
     if (state.status === 'logged-in') {
-      deserialize(
+      setLatestProof(
         state.anonAadhaarProofs[Object.keys(state.anonAadhaarProofs).length - 1]
           .pcd,
-      ).then(deserialized => {
-        setLatestProof(deserialized)
-      })
+      )
     }
-  }, [proverState])
+  }, [proverState, state])
 
   return [proverState, latestProof]
 }

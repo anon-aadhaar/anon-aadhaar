@@ -19,9 +19,10 @@ describe('useAnonAadhaar Hook', () => {
   let testData: [bigint, bigint, bigint, bigint]
   let paddedMsg: Uint8Array
   let messageLen: number
+  let signedData: string
 
   before(async () => {
-    const signedData = 'Hello-world'
+    signedData = 'Hello-world'
 
     testData = await genData(signedData, 'SHA-256')
 
@@ -48,6 +49,7 @@ describe('useAnonAadhaar Hook', () => {
           startReq: startReqFunction,
           useTestAadhaar: true,
           proverState: ProverState.Initializing,
+          appName: 'Anon Aadhaar',
         }}
       >
         {children}
@@ -64,25 +66,53 @@ describe('useAnonAadhaar Hook', () => {
 
   it('returns updated state when request sent', () => {
     const anonAadhaarArgs: AnonAadhaarArgs = {
-      aadhaarData: {
+      qrDataPadded: {
         argumentType: ArgumentTypeName.StringArray,
         value: Uint8ArrayToCharArray(paddedMsg),
       },
-      aadhaarDataLength: {
+      qrDataPaddedLength: {
         argumentType: ArgumentTypeName.Number,
         value: messageLen.toString(),
       },
+      nonPaddedDataLength: {
+        argumentType: ArgumentTypeName.Number,
+        value: signedData.length.toString(),
+      },
+      delimiterIndices: {
+        argumentType: ArgumentTypeName.StringArray,
+        value: [1, 2, 3, 4].map(elem => elem.toString()),
+      },
       signature: {
         argumentType: ArgumentTypeName.StringArray,
-        value: splitToWords(testData[1], BigInt(64), BigInt(32)),
+        value: splitToWords(testData[1], BigInt(121), BigInt(17)),
       },
       pubKey: {
         argumentType: ArgumentTypeName.StringArray,
-        value: splitToWords(testData[2], BigInt(64), BigInt(32)),
+        value: splitToWords(testData[2], BigInt(121), BigInt(17)),
+      },
+      nullifierSeed: {
+        argumentType: ArgumentTypeName.String,
+        value: '1234',
       },
       signalHash: {
         argumentType: ArgumentTypeName.String,
         value: '1',
+      },
+      revealGender: {
+        argumentType: ArgumentTypeName.Number,
+        value: '0',
+      },
+      revealAgeAbove18: {
+        argumentType: ArgumentTypeName.Number,
+        value: '0',
+      },
+      revealState: {
+        argumentType: ArgumentTypeName.Number,
+        value: '0',
+      },
+      revealPinCode: {
+        argumentType: ArgumentTypeName.Number,
+        value: '0',
       },
     }
 

@@ -4,7 +4,7 @@ import { Upload } from '@aws-sdk/lib-storage'
 import pako from 'pako'
 import path from 'path'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-require('dotenv').config()
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') })
 
 type Bucket = {
   name: string
@@ -19,12 +19,16 @@ const Buckets: { [key: string]: Bucket } = {
 
 // S3 config
 const s3 = new S3Client({
-  region: Buckets.test.region,
+  region: Buckets.prod.region,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
+  },
 })
 
 // Set destination
-const bucketName = Buckets.test.name
-const folder_tag = 'v1.0.0'
+const bucketName = Buckets.prod.name
+const folder_tag = 'v2.0.0'
 
 const main = async () => {
   // TODO

@@ -1,13 +1,16 @@
 import { useMemo, useState } from 'react'
-import { ProveModal } from './ProveModal'
+import { Modal } from './ProveModal/Modal'
 import styled from 'styled-components'
 import { useEffect, useContext } from 'react'
 import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
-import { icon } from './ButtonLogo'
-import { AadhaarQRValidation } from '../interface'
+import { icons } from './ButtonLogo'
+import { AadhaarQRValidation } from '../types'
+import { ProverState, FieldsToRevealArray } from '@anon-aadhaar/core'
 
 interface LogInWithAnonAadhaarProps {
   signal?: string
+  fieldsToReveal?: FieldsToRevealArray
+  nullifierSeed: number
 }
 
 /**
@@ -19,23 +22,31 @@ interface LogInWithAnonAadhaarProps {
  *
  * @returns A JSX element representing the LogInWithAnonAadhaar component.
  */
-export const LogInWithAnonAadhaar = ({ signal }: LogInWithAnonAadhaarProps) => {
+export const LogInWithAnonAadhaar = ({
+  signal,
+  fieldsToReveal,
+  nullifierSeed,
+}: LogInWithAnonAadhaarProps) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [qrStatus, setQrStatus] = useState<null | AadhaarQRValidation>(null)
+  const [currentView, setCurrentView] = useState<'Verify' | 'Prove'>('Verify')
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const { state, startReq } = useContext(AnonAadhaarContext)
+  const { state, startReq, proverState } = useContext(AnonAadhaarContext)
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
   }
 
-  const blob = new Blob([icon], { type: 'image/svg+xml' })
-  const anonAadhaarLogo = useMemo(() => URL.createObjectURL(blob), [icon])
+  const blob = new Blob([icons.aalogo], { type: 'image/svg+xml' })
+  const anonAadhaarLogo = useMemo(
+    () => URL.createObjectURL(blob),
+    [icons.aalogo],
+  )
 
   useEffect(() => {
-    if (state.status === 'logged-in') setIsModalOpen(false)
-  }, [state])
+    if (proverState === ProverState.Completed) closeModal()
+  }, [proverState])
 
   const openModal = () => {
     setIsModalOpen(true)
@@ -45,6 +56,7 @@ export const LogInWithAnonAadhaar = ({ signal }: LogInWithAnonAadhaarProps) => {
     setIsModalOpen(false)
     setErrorMessage(null)
     setQrStatus(null)
+    setCurrentView('Verify')
   }
 
   return (
@@ -55,7 +67,7 @@ export const LogInWithAnonAadhaar = ({ signal }: LogInWithAnonAadhaarProps) => {
             <Logo src={anonAadhaarLogo} />
             Login
           </Btn>
-          <ProveModal
+          <Modal
             isOpen={isModalOpen}
             onClose={closeModal}
             errorMessage={errorMessage}
@@ -64,7 +76,11 @@ export const LogInWithAnonAadhaar = ({ signal }: LogInWithAnonAadhaarProps) => {
             qrStatus={qrStatus}
             setQrStatus={setQrStatus}
             signal={signal}
-          ></ProveModal>
+            fieldsToReveal={fieldsToReveal}
+            nullifierSeed={nullifierSeed}
+            setCurrentView={setCurrentView}
+            currentView={currentView}
+          ></Modal>
         </div>
       )}
       {state.status === 'logged-in' && (
@@ -75,7 +91,7 @@ export const LogInWithAnonAadhaar = ({ signal }: LogInWithAnonAadhaarProps) => {
           </Btn>
           <MenuContainer $isopen={isMenuOpen}>
             <MenuItem onClick={openModal}>Create a proof</MenuItem>
-            <ProveModal
+            <Modal
               isOpen={isModalOpen}
               onClose={closeModal}
               errorMessage={errorMessage}
@@ -84,7 +100,11 @@ export const LogInWithAnonAadhaar = ({ signal }: LogInWithAnonAadhaarProps) => {
               qrStatus={qrStatus}
               setQrStatus={setQrStatus}
               signal={signal}
-            ></ProveModal>
+              fieldsToReveal={fieldsToReveal}
+              nullifierSeed={nullifierSeed}
+              setCurrentView={setCurrentView}
+              currentView={currentView}
+            ></Modal>
             <MenuItem onClick={() => startReq({ type: 'logout' })}>
               Logout
             </MenuItem>

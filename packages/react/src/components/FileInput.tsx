@@ -45,7 +45,7 @@ const InputFile = styled.div`
   border-width: 1px;
   border-color: #d1d5db;
   max-width: 100%;
-  font-size: 0.875rem;
+  font-size: '16px';
   line-height: 1.25rem;
   color: #111827;
   background-color: #f9fafb;

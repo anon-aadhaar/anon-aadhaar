@@ -103,24 +103,24 @@ export function decompressByteArray(byteArray: Uint8Array) {
   return decompressedArray
 }
 
-export const enum SELECTOR_ID {
-  null = 0,
-  emailOrPhone,
-  referenceId,
-  name,
-  dob,
-  gender,
-  careOf,
-  district,
-  landmark,
-  house,
-  location,
-  pinCode,
-  postOffice,
-  state,
-  street,
-  subDistrict,
-  VTC,
+export enum IdFields {
+  'Email_mobile_present_bit_indicator_value',
+  'ReferenceId',
+  'Name',
+  'DOB',
+  'Gender',
+  'CareOf',
+  'District',
+  'Landmark',
+  'House',
+  'Location',
+  'PinCode',
+  'PostOffice',
+  'State',
+  'Street',
+  'SubDistrict',
+  'VTC',
+  'PhoneNumberLast4',
 }
 
 export function readData(data: number[], index: number) {
@@ -139,28 +139,25 @@ export function readData(data: number[], index: number) {
 
 export function extractPhoto(qrData: number[]) {
   let begin = 0
-  for (let i = 0; i < 16; ++i) {
+  for (let i = 0; i < 18; ++i) {
     begin = qrData.indexOf(255, begin + 1)
   }
 
-  const end = qrData.length - 65
+  const end = qrData.length
   return {
     begin,
     end,
-    photo: qrData.slice(begin, end + 1),
+    bytes: qrData.slice(begin + 1, end),
   }
 }
 
 export const searchZkeyChunks = async (
   zkeyPath: string,
-  useTestAadhaar = false,
   storageService = defaultStorageService
 ) => {
   const filePromises = []
   for (let i = 0; i < 10; i++) {
-    const fileName = useTestAadhaar
-      ? `circuit_final_test_${i}.zkey`
-      : `circuit_final_prod_${i}.zkey`
+    const fileName = `circuit_final_${i}.zkey`
     const item = await storageService.getItem(fileName)
     if (item) {
       continue

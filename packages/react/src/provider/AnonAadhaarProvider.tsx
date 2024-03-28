@@ -12,6 +12,7 @@ import {
   artifactUrls,
   init,
   ProverState,
+  verify,
 } from '@anon-aadhaar/core'
 import React, { Dispatch, SetStateAction } from 'react'
 import { proveAndSerialize } from '../prove'
@@ -44,6 +45,11 @@ export type AnonAadhaarProviderProps = {
    * or the url of artifacts that you stored on your own server.
    */
   _artifactslinks?: ArtifactsLinks
+
+  /**
+   * `_appName`: Name of your app
+   */
+  _appName?: string
 }
 
 /**
@@ -67,6 +73,7 @@ export function AnonAadhaarProvider(
   const [anonAadhaarProof, setAnonAadhaarProof] =
     useState<AnonAadhaarCore | null>(null)
   const [useTestAadhaar, setUseTestAadhaar] = useState<boolean>(false)
+  const [appName, setAppName] = useState<string>('The current application')
   const [proverState, setProverState] = useState<ProverState>(
     ProverState.Initializing,
   )
@@ -81,6 +88,11 @@ export function AnonAadhaarProvider(
   }, [anonAadhaarProviderProps._useTestAadhaar])
 
   useEffect(() => {
+    if (anonAadhaarProviderProps._appName !== undefined)
+      setAppName(anonAadhaarProviderProps._appName)
+  }, [anonAadhaarProviderProps._appName])
+
+  useEffect(() => {
     let anonAadhaarInitArgs: InitArgs
     if (anonAadhaarProviderProps._artifactslinks) {
       anonAadhaarInitArgs = {
@@ -91,13 +103,9 @@ export function AnonAadhaarProvider(
       }
     } else {
       anonAadhaarInitArgs = {
-        wasmURL: useTestAadhaar
-          ? artifactUrls.test.wasm
-          : artifactUrls.prod.wasm,
-        zkeyURL: useTestAadhaar
-          ? artifactUrls.test.chunked
-          : artifactUrls.prod.chunked,
-        vkeyURL: useTestAadhaar ? artifactUrls.test.vk : artifactUrls.prod.vk,
+        wasmURL: artifactUrls.v2.wasm,
+        zkeyURL: artifactUrls.v2.chunked,
+        vkeyURL: artifactUrls.v2.vk,
         artifactsOrigin: ArtifactsOrigin.chunked,
       }
     }
@@ -107,7 +115,7 @@ export function AnonAadhaarProvider(
       .catch(e => {
         throw Error(e)
       })
-  }, [useTestAadhaar, anonAadhaarProviderProps._artifactslinks])
+  }, [anonAadhaarProviderProps._artifactslinks])
 
   // Write state to local storage whenever a login starts, succeeds, or fails
   const setAndWriteState = (newState: AnonAadhaarState) => {
@@ -157,8 +165,8 @@ export function AnonAadhaarProvider(
 
   // Provide context
   const val = React.useMemo(
-    () => ({ state, startReq, useTestAadhaar, proverState }),
-    [state, useTestAadhaar, proverState],
+    () => ({ state, startReq, useTestAadhaar, proverState, appName }),
+    [state, useTestAadhaar, proverState, appName],
   )
 
   return (
@@ -304,7 +312,7 @@ async function handleLogin(
     return null
   }
 
-  if (!(await AnonAadhaarCorePackage.verify(_anonAadhaarProof))) {
+  if (!(await verify(_anonAadhaarProof))) {
     throw new Error('Invalid proof')
   }
 
