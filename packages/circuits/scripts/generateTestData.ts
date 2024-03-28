@@ -1,9 +1,15 @@
 import {
+  IdFields,
   convertBigIntToByteArray,
   decompressByteArray,
 } from '@anon-aadhaar/core'
+import {
+  getEndIndex,
+  rawDataToCompressedQR,
+  replaceBytesBetween,
+  returnNewDateString,
+} from './util'
 import { returnFullId } from '../test/util'
-import pako from 'pako'
 import crypto from 'crypto'
 import fs from 'fs'
 import path from 'path'
@@ -19,12 +25,18 @@ const data =
 // - Adds the version specifier at the beginning 'V2'
 // - Mocks last 4 digits of phone number '1234' after VTC
 // - Refresh timestamp data to now
-const createCustomV2TestData = (signedData: Uint8Array) => {
+// - Optionnaly it can take parameters to change the test data fields (dob, pincode, gender, state)
+const createCustomV2TestData = (
+  signedData: Uint8Array,
+  dob?: string,
+  pincode?: string,
+  gender?: string,
+  state?: string,
+) => {
   const allDataParsed: number[][] = []
+  const delimiterIndices: number[] = []
   let countDelimiter = 0
   let temp: number[] = []
-  // Search for the end index after VTC
-  let endIndex = 0
   for (let i = 0; i < signedData.length; i++) {
     if (countDelimiter < 16) {
       if (signedData[i] !== 255) {
@@ -32,10 +44,10 @@ const createCustomV2TestData = (signedData: Uint8Array) => {
       } else {
         countDelimiter += 1
         allDataParsed.push(temp)
+        delimiterIndices.push(i)
         temp = []
       }
     } else {
-      endIndex = i
       break
     }
   }
@@ -50,13 +62,58 @@ const createCustomV2TestData = (signedData: Uint8Array) => {
     5 + newTimestamp.length,
   )
 
+  let modifiedSignedData: Uint8Array = signedDataWithNewTimestamp
+
+  if (dob) {
+    const newDOB = new TextEncoder().encode(dob)
+    modifiedSignedData = replaceBytesBetween(
+      modifiedSignedData,
+      newDOB,
+      delimiterIndices[IdFields.DOB - 1] + 1,
+      delimiterIndices[IdFields.DOB - 1] + allDataParsed[IdFields.DOB].length,
+    )
+  }
+
+  if (gender) {
+    const newGender = new TextEncoder().encode(gender)
+    modifiedSignedData = replaceBytesBetween(
+      modifiedSignedData,
+      newGender,
+      delimiterIndices[IdFields.Gender - 1] + 1,
+      delimiterIndices[IdFields.Gender - 1] +
+        allDataParsed[IdFields.Gender].length,
+    )
+  }
+
+  if (pincode) {
+    const newPincode = new TextEncoder().encode(pincode)
+    modifiedSignedData = replaceBytesBetween(
+      modifiedSignedData,
+      newPincode,
+      delimiterIndices[IdFields.PinCode - 1] + 1,
+      delimiterIndices[IdFields.PinCode - 1] +
+        allDataParsed[IdFields.PinCode].length,
+    )
+  }
+
+  if (state) {
+    const newState = new TextEncoder().encode(state)
+    modifiedSignedData = replaceBytesBetween(
+      modifiedSignedData,
+      newState,
+      delimiterIndices[IdFields.State - 1] + 1,
+      delimiterIndices[IdFields.State - 1] +
+        allDataParsed[IdFields.State].length,
+    )
+  }
+
   const versionSpecifier = new Uint8Array([86, 50, 255]) // 'V2' in ASCII followed by 255
   const number1234 = new Uint8Array([49, 50, 51, 52, 255]) // '1234' in ASCII followed by 255
   const beforeInsertion = new Uint8Array(
-    signedDataWithNewTimestamp.slice(0, endIndex),
+    modifiedSignedData.slice(0, getEndIndex(modifiedSignedData)),
   )
   const afterInsertion = new Uint8Array(
-    signedDataWithNewTimestamp.slice(endIndex),
+    modifiedSignedData.slice(getEndIndex(modifiedSignedData)),
   )
 
   // Combine all parts together
@@ -75,55 +132,6 @@ const createCustomV2TestData = (signedData: Uint8Array) => {
   )
 
   return newData
-}
-
-export function compressByteArray(byteArray: Uint8Array): Uint8Array {
-  const compressedArray = pako.deflate(byteArray)
-  return new Uint8Array(compressedArray)
-}
-
-export function replaceBytesBetween(
-  arr: Uint8Array,
-  replaceWith: Uint8Array,
-  start: number,
-  end: number,
-) {
-  if (end - start === replaceWith.length - 1) {
-    for (let i = start; i <= end; i++) {
-      arr[i] = replaceWith[i - start]
-    }
-  } else {
-    console.error('Replacement range and replaceWith length do not match.')
-  }
-  return arr
-}
-
-// Return timestamp in format “DDMMYYYYHHMMSSsss” (including milliseconds)
-export function returnNewDateString(): string {
-  const newDate = new Date()
-  return (
-    newDate.getUTCFullYear().toString() +
-    newDate.getUTCMonth().toString().padStart(2, '0') +
-    newDate.getUTCDay().toString().padStart(2, '0') +
-    newDate.getUTCHours().toString().padStart(2, '0') +
-    newDate.getUTCMinutes().toString().padStart(2, '0') +
-    newDate.getUTCSeconds().toString().padStart(2, '0') +
-    newDate.getUTCMilliseconds().toString().padStart(3, '0')
-  )
-}
-
-export function convertByteArrayToBigInt(byteArray: Uint8Array): bigint {
-  let result = BigInt(0)
-  for (let i = 0; i < byteArray.length; i++) {
-    result = result * BigInt(256) + BigInt(byteArray[i])
-  }
-  return result
-}
-
-const rawDataToCompressedQR = (data: Uint8Array) => {
-  const compressedDataBytes = compressByteArray(data)
-  const compressedBigInt = convertByteArrayToBigInt(compressedDataBytes)
-  return compressedBigInt
 }
 
 // Will sign the data with the keys generated for test
@@ -148,7 +156,13 @@ const signNewTestData = (newSignedData: Uint8Array) => {
   return signature
 }
 
-const main = (data: string) => {
+const main = (
+  data: string,
+  dob?: string,
+  gender?: string,
+  pincode?: string,
+  state?: string,
+) => {
   const qrDataBytes = convertBigIntToByteArray(BigInt(data))
   const decodedData = decompressByteArray(qrDataBytes)
 
@@ -157,6 +171,10 @@ const main = (data: string) => {
   // the last 4 digits of phone number and timestamp to now
   const dataToSign = createCustomV2TestData(
     decodedData.slice(0, decodedData.length - 256),
+    dob,
+    pincode,
+    gender,
+    state,
   )
 
   // Signing the newly generated testData
@@ -173,7 +191,7 @@ const main = (data: string) => {
   }
 
   fs.writeFileSync(
-    path.join(__dirname, '..', 'assets', 'newTestData.json'),
+    path.join(__dirname, '..', 'assets', 'test.json'),
     JSON.stringify(newQrData, null, 2),
   )
 
