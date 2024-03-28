@@ -1,8 +1,8 @@
 ## 2.0.0
 
-- Introduce optimised circuits
+- Introduce optimised circuits with around 1M constraints
 - Adds selective disclosure on Age>18, Gender, State & Pincode
-- Updates all the packages accrodingly (react, contracts, core)
+- Updates all the packages accordingly (react, contracts, core)
 
 ## 1.0.2
 
