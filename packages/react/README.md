@@ -71,10 +71,16 @@ useEffect(() => {
 ### `<LogInWithAnonAadhaar />`
 
 ```tsx
-<LogInWithAnonAadhaar />
+<LogInWithAnonAadhaar nullifierSeed={1234} />
 ```
 
 `LogInWithAnonAadhaar` provides a user interface for logging in and logging out using the AnonAadhaarContext.
+
+| Parameter        | Description                                                       | Default Value | Optional |
+| ---------------- | ----------------------------------------------------------------- | ------------- | -------- |
+| `signal`         | A unique identifier used to trigger the proof generation process. | undefined     | Yes      |
+| `fieldsToReveal` | Specifies which fields should be revealed during the process.     | undefined     | Yes      |
+| `nullifierSeed`  | A unique number used to generate a nullifier for the proof.       | undefined     | No       |
 
 ---
 
@@ -147,17 +153,20 @@ function YourComponent() {
         signal="yourSignalIdentifier"
         buttonStyle={{ backgroundColor: 'blue', color: 'white' }}
         buttonTitle="Generate a proof"
+        nullifierSeed={1234}
       />
     </div>
   )
 }
 ```
 
-| Parameter     | Description                                                       | Default Value        | Optional |
-| ------------- | ----------------------------------------------------------------- | -------------------- | -------- |
-| `signal`      | A unique identifier used to trigger the proof generation process. | undefined            | Yes      |
-| `buttonStyle` | CSS properties to customize the appearance of the button.         | `{}`                 | Yes      |
-| `buttonTitle` | Text displayed on the button to indicate the action to the user.  | `'Generate a proof'` | Yes      |
+| Parameter        | Description                                                       | Default Value        | Optional |
+| ---------------- | ----------------------------------------------------------------- | -------------------- | -------- |
+| `signal`         | A unique identifier used to trigger the proof generation process. | undefined            | Yes      |
+| `buttonStyle`    | CSS properties to customize the appearance of the button.         | `{}`                 | Yes      |
+| `buttonTitle`    | Text displayed on the button to indicate the action to the user.  | `'Generate a proof'` | Yes      |
+| `fieldsToReveal` | Specifies which fields should be revealed during the process.     | undefined            | Yes      |
+| `nullifierSeed`  | A unique number used to generate a nullifier for the proof.       | undefined            | No       |
 
 This component simplifies the user interaction by providing a single button that, when clicked, opens the proof generation modal window.
 

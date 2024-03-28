@@ -1,3 +1,9 @@
+## 2.0.0
+
+- Introduce optimised circuits
+- Adds selective disclosure on Age>18, Gender, State & Pincode
+- Updates all the packages accrodingly (react, contracts, core)
+
 ## 1.0.2
 
 - Fix QR code verification state bug
