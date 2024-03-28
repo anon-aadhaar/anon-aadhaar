@@ -12,6 +12,7 @@ import {
   artifactUrls,
   init,
   ProverState,
+  verify,
 } from '@anon-aadhaar/core'
 import React, { Dispatch, SetStateAction } from 'react'
 import { proveAndSerialize } from '../prove'
@@ -311,7 +312,7 @@ async function handleLogin(
     return null
   }
 
-  if (!(await AnonAadhaarCorePackage.verify(_anonAadhaarProof))) {
+  if (!(await verify(_anonAadhaarProof))) {
     throw new Error('Invalid proof')
   }
 

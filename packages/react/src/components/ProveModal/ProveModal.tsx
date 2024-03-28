@@ -132,7 +132,7 @@ const Title = styled.h3`
 const Disclaimer = styled.span`
   color: #6d6d6d;
   margin-top: 0.3rem;
-  font-size: small;
+  font-size: '16px';
   font-weight: normal;
 `
 
@@ -143,9 +143,9 @@ const Section = styled.div`
 `
 
 const Label = styled.div`
-  font-size: medium;
+  font-size: large;
   text-align: left;
-  font-weight: 500;
+  font-weight: 600;
   color: #111827;
 `
 const Illustration = styled.img`
@@ -160,14 +160,10 @@ const RevealSection = styled.div`
 const FieldRow = styled.div`
   display: flex;
   align-items: center;
-  /* Add additional styles here */
 `
 
 const CheckmarkIconWrapper = styled.div`
-  margin-right: 8px; // or whatever spacing you prefer
-  // Styles for the checkmark icon wrapper
+  margin-right: 8px;
 `
 
-const FieldLabel = styled.span`
-  // Styles for the label
-`
+const FieldLabel = styled.span``

@@ -35,7 +35,7 @@ const InputFile = styled.div`
   line-height: 1.25rem;
   color: #111827;
   background-color: #f9fafb;
-  margin-top: 0.3rem;
+  margin-top: 0.8rem;
   margin-bottom: 0.8rem;
   max-width: 100%;
 `

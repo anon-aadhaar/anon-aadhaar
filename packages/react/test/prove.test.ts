@@ -25,19 +25,17 @@ describe('AnonAadhaar prover react tests', function () {
 
     const args = await processAadhaarArgs(testQRData, true, 1234, [
       'revealPinCode',
-      'revealAgeAbove18',
+      'revealGender',
     ])
 
     const result = await proveAndSerialize(args)
 
-    console.log(result.anonAadhaarProof)
-
     const verified = await verify(result.anonAadhaarProof)
 
     assert(verified == true, 'Should verifiable')
-    assert(result.anonAadhaarProof.proof.gender === '0')
+    assert(result.anonAadhaarProof.proof.gender === '77')
     assert(result.anonAadhaarProof.proof.state === '0')
-    assert(result.anonAadhaarProof.proof.ageAbove18 === '1')
+    assert(result.anonAadhaarProof.proof.ageAbove18 === '0')
     assert(result.anonAadhaarProof.proof.pincode === '110051')
   })
 })

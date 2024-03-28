@@ -32,8 +32,15 @@ export const proveAndSerialize = async (
   anonAadhaarProof: AnonAadhaarCore
   serialized: SerializedPCD<AnonAadhaarCore>
 }> => {
-  const anonAadhaarProof = await prove(anonAadhaarArgs, setProverState)
-  const serialized = await serialize(anonAadhaarProof)
+  let anonAadhaarProof
+  let serialized
+  try {
+    anonAadhaarProof = await prove(anonAadhaarArgs, setProverState)
+    serialized = await serialize(anonAadhaarProof)
+  } catch (e) {
+    console.error(e)
+    throw new Error('Error while generating the proof')
+  }
 
   return { anonAadhaarProof, serialized }
 }

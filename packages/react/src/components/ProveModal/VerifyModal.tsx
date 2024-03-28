@@ -132,8 +132,8 @@ const Title = styled.h3`
 
 const Disclaimer = styled.span`
   color: #6d6d6d;
-  margin-top: 2rem;
-  font-size: small;
+  margin-top: 1rem;
+  font-size: '16px';
   font-weight: normal;
 `
 
@@ -153,7 +153,7 @@ const Label = styled.div`
 const PhonePlatformLinks = styled.a`
   color: #1d24e0;
   margin-top: 0.3rem;
-  font-size: small;
+  font-size: '16px';
   font-weight: normal;
 `
 const Container = styled.div`

@@ -5,7 +5,7 @@ import {
   ArtifactsOrigin,
   ProverState,
 } from './types'
-import { ZKArtifact, groth16 } from 'snarkjs'
+import { Groth16Proof, PublicSignals, ZKArtifact, groth16 } from 'snarkjs'
 import { storageService as defaultStorageService } from './storage'
 import { handleError, retrieveFileExtension, searchZkeyChunks } from './utils'
 
@@ -167,11 +167,20 @@ export class AnonAadhaarProver implements ProverInferace {
     }
 
     if (updateState) updateState(ProverState.Proving)
-    const { proof, publicSignals } = await groth16.fullProve(
-      input,
-      wasmBuffer,
-      zkeyBuffer
-    )
+    let result: {
+      proof: Groth16Proof
+      publicSignals: PublicSignals
+    }
+    try {
+      result = await groth16.fullProve(input, wasmBuffer, zkeyBuffer)
+    } catch (e) {
+      console.error(e)
+      if (updateState) updateState(ProverState.Error)
+      throw new Error('[AnonAAdhaarProver]: Error while generating the proof')
+    }
+
+    const proof = result.proof
+    const publicSignals = result.publicSignals
 
     if (updateState) updateState(ProverState.Completed)
     return {
