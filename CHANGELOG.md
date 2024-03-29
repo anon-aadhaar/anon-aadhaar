@@ -1,3 +1,7 @@
+## 2.0.1
+
+- Export components to generate test QR codes
+
 ## 2.0.0
 
 - Introduce optimised circuits with around 1M constraints

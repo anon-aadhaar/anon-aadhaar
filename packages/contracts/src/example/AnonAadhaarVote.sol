@@ -47,6 +47,7 @@ contract AnonAadhaarVote is IAnonAadhaarVote {
     /// @param nullifier: Nullifier for the user's Aadhaar data.
     /// @param timestamp: Timestamp of when the QR code was signed.
     /// @param signal: signal used while generating the proof, should be equal to msg.sender.
+    /// @param revealArray: Array of the values used as input for the proof generation (equal to [0, 0, 0, 0] if no field reveal were asked).
     /// @param groth16Proof: SNARK Groth16 proof.
     function voteForProposal(
         uint256 proposalIndex,

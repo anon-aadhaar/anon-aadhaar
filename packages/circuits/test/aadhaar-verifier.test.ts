@@ -14,18 +14,14 @@ import {
   decompressByteArray,
   splitToWords,
   extractPhoto,
+  timestampToUTCUnix,
 } from '@anon-aadhaar/core'
 import fs from 'fs'
 import crypto from 'crypto'
 import assert from 'assert'
 import { buildPoseidon } from 'circomlibjs'
 import { testQRData } from '../assets/dataInput.json'
-import {
-  bytesToIntChunks,
-  padArrayWithZeros,
-  timestampToUTCUnix,
-  bigIntsToString,
-} from './util'
+import { bytesToIntChunks, padArrayWithZeros, bigIntsToString } from './util'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config()
 
@@ -57,7 +53,7 @@ function prepareTestData() {
 
   const [paddedMsg, messageLen] = sha256Pad(signedData, 512 * 3)
 
-  const delimiterIndices = []
+  const delimiterIndices: number[] = []
   for (let i = 0; i < paddedMsg.length; i++) {
     if (paddedMsg[i] === 255) {
       delimiterIndices.push(i)
