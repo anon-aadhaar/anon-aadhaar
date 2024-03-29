@@ -1,4 +1,4 @@
-import { IdFields } from '@anon-aadhaar/core'
+import { IdFields } from './utils'
 import pako from 'pako'
 
 // This modify the test data to make it compliant with the secure Aadhaar QR V2 2022
