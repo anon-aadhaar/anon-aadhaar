@@ -36,7 +36,7 @@ describe('Extractor', function () {
 
     const [paddedMsg] = sha256Pad(signedData, 512 * 3)
 
-    const delimiterIndices = []
+    const delimiterIndices: number[] = []
     for (let i = 0; i < paddedMsg.length; i++) {
       if (paddedMsg[i] === 255) {
         delimiterIndices.push(i)
