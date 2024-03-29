@@ -1,3 +1,7 @@
+## 2.0.2
+
+- fix timestamp in QR code generator
+
 ## 2.0.1
 
 - Export components to generate test QR codes

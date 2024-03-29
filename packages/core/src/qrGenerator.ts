@@ -261,10 +261,11 @@ export function replaceBytesBetween(
 // Return timestamp in format “DDMMYYYYHHMMSSsss” (including milliseconds)
 export function returnNewDateString(): string {
   const newDate = new Date()
+
   return (
     newDate.getUTCFullYear().toString() +
-    newDate.getUTCMonth().toString().padStart(2, '0') +
-    newDate.getUTCDay().toString().padStart(2, '0') +
+    (newDate.getUTCMonth() + 1).toString().padStart(2, '0') +
+    newDate.getUTCDate().toString().padStart(2, '0') +
     newDate.getUTCHours().toString().padStart(2, '0') +
     newDate.getUTCMinutes().toString().padStart(2, '0') +
     newDate.getUTCSeconds().toString().padStart(2, '0') +
