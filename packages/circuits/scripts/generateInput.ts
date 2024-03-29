@@ -83,7 +83,11 @@ const main = () => {
     revealState: '0',
     revealPinCode: '0',
   }
-  writeFileSync('../build/temp.json', JSON.stringify(input))
+
+  writeFileSync(
+    path.join(__dirname, '../build/input.json'),
+    JSON.stringify(input),
+  )
 }
 
 main()

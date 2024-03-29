@@ -48,7 +48,7 @@ function install_deps() {
 }
 
 function build_circuit() {
-    circom ./src/aadhaar-verifier.circom  --r1cs --wasm -o $PARTIAL_ZKEYS_DIR -l ./node_modules
+    circom ./src/aadhaar-verifier.circom  --r1cs --wasm -o $BUILD_DIR -l ./node_modules
 }
 
 # trusted setup for development
