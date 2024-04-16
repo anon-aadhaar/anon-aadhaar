@@ -262,6 +262,12 @@ export function replaceBytesBetween(
 export function returnNewDateString(): string {
   const newDate = new Date()
 
+  // Convert the UTC date to IST by adding 5 hours and 30 minutes
+  const offsetHours = 5
+  const offsetMinutes = 30
+  newDate.setUTCHours(newDate.getUTCHours() + offsetHours)
+  newDate.setUTCMinutes(newDate.getUTCMinutes() + offsetMinutes)
+
   return (
     newDate.getUTCFullYear().toString() +
     (newDate.getUTCMonth() + 1).toString().padStart(2, '0') +

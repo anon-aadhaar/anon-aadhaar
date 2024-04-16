@@ -1,3 +1,9 @@
+## 2.0.3
+
+- fix timestamp in QR code generator (UTC to IST based)
+- fix returned type in useProver hook
+- fix generateArgs outputs
+
 ## 2.0.2
 
 - fix timestamp in QR code generator
