@@ -95,7 +95,7 @@ export const generateArgs = async ({
     },
     nonPaddedDataLength: {
       argumentType: ArgumentTypeName.Number,
-      value: messageLength.toString(),
+      value: signedData.length.toString(),
     },
     delimiterIndices: {
       argumentType: ArgumentTypeName.StringArray,
