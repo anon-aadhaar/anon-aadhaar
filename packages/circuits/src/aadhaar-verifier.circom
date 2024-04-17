@@ -2,8 +2,8 @@ pragma circom 2.1.6;
 
 include "circomlib/circuits/poseidon.circom";
 include "./helpers/signature.circom";
-include "./helpers/nullifier.circom";
 include "./helpers/extractor.circom";
+include "./helpers/nullifier.circom";
 
 
 /// @title AadhaarVerifier

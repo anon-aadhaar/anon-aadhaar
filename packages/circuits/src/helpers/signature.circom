@@ -26,12 +26,12 @@ template SignatureVerifier(n, k, maxDataLength) {
 
   // Hash the data and verify RSA signature - 917344 constraints
   component shaHasher = Sha256Bytes(maxDataLength);
-  shaHasher.in_padded <== qrDataPadded;
-  shaHasher.in_len_padded_bytes <== qrDataPaddedLength;
+  shaHasher.paddedIn <== qrDataPadded;
+  shaHasher.paddedInLength <== qrDataPaddedLength;
   signal sha[256];
   sha <== shaHasher.out;
   
-  component rsa = RSAVerify65537(n, k);
+  component rsa = RSAVerifier65537(n, k);
   var rsaMsgLength = (256 + n) \ n;
   component rsaBaseMsg[rsaMsgLength];
   for (var i = 0; i < rsaMsgLength; i++) {
@@ -45,10 +45,10 @@ template SignatureVerifier(n, k, maxDataLength) {
   }
 
   for (var i = 0; i < rsaMsgLength; i++) {
-      rsa.base_message[i] <== rsaBaseMsg[i].out;
+      rsa.message[i] <== rsaBaseMsg[i].out;
   }
   for (var i = rsaMsgLength; i < k; i++) {
-      rsa.base_message[i] <== 0;
+      rsa.message[i] <== 0;
   }
 
   for (var i = 0; i < k; i++) {

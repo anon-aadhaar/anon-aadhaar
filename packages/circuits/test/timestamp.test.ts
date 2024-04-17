@@ -25,7 +25,10 @@ describe('date-to-timestamp', function () {
       path.join(__dirname, './', 'circuits', 'timestamp-test.circom'),
       {
         recompile: true,
-        include: path.join(__dirname, '../node_modules'),
+        include: [
+          path.join(__dirname, '../node_modules'),
+          path.join(__dirname, '../../../node_modules'),
+        ],
       },
     )
   })

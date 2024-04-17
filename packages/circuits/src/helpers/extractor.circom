@@ -2,8 +2,9 @@ pragma circom 2.1.6;
 
 include "circomlib/circuits/comparators.circom";
 include "circomlib/circuits/bitify.circom";
+include "@zk-email/circuits/utils/array.circom";
+include "@zk-email/circuits/utils/bytes.circom";
 include "../helpers/constants.circom";
-include "../utils/array.circom";
 include "../utils/pack.circom";
 
 
@@ -29,7 +30,7 @@ template ExtractAndPackAsInt(maxDataLength, extractPosition) {
     var byteLength = extractMaxLength + 1;
     
     // Shift the data to the right till the the delimiter start
-    component shifter = SubarraySelector(maxDataLength, byteLength);
+    component shifter = SelectSubArray(maxDataLength, byteLength);
     shifter.in <== nDelimitedData;
     shifter.startIndex <== startDelimiterIndex; // We want delimiter to be the first byte
     shifter.length <== endDelimiterIndex - startDelimiterIndex;
@@ -39,21 +40,21 @@ template ExtractAndPackAsInt(maxDataLength, extractPosition) {
     shiftedBytes[0] === extractPosition * 255;
 
     // Assert that last byte is the delimiter (255 * (position of the field + 1))
-    component endDelimiterSelector = ArraySelector(maxDataLength, 16);
+    component endDelimiterSelector = ItemAtIndex(maxDataLength);
     endDelimiterSelector.in <== nDelimitedData;
     endDelimiterSelector.index <== endDelimiterIndex;
     endDelimiterSelector.out === (extractPosition + 1) * 255;
 
     // Pack byte[] to int[] where int is field element which take up to 31 bytes
-    component outInt = BytesToIntChunks(extractMaxLength);
+    component outInt = PackBytes(extractMaxLength);
     for (var i = 0; i < extractMaxLength; i ++) {
-        outInt.bytes[i] <== shiftedBytes[i + 1]; // +1 to skip the delimiter
+        outInt.in[i] <== shiftedBytes[i + 1]; // +1 to skip the delimiter
 
         // Assert that each value is less than 255 - ensures no delimiter in between
         assert(shiftedBytes[i + 1] < 255);
     }
 
-    out <== outInt.ints[0];
+    out <== outInt.out[0];
 }
 
 
@@ -69,10 +70,10 @@ template TimetampExtractor(maxDataLength) {
     signal input nDelimitedData[maxDataLength];
 
     signal output timestamp;
-    signal output year <== DigitBytesToNumber(4)([nDelimitedData[9], nDelimitedData[10], nDelimitedData[11], nDelimitedData[12]]);
-    signal output month <== DigitBytesToNumber(2)([nDelimitedData[13], nDelimitedData[14]]);
-    signal output day <== DigitBytesToNumber(2)([nDelimitedData[15], nDelimitedData[16]]);
-    signal hour <== DigitBytesToNumber(2)([nDelimitedData[17], nDelimitedData[18]]);
+    signal output year <== DigitBytesToInt(4)([nDelimitedData[9], nDelimitedData[10], nDelimitedData[11], nDelimitedData[12]]);
+    signal output month <== DigitBytesToInt(2)([nDelimitedData[13], nDelimitedData[14]]);
+    signal output day <== DigitBytesToInt(2)([nDelimitedData[15], nDelimitedData[16]]);
+    signal hour <== DigitBytesToInt(2)([nDelimitedData[17], nDelimitedData[18]]);
 
     component dateToUnixTime = DigitBytesToTimestamp(2032);
     dateToUnixTime.year <== year;
@@ -105,7 +106,7 @@ template AgeExtractor(maxDataLength) {
     var dobDelimiterIndex = dobPosition();
     var byteLength = 10 + 2; // DD-MM-YYYY + 2 delimiter
 
-    component shifter = SubarraySelector(maxDataLength, byteLength);
+    component shifter = SelectSubArray(maxDataLength, byteLength);
     shifter.in <== nDelimitedData;
     shifter.startIndex <== startDelimiterIndex; // We want delimiter to be the first byte
     shifter.length <== startDelimiterIndex + 10;
@@ -118,9 +119,9 @@ template AgeExtractor(maxDataLength) {
 
     // Convert DOB bytes to unix timestamp. 
     // Get year, month, name as ints (DD-MM-YYYY format and starts from shiftedBytes[0])
-    signal year <== DigitBytesToNumber(4)([shiftedBytes[7], shiftedBytes[8], shiftedBytes[9], shiftedBytes[10]]);
-    signal month <== DigitBytesToNumber(2)([shiftedBytes[4], shiftedBytes[5]]);
-    signal day <== DigitBytesToNumber(2)([shiftedBytes[1], shiftedBytes[2]]);
+    signal year <== DigitBytesToInt(4)([shiftedBytes[7], shiftedBytes[8], shiftedBytes[9], shiftedBytes[10]]);
+    signal month <== DigitBytesToInt(2)([shiftedBytes[4], shiftedBytes[5]]);
+    signal day <== DigitBytesToInt(2)([shiftedBytes[1], shiftedBytes[2]]);
 
     // Completed age based on year value
     signal ageByYear <== currentYear - year - 1;
@@ -151,19 +152,19 @@ template GenderExtractor(maxDataLength) {
     signal output out;
 
     // Assert start delimiter value
-    component startDelimiterSelector = ArraySelector(maxDataLength, 16);
+    component startDelimiterSelector = ItemAtIndex(maxDataLength);
     startDelimiterSelector.in <== nDelimitedData;
     startDelimiterSelector.index <== startDelimiterIndex;
     startDelimiterSelector.out === genderPosition() * 255;
 
     // Assert end delimiter value
-    component endDelimiterSelector = ArraySelector(maxDataLength, 16);
+    component endDelimiterSelector = ItemAtIndex(maxDataLength);
     endDelimiterSelector.in <== nDelimitedData;
     endDelimiterSelector.index <== startDelimiterIndex + 2;
     endDelimiterSelector.out === (genderPosition() + 1) * 255;
 
     // Get gender byte
-    component genderSelector = ArraySelector(maxDataLength, 16);
+    component genderSelector = ItemAtIndex(maxDataLength);
     genderSelector.in <== nDelimitedData;
     genderSelector.index <== startDelimiterIndex + 1;
     out <== genderSelector.out;
@@ -187,7 +188,7 @@ template PinCodeExtractor(maxDataLength) {
     var pinCodeMaxLength = 6;
     var byteLength = pinCodeMaxLength + 2; // 2 delimiters
 
-    component shifter = SubarraySelector(maxDataLength, byteLength);
+    component shifter = SelectSubArray(maxDataLength, byteLength);
     shifter.in <== nDelimitedData;
     shifter.startIndex <== startDelimiterIndex;
     shifter.length <== endDelimiterIndex - startDelimiterIndex + 1;
@@ -198,7 +199,7 @@ template PinCodeExtractor(maxDataLength) {
     shiftedBytes[0] === pinCodePosition() * 255;
     shiftedBytes[7] === (pinCodePosition() + 1) * 255;
 
-    out <== DigitBytesToNumber(6)([shiftedBytes[1], shiftedBytes[2], shiftedBytes[3], shiftedBytes[4], shiftedBytes[5], shiftedBytes[6]]);
+    out <== DigitBytesToInt(6)([shiftedBytes[1], shiftedBytes[2], shiftedBytes[3], shiftedBytes[4], shiftedBytes[5], shiftedBytes[6]]);
 }
 
 
@@ -220,7 +221,7 @@ template PhotoExtractor(maxDataLength) {
     var bytesLength = photoMaxLength + 1;
 
     // Shift the data to the right to until the photo index
-    component shifter = SubarraySelector(maxDataLength, bytesLength);
+    component shifter = SelectSubArray(maxDataLength, bytesLength);
     shifter.in <== nDelimitedData;
     shifter.startIndex <== startDelimiterIndex; // We want delimiter to be the first byte
     shifter.length <== endIndex - startDelimiterIndex + 1;
@@ -233,12 +234,12 @@ template PhotoExtractor(maxDataLength) {
     // Pack byte[] to int[] where int is field element which take up to 31 bytes
     // When packing like this the trailing 0s in each chunk would be removed as they are LSB
     // This is ok for being used in nullifiers as the behaviour would be consistent
-    component outInt = BytesToIntChunks(photoMaxLength);
+    component outInt = PackBytes(photoMaxLength);
     for (var i = 0; i < photoMaxLength; i ++) {
-        outInt.bytes[i] <== shiftedBytes[i + 1]; // +1 to skip the delimiter
+        outInt.in[i] <== shiftedBytes[i + 1]; // +1 to skip the delimiter
     }
 
-    out <== outInt.ints;
+    out <== outInt.out;
 }
 
 
