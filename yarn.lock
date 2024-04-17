@@ -2995,6 +2995,14 @@
   resolved "https://registry.yarnpkg.com/@ungap/structured-clone/-/structured-clone-1.2.0.tgz#756641adb587851b5ccb3e095daf27ae581c8406"
   integrity sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==
 
+"@zk-email/circuits@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@zk-email/circuits/-/circuits-4.0.0.tgz#b5bf511fbe02ee1c39cda8a1814c21dc86cd7195"
+  integrity sha512-dqPkncHsGzXfotPuzvmdx1YpGCTFNGS//8Srx567Sdvq07NJ03jNt216DvnhzKA0XHOLH2B64+OGaoVrDQ8XKw==
+  dependencies:
+    "@zk-email/zk-regex-circom" "^1.1.1"
+    circomlib "^2.0.5"
+
 "@zk-email/helpers@^3.1.3":
   version "3.1.3"
   resolved "https://registry.yarnpkg.com/@zk-email/helpers/-/helpers-3.1.3.tgz#c3e603955ea794b9506968e910249b990b1b536a"
@@ -3012,6 +3020,30 @@
     pki "^1.1.0"
     psl "^1.9.0"
     snarkjs "https://github.com/sampritipanda/snarkjs.git#fef81fc51d17a734637555c6edbd585ecda02d9e"
+
+"@zk-email/helpers@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@zk-email/helpers/-/helpers-4.0.0.tgz#d7461a411b045c8b58bb3cdea050d50069e094d1"
+  integrity sha512-L+v1FTTUt2ekUYo2isboBmALqbuxsJcd6BisLExq97IHn57SK8zb7OhRnZvvUNwPML7PDoGmQnS7Tvn/JB5Z3g==
+  dependencies:
+    addressparser "^1.0.1"
+    atob "^2.1.2"
+    circomlibjs "^0.1.7"
+    libmime "^5.2.1"
+    localforage "^1.10.0"
+    node-forge "^1.3.1"
+    pako "^2.1.0"
+    pki "^1.1.0"
+    psl "^1.9.0"
+    snarkjs "https://github.com/sampritipanda/snarkjs.git#fef81fc51d17a734637555c6edbd585ecda02d9e"
+
+"@zk-email/zk-regex-circom@^1.1.1":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@zk-email/zk-regex-circom/-/zk-regex-circom-1.3.0.tgz#8cb2b3b4977cfe42dc7072e13795e10d92efa074"
+  integrity sha512-faMboihzV3zyh2K3Qy4GYgxRRql4YEef26QDCISFFuURACWINfwtoZPC4OHtE0Ug60iAWRbpQtUWlPjomTCxoQ==
+  dependencies:
+    commander "^11.0.0"
+    snarkjs "^0.7.0"
 
 "@zk-kit/incremental-merkle-tree@^1.1.0":
   version "1.1.0"
@@ -3928,6 +3960,11 @@ commander@3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/commander/-/commander-3.0.2.tgz#6837c3fb677ad9933d1cfba42dd14d5117d6b39e"
   integrity sha512-Gar0ASD4BDyKC4hl4DwHqDrmvjoxWKZigVnAbn5H1owvm4CxCPdb0HQDehwNYMJpla5+M2tPmPARzhtYuwpHow==
+
+commander@^11.0.0:
+  version "11.1.0"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-11.1.0.tgz#62fdce76006a68e5c1ab3314dc92e800eb83d906"
+  integrity sha512-yPVavfyCcRhmorC7rWlkHn15b4wDVgVmBA7kV4QVBsF7kv/9TKJAbAXVTxvTnwP8HHKjRCJDClKbciiYS7p0DQ==
 
 commander@^4.0.0:
   version "4.1.1"

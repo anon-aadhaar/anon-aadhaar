@@ -1,8 +1,8 @@
 pragma circom 2.1.6;
 
 include "circomlib/circuits/poseidon.circom";
-include "./rsa/rsa.circom";
-include "./rsa/sha.circom";
+include "@zk-email/circuits/lib/rsa.circom";
+include "@zk-email/circuits/lib/sha.circom";
 
 
 /// @title SignatureVerifier
