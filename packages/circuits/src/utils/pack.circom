@@ -6,6 +6,8 @@ include "circomlib/circuits/comparators.circom";
 /// @notice Converts a date string of format YYYYMMDDHHMMSS to a unix time
 /// @notice Each byte is expected to be a ASCII character representing a digit
 /// @notice Assumes the input time is in UTC
+/// @dev Does not work for time before unix epoc (negative timestamps)
+/// @dev Inputs are not sanity checked in this templte (eg: month <= 12?, year >= 1970?)
 /// @param maxYears The maximum year that can be represented
 /// @param includeHours 1 to include hours, 0 to round down to day
 /// @param includeMinutes 1 to include minutes, 0 to round down to hour
@@ -22,8 +24,21 @@ template DigitBytesToTimestamp(maxYears) {
 
     signal output out;
 
+    
+    // These does not add constraints, but can help to catch errors during witness generation
     assert(year >= 1970);
     assert(year <= maxYears);
+    assert(month >= 1);
+    assert(month <= 12);
+    assert(day >= 1);
+    assert(day <= 31);
+    assert(hour >= 0);
+    assert(hour <= 23);
+    assert(minute >= 0);
+    assert(minute <= 59);
+    assert(second >= 0);
+    assert(second <= 59);
+
 
     signal daysTillPreviousMonth[12] <== [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
 
