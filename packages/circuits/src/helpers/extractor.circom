@@ -109,7 +109,7 @@ template AgeExtractor(maxDataLength) {
     component shifter = SelectSubArray(maxDataLength, byteLength);
     shifter.in <== nDelimitedData;
     shifter.startIndex <== startDelimiterIndex; // We want delimiter to be the first byte
-    shifter.length <== startDelimiterIndex + 10;
+    shifter.length <== byteLength;
 
     signal shiftedBytes[byteLength] <== shifter.out;
 
@@ -298,7 +298,7 @@ template QRDataExtractor(maxDataLength) {
     timestamp <== timestampExtractor.timestamp;
    
     // Extract age - and calculate if above 18
-    // We use the year, month, day from the timestamp to calculate the age
+    // We use the year, month, day from the timestamp as the current time to calculate the age
     // This wont be precise but avoid the need for additional `currentTime` input
     // User can generate fresh QR for accuracy if needed (on their 18th birthday)
     component ageExtractor = AgeExtractor(maxDataLength);
