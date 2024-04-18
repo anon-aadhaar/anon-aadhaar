@@ -72,7 +72,7 @@ function dev_trusted_setup() {
     if [ "$HASH" != "$OLD_HASH" ]; then 
     echo "TRUSTED SETUP FOR DEVELOPMENT - PLEASE, DON'T USE IT IN PRODUCTION !!!"
 
-    circom ./src/aadhaar-verifier.circom  --r1cs --wasm -o $PARTIAL_ZKEYS_DIR -l ./node_modules
+    circom ./src/aadhaar-verifier.circom  --r1cs --wasm -o $PARTIAL_ZKEYS_DIR -l ./node_modules -l ../../node_modules
 
     NODE_OPTIONS=--max-old-space-size=8192 \
 	node ./node_modules/.bin/snarkjs groth16 setup $BUILD_DIR/partial_zkeys/aadhaar-verifier.r1cs $PTAU_PATH $PARTIAL_ZKEYS_DIR/circuit_0000.zkey
