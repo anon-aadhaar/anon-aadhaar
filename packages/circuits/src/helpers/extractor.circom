@@ -9,6 +9,46 @@ include "../utils/pack.circom";
 
 
 
+/**
+Aadhar QR code data schema (V2)
+
+V1 Docs - https://uidai.gov.in/images/resource/User_manulal_QR_Code_15032019.pdf
+There are no official spec docs for Aadhaar V2 available publically, but the difference from V1 is:
+  - "V2" is added at the bedinning of the data, before the first delimitter.
+  - Phone and email hash is no longer present.
+  - Last 4 digits of mobile number is added (before the photo).
+
+- Delimiter is 255.
+- Before first delimiter, there are two bytes representing the version. This should be [86, 50] (V2)
+- From then on, each field is separated by the delimiter. There are total of 16 fields.
+  1 (data after first 255). Email_mobile_present_bit_indicator_value (can be 0 or 1 or 2 or 3): 
+      0: indicates no mobile/email present in secure qr code. 
+      1: indicates only email present in secure qr code. 
+      2: indicates only mobile present in secure qr code 
+      3: indicates both mobile and email present in secure qr code.
+  2. Reference ID (Last 4 digits of aadhar number and timestamp)
+  3. Name
+  4. Date of Birth
+  5. Gender
+  6. Address > Care of
+  7. Address > District
+  8. Address > Landmark
+  9. Address > House
+  10. Address > Location
+  11. Address > Pin code
+  12. Address > Post office
+  13. Address > State
+  14. Address > Street
+  15. Address > Sub district
+  16. VTC
+  17. Last 4 digits of mobile number
+  18. The data after 18th 255 till end (-256 ofthe signature) is the photo.
+
+- Last 256 bytes is the signature.
+**/
+
+
+
 /// @title ExtractAndPackAsInt
 /// @notice Helper function to exract data at a position to a single int (assumes data is less than 31 bytes)
 /// @dev This is only used for state now; but can work for district, name, etc if needed
@@ -90,9 +130,12 @@ template TimetampExtractor(maxDataLength) {
 /// @title AgeExtractor 
 /// @notice Extract date of birth from the Aadhaar QR data and returns as Unix timestamp
 /// @notice The timestamp will correspond to 00:00 of the date in IST timezone
+/// @param maxDataLength - Maximum length of the data
 /// @input nDelimitedData[maxDataLength] - QR data where each delimiter is 255 * n where n is order of the data
 /// @input startDelimiterIndex - index of the delimiter after which the date of birth start
-/// @input endDelimiterIndex - index of the delimiter up to which the date of birth is present
+/// @input currentYear - Current year to calculate the age
+/// @input currentMonth - Current month to calculate the age
+/// @input currentDay - Current day to calculate the age
 /// @output out - Unix timestamp representing the date of birth
 template AgeExtractor(maxDataLength) {
     signal input nDelimitedData[maxDataLength];
