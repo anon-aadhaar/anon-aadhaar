@@ -70,11 +70,11 @@ template ExtractAndPackAsInt(maxDataLength, extractPosition) {
     var byteLength = extractMaxLength + 1;
     
     // Shift the data to the right till the the delimiter start
-    component shifter = SelectSubArray(maxDataLength, byteLength);
-    shifter.in <== nDelimitedData;
-    shifter.startIndex <== startDelimiterIndex; // We want delimiter to be the first byte
-    shifter.length <== endDelimiterIndex - startDelimiterIndex;
-    signal shiftedBytes[byteLength] <== shifter.out;
+    component subArraySelector = SelectSubArray(maxDataLength, byteLength);
+    subArraySelector.in <== nDelimitedData;
+    subArraySelector.startIndex <== startDelimiterIndex; // We want delimiter to be the first byte
+    subArraySelector.length <== endDelimiterIndex - startDelimiterIndex;
+    signal shiftedBytes[byteLength] <== subArraySelector.out;
     
     // Assert that the first byte is the delimiter (255 * position of the field)
     shiftedBytes[0] === extractPosition * 255;
@@ -144,17 +144,19 @@ template AgeExtractor(maxDataLength) {
     signal input currentMonth;
     signal input currentDay;
 
-    signal output out;
+    signal output age;
+    signal output nDelimitedDataShiftedToDob[maxDataLength];
     
     var dobDelimiterIndex = dobPosition();
     var byteLength = 10 + 2; // DD-MM-YYYY + 2 delimiter
 
-    component shifter = SelectSubArray(maxDataLength, byteLength);
+    // Shift the data to the right to until the DOB index
+    // We are not usind SubArraySelector as the shifted data is an output
+    component shifter = VarShiftLeft(maxDataLength, maxDataLength);
     shifter.in <== nDelimitedData;
-    shifter.startIndex <== startDelimiterIndex; // We want delimiter to be the first byte
-    shifter.length <== byteLength;
+    shifter.shift <== startDelimiterIndex; // We want delimiter to be the first byte
 
-    signal shiftedBytes[byteLength] <== shifter.out;
+    signal shiftedBytes[maxDataLength] <== shifter.out;
 
     // Assert delimiters around the data is correct
     shiftedBytes[0] === dobPosition() * 255;
@@ -178,41 +180,29 @@ template AgeExtractor(maxDataLength) {
     dayGt.in[0] <== currentDay + 1;
     dayGt.in[1] <== day;
 
-    out <== ageByYear + monthGt.out + dayGt.out;
+    age <== ageByYear + monthGt.out + dayGt.out;
+    nDelimitedDataShiftedToDob <== shiftedBytes;
 }
 
 
 /// @title GenderExtractor
 /// @notice Extracts the Gender from the Aadhaar QR data and returns as Unix timestamp
-/// @dev Not reusing ExtractAndPackAsInt as the output is a single byte and its cheaper this way
-/// @input nDelimitedData[maxDataLength] - QR data where each delimiter is 255 * n where n is order of the data
+/// @input nDelimitedDataShiftedToDob[maxDataLength] - QR data where each delimiter is 255 * n 
+///     where n is order of the data shifted till DOB index
 /// @input startDelimiterIndex - index of the delimiter after
 /// @output out Single byte number representing gender
 template GenderExtractor(maxDataLength) {
-    signal input nDelimitedData[maxDataLength];
-    signal input startDelimiterIndex;
+    signal input nDelimitedDataShiftedToDob[maxDataLength];
 
     signal output out;
 
-    // Assert start delimiter value
-    component startDelimiterSelector = ItemAtIndex(maxDataLength);
-    startDelimiterSelector.in <== nDelimitedData;
-    startDelimiterSelector.index <== startDelimiterIndex;
-    startDelimiterSelector.out === genderPosition() * 255;
-
-    // Assert end delimiter value
-    component endDelimiterSelector = ItemAtIndex(maxDataLength);
-    endDelimiterSelector.in <== nDelimitedData;
-    endDelimiterSelector.index <== startDelimiterIndex + 2;
-    endDelimiterSelector.out === (genderPosition() + 1) * 255;
-
-    // Get gender byte
-    component genderSelector = ItemAtIndex(maxDataLength);
-    genderSelector.in <== nDelimitedData;
-    genderSelector.index <== startDelimiterIndex + 1;
-    out <== genderSelector.out;
-
-    assert(out < 255);
+    // Gender is always 1 byte and is immediate after DOB
+    // We use nDelimitedDataShiftedToDob and start after 10 + 1 bytes of DOB data
+    // This is more efficient than using ItemAtIndex thrice (for startIndex, gender, endIndex)
+    // saves around 14k constraints
+    nDelimitedDataShiftedToDob[11] === genderPosition() * 255;
+    nDelimitedDataShiftedToDob[13] === (genderPosition() + 1) * 255;
+    out <== nDelimitedDataShiftedToDob[12];
 }
 
 /// @title PinCodeExtractor
@@ -231,12 +221,12 @@ template PinCodeExtractor(maxDataLength) {
     var pinCodeMaxLength = 6;
     var byteLength = pinCodeMaxLength + 2; // 2 delimiters
 
-    component shifter = SelectSubArray(maxDataLength, byteLength);
-    shifter.in <== nDelimitedData;
-    shifter.startIndex <== startDelimiterIndex;
-    shifter.length <== endDelimiterIndex - startDelimiterIndex + 1;
+    component subArraySelector = SelectSubArray(maxDataLength, byteLength);
+    subArraySelector.in <== nDelimitedData;
+    subArraySelector.startIndex <== startDelimiterIndex;
+    subArraySelector.length <== endDelimiterIndex - startDelimiterIndex + 1;
 
-    signal shiftedBytes[byteLength] <== shifter.out;
+    signal shiftedBytes[byteLength] <== subArraySelector.out;
 
     // Assert delimiters around the data is correct
     shiftedBytes[0] === pinCodePosition() * 255;
@@ -264,12 +254,12 @@ template PhotoExtractor(maxDataLength) {
     var bytesLength = photoMaxLength + 1;
 
     // Shift the data to the right to until the photo index
-    component shifter = SelectSubArray(maxDataLength, bytesLength);
-    shifter.in <== nDelimitedData;
-    shifter.startIndex <== startDelimiterIndex; // We want delimiter to be the first byte
-    shifter.length <== endIndex - startDelimiterIndex + 1;
+    component subArraySelector = SelectSubArray(maxDataLength, bytesLength);
+    subArraySelector.in <== nDelimitedData;
+    subArraySelector.startIndex <== startDelimiterIndex; // We want delimiter to be the first byte
+    subArraySelector.length <== endIndex - startDelimiterIndex + 1;
     
-    signal shiftedBytes[bytesLength] <== shifter.out;
+    signal shiftedBytes[bytesLength] <== subArraySelector.out;
     
     // Assert that the first byte is the delimiter (255 * position of name field)
     shiftedBytes[0] === photoPosition() * 255;
@@ -352,14 +342,15 @@ template QRDataExtractor(maxDataLength) {
     ageExtractor.currentDay <== timestampExtractor.day;
     
     component ageAbove18Checker = GreaterThan(8);
-    ageAbove18Checker.in[0] <== ageExtractor.out;
+    ageAbove18Checker.in[0] <== ageExtractor.age;
     ageAbove18Checker.in[1] <== 18;
     ageAbove18 <== ageAbove18Checker.out;
 
     // Extract gender
+    // Age extractor returns data shifted till DOB. Since size for DOB data is fixed,
+    // we can use the same shifted data to extract gender.
     component genderExtractor = GenderExtractor(maxDataLength);
-    genderExtractor.nDelimitedData <== nDelimitedData;
-    genderExtractor.startDelimiterIndex <== delimiterIndices[genderPosition() - 1];
+    genderExtractor.nDelimitedDataShiftedToDob <== ageExtractor.nDelimitedDataShiftedToDob;
     gender <== genderExtractor.out;
 
     // Extract state
@@ -381,9 +372,4 @@ template QRDataExtractor(maxDataLength) {
     photoExtractor.startDelimiterIndex <== delimiterIndices[photoPosition() - 1];
     photoExtractor.endIndex <== nonPaddedDataLength - 1;
     photo <== photoExtractor.out;
-
-    // TODO: We might be able to optimize the extraction by left shifting data to delimiter
-    // before DOB (rotating data and not seting remamining to 0 like in VarShiftLeft), 
-    // and then extracting DOB, gender simply by using indices
-    // Pincode also only needs shift (without setting remaining to 0) as size is fixed
 }
