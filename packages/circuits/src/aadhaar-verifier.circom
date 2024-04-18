@@ -54,6 +54,10 @@ template AadhaarVerifier(n, k, maxDataLength) {
     signatureVerifier.pubKey <== pubKey;
     signatureVerifier.signature <== signature;
     pubkeyHash <== signatureVerifier.pubkeyHash;
+
+
+    // Assert data between qrDataPaddedLength and maxDataLength is zero
+    AssertZeroPadding(maxDataLength)(qrDataPadded, qrDataPaddedLength);
     
 
     // Extract data from QR and compute nullifiers

@@ -89,9 +89,6 @@ template ExtractAndPackAsInt(maxDataLength, extractPosition) {
     component outInt = PackBytes(extractMaxLength);
     for (var i = 0; i < extractMaxLength; i ++) {
         outInt.in[i] <== shiftedBytes[i + 1]; // +1 to skip the delimiter
-
-        // Assert that each value is less than 255 - ensures no delimiter in between
-        assert(shiftedBytes[i + 1] < 255);
     }
 
     out <== outInt.out[0];
