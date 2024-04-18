@@ -7,7 +7,7 @@ include "circomlib/circuits/comparators.circom";
 /// @notice Each byte is expected to be a ASCII character representing a digit
 /// @notice Assumes the input time is in UTC
 /// @dev Does not work for time before unix epoc (negative timestamps)
-/// @dev Inputs are not sanity checked in this templte (eg: month <= 12?, year >= 1970?)
+/// @dev Inputs are not sanity checked in this template (eg: month <= 12?, year >= 1970?)
 /// @param maxYears The maximum year that can be represented
 /// @param includeHours 1 to include hours, 0 to round down to day
 /// @param includeMinutes 1 to include minutes, 0 to round down to hour

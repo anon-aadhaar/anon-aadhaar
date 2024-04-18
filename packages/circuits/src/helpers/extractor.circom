@@ -10,11 +10,11 @@ include "../utils/pack.circom";
 
 
 /**
-Aadhar QR code data schema (V2)
+Aadhaar QR code data schema (V2)
 
 V1 Docs - https://uidai.gov.in/images/resource/User_manulal_QR_Code_15032019.pdf
 There are no official spec docs for Aadhaar V2 available publically, but the difference from V1 is:
-  - "V2" is added at the bedinning of the data, before the first delimitter.
+  - "V2" is added at the beginning of the data, before the first delimitter.
   - Phone and email hash is no longer present.
   - Last 4 digits of mobile number is added (before the photo).
 
@@ -26,7 +26,7 @@ There are no official spec docs for Aadhaar V2 available publically, but the dif
       1: indicates only email present in secure qr code. 
       2: indicates only mobile present in secure qr code 
       3: indicates both mobile and email present in secure qr code.
-  2. Reference ID (Last 4 digits of aadhar number and timestamp)
+  2. Reference ID (Last 4 digits of Aadhaar number and timestamp)
   3. Name
   4. Date of Birth
   5. Gender
@@ -41,8 +41,8 @@ There are no official spec docs for Aadhaar V2 available publically, but the dif
   14. Address > Street
   15. Address > Sub district
   16. VTC
-  17. Last 4 digits of mobile number
-  18. The data after 18th 255 till end (-256 ofthe signature) is the photo.
+  17. Last 4 digits of the mobile number
+  18. The data after 18th 255 till the end (excluding the 256 for the signature) is the photo.
 
 - Last 256 bytes is the signature.
 **/
@@ -50,7 +50,7 @@ There are no official spec docs for Aadhaar V2 available publically, but the dif
 
 
 /// @title ExtractAndPackAsInt
-/// @notice Helper function to exract data at a position to a single int (assumes data is less than 31 bytes)
+/// @notice Helper function to extract data at a position to a single int (assumes data is less than 31 bytes)
 /// @dev This is only used for state now; but can work for district, name, etc if needed
 /// @param maxDataLength - Maximum length of the data
 /// @param extractPosition - Position of the data to extract (after which delimiter does the data start)
