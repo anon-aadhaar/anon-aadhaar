@@ -135,6 +135,9 @@ describe('useAnonAadhaar Hook', () => {
     // Verify that the login request was triggered and state is updated
     expect(statusElement.textContent).to.equal('logging-in')
     expect(proverElement.textContent).to.equal(ProverState.FetchingWasm)
+
+    // Clean up process after check
+    cleanup()
   })
 })
 
