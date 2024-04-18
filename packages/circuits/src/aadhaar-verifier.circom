@@ -75,7 +75,7 @@ template AadhaarVerifier(n, k, maxDataLength) {
     nullifier <== Nullifier()(nullifierSeed, photo);
 
     
-    // Dummy square to prevent singal tampering (in case when using different prover)
+    // Dummy square to prevent singal tampering (in rare cases where non-constrained inputs are ignored)
     signal signalHashSquare <== signalHash * signalHash;
 }
 
