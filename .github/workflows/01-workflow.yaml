@@ -50,7 +50,7 @@ jobs:
           key: circom
 
       - name: Download power of tau and install Circom
-        run: yarn dev-install:circuit
+        run: cd packages/circuits && yarn dev-install
 
       - name: Get Circuit Hash
         id: get-circuit-hash
@@ -71,8 +71,11 @@ jobs:
         env:
           PROVIDER_KEY_SECRET: ${{secrets.PROVIDER_KEY}}
 
-      - name: 'Dev trusted setup'
-        run: 'yarn dev-setup:circuit'
+      - name: Build circuits
+        run: cd packages/circuits && yarn build-circuit
+
+      - name: Run development trusted setup
+        run: yarn dev-setup:circuit
 
       - name: Build packages
         run: yarn build:libraries
