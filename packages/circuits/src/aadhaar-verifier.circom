@@ -2,8 +2,8 @@ pragma circom 2.1.6;
 
 include "circomlib/circuits/poseidon.circom";
 include "./helpers/signature.circom";
-include "./helpers/nullifier.circom";
 include "./helpers/extractor.circom";
+include "./helpers/nullifier.circom";
 
 
 /// @title AadhaarVerifier
@@ -54,6 +54,10 @@ template AadhaarVerifier(n, k, maxDataLength) {
     signatureVerifier.pubKey <== pubKey;
     signatureVerifier.signature <== signature;
     pubkeyHash <== signatureVerifier.pubkeyHash;
+
+
+    // Assert data between qrDataPaddedLength and maxDataLength is zero
+    AssertZeroPadding(maxDataLength)(qrDataPadded, qrDataPaddedLength);
     
 
     // Extract data from QR and compute nullifiers
@@ -75,7 +79,7 @@ template AadhaarVerifier(n, k, maxDataLength) {
     nullifier <== Nullifier()(nullifierSeed, photo);
 
     
-    // Dummy square to prevent singal tampering (in case when using different prover)
+    // Dummy square to prevent singal tampering (in rare cases where non-constrained inputs are ignored)
     signal signalHashSquare <== signalHash * signalHash;
 }
 

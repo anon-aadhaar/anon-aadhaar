@@ -111,7 +111,10 @@ describe('AadhaarVerifier', function () {
     circuit = await circom_tester(pathToCircuit, {
       recompile: true,
       // output: path.join(__dirname, '../build'),
-      include: path.join(__dirname, '../node_modules'),
+      include: [
+        path.join(__dirname, '../node_modules'),
+        path.join(__dirname, '../../../node_modules'),
+      ],
     })
   })
 
