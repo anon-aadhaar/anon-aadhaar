@@ -62,7 +62,7 @@ yarn install
 # PWD = packages/circuits
 
 yarn dev-install
-yarn build
+yarn build-circuit
 yarn dev-setup
 ```
 
