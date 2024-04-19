@@ -12,7 +12,7 @@ import {
   bufferToHex,
 } from '@zk-email/helpers/dist/binary-format'
 import { sha256Pad } from '@zk-email/helpers/dist/sha-utils'
-import { testQRData } from '../assets/newTestData.json'
+import { testQRData } from '../assets/test.json'
 
 let qrData = testQRData
 let certificateName = 'testCertificate.pem'

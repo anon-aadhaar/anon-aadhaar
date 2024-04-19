@@ -15,6 +15,7 @@
     "build-circuit": "/bin/bash ./scripts/build.sh build",
     "dev-install": "/bin/bash ./scripts/build.sh install",
     "dev-setup": "/bin/bash ./scripts/build.sh setup",
+    "gen-test-data": "ts-node scripts/generateTestData.ts",
     "gen-proof": "/bin/bash ./scripts/build.sh gen-proof",
     "gen-witness": "/bin/bash ./scripts/build.sh gen-witness",
     "gen-contracts": "/bin/bash ./scripts/build.sh gen-contracts",
