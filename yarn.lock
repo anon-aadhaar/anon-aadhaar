@@ -2995,36 +2995,18 @@
   resolved "https://registry.yarnpkg.com/@ungap/structured-clone/-/structured-clone-1.2.0.tgz#756641adb587851b5ccb3e095daf27ae581c8406"
   integrity sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==
 
-"@zk-email/circuits@^4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@zk-email/circuits/-/circuits-4.0.0.tgz#b5bf511fbe02ee1c39cda8a1814c21dc86cd7195"
-  integrity sha512-dqPkncHsGzXfotPuzvmdx1YpGCTFNGS//8Srx567Sdvq07NJ03jNt216DvnhzKA0XHOLH2B64+OGaoVrDQ8XKw==
+"@zk-email/circuits@^6.0.2":
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/@zk-email/circuits/-/circuits-6.0.2.tgz#11b97e2f99169742e38a8754e19337eed605a986"
+  integrity sha512-noOFEiSPGHukfdX41NTvQgIQHCQsVpLHmgZb5R2GWb5XMsfYyr3yCLt8FklbDC3QYWD5TpqtuL/ee2LQHaFj+A==
   dependencies:
     "@zk-email/zk-regex-circom" "^1.1.1"
     circomlib "^2.0.5"
 
-"@zk-email/helpers@^3.1.3":
-  version "3.1.3"
-  resolved "https://registry.yarnpkg.com/@zk-email/helpers/-/helpers-3.1.3.tgz#c3e603955ea794b9506968e910249b990b1b536a"
-  integrity sha512-a6iyWugDkm5RKnXd3q0bAqXWuJ4nKtRinQD8jt5UhiDKD2OJ8SAc+tvgeHOTyZx90nKP6mDolGEy+tWAWpdVMg==
-  dependencies:
-    addressparser "^1.0.1"
-    atob "^2.1.2"
-    circomlibjs "^0.1.7"
-    ethers "^6.8.0"
-    libmime "^5.2.1"
-    localforage "^1.10.0"
-    lodash "^4.17.21"
-    node-forge "^1.3.1"
-    pako "^2.1.0"
-    pki "^1.1.0"
-    psl "^1.9.0"
-    snarkjs "https://github.com/sampritipanda/snarkjs.git#fef81fc51d17a734637555c6edbd585ecda02d9e"
-
-"@zk-email/helpers@^4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@zk-email/helpers/-/helpers-4.0.0.tgz#d7461a411b045c8b58bb3cdea050d50069e094d1"
-  integrity sha512-L+v1FTTUt2ekUYo2isboBmALqbuxsJcd6BisLExq97IHn57SK8zb7OhRnZvvUNwPML7PDoGmQnS7Tvn/JB5Z3g==
+"@zk-email/helpers@^6.0.2":
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/@zk-email/helpers/-/helpers-6.0.2.tgz#dd94af94e780329dfdb3087729f044f4a2c469da"
+  integrity sha512-6oho7pkuvTR4tjA0evkn9qU4vGrp1zCOmW8ETUa2VBxpiZaxbex6jza8Y5Z2IrfXi6v4J/OSRBbat5DS0yQ7cA==
   dependencies:
     addressparser "^1.0.1"
     atob "^2.1.2"
@@ -4773,7 +4755,7 @@ ethers@^5.5.1, ethers@^5.7.1, ethers@^5.7.2:
     "@ethersproject/web" "5.7.1"
     "@ethersproject/wordlists" "5.7.0"
 
-ethers@^6.7.1, ethers@^6.8.0:
+ethers@^6.7.1:
   version "6.10.0"
   resolved "https://registry.yarnpkg.com/ethers/-/ethers-6.10.0.tgz#20f3c63c60d59a993f8090ad423d8a3854b3b1cd"
   integrity sha512-nMNwYHzs6V1FR3Y4cdfxSQmNgZsRj1RiTU25JwvnJLmyzw9z3SKxNc2XKDuiXXo/v9ds5Mp9m6HBabgYQQ26tA==

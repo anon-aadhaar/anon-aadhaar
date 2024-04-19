@@ -7,8 +7,8 @@ import {
   AnonAadhaarContext,
   AnonAadhaarState,
 } from '../src/hooks/useAnonAadhaar'
-import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
-import { Uint8ArrayToCharArray } from '@zk-email/helpers/dist/binaryFormat'
+import { sha256Pad } from '@zk-email/helpers/dist/sha-utils'
+import { Uint8ArrayToCharArray } from '@zk-email/helpers/dist/binary-format'
 import { ProverState, AnonAadhaarArgs, splitToWords } from '@anon-aadhaar/core'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import { AnonAadhaarProvider } from '../src/provider/AnonAadhaarProvider'

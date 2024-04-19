@@ -2,8 +2,8 @@
 import path from 'path'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const circom_tester = require('circom_tester/wasm/tester')
-import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
-import { Uint8ArrayToCharArray } from '@zk-email/helpers/dist/binaryFormat'
+import { sha256Pad } from '@zk-email/helpers/dist/sha-utils'
+import { Uint8ArrayToCharArray } from '@zk-email/helpers/dist/binary-format'
 import {
   convertBigIntToByteArray,
   decompressByteArray,

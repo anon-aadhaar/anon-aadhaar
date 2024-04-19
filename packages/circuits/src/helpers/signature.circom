@@ -65,6 +65,7 @@ template SignatureVerifier(n, k, maxDataLength) {
       poseidonInputSize++;
   }
   assert(poseidonInputSize <= 16);
+
   signal pubkeyHasherInput[poseidonInputSize];
   for (var i = 0; i < poseidonInputSize; i++) {
       if (i == poseidonInputSize - 1 && poseidonInputSize % 2 == 1) {

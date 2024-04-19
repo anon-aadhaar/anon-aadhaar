@@ -10,8 +10,8 @@ import {
 import {
   Uint8ArrayToCharArray,
   bufferToHex,
-} from '@zk-email/helpers/dist/binaryFormat'
-import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
+} from '@zk-email/helpers/dist/binary-format'
+import { sha256Pad } from '@zk-email/helpers/dist/sha-utils'
 import { testQRData } from '../assets/newTestData.json'
 
 let qrData = testQRData

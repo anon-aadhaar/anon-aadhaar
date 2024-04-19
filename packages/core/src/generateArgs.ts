@@ -7,8 +7,8 @@ import { AnonAadhaarArgs, FieldsToRevealArray } from './types'
 import {
   bufferToHex,
   Uint8ArrayToCharArray,
-} from '@zk-email/helpers/dist/binaryFormat'
-import { sha256Pad } from '@zk-email/helpers/dist/shaHash'
+} from '@zk-email/helpers/dist/binary-format'
+import { sha256Pad } from '@zk-email/helpers/dist/sha-utils'
 import { Buffer } from 'buffer'
 import { pki } from 'node-forge'
 import { ArgumentTypeName } from '@pcd/pcd-types'
