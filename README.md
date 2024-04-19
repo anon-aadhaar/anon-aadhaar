@@ -56,6 +56,12 @@ For production, always use the published npm packages.
 yarn install
 ```
 
+#### Build libraries
+
+```sh
+yarn build:libraries
+```
+
 #### Build circuit and generate zkey
 
 ```sh
