@@ -1,6 +1,6 @@
 # @anon-aadhaar/contracts
 
-This package contains the anon Aadhaar Verfier contract. You can import it directly in your Hardhat project, or use the alredy deployed contracts, to verify an Anon Aadhaar Proof.
+This package contains the anon Aadhaar Verfier contract. You can import it directly in your Hardhat project, or use the already deployed contracts, to verify an Anon Aadhaar Proof.
 
 ## 🛠 Install
 

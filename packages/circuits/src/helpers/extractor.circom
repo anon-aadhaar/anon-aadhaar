@@ -96,7 +96,7 @@ template ExtractAndPackAsInt(maxDataLength, extractPosition) {
 
 
 /// @title TimetampExtractor
-/// @notice Extracts the timetamp when the QR was signed rounded to nearest hour
+/// @notice Extracts the timestamp when the QR was signed rounded to nearest hour
 /// @dev We ignore minutes and seconds to avoid identifying the user based on the precise timestamp
 /// @input nDelimitedData[maxDataLength] - QR data where each delimiter is 255 * n where n is order of the data
 /// @output timestamp - Unix timestamp on signature
@@ -297,7 +297,7 @@ template QRDataExtractor(maxDataLength) {
     signal output photo[photoPackSize()];
 
     // Create `nDelimitedData` - same as `data` but each delimiter is replaced with n * 255
-    // where n means the nth occurance of 255
+    // where n means the nth occurrence of 255
     // This is to verify `delimiterIndices` is correctly set for each extraction
     component is255[maxDataLength];
     component indexBeforePhoto[maxDataLength];

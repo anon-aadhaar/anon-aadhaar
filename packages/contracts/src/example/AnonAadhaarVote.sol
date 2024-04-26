@@ -72,7 +72,7 @@ contract AnonAadhaarVote is IAnonAadhaarVote {
         );
         require(
             IAnonAadhaar(anonAadhaarVerifierAddr).verifyAnonAadhaarProof(
-                nullifierSeed, // nulifier seed
+                nullifierSeed, // nullifier seed
                 nullifier,
                 timestamp,
                 signal,
