@@ -1,10 +1,12 @@
-import React, { Dispatch, SetStateAction } from 'react'
+import React, { Dispatch, SetStateAction, useContext } from 'react'
 import styled from 'styled-components'
 import { FileInput } from '../FileInput'
 import { uploadQRpng } from '../../util'
 import { AadhaarQRValidation } from '../../types'
 import { Logo } from '../LogInWithAnonAadhaar'
 import { FaChevronRight } from 'react-icons/fa'
+import FontStyles from '../../fontStyles'
+import { AnonAadhaarContext } from '../../hooks/useAnonAadhaar'
 
 interface VerifyModalProps {
   logo: string
@@ -23,6 +25,7 @@ export const VerifyModal: React.FC<VerifyModalProps> = ({
   setQrData,
   setCurrentView,
 }) => {
+  const { useTestAadhaar } = useContext(AnonAadhaarContext)
   return (
     <>
       <TitleSection>
@@ -32,33 +35,53 @@ export const VerifyModal: React.FC<VerifyModalProps> = ({
         </Title>
         <Disclaimer>
           Anon Aadhaar allows you to create a proof of your Aadhaar ID without
-          revealing any personal data. Generate a QR code using the mAadhaar app
-          (
-          <PhonePlatformLinks
-            href={'https://apps.apple.com/in/app/maadhaar/id1435469474'}
-            target="_blank"
-            rel="noreferrer"
-          >
-            iOS
-          </PhonePlatformLinks>{' '}
-          /{' '}
-          <PhonePlatformLinks
-            href={
-              'https://play.google.com/store/apps/details?id=in.gov.uidai.mAadhaarPlus&hl=en_IN&pli=1'
-            }
-            target="_blank"
-            rel="noreferrer"
-          >
-            Android
-          </PhonePlatformLinks>
-          ), by entering your Aadhaar number and OTP verification. You can then
-          save the QR as an image using the &apos;Share&apos; button for import.
-          <p>
-            This process is local to your browser for privacy, and QR images are
-            not uploaded to any server.
-          </p>
+          revealing any personal data. This process is local to your browser for
+          privacy, and QR images are not uploaded to any server.
           <p>&nbsp;</p>
           <p>Note: Internet speed may affect processing time.</p>
+          <Line></Line>
+          <FontStyles />
+          <StyledParagraph>GENERATE A QR CODE:</StyledParagraph>
+          {useTestAadhaar ? (
+            <>
+              You can try this example app by generating a test Adhaar QR Code
+              <p>&nbsp;</p>
+              <PhonePlatformLinks
+                href={
+                  'https://anon-aadhaar-documentation.vercel.app/docs/generate-qr'
+                }
+                target="_blank"
+                rel="noreferrer"
+              >
+                Link to generate a QR Code
+              </PhonePlatformLinks>
+            </>
+          ) : (
+            <>
+              Open mAadhaar app{' '}
+              <PhonePlatformLinks
+                href={'https://apps.apple.com/in/app/maadhaar/id1435469474'}
+                target="_blank"
+                rel="noreferrer"
+              >
+                iOS
+              </PhonePlatformLinks>{' '}
+              or{' '}
+              <PhonePlatformLinks
+                href={
+                  'https://play.google.com/store/apps/details?id=in.gov.uidai.mAadhaarPlus&hl=en_IN&pli=1'
+                }
+                target="_blank"
+                rel="noreferrer"
+              >
+                Android
+              </PhonePlatformLinks>
+              <p>&nbsp;</p>
+              By entering your Aadhaar number and OTP verification. You can then
+              save the QR as an image using the &apos;Share&apos; button for
+              import.
+            </>
+          )}
         </Disclaimer>
       </TitleSection>
 
@@ -131,7 +154,7 @@ const Title = styled.h3`
 `
 
 const Disclaimer = styled.span`
-  color: #6d6d6d;
+  color: #717686;
   margin-top: 1rem;
   font-size: 0.9rem;
   font-weight: normal;
@@ -155,6 +178,7 @@ const PhonePlatformLinks = styled.a`
   margin-top: 0.3rem;
   font-size: 0.9rem;
   font-weight: normal;
+  text-decoration: underline;
 `
 const Container = styled.div`
   display: flex;
@@ -183,4 +207,20 @@ const StepDisplay = styled.div`
   justify-content: center;
   align-items: center;
   font-weight: bold;
+`
+const Line = styled.div`
+  height: 2px;
+  margin: 20px 0;
+  width: 5rem;
+  background-color: rgba(0, 154, 8, 1);
+  margin-left: auto;
+  margin-right: auto;
+`
+const StyledParagraph = styled.p`
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 400; // Regular weight
+  font-size: 16px; // Example font size
+  color: #333; // Example text color
+  margin: 10px 0;
+  line-height: 1.5;
 `
