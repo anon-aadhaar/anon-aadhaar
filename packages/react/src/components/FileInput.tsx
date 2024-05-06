@@ -1,5 +1,6 @@
-import React, { FunctionComponent, ChangeEvent, useState } from 'react'
+import React, { FunctionComponent, ChangeEvent, useState, useMemo } from 'react'
 import styled from 'styled-components'
+import { icons } from './ButtonLogo'
 
 interface FileInputProps {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void
@@ -10,10 +11,16 @@ export const FileInput: FunctionComponent<FileInputProps> = ({
   onChange,
   id,
 }) => {
-  const [fileName, setFileName] = useState<string>('No file selected')
+  const [fileName, setFileName] = useState<string>('Choose file')
+
+  const blob = new Blob([icons.fileUpload], { type: 'image/svg+xml' })
+  const uploadIcon = useMemo(
+    () => URL.createObjectURL(blob),
+    [icons.fileUpload],
+  )
+
   return (
-    <InputFile>
-      <UploadButton htmlFor={id}>Choose file</UploadButton>
+    <InputFile htmlFor={id}>
       <input
         type="file"
         id={id}
@@ -25,6 +32,7 @@ export const FileInput: FunctionComponent<FileInputProps> = ({
         accept="image/*"
         hidden
       />
+      <FileUploadIcon src={uploadIcon} />
       <FileName id="file-chosen">{fileName}</FileName>
     </InputFile>
   )
@@ -34,7 +42,7 @@ const FileName = styled.span`
   margin-left: 5px;
 `
 
-const InputFile = styled.div`
+const InputFile = styled.label`
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -43,21 +51,19 @@ const InputFile = styled.div`
   max-width: 80%;
   border-radius: 0.5rem;
   border-width: 1px;
-  border-color: #d1d5db;
+  border-color: black;
   max-width: 100%;
   font-size: '16px';
   line-height: 1.25rem;
   color: #111827;
-  background-color: #f9fafb;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 16px;
+  padding-right: 16px;
   cursor: pointer;
   margin-top: 0.3rem;
 `
-
-const UploadButton = styled.label`
-  color: #111827;
-  background-color: #345c93;
-  color: white;
-  padding: 0.5rem;
-  font-family: sans-serif;
-  cursor: pointer;
+export const FileUploadIcon = styled.img`
+  height: 1.5rem;
+  margin-right: 0.5rem;
 `
