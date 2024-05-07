@@ -8,7 +8,7 @@ import React, {
   useRef,
 } from 'react'
 import styled from 'styled-components'
-import { icons } from './ButtonLogo'
+import { icons } from './MainIcons'
 import { AadhaarQRValidation } from '../types'
 
 interface FileInputProps {

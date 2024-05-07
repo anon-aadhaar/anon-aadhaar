@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction, useContext } from 'react'
 import styled from 'styled-components'
 import { FileInput } from '../FileInput'
 import { uploadQRpng } from '../../util'
-import { AadhaarQRValidation } from '../../types'
+import { AadhaarQRValidation, ModalViews } from '../../types'
 import { AnonAadhaarContext } from '../../hooks/useAnonAadhaar'
 import { useFonts } from '../../hooks/useFonts'
 
@@ -11,7 +11,7 @@ interface VerifyModalProps {
   provingEnabled: boolean
   setQrStatus: Dispatch<SetStateAction<AadhaarQRValidation | null>>
   setQrData: Dispatch<SetStateAction<string | null>>
-  setCurrentView: Dispatch<SetStateAction<'Verify' | 'Prove'>>
+  setCurrentView: Dispatch<SetStateAction<ModalViews>>
 }
 
 export const VerifyModal: React.FC<VerifyModalProps> = ({

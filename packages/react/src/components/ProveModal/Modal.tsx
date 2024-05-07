@@ -6,7 +6,7 @@ import React, {
   useContext,
 } from 'react'
 import styled from 'styled-components'
-import { AadhaarQRValidation } from '../../types'
+import { AadhaarQRValidation, ModalViews } from '../../types'
 import { ErrorToast } from './ErrorToast'
 import { BrowserView, MobileView } from 'react-device-detect'
 import { Logo } from '../LogInWithAnonAadhaar'
@@ -15,6 +15,7 @@ import { AnonAadhaarContext } from '../../hooks/useAnonAadhaar'
 import { VerifyModal } from './VerifyModal'
 import { ProveModal } from './ProveModal'
 import { FieldsToRevealArray } from '@anon-aadhaar/core'
+import { LoaderView } from './LoaderView'
 
 interface ModalProps {
   isOpen: boolean
@@ -25,8 +26,8 @@ interface ModalProps {
   qrStatus: AadhaarQRValidation | null
   setQrStatus: Dispatch<SetStateAction<AadhaarQRValidation | null>>
   nullifierSeed: number
-  currentView: 'Verify' | 'Prove'
-  setCurrentView: Dispatch<SetStateAction<'Verify' | 'Prove'>>
+  currentView: ModalViews
+  setCurrentView: Dispatch<SetStateAction<ModalViews>>
   fieldsToReveal?: FieldsToRevealArray
   signal?: string
 }
@@ -106,6 +107,8 @@ export const Modal: React.FC<ModalProps> = ({
                     nullifierSeed={nullifierSeed}
                   />
                 )
+              case 'Proving':
+                return <LoaderView />
             }
           })()}
         </ModalContent>

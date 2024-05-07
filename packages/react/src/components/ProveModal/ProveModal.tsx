@@ -11,7 +11,7 @@ import { ProveButton } from './ProveButton'
 import { AadhaarQRValidation } from '../../types'
 import { SignalDisplay } from './SignalDisplay'
 import { AnonAadhaarContext } from '../../hooks/useAnonAadhaar'
-import { icons } from '../ButtonLogo'
+import { icons } from '../MainIcons'
 import { FieldsToRevealArray, fieldsLabel } from '@anon-aadhaar/core'
 
 interface ProveModalProps {
