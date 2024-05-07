@@ -3,13 +3,10 @@ import styled from 'styled-components'
 import { FileInput } from '../FileInput'
 import { uploadQRpng } from '../../util'
 import { AadhaarQRValidation } from '../../types'
-import { Logo } from '../LogInWithAnonAadhaar'
-import { FaChevronRight } from 'react-icons/fa'
 import FontStyles from '../../fontStyles'
 import { AnonAadhaarContext } from '../../hooks/useAnonAadhaar'
 
 interface VerifyModalProps {
-  logo: string
   qrStatus: AadhaarQRValidation | null
   provingEnabled: boolean
   setQrStatus: Dispatch<SetStateAction<AadhaarQRValidation | null>>
@@ -18,7 +15,6 @@ interface VerifyModalProps {
 }
 
 export const VerifyModal: React.FC<VerifyModalProps> = ({
-  logo,
   qrStatus,
   provingEnabled,
   setQrStatus,
@@ -27,97 +23,90 @@ export const VerifyModal: React.FC<VerifyModalProps> = ({
 }) => {
   const { useTestAadhaar } = useContext(AnonAadhaarContext)
   return (
-    <>
-      <TitleSection>
-        <Title>
+    <MainContainer>
+      <Container>
+        <TitleSection>
+          {/* <Title>
           <Logo src={logo} />
           Prove your Identity
-        </Title>
-        <Disclaimer>
-          Anon Aadhaar allows you to create a proof of your Aadhaar ID without
-          revealing any personal data. This process is local to your browser for
-          privacy, and QR images are not uploaded to any server.
-          <p>&nbsp;</p>
-          <p>Note: Internet speed may affect processing time.</p>
-          <Line></Line>
-          <FontStyles />
-          <StyledParagraph>GENERATE A QR CODE:</StyledParagraph>
-          {useTestAadhaar ? (
-            <>
-              You can try this example app by generating a test Adhaar QR Code
-              <p>&nbsp;</p>
-              <PhonePlatformLinks
-                href={
-                  'https://anon-aadhaar-documentation.vercel.app/docs/generate-qr'
-                }
-                target="_blank"
-                rel="noreferrer"
-              >
-                Link to generate a QR Code
-              </PhonePlatformLinks>
-            </>
-          ) : (
-            <>
-              Open mAadhaar app{' '}
-              <PhonePlatformLinks
-                href={'https://apps.apple.com/in/app/maadhaar/id1435469474'}
-                target="_blank"
-                rel="noreferrer"
-              >
-                iOS
-              </PhonePlatformLinks>{' '}
-              or{' '}
-              <PhonePlatformLinks
-                href={
-                  'https://play.google.com/store/apps/details?id=in.gov.uidai.mAadhaarPlus&hl=en_IN&pli=1'
-                }
-                target="_blank"
-                rel="noreferrer"
-              >
-                Android
-              </PhonePlatformLinks>
-              <p>&nbsp;</p>
-              By entering your Aadhaar number and OTP verification. You can then
-              save the QR as an image using the &apos;Share&apos; button for
-              import.
-            </>
-          )}
-        </Disclaimer>
-      </TitleSection>
+        </Title> */}
+          <Disclaimer>
+            Anon Aadhaar allows you to create a proof of your Aadhaar ID without
+            revealing any personal data. This process is local to your browser
+            for privacy, and QR images are not uploaded to any server.
+            <p>&nbsp;</p>
+            <p>Note: Internet speed may affect processing time.</p>
+            <Line></Line>
+            <FontStyles />
+            <StyledParagraph>GENERATE A QR CODE:</StyledParagraph>
+            {useTestAadhaar ? (
+              <>
+                You can try this example app by generating a test Adhaar QR Code
+                <p>&nbsp;</p>
+                <PhonePlatformLinks
+                  href={
+                    'https://anon-aadhaar-documentation.vercel.app/docs/generate-qr'
+                  }
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Link to generate a QR Code
+                </PhonePlatformLinks>
+              </>
+            ) : (
+              <>
+                Open mAadhaar app{' '}
+                <PhonePlatformLinks
+                  href={'https://apps.apple.com/in/app/maadhaar/id1435469474'}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  iOS
+                </PhonePlatformLinks>{' '}
+                or{' '}
+                <PhonePlatformLinks
+                  href={
+                    'https://play.google.com/store/apps/details?id=in.gov.uidai.mAadhaarPlus&hl=en_IN&pli=1'
+                  }
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Android
+                </PhonePlatformLinks>
+                <p>&nbsp;</p>
+                By entering your Aadhaar number and OTP verification. You can
+                then save the QR as an image using the &apos;Share&apos; button
+                for import.
+              </>
+            )}
+          </Disclaimer>
+        </TitleSection>
 
-      <UploadSection>
-        <UploadFile>
-          <Label>Upload your Aadhaar secure QR Code: </Label>
-          <FileInput
-            onChange={async e => {
-              const { qrValue } = await uploadQRpng(e, setQrStatus)
-              setQrData(qrValue)
-            }}
-            id={'handlePdfChange'}
-          />
-          <DocumentResult>{qrStatus}</DocumentResult>
-        </UploadFile>
-      </UploadSection>
+        <UploadSection>
+          <UploadFile>
+            <Label>Upload your Aadhaar secure QR Code: </Label>
+            <FileInput
+              onChange={async e => {
+                const { qrValue } = await uploadQRpng(e, setQrStatus)
+                setQrData(qrValue)
+              }}
+              id={'handlePdfChange'}
+              setQrStatus={setQrStatus}
+              qrStatus={qrStatus}
+            />
+          </UploadFile>
+        </UploadSection>
+      </Container>
 
       <Container>
-        <Placeholder />
-
-        <StepDisplay>1/2</StepDisplay>
-
-        {provingEnabled ? (
-          <Button
-            disabled={!provingEnabled}
-            onClick={() => {
-              setCurrentView('Prove')
-            }}
-          >
-            Next <FaChevronRight height={15} />
-          </Button>
-        ) : (
-          <Placeholder />
-        )}
+        <Btn disabled={!provingEnabled} onClick={() => setCurrentView('Prove')}>
+          CONTINUE
+        </Btn>
+        <SmallDisclaimer>
+          No Aadhaar data ever leaves your device!
+        </SmallDisclaimer>
       </Container>
-    </>
+    </MainContainer>
   )
 }
 
@@ -126,11 +115,12 @@ const UploadFile = styled.div`
   margin-bottom: 30px;
 `
 
-const DocumentResult = styled.div`
-  color: #111827;
-  position: absolute;
-  font-size: 0.875rem;
-  margin-top: 4px;
+const SmallDisclaimer = styled.p`
+  font-size: small;
+  color: #717686;
+  text-decoration: wavy;
+  text-align: center;
+  margin-top: 5px;
 `
 
 const TitleSection = styled.div`
@@ -139,29 +129,26 @@ const TitleSection = styled.div`
   row-gap: 1rem;
   margin-left: auto;
   margin-right: auto;
-  margin: 1rem 1rem 0;
   display: flex;
   flex-flow: column;
 `
 
-const Title = styled.h3`
-  display: flex;
-  flex-shrink: 0;
-  margin-left: auto;
-  margin-right: auto;
-  font-size: medium;
-  font-weight: bold;
-`
+// const Title = styled.h3`
+//   display: flex;
+//   flex-shrink: 0;
+//   margin-left: auto;
+//   margin-right: auto;
+//   font-size: medium;
+//   font-weight: bold;
+// `
 
 const Disclaimer = styled.span`
   color: #717686;
-  margin-top: 1rem;
   font-size: 0.9rem;
   font-weight: normal;
 `
 
 const UploadSection = styled.div`
-  margin: 0 1rem 0;
   row-gap: 1rem;
   max-width: 100%;
 `
@@ -181,33 +168,15 @@ const PhonePlatformLinks = styled.a`
   text-decoration: underline;
 `
 const Container = styled.div`
-  display: flex;
   width: 100%;
-  justify-content: space-between;
-  padding: 1.5rem;
 `
 
-const Button = styled.button`
-  display: flex;
-  align-items: center;
-  font-weight: 600; /* semibold */
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
-  }
-`
-
-const Placeholder = styled.div`
-  display: flex;
-  width: 3rem; /* 48px */
-`
-
-const StepDisplay = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: bold;
-`
+// const StepDisplay = styled.div`
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   font-weight: bold;
+// `
 const Line = styled.div`
   height: 2px;
   margin: 20px 0;
@@ -223,4 +192,42 @@ const StyledParagraph = styled.p`
   color: #333; // Example text color
   margin: 10px 0;
   line-height: 1.5;
+`
+const Btn = styled.button`
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  font-size: 16px;
+  cursor: pointer;
+  color: white;
+  background-color: #009a08;
+  border: none;
+  min-width: 12rem;
+  min-height: 3rem;
+  border-radius: 6px;
+
+  &:hover {
+    opacity: 70%;
+  }
+
+  &:active {
+    background: #f8f8f8;
+  }
+
+  &:disabled {
+    color: #a8aaaf;
+    background: #e8e8e8;
+    cursor: default;
+    cursor: not-allowed;
+  }
+`
+const MainContainer = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
 `

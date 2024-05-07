@@ -9,7 +9,6 @@ import React, {
 import styled from 'styled-components'
 import { ProveButton } from './ProveButton'
 import { AadhaarQRValidation } from '../../types'
-import { Logo } from '../LogInWithAnonAadhaar'
 import { SignalDisplay } from './SignalDisplay'
 import { AnonAadhaarContext } from '../../hooks/useAnonAadhaar'
 import { icons } from '../ButtonLogo'
@@ -17,7 +16,6 @@ import { FieldsToRevealArray, fieldsLabel } from '@anon-aadhaar/core'
 
 interface ProveModalProps {
   setErrorMessage: Dispatch<SetStateAction<string | null>>
-  logo: string
   qrStatus: AadhaarQRValidation | null
   qrData: string | null
   setQrStatus: Dispatch<SetStateAction<AadhaarQRValidation | null>>
@@ -28,7 +26,6 @@ interface ProveModalProps {
 
 export const ProveModal: React.FC<ProveModalProps> = ({
   setErrorMessage,
-  logo,
   qrStatus,
   qrData,
   setQrStatus,
@@ -55,10 +52,6 @@ export const ProveModal: React.FC<ProveModalProps> = ({
   return (
     <>
       <TitleSection>
-        <Title>
-          <Logo src={logo} />
-          Prove your Identity
-        </Title>
         <Disclaimer>
           The signature of your document has been verified, you can now
           genereate your Proof of Identity.
@@ -115,15 +108,6 @@ const TitleSection = styled.div`
   margin: 1rem 1rem 0;
   display: flex;
   flex-flow: column;
-`
-
-const Title = styled.h3`
-  display: flex;
-  flex-shrink: 0;
-  margin-left: auto;
-  margin-right: auto;
-  font-size: medium;
-  font-weight: bold;
 `
 
 const Disclaimer = styled.span`

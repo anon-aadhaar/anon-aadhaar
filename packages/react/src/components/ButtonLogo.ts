@@ -18,6 +18,8 @@ export const icons: { [key in MyIconType]: string } = {
   x: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"><path fill="#fff" fill-rule="evenodd" d="M7.382 6.18a.857.857 0 0 0-1.13 1.283L10.787 12 6.25 16.537l-.071.08a.857.857 0 0 0 1.283 1.132L12 13.212l4.537 4.537.08.071a.857.857 0 0 0 1.132-1.283L13.212 12l4.537-4.537.071-.08a.857.857 0 0 0-1.283-1.132L12 10.788 7.463 6.25z" clip-rule="evenodd"/></svg>',
   fileUpload:
     '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"><path fill="#081224" fill-rule="evenodd" d="M17 22zc1.65 0 3-1.35 3-3V8a1.011 1.011 0 0 0-.29-.71l-5-5A.966.966 0 0 0 14 2H7C5.34 2 4 3.34 4 5v14c0 1.65 1.34 3 3 3zM13 4H7c-.56 0-1 .44-1 1v14c0 .55.44 1 1 1h10c.55 0 1-.45 1-1V9h-3a2 2 0 0 1-2-2zm2 1.41V7h1.59zM12 18c-.56 0-1-.45-1-1v-3.585L9.71 14.71v-.01c-.4.39-1.03.39-1.42 0-.4-.4-.4-1.03 0-1.42l3-3c.38-.4 1.02-.4 1.41-.01l3 3c.39.38.39 1.02 0 1.41h-.01c-.19.18-.45.29-.71.29L15 15c-.27 0-.53-.11-.71-.29L13 13.414V17c0 .55-.45 1-1 1" clip-rule="evenodd"/></svg>',
+  xBlack:
+    '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"><path fill="#334155" fill-rule="evenodd" d="M7.382 6.18a.857.857 0 0 0-1.13 1.283L10.787 12 6.25 16.537l-.071.08a.857.857 0 0 0 1.283 1.132L12 13.212l4.537 4.537.08.071a.857.857 0 0 0 1.132-1.283L13.212 12l4.537-4.537.071-.08a.857.857 0 0 0-1.283-1.132L12 10.788 7.463 6.25z" clip-rule="evenodd"/></svg>',
 }
 export type MyIconType =
   | 'aalogo'
@@ -31,3 +33,4 @@ export type MyIconType =
   | 'x'
   | 'alert'
   | 'fileUpload'
+  | 'xBlack'

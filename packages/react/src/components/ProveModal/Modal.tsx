@@ -89,9 +89,8 @@ export const Modal: React.FC<ModalProps> = ({
               case 'Verify':
                 return (
                   <VerifyModal
-                    logo={logo}
-                    qrStatus={qrStatus}
                     provingEnabled={provingEnabled}
+                    qrStatus={qrStatus}
                     setQrStatus={setQrStatus}
                     setQrData={setQrData}
                     setCurrentView={setCurrentView}
@@ -101,7 +100,6 @@ export const Modal: React.FC<ModalProps> = ({
                 return (
                   <ProveModal
                     setErrorMessage={setErrorMessage}
-                    logo={logo}
                     qrStatus={qrStatus}
                     qrData={qrData}
                     setQrStatus={setQrStatus}
@@ -163,7 +161,7 @@ const ModalContent = styled.div`
   background-color: #ffffff;
   border-radius: 1rem;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  justify-content: space-between;
+  padding: 2rem;
 
   @media (max-width: 425px) {
     /* For screens <= 425px (e.g., mobile devices) */
@@ -187,7 +185,6 @@ const TitleSection = styled.div`
   row-gap: 1rem;
   margin-left: auto;
   margin-right: auto;
-  margin: 1rem 1rem 0;
   display: flex;
   flex-flow: column;
 `
@@ -203,7 +200,6 @@ const Title = styled.h3`
 
 const Disclaimer = styled.span`
   color: #6d6d6d;
-  margin-top: 0.3rem;
   font-size: small;
   font-weight: normal;
 `
