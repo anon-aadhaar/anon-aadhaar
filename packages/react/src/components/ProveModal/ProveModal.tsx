@@ -35,10 +35,16 @@ export const ProveModal: React.FC<ProveModalProps> = ({
 }) => {
   const [provingEnabled, setProvingEnabled] = useState<boolean>(false)
   const { appName } = useContext(AnonAadhaarContext)
-  const blob = new Blob([icons.illustration], { type: 'image/svg+xml' })
+  const eyeOffBlob = new Blob([icons.eyeOff], { type: 'image/svg+xml' })
   const noRevealillustration = useMemo(
-    () => URL.createObjectURL(blob),
-    [icons.illustration],
+    () => URL.createObjectURL(eyeOffBlob),
+    [icons.eyeOff],
+  )
+
+  const eyeBlob = new Blob([icons.eye], { type: 'image/svg+xml' })
+  const revealillustration = useMemo(
+    () => URL.createObjectURL(eyeBlob),
+    [icons.eye],
   )
 
   useEffect(() => {
@@ -50,101 +56,157 @@ export const ProveModal: React.FC<ProveModalProps> = ({
   }, [qrStatus])
 
   return (
-    <>
-      <TitleSection>
-        <Disclaimer>
-          The signature of your document has been verified, you can now
-          genereate your Proof of Identity.
-        </Disclaimer>
-      </TitleSection>
+    <MainContainer>
+      <div>
+        <TitleSection>YOUR QR CODE IS VERIFIED!</TitleSection>
 
-      {fieldsToReveal === undefined ? (
         <Section>
-          <Label>{appName} doesn&apos;t requests you to share any data</Label>
-          <Illustration src={noRevealillustration} />
-        </Section>
-      ) : (
-        <Section>
-          <Label>{appName} requests you to share data: </Label>
+          <Label>Data you are sharing to {appName}: </Label>
           <RevealSection>
-            {fieldsLabel.map(({ key, label }) =>
-              fieldsToReveal.includes(key) ? (
-                <FieldRow key={key}>
-                  <CheckmarkIconWrapper>✅</CheckmarkIconWrapper>
-                  <FieldLabel>{label}</FieldLabel>
-                </FieldRow>
-              ) : null,
-            )}
+            {fieldsToReveal
+              ? fieldsLabel.map(({ key, label }) =>
+                  fieldsToReveal.includes(key) ? (
+                    <FieldRow key={key}>
+                      <DiscloseOn>
+                        <Icon src={revealillustration} />
+                        {label}
+                      </DiscloseOn>
+                    </FieldRow>
+                  ) : (
+                    <FieldRow key={key}>
+                      <DiscloseOff>
+                        <Icon src={noRevealillustration} />
+                        {label}
+                      </DiscloseOff>
+                    </FieldRow>
+                  ),
+                )
+              : fieldsLabel.map(({ key, label }) => (
+                  <FieldRow key={key}>
+                    <DiscloseOff>
+                      <Icon src={noRevealillustration} />
+                      {label}
+                    </DiscloseOff>
+                  </FieldRow>
+                ))}
           </RevealSection>
         </Section>
-      )}
 
-      {signal && (
-        <Section>
-          <Label>Data you are signing: </Label>
-          <SignalDisplay signal={signal} />
-        </Section>
-      )}
-
-      <ProveButton
-        qrData={qrData}
-        provingEnabled={provingEnabled}
-        setErrorMessage={setErrorMessage}
-        signal={signal}
-        setQrStatus={setQrStatus}
-        nullifierSeed={nullifierSeed}
-        fieldsToReveal={fieldsToReveal}
-      />
-    </>
+        {signal && (
+          <Section>
+            <Label>Data you are signing: </Label>
+            <SignalDisplay signal={signal} />
+          </Section>
+        )}
+      </div>
+      <div>
+        <ProveButton
+          qrData={qrData}
+          provingEnabled={provingEnabled}
+          setErrorMessage={setErrorMessage}
+          signal={signal}
+          setQrStatus={setQrStatus}
+          nullifierSeed={nullifierSeed}
+          fieldsToReveal={fieldsToReveal}
+        />
+        <SmallDisclaimer>
+          No Aadhaar data ever leaves your device!
+        </SmallDisclaimer>
+      </div>
+    </MainContainer>
   )
 }
 
 const TitleSection = styled.div`
-  color: #111827;
-  flex-shrink: 0;
-  row-gap: 1rem;
-  margin-left: auto;
-  margin-right: auto;
-  margin: 1rem 1rem 0;
-  display: flex;
-  flex-flow: column;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600; // Regular weight
+  font-size: 16px; // Example font size
+  color: #333; // Example text color
+  line-height: 1.5;
+  text-transform: capitalize;
 `
 
-const Disclaimer = styled.span`
-  color: #6d6d6d;
-  margin-top: 0.3rem;
-  font-size: 0.9rem;
-  font-weight: normal;
+// const Disclaimer = styled.span`
+//   color: #6d6d6d;
+//   margin-top: 0.3rem;
+//   font-size: 0.9rem;
+//   font-weight: normal;
+// `
+
+export const Icon = styled.img`
+  height: 1.5rem;
+  margin-right: 5px;
+`
+
+const DiscloseOn = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  border: solid;
+  align-items: center;
+  border-color: #009a08;
+  border-radius: 4px;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  color: black;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 12px;
+  padding-right: 12px;
+`
+
+const DiscloseOff = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  border: solid;
+  align-items: center;
+  border-color: #b6b9c3;
+  border-radius: 4px;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  color: #b6b9c3;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 12px;
+  padding-right: 12px;
 `
 
 const Section = styled.div`
-  margin: 0 1rem 0;
+  margin-top: 15px;
   row-gap: 1rem;
   max-width: 100%;
 `
 
 const Label = styled.div`
-  font-size: large;
+  font-size: 14px;
   text-align: left;
-  font-weight: 600;
-  color: #111827;
-`
-const Illustration = styled.img`
-  height: 10rem;
-  margin-right: auto;
-  margin-left: auto;
+  font-weight: 400;
+  color: #6b7280;
 `
 const RevealSection = styled.div`
-  /* Add your styles here */
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+  margin-top: 10px;
 `
 
 const FieldRow = styled.div`
   display: flex;
   align-items: center;
 `
-
-const CheckmarkIconWrapper = styled.div`
-  margin-right: 8px;
+const MainContainer = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
 `
-
-const FieldLabel = styled.span``
+const SmallDisclaimer = styled.p`
+  font-size: small;
+  color: #717686;
+  text-decoration: wavy;
+  text-align: center;
+  margin-top: 10px;
+`

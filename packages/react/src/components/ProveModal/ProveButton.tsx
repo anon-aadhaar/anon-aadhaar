@@ -64,7 +64,7 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
         return (
           <Btn disabled={!provingEnabled} onClick={startProving}>
             {' '}
-            Request Aadhaar Proof{' '}
+            GENERATE ANON AADHAAR PROOF{' '}
           </Btn>
         )
       case ProverState.FetchingWasm:
@@ -104,25 +104,24 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
 }
 
 const Btn = styled.button`
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
   display: flex;
+  width: 100%;
   align-items: center;
   justify-content: center;
   padding: 0.5rem 1rem;
-  font-size: 1.15rem;
+  font-size: 16px;
   cursor: pointer;
-  color: #f8f8f8;
-  font-weight: bold;
-  box-shadow: 0px 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
+  color: white;
+  background-color: #009a08;
   border: none;
   min-width: 12rem;
   min-height: 3rem;
-  border-radius: 0.5rem;
-  background: linear-gradient(345deg, #10fe53 0%, #09d3ff 100%);
-  margin: 1rem;
+  border-radius: 6px;
 
   &:hover {
     opacity: 70%;
-    background: linear-gradient(345deg, #10fe53 0%, #09d3ff 100%);
   }
 
   &:active {
@@ -133,5 +132,6 @@ const Btn = styled.button`
     color: #a8aaaf;
     background: #e8e8e8;
     cursor: default;
+    cursor: not-allowed;
   }
 `
