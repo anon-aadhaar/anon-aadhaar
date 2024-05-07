@@ -3,8 +3,8 @@ import styled from 'styled-components'
 import { FileInput } from '../FileInput'
 import { uploadQRpng } from '../../util'
 import { AadhaarQRValidation } from '../../types'
-import FontStyles from '../../fontStyles'
 import { AnonAadhaarContext } from '../../hooks/useAnonAadhaar'
+import { useFonts } from '../../hooks/useFonts'
 
 interface VerifyModalProps {
   qrStatus: AadhaarQRValidation | null
@@ -22,14 +22,12 @@ export const VerifyModal: React.FC<VerifyModalProps> = ({
   setCurrentView,
 }) => {
   const { useTestAadhaar } = useContext(AnonAadhaarContext)
+  useFonts()
+
   return (
     <MainContainer>
       <Container>
         <TitleSection>
-          {/* <Title>
-          <Logo src={logo} />
-          Prove your Identity
-        </Title> */}
           <Disclaimer>
             Anon Aadhaar allows you to create a proof of your Aadhaar ID without
             revealing any personal data. This process is local to your browser
@@ -37,7 +35,6 @@ export const VerifyModal: React.FC<VerifyModalProps> = ({
             <p>&nbsp;</p>
             <p>Note: Internet speed may affect processing time.</p>
             <Line></Line>
-            <FontStyles />
             <StyledParagraph>GENERATE A QR CODE:</StyledParagraph>
             {useTestAadhaar ? (
               <>
@@ -73,10 +70,11 @@ export const VerifyModal: React.FC<VerifyModalProps> = ({
                 >
                   Android
                 </PhonePlatformLinks>
-                <p>&nbsp;</p>
-                By entering your Aadhaar number and OTP verification. You can
-                then save the QR as an image using the &apos;Share&apos; button
-                for import.
+                <p>
+                  By entering your Aadhaar number and OTP verification. You can
+                  then save the QR as an image using the &apos;Share&apos;
+                  button for import.
+                </p>
               </>
             )}
           </Disclaimer>
@@ -84,7 +82,9 @@ export const VerifyModal: React.FC<VerifyModalProps> = ({
 
         <UploadSection>
           <UploadFile>
-            <Label>Upload your Aadhaar secure QR Code: </Label>
+            <StyledParagraph>
+              UPLOAD YOUR AADHAAR SECURE QR CODE:{' '}
+            </StyledParagraph>
             <FileInput
               onChange={async e => {
                 const { qrValue } = await uploadQRpng(e, setQrStatus)
@@ -120,7 +120,7 @@ const SmallDisclaimer = styled.p`
   color: #717686;
   text-decoration: wavy;
   text-align: center;
-  margin-top: 5px;
+  margin-top: 10px;
 `
 
 const TitleSection = styled.div`
@@ -133,31 +133,16 @@ const TitleSection = styled.div`
   flex-flow: column;
 `
 
-// const Title = styled.h3`
-//   display: flex;
-//   flex-shrink: 0;
-//   margin-left: auto;
-//   margin-right: auto;
-//   font-size: medium;
-//   font-weight: bold;
-// `
-
 const Disclaimer = styled.span`
   color: #717686;
-  font-size: 0.9rem;
+  font-size: 14px;
   font-weight: normal;
+  line-height: 20px;
 `
 
 const UploadSection = styled.div`
   row-gap: 1rem;
   max-width: 100%;
-`
-
-const Label = styled.div`
-  font-size: medium;
-  text-align: left;
-  font-weight: 500;
-  color: #111827;
 `
 
 const PhonePlatformLinks = styled.a`
@@ -187,13 +172,16 @@ const Line = styled.div`
 `
 const StyledParagraph = styled.p`
   font-family: 'Rajdhani', sans-serif;
-  font-weight: 400; // Regular weight
+  font-weight: 600; // Regular weight
   font-size: 16px; // Example font size
   color: #333; // Example text color
   margin: 10px 0;
   line-height: 1.5;
+  text-transform: capitalize;
 `
 const Btn = styled.button`
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
   display: flex;
   width: 100%;
   align-items: center;

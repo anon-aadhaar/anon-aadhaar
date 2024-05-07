@@ -25,7 +25,7 @@ export const FileInput: FunctionComponent<FileInputProps> = ({
   qrStatus,
 }) => {
   const [fileName, setFileName] = useState<string | null>(null)
-  const fileInputRef = useRef(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const uploadIconBlob = new Blob([icons.fileUpload], { type: 'image/svg+xml' })
   const uploadIcon = useMemo(

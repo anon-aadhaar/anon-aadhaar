@@ -15,7 +15,6 @@ import { AnonAadhaarContext } from '../../hooks/useAnonAadhaar'
 import { VerifyModal } from './VerifyModal'
 import { ProveModal } from './ProveModal'
 import { FieldsToRevealArray } from '@anon-aadhaar/core'
-import FontStyles from '../../fontStyles'
 
 interface ModalProps {
   isOpen: boolean
@@ -75,7 +74,6 @@ export const Modal: React.FC<ModalProps> = ({
 
   return isOpen ? (
     <ModalOverlay onClick={onClose}>
-      <FontStyles />
       <BrowserView>
         <ModalContent onClick={e => e.stopPropagation()}>
           {errorMessage !== null && (
