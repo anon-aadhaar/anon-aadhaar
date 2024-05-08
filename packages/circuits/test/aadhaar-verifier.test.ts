@@ -106,7 +106,7 @@ describe('AadhaarVerifier', function () {
     const pathToCircuit = path.join(
       __dirname,
       '../src',
-      'aadhaar-verifier.circom',
+      'main.circom',
     )
     circuit = await circom_tester(pathToCircuit, {
       recompile: true,

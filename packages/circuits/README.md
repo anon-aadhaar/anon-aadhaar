@@ -6,7 +6,8 @@ This package contains circom circuits for the Anon Aadhaar protocol.
 
 The main logic of the protocol is contained in:
 
-- `src/aadhaar-verifier.circom`: Main circuit that handle inputs/outputs, call other components.
+- `src/main.circom`: `main` component that export the AadhaarVerifier circuit.
+- `src/aadhaar-verifier.circom`: Primary circuit that handle inputs/outputs, call other components.
 - `src/helpers/signature.circom`: Circuit that verifies the signature of the Aadhaar data.
 - `src/helpers/extractor.circom`: Circuit that extracts the required information from the Aadhaar data.
 - `src/helpers/nullifier.circom`: Circuit that generates the nullifier for the proof.
