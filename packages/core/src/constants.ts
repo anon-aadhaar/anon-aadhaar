@@ -1,12 +1,13 @@
 enum BaseUrlArtifacts {
   Prod = 'https://d1re67zv2jtrxt.cloudfront.net/',
   // Test = 'https://d1l6t78iyuhldt.cloudfront.net/v1.0.0',
-  // Staging = 'https://dhzposh38rt8g.cloudfront.net',
+  Staging = 'https://dhzposh38rt8g.cloudfront.net',
 }
 
 enum Version {
   V1 = 'v1.0.0',
   V2 = 'v2.0.0',
+  Lite = 'lite',
 }
 
 enum Artifacts {
@@ -28,6 +29,12 @@ export const artifactUrls = {
     zkey: BaseUrlArtifacts.Prod + Version.V2 + Artifacts.ZKEY_URL,
     vk: BaseUrlArtifacts.Prod + Version.V2 + Artifacts.VK_URL,
     chunked: BaseUrlArtifacts.Prod + Version.V2 + Artifacts.ZKEY_CHUNKS,
+  },
+  Lite: {
+    wasm: BaseUrlArtifacts.Prod + Version.Lite + Artifacts.WASM_URL,
+    zkey: BaseUrlArtifacts.Prod + Version.Lite + Artifacts.ZKEY_URL,
+    vk: BaseUrlArtifacts.Prod + Version.Lite + Artifacts.VK_URL,
+    chunked: BaseUrlArtifacts.Prod + Version.Lite + Artifacts.ZKEY_CHUNKS,
   },
   // test: {
   //   wasm: BaseUrlArtifacts.Test + Artifacts.WASM_URL,

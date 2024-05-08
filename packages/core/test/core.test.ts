@@ -95,7 +95,7 @@ describe('Core tests', function () {
     const args = await generateArgs({
       qrData: QRData,
       certificateFile: certificate,
-      nullifierSeed: 1234,
+      secret: '123456',
     })
 
     const anonAadhaarProof = await prove(args)
