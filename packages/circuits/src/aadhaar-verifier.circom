@@ -84,4 +84,4 @@ template AadhaarVerifier(n, k, maxDataLength) {
 }
 
 
-component main { public [nullifierSeed, signalHash] } = AadhaarVerifier(121, 17, 512 * 3);
+// component main { public [nullifierSeed, signalHash] } = AadhaarVerifier(121, 17, 512 * 3);

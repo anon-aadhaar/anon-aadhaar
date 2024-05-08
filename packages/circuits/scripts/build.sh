@@ -44,7 +44,7 @@ function install_deps() {
 }
 
 function build_circuit() {
-    circom ./src/aadhaar-verifier.circom  --r1cs --wasm --c -o "$BUILD_DIR" -l ./node_modules -l ../../node_modules
+    circom ./src/aadhaar-verifier.afk.circom  --r1cs --wasm --c -o "$BUILD_DIR" -l ./node_modules -l ../../node_modules
 }
 
 # trusted setup for development
@@ -69,7 +69,7 @@ function dev_trusted_setup() {
     echo "TRUSTED SETUP FOR DEVELOPMENT - PLEASE, DON'T USE IT IN PRODUCTION !!!"
 
     NODE_OPTIONS=--max-old-space-size=8192 \
-	node ./node_modules/.bin/snarkjs groth16 setup "$BUILD_DIR"/aadhaar-verifier.r1cs "$PTAU_PATH" "$PARTIAL_ZKEYS_DIR"/circuit_0000.zkey
+	node ./node_modules/.bin/snarkjs groth16 setup "$BUILD_DIR"/aadhaar-verifier.afk.r1cs "$PTAU_PATH" "$PARTIAL_ZKEYS_DIR"/circuit_0000.zkey
 
     echo "test random" | NODE_OPTIONS='--max-old-space-size=8192' \
 	node ./node_modules/.bin/snarkjs zkey contribute "$PARTIAL_ZKEYS_DIR"/circuit_0000.zkey "$PARTIAL_ZKEYS_DIR"/circuit_final.zkey --name="1st Contributor Name" -v 
@@ -80,7 +80,7 @@ function dev_trusted_setup() {
         mkdir -p "$ARTIFACTS_DIR"
     fi
 
-    cp "$JS_BUILD_DIR"/aadhaar-verifier.wasm "$ARTIFACTS_DIR"
+    cp "$JS_BUILD_DIR"/aadhaar-verifier.afk.wasm "$ARTIFACTS_DIR"
     cp "$PARTIAL_ZKEYS_DIR"/circuit_final.zkey "$ARTIFACTS_DIR"
     cp "$BUILD_DIR"/vkey.json "$ARTIFACTS_DIR"
 
@@ -104,7 +104,7 @@ function setup_contract() {
 function generate_witness() {
     echo "Gen witness..."
     QR_DATA=$QR_DATA npx ts-node ./scripts/generateInput.ts
-    node "$JS_BUILD_DIR"/generate_witness.js "$JS_BUILD_DIR"/aadhaar-verifier.wasm  "$BUILD_DIR"/input.json "$BUILD_DIR"/witness.wtns
+    node "$JS_BUILD_DIR"/generate_witness.js "$JS_BUILD_DIR"/aadhaar-verifier.afk.wasm  "$BUILD_DIR"/input.json "$BUILD_DIR"/witness.wtns
     echo "Done!"
 }
 
