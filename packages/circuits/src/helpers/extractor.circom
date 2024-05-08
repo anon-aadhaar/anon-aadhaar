@@ -349,18 +349,18 @@ template QRDataExtractor(maxDataLength) {
     genderExtractor.nDelimitedDataShiftedToDob <== ageExtractor.nDelimitedDataShiftedToDob;
     gender <== genderExtractor.out;
 
-    // Extract state
-    component stateExtractor = ExtractAndPackAsInt(maxDataLength, statePosition());
-    stateExtractor.nDelimitedData <== nDelimitedData;
-    stateExtractor.delimiterIndices <== delimiterIndices;
-    state <== stateExtractor.out;
-
     // Extract PIN code
     component pinCodeExtractor = PinCodeExtractor(maxDataLength);
     pinCodeExtractor.nDelimitedData <== nDelimitedData;
     pinCodeExtractor.startDelimiterIndex <== delimiterIndices[pinCodePosition() - 1];
     pinCodeExtractor.endDelimiterIndex <== delimiterIndices[pinCodePosition()];
     pinCode <== pinCodeExtractor.out;
+
+    // Extract state
+    component stateExtractor = ExtractAndPackAsInt(maxDataLength, statePosition());
+    stateExtractor.nDelimitedData <== nDelimitedData;
+    stateExtractor.delimiterIndices <== delimiterIndices;
+    state <== stateExtractor.out;
 
     // Extract photo
     component photoExtractor = PhotoExtractor(maxDataLength);
