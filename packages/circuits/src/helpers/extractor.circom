@@ -127,6 +127,7 @@ template TimetampExtractor(maxDataLength) {
 /// @title AgeExtractor 
 /// @notice Extract date of birth from the Aadhaar QR data and returns as Unix timestamp
 /// @notice The timestamp will correspond to 00:00 of the date in IST timezone
+/// @notice Assumes current time input is above DOB
 /// @param maxDataLength - Maximum length of the data
 /// @input nDelimitedData[maxDataLength] - QR data where each delimiter is 255 * n where n is order of the data
 /// @input startDelimiterIndex - index of the delimiter after which the date of birth start
@@ -144,8 +145,6 @@ template AgeExtractor(maxDataLength) {
     signal output age;
     signal output nDelimitedDataShiftedToDob[maxDataLength];
     
-    var byteLength = 10 + 2; // DD-MM-YYYY + 2 delimiter
-
     // Shift the data to the right to until the DOB index
     // We are not usind SubArraySelector as the shifted data is an output
     component shifter = VarShiftLeft(maxDataLength, maxDataLength);
@@ -167,16 +166,22 @@ template AgeExtractor(maxDataLength) {
     // Completed age based on year value
     signal ageByYear <== currentYear - year - 1;
 
-    // +1 if month and day is greater than or equal to the current month and day
+    // +1 to age if month is above currentMonth, or if months are same and day is higher
     component monthGt = GreaterThan(4);
-    monthGt.in[0] <== currentMonth + 1;
+    monthGt.in[0] <== currentMonth;
     monthGt.in[1] <== month;
+
+    component monthEq = IsEqual();
+    monthEq.in[0] <== currentMonth;
+    monthEq.in[1] <== month;
 
     component dayGt = GreaterThan(5);
     dayGt.in[0] <== currentDay + 1;
     dayGt.in[1] <== day;
 
-    age <== ageByYear + monthGt.out + dayGt.out;
+    signal isHigherDayOnSameMonth <== monthEq.out * dayGt.out;
+
+    age <== ageByYear + (monthGt.out + isHigherDayOnSameMonth);
     nDelimitedDataShiftedToDob <== shiftedBytes;
 }
 
