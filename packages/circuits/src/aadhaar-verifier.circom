@@ -82,6 +82,3 @@ template AadhaarVerifier(n, k, maxDataLength) {
     // Dummy square to prevent singal tampering (in rare cases where non-constrained inputs are ignored)
     signal signalHashSquare <== signalHash * signalHash;
 }
-
-
-component main { public [nullifierSeed, signalHash] } = AadhaarVerifier(121, 17, 512 * 3);
