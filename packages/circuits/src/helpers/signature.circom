@@ -51,11 +51,8 @@ template SignatureVerifier(n, k, maxDataLength) {
       rsa.message[i] <== 0;
   }
 
-  for (var i = 0; i < k; i++) {
-      rsa.modulus[i] <== pubKey[i];
-      rsa.signature[i] <== signature[i];
-  }
-
+	rsa.modulus <== pubKey;
+	rsa.signature <== signature;
 
   // Calculate Poseidon hash of the public key (609 constraints)
   // Poseidon component can take only 16 inputs, so we convert k chunks to k/2 chunks.
