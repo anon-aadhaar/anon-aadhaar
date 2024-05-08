@@ -53,15 +53,10 @@ export async function prove(
     throw new Error('Invalid pubKey argument')
   }
 
-  if (!args.signalHash.value) {
-    throw new Error('Invalid signalHash argument')
-  }
-
   const id = uuidv4()
 
   const anonAadhaarClaim: AnonAadhaarClaim = {
     pubKey: args.pubKey.value,
-    signalHash: args.signalHash.value,
   }
 
   const prover: ProverInferace = new AnonAadhaarProver(
@@ -105,12 +100,11 @@ export async function verify(pcd: AnonAadhaarCore): Promise<boolean> {
       pcd.proof.pubkeyHash,
       pcd.proof.nullifier,
       pcd.proof.timestamp,
-      pcd.proof.ageAbove18,
-      pcd.proof.gender,
-      pcd.proof.state,
-      pcd.proof.pincode,
-      pcd.proof.nullifierSeed,
-      pcd.proof.signalHash,
+      pcd.proof.countryCommitment,
+      pcd.proof.ageAbove18Commitment,
+      pcd.proof.genderCommitment,
+      pcd.proof.stateCommitment,
+      pcd.proof.pinCodeCommitment,
     ],
     pcd.proof.groth16Proof
   )
@@ -137,10 +131,11 @@ export async function verifyLocal(pcd: AnonAadhaarCore): Promise<boolean> {
       pcd.proof.pubkeyHash,
       pcd.proof.nullifier,
       pcd.proof.timestamp,
-      pcd.proof.ageAbove18,
-      pcd.proof.gender,
-      pcd.proof.pincode,
-      pcd.proof.state,
+      pcd.proof.countryCommitment,
+      pcd.proof.ageAbove18Commitment,
+      pcd.proof.genderCommitment,
+      pcd.proof.stateCommitment,
+      pcd.proof.pinCodeCommitment,
     ],
     pcd.proof.groth16Proof
   )

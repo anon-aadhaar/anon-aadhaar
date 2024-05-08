@@ -35,12 +35,13 @@ describe('Core tests', function () {
     sinon.restore()
   })
 
-  it('Proving flow with artifacts fetched locally', async function () {
-    const artifactsDirName = __dirname + '/../../circuits/artifacts'
+  it.only('Proving flow with artifacts fetched locally', async function () {
+    const artifactsDirName = __dirname + '/../../circuits/build'
     const anonAadhaarInitArgs: InitArgs = {
-      wasmURL: artifactsDirName + '/aadhaar-verifier.wasm',
-      zkeyURL: artifactsDirName + '/circuit_final.zkey',
-      vkeyURL: artifactsDirName + '/vkey.json',
+      wasmURL:
+        artifactsDirName + '/aadhaar-verifier.afk_js/aadhaar-verifier.afk.wasm',
+      zkeyURL: artifactsDirName + '/aadhaar-verifier.afk.zkey',
+      vkeyURL: artifactsDirName + '/aadhaar-verifier.afk.vkey.json',
       artifactsOrigin: ArtifactsOrigin.local,
     }
 
@@ -49,7 +50,7 @@ describe('Core tests', function () {
     const args = await generateArgs({
       qrData: QRData,
       certificateFile: certificate,
-      nullifierSeed: 1234,
+      secret: '123456',
     })
 
     const anonAadhaarProof = await prove(args)
@@ -71,7 +72,7 @@ describe('Core tests', function () {
     const args = await generateArgs({
       qrData: QRData,
       certificateFile: certificate,
-      nullifierSeed: 1234,
+      secret: '123456',
     })
 
     const anonAadhaarProof = await prove(args)

@@ -3,7 +3,7 @@ import {
   decompressByteArray,
   splitToWords,
 } from './utils'
-import { AnonAadhaarArgs, FieldsToRevealArray } from './types'
+import { AnonAadhaarArgs } from './types'
 import {
   bufferToHex,
   Uint8ArrayToCharArray,
@@ -12,14 +12,14 @@ import { sha256Pad } from '@zk-email/helpers/dist/sha-utils'
 import { Buffer } from 'buffer'
 import { pki } from 'node-forge'
 import { ArgumentTypeName } from '@pcd/pcd-types'
-import { hash } from './hash'
 
 interface GenerateArgsOptions {
   qrData: string
   certificateFile: string
-  nullifierSeed: number
-  fieldsToRevealArray?: FieldsToRevealArray
-  signal?: string
+  secret: string
+  // nullifierSeed: number
+  // fieldsToRevealArray?: FieldsToRevealArray
+  // signal?: string
 }
 
 /**
@@ -30,10 +30,11 @@ interface GenerateArgsOptions {
 export const generateArgs = async ({
   qrData,
   certificateFile,
-  nullifierSeed,
-  fieldsToRevealArray,
-  signal,
-}: GenerateArgsOptions): Promise<AnonAadhaarArgs> => {
+  secret,
+}: // nullifierSeed,
+// fieldsToRevealArray,
+// signal,
+GenerateArgsOptions): Promise<AnonAadhaarArgs> => {
   const bigIntData = BigInt(qrData)
 
   const byteArray = convertBigIntToByteArray(bigIntData)
@@ -72,17 +73,17 @@ export const generateArgs = async ({
     }
   }
 
-  if (!fieldsToRevealArray) fieldsToRevealArray = []
+  // if (!fieldsToRevealArray) fieldsToRevealArray = []
 
-  const fieldsToReveal = {
-    revealGender: fieldsToRevealArray.includes('revealGender'),
-    revealAgeAbove18: fieldsToRevealArray.includes('revealAgeAbove18'),
-    revealState: fieldsToRevealArray.includes('revealState'),
-    revealPinCode: fieldsToRevealArray.includes('revealPinCode'),
-  }
+  // const fieldsToReveal = {
+  //   revealGender: fieldsToRevealArray.includes('revealGender'),
+  //   revealAgeAbove18: fieldsToRevealArray.includes('revealAgeAbove18'),
+  //   revealState: fieldsToRevealArray.includes('revealState'),
+  //   revealPinCode: fieldsToRevealArray.includes('revealPinCode'),
+  // }
 
-  // Set signal to 1 by default if no signal setted up
-  const signalHash = signal ? hash(signal) : hash(1)
+  // // Set signal to 1 by default if no signal setted up
+  // const signalHash = signal ? hash(signal) : hash(1)
 
   const anonAadhaarArgs: AnonAadhaarArgs = {
     qrDataPadded: {
@@ -109,29 +110,9 @@ export const generateArgs = async ({
       argumentType: ArgumentTypeName.StringArray,
       value: splitToWords(pubKeyBigInt, BigInt(121), BigInt(17)),
     },
-    nullifierSeed: {
+    secret: {
       argumentType: ArgumentTypeName.String,
-      value: nullifierSeed.toString(),
-    },
-    signalHash: {
-      argumentType: ArgumentTypeName.String,
-      value: signalHash,
-    },
-    revealGender: {
-      argumentType: ArgumentTypeName.Number,
-      value: fieldsToReveal.revealGender ? '1' : '0',
-    },
-    revealAgeAbove18: {
-      argumentType: ArgumentTypeName.Number,
-      value: fieldsToReveal.revealAgeAbove18 ? '1' : '0',
-    },
-    revealState: {
-      argumentType: ArgumentTypeName.Number,
-      value: fieldsToReveal.revealState ? '1' : '0',
-    },
-    revealPinCode: {
-      argumentType: ArgumentTypeName.Number,
-      value: fieldsToReveal.revealPinCode ? '1' : '0',
+      value: secret,
     },
   }
 

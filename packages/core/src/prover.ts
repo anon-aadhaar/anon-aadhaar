@@ -158,12 +158,7 @@ export class AnonAadhaarProver implements ProverInferace {
       delimiterIndices: witness.delimiterIndices.value!,
       signature: witness.signature.value!,
       pubKey: witness.pubKey.value!,
-      nullifierSeed: witness.nullifierSeed.value!,
-      signalHash: witness.signalHash.value!,
-      revealAgeAbove18: witness.revealAgeAbove18.value!,
-      revealGender: witness.revealGender.value!,
-      revealPinCode: witness.revealPinCode.value!,
-      revealState: witness.revealState.value!,
+      secret: witness.secret.value!,
     }
 
     if (updateState) updateState(ProverState.Proving)
@@ -186,14 +181,13 @@ export class AnonAadhaarProver implements ProverInferace {
     return {
       groth16Proof: proof,
       pubkeyHash: publicSignals[0],
-      timestamp: publicSignals[2],
-      nullifierSeed: witness.nullifierSeed.value!,
       nullifier: publicSignals[1],
-      signalHash: witness.signalHash.value!,
-      ageAbove18: publicSignals[3],
-      gender: publicSignals[4],
-      state: publicSignals[5],
-      pincode: publicSignals[6],
+      timestamp: publicSignals[2],
+      countryCommitment: publicSignals[3],
+      ageAbove18Commitment: publicSignals[4],
+      genderCommitment: publicSignals[5],
+      stateCommitment: publicSignals[6],
+      pinCodeCommitment: publicSignals[7],
     }
   }
 }
