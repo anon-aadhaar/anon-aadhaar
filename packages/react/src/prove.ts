@@ -8,7 +8,6 @@ import {
   handleError,
   ProverState,
   testCertificateUrl,
-  FieldsToRevealArray,
 } from '@anon-aadhaar/core'
 import { Dispatch, SetStateAction } from 'react'
 import { fetchCertificateFile, fetchKey } from './util'
@@ -60,9 +59,7 @@ export const proveAndSerialize = async (
 export const processAadhaarArgs = async (
   qrData: string,
   useTestAadhaar: boolean,
-  nullifierSeed: number,
-  fieldsToRevealArray?: FieldsToRevealArray,
-  signal?: string,
+  secret: string
 ): Promise<AnonAadhaarArgs> => {
   let certificateFile: string | null = null
   try {
@@ -80,9 +77,7 @@ export const processAadhaarArgs = async (
   const args = await generateArgs({
     qrData,
     certificateFile,
-    nullifierSeed,
-    fieldsToRevealArray,
-    signal,
+    secret
   })
 
   return args
