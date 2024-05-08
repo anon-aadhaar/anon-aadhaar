@@ -19,7 +19,7 @@ const Buckets: { [key: string]: Bucket } = {
 
 // S3 config
 const s3 = new S3Client({
-  region: Buckets.prod.region,
+  region: Buckets.staging.region,
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
@@ -27,14 +27,14 @@ const s3 = new S3Client({
 })
 
 // Set destination
-const bucketName = Buckets.prod.name
-const folder_tag = 'v2.0.0'
+const bucketName = Buckets.staging.name
+const folder_tag = 'Lite'
 
 const main = async () => {
   // TODO
   // Change the way we target zkey to chunk
   const zkeyData = readFileSync(
-    path.join(__dirname, '../artifacts', 'circuit_final.zkey'),
+    path.join(__dirname, '../build', 'aadhaar-verifier.afk.zkey'),
   )
 
   let i = 0

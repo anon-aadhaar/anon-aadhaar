@@ -24,7 +24,7 @@ describe('Core tests', function () {
 
     sinon.stub(proverModule, 'loadZkeyChunks').callsFake(async () => {
       return originalLoadZkeyChunks(
-        artifactUrls.v2.chunked,
+        artifactUrls.Lite.chunked,
         mockedStorageService
       )
     })
@@ -35,7 +35,7 @@ describe('Core tests', function () {
     sinon.restore()
   })
 
-  it.only('Proving flow with artifacts fetched locally', async function () {
+  it('Proving flow with artifacts fetched locally', async function () {
     const artifactsDirName = __dirname + '/../../circuits/build'
     const anonAadhaarInitArgs: InitArgs = {
       wasmURL:
@@ -61,9 +61,9 @@ describe('Core tests', function () {
 
   it('Proving flow with artifacts fetched from server', async function () {
     const anonAadhaarInitArgs: InitArgs = {
-      wasmURL: artifactUrls.v2.wasm,
-      zkeyURL: artifactUrls.v2.zkey,
-      vkeyURL: artifactUrls.v2.vk,
+      wasmURL: artifactUrls.Lite.wasm,
+      zkeyURL: artifactUrls.Lite.zkey,
+      vkeyURL: artifactUrls.Lite.vk,
       artifactsOrigin: ArtifactsOrigin.server,
     }
 
@@ -84,9 +84,9 @@ describe('Core tests', function () {
 
   it('Proving flow with chunked artifacts fetched from server', async function () {
     const anonAadhaarInitArgs: InitArgs = {
-      wasmURL: artifactUrls.v2.wasm,
-      zkeyURL: artifactUrls.v2.chunked,
-      vkeyURL: artifactUrls.v2.vk,
+      wasmURL: artifactUrls.Lite.wasm,
+      zkeyURL: artifactUrls.Lite.chunked,
+      vkeyURL: artifactUrls.Lite.vk,
       artifactsOrigin: ArtifactsOrigin.chunked,
     }
 

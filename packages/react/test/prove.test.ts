@@ -15,27 +15,20 @@ describe('AnonAadhaar prover react tests', function () {
 
   it('Generate and verify a proof from react', async function () {
     const anonAadhaarInitArgs: InitArgs = {
-      wasmURL: artifactUrls.v2.wasm,
-      zkeyURL: artifactUrls.v2.zkey,
-      vkeyURL: artifactUrls.v2.vk,
+      wasmURL: artifactUrls.Lite.wasm,
+      zkeyURL: artifactUrls.Lite.zkey,
+      vkeyURL: artifactUrls.Lite.vk,
       artifactsOrigin: ArtifactsOrigin.server,
     }
 
     await init(anonAadhaarInitArgs)
 
-    const args = await processAadhaarArgs(testQRData, true, 1234, [
-      'revealPinCode',
-      'revealGender',
-    ])
+    const args = await processAadhaarArgs(testQRData, true, "1234")
 
     const result = await proveAndSerialize(args)
 
     const verified = await verify(result.anonAadhaarProof)
 
     assert(verified == true, 'Should verifiable')
-    assert(result.anonAadhaarProof.proof.gender === '77')
-    assert(result.anonAadhaarProof.proof.state === '0')
-    assert(result.anonAadhaarProof.proof.ageAbove18 === '0')
-    assert(result.anonAadhaarProof.proof.pincode === '110051')
   })
 })
