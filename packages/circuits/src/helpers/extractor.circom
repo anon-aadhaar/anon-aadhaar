@@ -144,7 +144,6 @@ template AgeExtractor(maxDataLength) {
     signal output age;
     signal output nDelimitedDataShiftedToDob[maxDataLength];
     
-    var dobDelimiterIndex = dobPosition();
     var byteLength = 10 + 2; // DD-MM-YYYY + 2 delimiter
 
     // Shift the data to the right to until the DOB index
