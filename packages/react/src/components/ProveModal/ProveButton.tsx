@@ -1,11 +1,10 @@
 import styled from 'styled-components'
 import { Dispatch, useContext, SetStateAction } from 'react'
 import { AnonAadhaarContext } from '../../hooks/useAnonAadhaar'
-import { Spinner } from '../LoadingSpinner'
 import React from 'react'
 import { processAadhaarArgs } from '../../prove'
-import { AadhaarQRValidation } from '../../types'
-import { FieldsToRevealArray, ProverState } from '@anon-aadhaar/core'
+import { AadhaarQRValidation, ModalViews } from '../../types'
+import { FieldsToRevealArray } from '@anon-aadhaar/core'
 
 interface ProveButtonProps {
   qrData: string | null
@@ -15,6 +14,7 @@ interface ProveButtonProps {
   nullifierSeed: number
   setQrStatus: Dispatch<SetStateAction<AadhaarQRValidation | null>>
   signal?: string
+  setCurrentView: Dispatch<SetStateAction<ModalViews>>
 }
 
 export const ProveButton: React.FC<ProveButtonProps> = ({
@@ -25,12 +25,13 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
   fieldsToReveal,
   nullifierSeed,
   setQrStatus,
+  setCurrentView,
 }) => {
-  const { startReq, useTestAadhaar, proverState } =
-    useContext(AnonAadhaarContext)
+  const { startReq, useTestAadhaar } = useContext(AnonAadhaarContext)
 
   const startProving = async () => {
     try {
+      setCurrentView('Proving')
       if (qrData === null) throw new Error('Missing QR code data.')
 
       if (fieldsToReveal === undefined) fieldsToReveal = []
@@ -51,56 +52,12 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
     }
   }
 
-  return (() => {
-    switch (proverState) {
-      case ProverState.Initializing:
-        return (
-          <Btn disabled={!provingEnabled} onClick={startProving}>
-            {' '}
-            Request Aadhaar Proof{' '}
-          </Btn>
-        )
-      case ProverState.Completed:
-        return (
-          <Btn disabled={!provingEnabled} onClick={startProving}>
-            {' '}
-            GENERATE ANON AADHAAR PROOF{' '}
-          </Btn>
-        )
-      case ProverState.FetchingWasm:
-        return (
-          <Btn>
-            Searching for wasm file...
-            {'\u2003'}
-            <Spinner />
-          </Btn>
-        )
-      case ProverState.FetchingZkey:
-        return (
-          <Btn>
-            Searching for zkey file...
-            {'\u2003'}
-            <Spinner />
-          </Btn>
-        )
-      case ProverState.Proving:
-        return (
-          <Btn>
-            Generating proof...
-            {'\u2003'}
-            <Spinner />
-          </Btn>
-        )
-      case ProverState.Error:
-        return (
-          <Btn>
-            Oups something went wrong...
-            {'\u2003'}
-            <Spinner />
-          </Btn>
-        )
-    }
-  })()
+  return (
+    <Btn disabled={!provingEnabled} onClick={startProving}>
+      {' '}
+      GENERATE ANON AADHAAR PROOF{' '}
+    </Btn>
+  )
 }
 
 const Btn = styled.button`

@@ -105,6 +105,7 @@ export const Modal: React.FC<ModalProps> = ({
                     signal={signal}
                     fieldsToReveal={fieldsToReveal}
                     nullifierSeed={nullifierSeed}
+                    setCurrentView={setCurrentView}
                   />
                 )
               case 'Proving':

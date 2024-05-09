@@ -8,7 +8,7 @@ import React, {
 } from 'react'
 import styled from 'styled-components'
 import { ProveButton } from './ProveButton'
-import { AadhaarQRValidation } from '../../types'
+import { AadhaarQRValidation, ModalViews } from '../../types'
 import { SignalDisplay } from './SignalDisplay'
 import { AnonAadhaarContext } from '../../hooks/useAnonAadhaar'
 import { icons } from '../MainIcons'
@@ -22,6 +22,7 @@ interface ProveModalProps {
   fieldsToReveal?: FieldsToRevealArray
   nullifierSeed: number
   signal?: string
+  setCurrentView: Dispatch<SetStateAction<ModalViews>>
 }
 
 export const ProveModal: React.FC<ProveModalProps> = ({
@@ -32,6 +33,7 @@ export const ProveModal: React.FC<ProveModalProps> = ({
   signal,
   fieldsToReveal,
   nullifierSeed,
+  setCurrentView,
 }) => {
   const [provingEnabled, setProvingEnabled] = useState<boolean>(false)
   const { appName } = useContext(AnonAadhaarContext)
@@ -108,6 +110,7 @@ export const ProveModal: React.FC<ProveModalProps> = ({
           setQrStatus={setQrStatus}
           nullifierSeed={nullifierSeed}
           fieldsToReveal={fieldsToReveal}
+          setCurrentView={setCurrentView}
         />
         <SmallDisclaimer>
           No Aadhaar data ever leaves your device!
