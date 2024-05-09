@@ -10,5 +10,5 @@ export default function App({ Component, pageProps }: AppProps) {
     setIsReady(true)
   }, [])
 
-  return isReady && <AnonAadhaarProvider><Component {...pageProps} /></AnonAadhaarProvider>;
+  return isReady && <AnonAadhaarProvider _useTestAadhaar={true} _appName="AFK"><Component {...pageProps} /></AnonAadhaarProvider>;
 }

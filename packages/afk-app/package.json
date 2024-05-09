@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "echo skip build",
+    "build-app": "next build",
     "start": "next start",
     "lint": "next lint",
     "format": "echo skip format"

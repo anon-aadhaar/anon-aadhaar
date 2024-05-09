@@ -11,7 +11,7 @@ export default function Home() {
     >
       <h1>Welcome to AFK</h1>
 
-      <LogInWithAnonAadhaar nullifierSeed={1234}/>
+      <LogInWithAnonAadhaar nullifierSeed={1234} fieldsToReveal={['revealAgeAbove18', 'revealGender', 'revealPinCode', 'revealState']}/>
     </main>
   );
 }
