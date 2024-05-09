@@ -103,11 +103,7 @@ describe('AadhaarVerifier', function () {
   let circuit: any
 
   this.beforeAll(async () => {
-    const pathToCircuit = path.join(
-      __dirname,
-      '../src',
-      'main.circom',
-    )
+    const pathToCircuit = path.join(__dirname, '../src', 'main.circom')
     circuit = await circom_tester(pathToCircuit, {
       recompile: true,
       // output: path.join(__dirname, '../build'),
