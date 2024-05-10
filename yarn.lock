@@ -2995,18 +2995,18 @@
   resolved "https://registry.yarnpkg.com/@ungap/structured-clone/-/structured-clone-1.2.0.tgz#756641adb587851b5ccb3e095daf27ae581c8406"
   integrity sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==
 
-"@zk-email/circuits@^6.0.2":
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/@zk-email/circuits/-/circuits-6.0.2.tgz#11b97e2f99169742e38a8754e19337eed605a986"
-  integrity sha512-noOFEiSPGHukfdX41NTvQgIQHCQsVpLHmgZb5R2GWb5XMsfYyr3yCLt8FklbDC3QYWD5TpqtuL/ee2LQHaFj+A==
+"@zk-email/circuits@^6.0.3":
+  version "6.0.3"
+  resolved "https://registry.yarnpkg.com/@zk-email/circuits/-/circuits-6.0.3.tgz#c38fc310aec5ef7523eedd8fa2f3946bfde7a5bd"
+  integrity sha512-fa9daY1qCiJJ3CsPZ5yTi7+LYQHVfQ69/jr4wzRhK0JWayMMO0eUt7x6498SuIFznFyfbsSFdHJZ6hB5aYm8Dw==
   dependencies:
     "@zk-email/zk-regex-circom" "^1.1.1"
     circomlib "^2.0.5"
 
-"@zk-email/helpers@^6.0.2":
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/@zk-email/helpers/-/helpers-6.0.2.tgz#dd94af94e780329dfdb3087729f044f4a2c469da"
-  integrity sha512-6oho7pkuvTR4tjA0evkn9qU4vGrp1zCOmW8ETUa2VBxpiZaxbex6jza8Y5Z2IrfXi6v4J/OSRBbat5DS0yQ7cA==
+"@zk-email/helpers@^6.0.3":
+  version "6.0.3"
+  resolved "https://registry.yarnpkg.com/@zk-email/helpers/-/helpers-6.0.3.tgz#6e745a323ddebaf4fd162b1943205a26567670dc"
+  integrity sha512-6uqVIoWcF4lCM34fDCpdh3TBbucK3oeppUTObSLNs49lh5+NUWfgerAGeWHCkNda2ppMg00/+3w0dQwtPyfxIQ==
   dependencies:
     addressparser "^1.0.1"
     atob "^2.1.2"
@@ -3015,7 +3015,6 @@
     localforage "^1.10.0"
     node-forge "^1.3.1"
     pako "^2.1.0"
-    pki "^1.1.0"
     psl "^1.9.0"
     snarkjs "https://github.com/sampritipanda/snarkjs.git#fef81fc51d17a734637555c6edbd585ecda02d9e"
 
@@ -6853,11 +6852,6 @@ pirates@^4.0.1:
   version "4.0.6"
   resolved "https://registry.yarnpkg.com/pirates/-/pirates-4.0.6.tgz#3018ae32ecfcff6c29ba2267cbf21166ac1f36b9"
   integrity sha512-saLsH7WeYYPiD25LDuLRRY/i+6HaPYr6G1OUlN39otzkSTxKnubR9RTxS3/Kk50s1g2JTgFwWQDQyplC5/SHZg==
-
-pki@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/pki/-/pki-1.1.0.tgz#abd7c257816ceb2a0c0afef5642180227355d173"
-  integrity sha512-OzMMXAo8sI7X3+EW46eIfGfOnuM0d0Cef0iVp7UUCsh2VV7RvsUztLTc6xacBwgsz16Vp6qQuQA8Lep5bxeuOA==
 
 postcss-load-config@^4.0.1:
   version "4.0.2"
