@@ -79,6 +79,12 @@ describe('VerifyProof', function () {
         certificateFile: certificate,
         nullifierSeed: nullifierSeed,
         signal: user1addres,
+        fieldsToRevealArray: [
+          'revealAgeAbove18',
+          'revealGender',
+          'revealPinCode',
+          'revealState',
+        ],
       })
 
       const anonAadhaarCore = await prove(args)
@@ -103,8 +109,8 @@ describe('VerifyProof', function () {
             [
               anonAadhaarProof.ageAbove18,
               anonAadhaarProof.gender,
-              anonAadhaarProof.pincode,
               anonAadhaarProof.state,
+              anonAadhaarProof.pincode,
             ],
             packedGroth16Proof,
           ),
@@ -125,8 +131,8 @@ describe('VerifyProof', function () {
             [
               anonAadhaarProof.ageAbove18,
               anonAadhaarProof.gender,
-              anonAadhaarProof.pincode,
               anonAadhaarProof.state,
+              anonAadhaarProof.pincode,
             ],
             packedGroth16Proof,
           ),
@@ -193,8 +199,8 @@ describe('VerifyProof', function () {
             [
               anonAadhaarProof.ageAbove18,
               anonAadhaarProof.gender,
-              anonAadhaarProof.pincode,
               anonAadhaarProof.state,
+              anonAadhaarProof.pincode,
             ],
             packedGroth16Proof,
           ),
@@ -214,8 +220,8 @@ describe('VerifyProof', function () {
             [
               anonAadhaarProof.ageAbove18,
               anonAadhaarProof.gender,
-              anonAadhaarProof.pincode,
               anonAadhaarProof.state,
+              anonAadhaarProof.pincode,
             ],
             packedGroth16Proof,
           ),
@@ -244,8 +250,8 @@ describe('VerifyProof', function () {
             [
               anonAadhaarProof.ageAbove18,
               anonAadhaarProof.gender,
-              anonAadhaarProof.pincode,
               anonAadhaarProof.state,
+              anonAadhaarProof.pincode,
             ],
             packedGroth16Proof,
           ),
