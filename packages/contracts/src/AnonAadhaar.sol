@@ -6,7 +6,7 @@ import '../interfaces/IAnonAadhaar.sol';
 
 contract AnonAadhaar is IAnonAadhaar {
     address public verifier;
-    uint256 public storedPublicKeyHash;
+    uint256 public immutable storedPublicKeyHash;
 
     constructor(address _verifier, uint256 _pubkeyHash) {
         verifier = _verifier;
@@ -68,6 +68,6 @@ contract AnonAadhaar is IAnonAadhaar {
     /// @param message: Message to be hashed.
     /// @return Message digest.
     function _hash(uint256 message) private pure returns (uint256) {
-        return uint256(keccak256(abi.encodePacked(message))) >> 8;
+        return uint256(keccak256(abi.encodePacked(message))) >> 3;
     }
 }

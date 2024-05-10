@@ -15,5 +15,5 @@ export function hash(
 
   message = zeroPad(message, 32)
 
-  return (BigInt(keccak256(message)) >> BigInt(8)).toString() as NumericString
+  return (BigInt(keccak256(message)) >> BigInt(3)).toString() as NumericString
 }
