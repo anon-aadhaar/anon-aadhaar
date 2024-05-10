@@ -25,8 +25,8 @@ contract AnonAadhaar is IAnonAadhaar {
         uint nullifier,
         uint timestamp,
         uint signal,
-        uint[4] memory revealArray,
-        uint[8] memory groth16Proof
+        uint[4] calldata revealArray,
+        uint[8] calldata groth16Proof
     ) public view returns (bool) {
         uint signalHash = _hash(signal);
         return
