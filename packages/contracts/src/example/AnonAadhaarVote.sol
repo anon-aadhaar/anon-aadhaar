@@ -114,7 +114,8 @@ contract AnonAadhaarVote is IAnonAadhaarVote {
     // Function to get the total number of votes across all proposals
     function getTotalVotes() public view returns (uint256) {
         uint256 totalVotes = 0;
-        for (uint256 i = 0; i < proposals.length; i++) {
+        uint256 proposalLength = proposals.length;
+        for (uint256 i = 0; i < proposalLength; i++) {
             totalVotes += proposals[i].voteCount;
         }
         return totalVotes;
