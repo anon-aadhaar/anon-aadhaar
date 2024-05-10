@@ -16,12 +16,12 @@ include "./helpers/nullifier.circom";
 /// @input delimiterIndices - Indices of delimiters (255) in the QR text data. 18 delimiters including photo
 /// @input signature - RSA signature
 /// @input pubKey - RSA public key (of the government)
-/// @input nullifierSeed - A random value that is part of the nullifier; for example: applicationId, actionId
-/// @input public signalHash - An external signal to make it part of the proof
 /// @input revealAgeAbove18 - Flag to reveal age is above 18
 /// @input revealGender - Flag to reveal extracted gender
 /// @input revealState - Flag to reveal extracted state
 /// @input revealPinCode - Flag to reveal extracted pin code
+/// @input nullifierSeed - A random value that is part of the nullifier; for example: applicationId, actionId
+/// @input public signalHash - An external signal to make it part of the proof
 /// @output nullifier - A unique value derived from nullifierSeed and Aadhaar data to nullify the proof/user
 /// @output timestamp - Timestamp of when the data was signed - extracted and converted to Unix timestamp
 /// @output pubkeyHash - Poseidon hash of the RSA public key
@@ -31,12 +31,14 @@ template AadhaarVerifier(n, k, maxDataLength) {
     signal input delimiterIndices[18];
     signal input signature[k];
     signal input pubKey[k];
-    signal input nullifierSeed;
-    signal input signalHash;
     signal input revealAgeAbove18;
     signal input revealGender;
     signal input revealState;
     signal input revealPinCode;
+
+    // Public inputs
+    signal input nullifierSeed;
+    signal input signalHash;
 
     signal output pubkeyHash;
     signal output nullifier;
