@@ -204,7 +204,7 @@ describe('VerifyProof', function () {
             ],
             packedGroth16Proof,
           ),
-        ).to.be.revertedWith('[AnonAadhaarVote]: wrong user signal sent.')
+        ).to.be.revertedWith('[AnonAadhaarVote]: Wrong user signal sent.')
       })
 
       it('Should verify a proof with right address in signal', async function () {
@@ -256,7 +256,7 @@ describe('VerifyProof', function () {
             packedGroth16Proof,
           ),
         ).to.be.revertedWith(
-          '[AnonAadhaarVote]: Proof must be generated with Aadhaar data generated less than 3 hours ago.',
+          '[AnonAadhaarVote]: Proof must be generated with Aadhaar data signed less than 3 hours ago.',
         )
       })
     })
