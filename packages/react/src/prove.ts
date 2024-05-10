@@ -59,7 +59,7 @@ export const proveAndSerialize = async (
 export const processAadhaarArgs = async (
   qrData: string,
   useTestAadhaar: boolean,
-  secret: string
+  secret: string,
 ): Promise<AnonAadhaarArgs> => {
   let certificateFile: string | null = null
   try {
@@ -77,7 +77,7 @@ export const processAadhaarArgs = async (
   const args = await generateArgs({
     qrData,
     certificateFile,
-    secret
+    secret,
   })
 
   return args
