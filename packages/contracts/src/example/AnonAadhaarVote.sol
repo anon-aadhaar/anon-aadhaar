@@ -55,8 +55,8 @@ contract AnonAadhaarVote is IAnonAadhaarVote {
         uint nullifier,
         uint timestamp,
         uint signal,
-        uint[4] memory revealArray, 
-        uint[8] memory groth16Proof
+        uint[4] calldata revealArray, 
+        uint[8] calldata groth16Proof
     ) public {
         require(
             proposalIndex < proposals.length,
