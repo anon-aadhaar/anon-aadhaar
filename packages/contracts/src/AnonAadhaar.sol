@@ -13,15 +13,6 @@ contract AnonAadhaar is IAnonAadhaar {
         storedPublicKeyHash = _pubkeyHash;
     }
 
-    /// @dev Verifies that the public key received is corresponding with the one stored in the contract.
-    /// @param _receivedpubkeyHash: Public key received.
-    /// @return Verified bool
-    function verifyPublicKeyHash(
-        uint256 _receivedpubkeyHash
-    ) private view returns (bool) {
-        return storedPublicKeyHash == _receivedpubkeyHash;
-    }
-
     /// @dev Verifies the AnonAadhaar proof received.
     /// @param nullifier: Nullifier for the users Aadhaar.
     /// @param timestamp: Timestamp of when the QR code was signed.
