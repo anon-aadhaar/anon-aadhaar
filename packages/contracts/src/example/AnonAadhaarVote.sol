@@ -67,7 +67,7 @@ contract AnonAadhaarVote is IAnonAadhaarVote {
             '[AnonAadhaarVote]: wrong user signal sent.'
         );
         require(
-            isLessThan3HoursAgo(timestamp) == true,
+            isLessThan3HoursAgo(timestamp),
             '[AnonAadhaarVote]: Proof must be generated with Aadhaar data generated less than 3 hours ago.'
         );
         require(
@@ -78,7 +78,7 @@ contract AnonAadhaarVote is IAnonAadhaarVote {
                 signal,
                 revealArray,
                 groth16Proof
-            ) == true,
+            ),
             '[AnonAadhaarVote]: proof sent is not valid.'
         );
         // Check that user hasn't already voted
