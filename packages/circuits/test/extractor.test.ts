@@ -37,7 +37,7 @@ describe('Extractor', function () {
 
     const signedData = QRDataDecode.slice(0, QRDataDecode.length - 256)
 
-    const [paddedMsg] = sha256Pad(signedData, 512 * 3)
+    const [paddedMsg, messageLen] = sha256Pad(signedData, 512 * 3)
 
     const delimiterIndices: number[] = []
     for (let i = 0; i < paddedMsg.length; i++) {
@@ -51,7 +51,7 @@ describe('Extractor', function () {
 
     const witness: any[] = await circuit.calculateWitness({
       data: Uint8ArrayToCharArray(paddedMsg),
-      nonPaddedDataLength: QRDataDecode.length - 256,
+      qrDataPaddedLength: messageLen,
       delimiterIndices: delimiterIndices,
     })
 
@@ -75,7 +75,7 @@ describe('Extractor', function () {
 
     // Photo
     // Reconstruction of the photo bytes from packed ints and compare each byte
-    const photo = extractPhoto(Array.from(signedData))
+    const photo = extractPhoto(Array.from(paddedMsg))
     const photoWitness = bigIntChunksToByteArray(witness.slice(6, 6 + 32))
 
     assert(photoWitness.length === photo.bytes.length)

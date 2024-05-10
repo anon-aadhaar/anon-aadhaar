@@ -72,7 +72,6 @@ const main = () => {
   const input = {
     qrDataPadded: Uint8ArrayToCharArray(paddedMsg),
     qrDataPaddedLength: messageLen,
-    nonPaddedDataLength: signedData.length,
     delimiterIndices: delimiterIndices,
     signature: splitToWords(signature, BigInt(121), BigInt(17)),
     pubKey: splitToWords(pubKey, BigInt(121), BigInt(17)),

@@ -56,7 +56,6 @@ export type AnonAadhaarProof = {
 export type AnonAadhaarArgs = {
   qrDataPadded: StringArrayArgument // private
   qrDataPaddedLength: NumberArgument // private
-  nonPaddedDataLength: NumberArgument
   delimiterIndices: StringArrayArgument
   signature: StringArrayArgument // private
   pubKey: StringArrayArgument // public

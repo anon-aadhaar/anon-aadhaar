@@ -74,10 +74,6 @@ describe('useAnonAadhaar Hook', () => {
         argumentType: ArgumentTypeName.Number,
         value: messageLen.toString(),
       },
-      nonPaddedDataLength: {
-        argumentType: ArgumentTypeName.Number,
-        value: signedData.length.toString(),
-      },
       delimiterIndices: {
         argumentType: ArgumentTypeName.StringArray,
         value: [1, 2, 3, 4].map(elem => elem.toString()),

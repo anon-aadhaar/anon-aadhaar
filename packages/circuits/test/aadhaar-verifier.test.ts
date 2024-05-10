@@ -82,7 +82,6 @@ function prepareTestData() {
   const inputs = {
     qrDataPadded: Uint8ArrayToCharArray(paddedMsg),
     qrDataPaddedLength: messageLen,
-    nonPaddedDataLength: signedData.length,
     delimiterIndices: delimiterIndices,
     signature: splitToWords(signature, BigInt(121), BigInt(17)),
     pubKey: splitToWords(pubKey, BigInt(121), BigInt(17)),
@@ -94,7 +93,7 @@ function prepareTestData() {
     revealPinCode: 0,
   }
 
-  return { inputs, signedData, decodedData, pubKey }
+  return { inputs, paddedMsg, signedData, decodedData, pubKey }
 }
 
 describe('AadhaarVerifier', function () {
@@ -136,7 +135,7 @@ describe('AadhaarVerifier', function () {
   it('should compute nullifier correctly', async () => {
     const nullifierSeed = 12345678
 
-    const { inputs, signedData } = prepareTestData()
+    const { inputs, paddedMsg } = prepareTestData()
     inputs.nullifierSeed = nullifierSeed
 
     const witness = await circuit.calculateWitness(inputs)
@@ -144,7 +143,7 @@ describe('AadhaarVerifier', function () {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const poseidon: any = await buildPoseidon()
 
-    const { bytes: photoBytes } = extractPhoto(Array.from(signedData))
+    const { bytes: photoBytes } = extractPhoto(Array.from(paddedMsg))
     const photoBytesPacked = padArrayWithZeros(
       bytesToIntChunks(new Uint8Array(photoBytes), 31),
       32,

@@ -13,7 +13,6 @@ include "./helpers/nullifier.circom";
 /// @param maxDataLength - Maximum length of the data
 /// @input qrDataPadded - QR data without the signature; each number represent ascii byte; remaining space is padded with 0
 /// @input qrDataPaddedLength - Length of padded QR data
-/// @input nonPaddedDataLength - Length of actual data without padding
 /// @input delimiterIndices - Indices of delimiters (255) in the QR text data. 18 delimiters including photo
 /// @input signature - RSA signature
 /// @input pubKey - RSA public key (of the government)
@@ -29,12 +28,9 @@ include "./helpers/nullifier.circom";
 template AadhaarVerifier(n, k, maxDataLength) {
     signal input qrDataPadded[maxDataLength];
     signal input qrDataPaddedLength;
-    signal input nonPaddedDataLength;
     signal input delimiterIndices[18];
     signal input signature[k];
     signal input pubKey[k];
-
-    // Public inputs
     signal input nullifierSeed;
     signal input signalHash;
     signal input revealAgeAbove18;
@@ -67,7 +63,7 @@ template AadhaarVerifier(n, k, maxDataLength) {
     // Extract data from QR and compute nullifiers
     component qrDataExtractor = QRDataExtractor(maxDataLength);
     qrDataExtractor.data <== qrDataPadded;
-    qrDataExtractor.nonPaddedDataLength <== nonPaddedDataLength;
+    qrDataExtractor.qrDataPaddedLength <== qrDataPaddedLength;
     qrDataExtractor.delimiterIndices <== delimiterIndices;
 
     // Reveal extracted data

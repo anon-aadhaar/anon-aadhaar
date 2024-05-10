@@ -280,16 +280,15 @@ template PhotoExtractor(maxDataLength) {
 /// @title QRDataExtractor
 /// @notice Extracts the name, date, gender, photo from the Aadhaar QR data
 /// @input data[maxDataLength] - QR data without the signature padded
-/// @input dataLength - Length of the padded QR data
-/// @input nonPaddedDataLength - Length of the non-padded QR data
+/// @input qrDataPaddedLength - Length of the padded QR data
 /// @input delimiterIndices[17] - Indices of the delimiters in the QR data
 /// @output name - single field (int) element representing the name in little endian order
 /// @output age - Unix timestamp representing the date of birth
 /// @output gender - Single byte number representing gender
-/// @output photo - Photo of the user
+/// @output photo - Photo of the user along the SHA padding
 template QRDataExtractor(maxDataLength) {
     signal input data[maxDataLength];
-    signal input nonPaddedDataLength;
+    signal input qrDataPaddedLength;
     signal input delimiterIndices[18];
 
     // signal output name;
@@ -371,6 +370,6 @@ template QRDataExtractor(maxDataLength) {
     component photoExtractor = PhotoExtractor(maxDataLength);
     photoExtractor.nDelimitedData <== nDelimitedData;
     photoExtractor.startDelimiterIndex <== delimiterIndices[photoPosition() - 1];
-    photoExtractor.endIndex <== nonPaddedDataLength - 1;
+    photoExtractor.endIndex <== qrDataPaddedLength - 1;
     photo <== photoExtractor.out;
 }
