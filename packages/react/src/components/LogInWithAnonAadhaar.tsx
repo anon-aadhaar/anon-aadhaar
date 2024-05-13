@@ -10,7 +10,7 @@ import { ProverState, FieldsToRevealArray } from '@anon-aadhaar/core'
 interface LogInWithAnonAadhaarProps {
   signal?: string
   fieldsToReveal?: FieldsToRevealArray
-  nullifierSeed: number
+  nullifierSeed: string
 }
 
 /**

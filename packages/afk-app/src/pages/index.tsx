@@ -3,15 +3,17 @@ import { LogInWithAnonAadhaar } from '@anon-aadhaar/react'
 // import { useEffect } from 'react'
 import { useAFKIentity } from '@/hooks/useAfkIdentity'
 import { createIdentity } from '@/identity/identity'
+import { generateAFKProofs } from '@/identity/createAFKProof'
+import { useEffect } from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
   const { _identity } = useAFKIentity()
 
-  // useEffect(() => {
-  //   if (_identity) console.log('coucou: ', _identity)
-  // }, [_identity])
+  useEffect(() => {
+    if (_identity) console.log('coucou: ', _identity._privateKey)
+  }, [_identity])
 
   return (
     <main
@@ -29,7 +31,7 @@ export default function Home() {
         </button>
       ) : (
         <LogInWithAnonAadhaar
-          nullifierSeed={1234}
+          nullifierSeed={_identity.privateKey}
           fieldsToReveal={[
             'revealAgeAbove18',
             'revealGender',
@@ -37,6 +39,12 @@ export default function Home() {
             'revealState',
           ]}
         />
+      )}
+
+      {_identity && (
+        <button onClick={() => generateAFKProofs(_identity._privateKey)}>
+          TEST AFK PROVER
+        </button>
       )}
     </main>
   )

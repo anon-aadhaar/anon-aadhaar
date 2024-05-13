@@ -20,7 +20,7 @@ interface ProveModalProps {
   qrData: string | null
   setQrStatus: Dispatch<SetStateAction<AadhaarQRValidation | null>>
   fieldsToReveal?: FieldsToRevealArray
-  nullifierSeed: number
+  nullifierSeed: string
   signal?: string
   setCurrentView: Dispatch<SetStateAction<ModalViews>>
 }

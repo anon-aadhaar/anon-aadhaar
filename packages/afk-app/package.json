@@ -16,7 +16,8 @@
     "localforage": "^1.10.0",
     "next": "14.2.3",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "snarkjs": "^0.7.4"
   },
   "devDependencies": {
     "@types/node": "^20",

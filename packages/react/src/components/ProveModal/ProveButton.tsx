@@ -11,7 +11,7 @@ interface ProveButtonProps {
   provingEnabled: boolean
   setErrorMessage: Dispatch<SetStateAction<string | null>>
   fieldsToReveal?: FieldsToRevealArray
-  nullifierSeed: number
+  nullifierSeed: string
   setQrStatus: Dispatch<SetStateAction<AadhaarQRValidation | null>>
   signal?: string
   setCurrentView: Dispatch<SetStateAction<ModalViews>>
@@ -21,11 +21,10 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
   qrData,
   provingEnabled,
   setErrorMessage,
-  signal,
   fieldsToReveal,
-  nullifierSeed,
   setQrStatus,
   setCurrentView,
+  nullifierSeed,
 }) => {
   const { startReq, useTestAadhaar } = useContext(AnonAadhaarContext)
 
@@ -40,8 +39,6 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
         qrData,
         useTestAadhaar,
         nullifierSeed,
-        fieldsToReveal,
-        signal,
       )
 
       startReq({ type: 'login', args })
