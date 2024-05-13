@@ -103,9 +103,9 @@ export function AnonAadhaarProvider(
       }
     } else {
       anonAadhaarInitArgs = {
-        wasmURL: artifactUrls.v2.wasm,
-        zkeyURL: artifactUrls.v2.chunked,
-        vkeyURL: artifactUrls.v2.vk,
+        wasmURL: artifactUrls.Lite.wasm,
+        zkeyURL: artifactUrls.Lite.chunked,
+        vkeyURL: artifactUrls.Lite.vk,
         artifactsOrigin: ArtifactsOrigin.chunked,
       }
     }
