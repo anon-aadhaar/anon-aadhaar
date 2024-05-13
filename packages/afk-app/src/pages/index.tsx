@@ -12,7 +12,7 @@ export default function Home() {
   const { _identity } = useAFKIentity()
 
   useEffect(() => {
-    if (_identity) console.log('coucou: ', _identity._privateKey)
+    if (_identity) console.log('coucou: ', _identity.privateKey)
   }, [_identity])
 
   return (
@@ -42,7 +42,7 @@ export default function Home() {
       )}
 
       {_identity && (
-        <button onClick={() => generateAFKProofs(_identity._privateKey)}>
+        <button onClick={() => generateAFKProofs(_identity.privateKey)}>
           TEST AFK PROVER
         </button>
       )}
