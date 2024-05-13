@@ -44,7 +44,7 @@ function install_deps() {
 }
 
 function build_circuit() {
-    circom ./src/main.circom  --r1cs --wasm --c -o "$BUILD_DIR" -l ./node_modules -l ../../node_modules
+    circom ./src/aadhaar-verifier.circom  --r1cs --wasm --c -o "$BUILD_DIR" -l ./node_modules -l ../../node_modules
 }
 
 # trusted setup for development
