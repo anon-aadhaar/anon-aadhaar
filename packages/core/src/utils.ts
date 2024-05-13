@@ -202,3 +202,15 @@ export const retrieveFileExtension = (str: string) => {
   )
   return fileExtension
 }
+
+export function isOlderThanEighteen(dob: string): boolean {
+  const birthDate = new Date(dob)
+  const today = new Date()
+  const eighteenYearsAgo = new Date(
+    today.getFullYear() - 18,
+    today.getMonth(),
+    today.getDate()
+  )
+
+  return birthDate <= eighteenYearsAgo
+}

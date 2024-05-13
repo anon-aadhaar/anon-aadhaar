@@ -102,3 +102,22 @@ export type FieldKey =
   | 'revealPinCode'
 
 export type FieldsToRevealArray = FieldKey[]
+
+export type IdFieldsLabels =
+  | 'Email_mobile_present_bit_indicator_value'
+  | 'ReferenceId'
+  | 'Name'
+  | 'DOB'
+  | 'Gender'
+  | 'CareOf'
+  | 'District'
+  | 'Landmark'
+  | 'House'
+  | 'Location'
+  | 'PinCode'
+  | 'PostOffice'
+  | 'State'
+  | 'Street'
+  | 'SubDistrict'
+  | 'VTC'
+  | 'PhoneNumberLast4'

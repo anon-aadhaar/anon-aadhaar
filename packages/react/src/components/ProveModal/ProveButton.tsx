@@ -5,6 +5,7 @@ import React from 'react'
 import { processAadhaarArgs } from '../../prove'
 import { AadhaarQRValidation, ModalViews } from '../../types'
 import { FieldsToRevealArray } from '@anon-aadhaar/core'
+import { storeValuesInDB } from '../../util'
 
 interface ProveButtonProps {
   qrData: string | null
@@ -35,11 +36,10 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
 
       if (fieldsToReveal === undefined) fieldsToReveal = []
 
-      const args = await processAadhaarArgs(
-        qrData,
-        useTestAadhaar,
-        nullifierSeed,
-      )
+      const { args, ageAbove18, gender, pinCode, state } =
+        await processAadhaarArgs(qrData, useTestAadhaar, nullifierSeed)
+
+      await storeValuesInDB({ ageAbove18, gender, pinCode, state })
 
       startReq({ type: 'login', args })
       setQrStatus(null)

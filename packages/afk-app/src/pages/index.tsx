@@ -3,7 +3,7 @@ import { LogInWithAnonAadhaar } from '@anon-aadhaar/react'
 // import { useEffect } from 'react'
 import { useAFKIentity } from '@/hooks/useAfkIdentity'
 import { createIdentity } from '@/identity/identity'
-import { generateAFKProofs } from '@/identity/createAFKProof'
+// import { generateAFKProofs } from '@/identity/createAFKProof'
 import { useEffect } from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -41,11 +41,11 @@ export default function Home() {
         />
       )}
 
-      {_identity && (
+      {/* {_identity && (
         <button onClick={() => generateAFKProofs(_identity.privateKey)}>
           TEST AFK PROVER
         </button>
-      )}
+      )} */}
     </main>
   )
 }
