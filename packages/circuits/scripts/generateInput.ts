@@ -79,8 +79,8 @@ const main = () => {
     signalHash: hash(1),
     revealGender: '0',
     revealAgeAbove18: '0',
-    revealState: '0',
     revealPinCode: '0',
+    revealState: '0',
   }
 
   writeFileSync(

@@ -33,9 +33,9 @@ describe('AnonAadhaar prover react tests', function () {
     const verified = await verify(result.anonAadhaarProof)
 
     assert(verified == true, 'Should verifiable')
-    assert(result.anonAadhaarProof.proof.gender === '77')
-    assert(result.anonAadhaarProof.proof.state === '0')
     assert(result.anonAadhaarProof.proof.ageAbove18 === '0')
+    assert(result.anonAadhaarProof.proof.gender === '77')
     assert(result.anonAadhaarProof.proof.pincode === '110051')
+    assert(result.anonAadhaarProof.proof.state === '0')
   })
 })

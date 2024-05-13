@@ -89,8 +89,8 @@ function prepareTestData() {
     signalHash: 1001,
     revealGender: 0,
     revealAgeAbove18: 0,
-    revealState: 0,
     revealPinCode: 0,
+    revealState: 0,
   }
 
   return {
@@ -184,8 +184,8 @@ describe('AadhaarVerifier', function () {
 
     inputs.revealAgeAbove18 = 1
     inputs.revealGender = 1
-    inputs.revealState = 1
     inputs.revealPinCode = 1
+    inputs.revealState = 1
 
     const witness = await circuit.calculateWitness(inputs)
 
@@ -207,8 +207,8 @@ describe('AadhaarVerifier', function () {
 
     inputs.revealAgeAbove18 = 0
     inputs.revealGender = 0
-    inputs.revealState = 0
     inputs.revealPinCode = 0
+    inputs.revealState = 0
 
     const witness = await circuit.calculateWitness(inputs)
 

@@ -102,11 +102,11 @@ describe('useAnonAadhaar Hook', () => {
         argumentType: ArgumentTypeName.Number,
         value: '0',
       },
-      revealState: {
+      revealPinCode: {
         argumentType: ArgumentTypeName.Number,
         value: '0',
       },
-      revealPinCode: {
+      revealState: {
         argumentType: ArgumentTypeName.Number,
         value: '0',
       },

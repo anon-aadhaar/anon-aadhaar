@@ -46,8 +46,8 @@ export type AnonAadhaarProof = {
   signalHash: string
   ageAbove18: string
   gender: string
-  state: string
   pincode: string
+  state: string
 }
 
 /**
@@ -63,8 +63,8 @@ export type AnonAadhaarArgs = {
   signalHash: StringArgument // public
   revealGender: NumberArgument
   revealAgeAbove18: NumberArgument
-  revealState: NumberArgument
   revealPinCode: NumberArgument
+  revealState: NumberArgument
 }
 
 export type PackedGroth16Proof = [
@@ -90,21 +90,21 @@ export enum ProverState {
 export type FieldsToReveal = {
   revealAgeAbove18: boolean
   revealGender: boolean
-  revealState: boolean
   revealPinCode: boolean
+  revealState: boolean
 }
 
 export const fieldsLabel: { key: keyof FieldsToReveal; label: string }[] = [
   { key: 'revealAgeAbove18', label: 'Age Above 18' },
   { key: 'revealGender', label: 'Gender' },
-  { key: 'revealState', label: 'State' },
   { key: 'revealPinCode', label: 'PIN Code' },
+  { key: 'revealState', label: 'State' },
 ]
 
 export type FieldKey =
   | 'revealAgeAbove18'
   | 'revealGender'
-  | 'revealState'
   | 'revealPinCode'
+  | 'revealState'
 
 export type FieldsToRevealArray = FieldKey[]

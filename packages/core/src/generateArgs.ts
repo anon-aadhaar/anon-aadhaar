@@ -77,8 +77,8 @@ export const generateArgs = async ({
   const fieldsToReveal = {
     revealGender: fieldsToRevealArray.includes('revealGender'),
     revealAgeAbove18: fieldsToRevealArray.includes('revealAgeAbove18'),
-    revealState: fieldsToRevealArray.includes('revealState'),
     revealPinCode: fieldsToRevealArray.includes('revealPinCode'),
+    revealState: fieldsToRevealArray.includes('revealState'),
   }
 
   // Set signal to 1 by default if no signal setted up
@@ -121,13 +121,13 @@ export const generateArgs = async ({
       argumentType: ArgumentTypeName.Number,
       value: fieldsToReveal.revealAgeAbove18 ? '1' : '0',
     },
-    revealState: {
-      argumentType: ArgumentTypeName.Number,
-      value: fieldsToReveal.revealState ? '1' : '0',
-    },
     revealPinCode: {
       argumentType: ArgumentTypeName.Number,
       value: fieldsToReveal.revealPinCode ? '1' : '0',
+    },
+    revealState: {
+      argumentType: ArgumentTypeName.Number,
+      value: fieldsToReveal.revealState ? '1' : '0',
     },
   }
 

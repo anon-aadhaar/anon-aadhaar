@@ -109,8 +109,8 @@ describe('VerifyProof', function () {
             [
               anonAadhaarProof.ageAbove18,
               anonAadhaarProof.gender,
-              anonAadhaarProof.state,
               anonAadhaarProof.pincode,
+              anonAadhaarProof.state,
             ],
             packedGroth16Proof,
           ),
@@ -131,8 +131,8 @@ describe('VerifyProof', function () {
             [
               anonAadhaarProof.ageAbove18,
               anonAadhaarProof.gender,
-              anonAadhaarProof.state,
               anonAadhaarProof.pincode,
+              anonAadhaarProof.state,
             ],
             packedGroth16Proof,
           ),
@@ -199,8 +199,8 @@ describe('VerifyProof', function () {
             [
               anonAadhaarProof.ageAbove18,
               anonAadhaarProof.gender,
-              anonAadhaarProof.state,
               anonAadhaarProof.pincode,
+              anonAadhaarProof.state,
             ],
             packedGroth16Proof,
           ),
@@ -220,8 +220,8 @@ describe('VerifyProof', function () {
             [
               anonAadhaarProof.ageAbove18,
               anonAadhaarProof.gender,
-              anonAadhaarProof.state,
               anonAadhaarProof.pincode,
+              anonAadhaarProof.state,
             ],
             packedGroth16Proof,
           ),
@@ -250,8 +250,8 @@ describe('VerifyProof', function () {
             [
               anonAadhaarProof.ageAbove18,
               anonAadhaarProof.gender,
-              anonAadhaarProof.state,
               anonAadhaarProof.pincode,
+              anonAadhaarProof.state,
             ],
             packedGroth16Proof,
           ),

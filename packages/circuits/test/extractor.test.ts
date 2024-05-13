@@ -31,7 +31,7 @@ describe('Extractor', function () {
     )
   })
 
-  it.only('should extract data', async () => {
+  it('should extract data', async () => {
     const QRDataBytes = convertBigIntToByteArray(BigInt(QRData))
     const QRDataDecode = decompressByteArray(QRDataBytes)
 
