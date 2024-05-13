@@ -137,17 +137,17 @@ export function readData(data: number[], index: number) {
   return data.slice(start, end)
 }
 
-export function extractPhoto(qrData: number[]) {
+// Extract photo from startIndex (18th delimiter) to end including the padding
+export function extractPhoto(qrDataPadded: number[], dataLength: number) {
   let begin = 0
   for (let i = 0; i < 18; ++i) {
-    begin = qrData.indexOf(255, begin + 1)
+    begin = qrDataPadded.indexOf(255, begin + 1)
   }
 
-  const end = qrData.length
   return {
     begin,
-    end,
-    bytes: qrData.slice(begin + 1, end),
+    dataLength,
+    bytes: qrDataPadded.slice(begin + 1, dataLength),
   }
 }
 

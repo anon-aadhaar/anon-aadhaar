@@ -51,11 +51,11 @@ function prepareTestData() {
 
   const signedData = decodedData.slice(0, decodedData.length - 256)
 
-  const [paddedMsg, messageLen] = sha256Pad(signedData, 512 * 3)
+  const [qrDataPadded, qrDataPaddedLen] = sha256Pad(signedData, 512 * 3)
 
   const delimiterIndices: number[] = []
-  for (let i = 0; i < paddedMsg.length; i++) {
-    if (paddedMsg[i] === 255) {
+  for (let i = 0; i < qrDataPadded.length; i++) {
+    if (qrDataPadded[i] === 255) {
       delimiterIndices.push(i)
     }
     if (delimiterIndices.length === 18) {
@@ -80,8 +80,8 @@ function prepareTestData() {
   )
 
   const inputs = {
-    qrDataPadded: Uint8ArrayToCharArray(paddedMsg),
-    qrDataPaddedLength: messageLen,
+    qrDataPadded: Uint8ArrayToCharArray(qrDataPadded),
+    qrDataPaddedLength: qrDataPaddedLen,
     delimiterIndices: delimiterIndices,
     signature: splitToWords(signature, BigInt(121), BigInt(17)),
     pubKey: splitToWords(pubKey, BigInt(121), BigInt(17)),
@@ -93,7 +93,7 @@ function prepareTestData() {
     revealPinCode: 0,
   }
 
-  return { inputs, paddedMsg, signedData, decodedData, pubKey }
+  return { inputs, qrDataPadded, signedData, decodedData, pubKey, qrDataPaddedLen }
 }
 
 describe('AadhaarVerifier', function () {
@@ -135,7 +135,7 @@ describe('AadhaarVerifier', function () {
   it('should compute nullifier correctly', async () => {
     const nullifierSeed = 12345678
 
-    const { inputs, paddedMsg } = prepareTestData()
+    const { inputs, qrDataPadded, qrDataPaddedLen } = prepareTestData()
     inputs.nullifierSeed = nullifierSeed
 
     const witness = await circuit.calculateWitness(inputs)
@@ -143,7 +143,7 @@ describe('AadhaarVerifier', function () {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const poseidon: any = await buildPoseidon()
 
-    const { bytes: photoBytes } = extractPhoto(Array.from(paddedMsg))
+    const { bytes: photoBytes } = extractPhoto(Array.from(qrDataPadded), qrDataPaddedLen)
     const photoBytesPacked = padArrayWithZeros(
       bytesToIntChunks(new Uint8Array(photoBytes), 31),
       32,
