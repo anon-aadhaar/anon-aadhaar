@@ -128,7 +128,7 @@ export async function fetchKey(keyURL: string, maxRetries = 3) {
 
 // Function to store data in IndexedDB using localforage
 export async function storeValuesInDB(data: {
-  [key: string]: any
+  [key: string]: string | boolean
 }): Promise<void> {
   try {
     for (const key in data) {
@@ -141,14 +141,10 @@ export async function storeValuesInDB(data: {
 }
 
 // Function to store data in IndexedDB using localforage
-export async function retrieveValuesInDB(data: {
-  [key: string]: any
-}): Promise<void> {
+export async function retrieveValuesInDB(key: string): Promise<any> {
   try {
-    for (const key in data) {
-      await localforage.getItem(key)
-    }
-    console.log('Data successfully retrieved in IndexedDB')
+    // console.log('Data successfully retrieved in IndexedDB')
+    return await localforage.getItem(key)
   } catch (error) {
     console.error('Error storing data in IndexedDB:', error)
   }
