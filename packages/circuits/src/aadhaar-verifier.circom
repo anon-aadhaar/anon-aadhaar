@@ -18,8 +18,8 @@ include "./helpers/nullifier.circom";
 /// @input pubKey - RSA public key (of the government)
 /// @input revealAgeAbove18 - Flag to reveal age is above 18
 /// @input revealGender - Flag to reveal extracted gender
-/// @input revealState - Flag to reveal extracted state
 /// @input revealPinCode - Flag to reveal extracted pin code
+/// @input revealState - Flag to reveal extracted state
 /// @input nullifierSeed - A random value that is part of the nullifier; for example: applicationId, actionId
 /// @input public signalHash - An external signal to make it part of the proof
 /// @output nullifier - A unique value derived from nullifierSeed and Aadhaar data to nullify the proof/user
@@ -33,8 +33,8 @@ template AadhaarVerifier(n, k, maxDataLength) {
     signal input pubKey[k];
     signal input revealAgeAbove18;
     signal input revealGender;
-    signal input revealState;
     signal input revealPinCode;
+    signal input revealState;
 
     // Public inputs
     signal input nullifierSeed;
@@ -45,8 +45,8 @@ template AadhaarVerifier(n, k, maxDataLength) {
     signal output timestamp;
     signal output ageAbove18;
     signal output gender;
-    signal output state;
     signal output pinCode;
+    signal output state;
 
 
     // Verify the RSA signature
@@ -71,14 +71,14 @@ template AadhaarVerifier(n, k, maxDataLength) {
     // Reveal extracted data
     revealAgeAbove18 * (revealAgeAbove18 - 1) === 0;
     revealGender * (revealGender - 1) === 0;
-    revealState * (revealState - 1) === 0;
     revealPinCode * (revealPinCode - 1) === 0;
+    revealState * (revealState - 1) === 0;
 
     timestamp <== qrDataExtractor.timestamp;
     ageAbove18 <== revealAgeAbove18 * qrDataExtractor.ageAbove18; // Note: 0 does not necessarily mean age is below 18
     gender <== revealGender * qrDataExtractor.gender;
-    state <== revealState * qrDataExtractor.state;
     pinCode <== revealPinCode * qrDataExtractor.pinCode;
+    state <== revealState * qrDataExtractor.state;
 
 
     // Calculate nullifier

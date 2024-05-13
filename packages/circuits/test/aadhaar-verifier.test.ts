@@ -93,7 +93,14 @@ function prepareTestData() {
     revealPinCode: 0,
   }
 
-  return { inputs, qrDataPadded, signedData, decodedData, pubKey, qrDataPaddedLen }
+  return {
+    inputs,
+    qrDataPadded,
+    signedData,
+    decodedData,
+    pubKey,
+    qrDataPaddedLen,
+  }
 }
 
 describe('AadhaarVerifier', function () {
@@ -143,7 +150,10 @@ describe('AadhaarVerifier', function () {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const poseidon: any = await buildPoseidon()
 
-    const { bytes: photoBytes } = extractPhoto(Array.from(qrDataPadded), qrDataPaddedLen)
+    const { bytes: photoBytes } = extractPhoto(
+      Array.from(qrDataPadded),
+      qrDataPaddedLen,
+    )
     const photoBytesPacked = padArrayWithZeros(
       bytesToIntChunks(new Uint8Array(photoBytes), 31),
       32,
