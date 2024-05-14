@@ -199,11 +199,11 @@ describe('AadhaarVerifier', function () {
     // Gender
     assert(bigIntsToString([witness[5]]) === 'M')
 
-    // State
-    assert(bigIntsToString([witness[6]]) === 'Delhi')
-
     // Pin code
-    assert(Number(witness[7]) === 110051)
+    assert(Number(witness[6]) === 110051)
+
+    // State
+    assert(bigIntsToString([witness[7]]) === 'Delhi')
   })
 
   it('should not output extracted data if reveal is false', async () => {
