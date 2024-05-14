@@ -71,14 +71,14 @@ export const ProveModal: React.FC<ProveModalProps> = ({
                     <FieldRow key={key}>
                       <DiscloseOn>
                         <Icon src={revealillustration} />
-                        {label}
+                        {label.toLocaleUpperCase()}
                       </DiscloseOn>
                     </FieldRow>
                   ) : (
                     <FieldRow key={key}>
                       <DiscloseOff>
                         <Icon src={noRevealillustration} />
-                        {label}
+                        {label.toLocaleUpperCase()}
                       </DiscloseOff>
                     </FieldRow>
                   ),
@@ -87,7 +87,7 @@ export const ProveModal: React.FC<ProveModalProps> = ({
                   <FieldRow key={key}>
                     <DiscloseOff>
                       <Icon src={noRevealillustration} />
-                      {label}
+                      {label.toLocaleUpperCase()}
                     </DiscloseOff>
                   </FieldRow>
                 ))}
