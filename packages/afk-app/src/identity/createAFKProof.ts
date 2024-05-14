@@ -76,6 +76,8 @@ export const generateAFKProofs = async (
     retrieveValuesInDB('pinCode'),
   ])
 
+  console.log(clearValues)
+
   const input = {
     secret: BigInt('0x' + secret),
     issuerIds: [
@@ -120,10 +122,10 @@ export const generateAFKProofs = async (
   }
 
   const wasmBuffer = new Uint8Array(
-    (await fetchKey('./afk.wasm')) as ArrayBuffer,
+    (await fetchKey('/afk.wasm')) as ArrayBuffer,
   )
   const zkeyBuffer = new Uint8Array(
-    (await fetchKey('./afk.zkey')) as ArrayBuffer,
+    (await fetchKey('/afk.zkey')) as ArrayBuffer,
   )
 
   console.log('lauching afk prover')
