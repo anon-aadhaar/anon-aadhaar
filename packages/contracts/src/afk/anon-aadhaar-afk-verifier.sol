@@ -1,13 +1,13 @@
 pragma solidity >=0.7.0 <0.9.0;
 
-import '../interfaces/IIssuerVerifier.sol';
+import './interfaces.sol';
 import {Groth16Verifier} from './anon-aadhaar-afk-groth16-verifier.sol';
 
-contract AnonAadhaarAFKVerifier implements IIssuerVerifier {
+contract AnonAadhaarAFKVerifier is IIssuerVerifier {
     Groth16Verifier public verifier;
-    address public pubKeyHash;
+    uint256 public pubKeyHash;
 
-    constructor(Groth16Verifier _verifier, address _pubKeyHash) {
+    constructor(Groth16Verifier _verifier, uint256 _pubKeyHash) {
         verifier = _verifier;
         pubKeyHash = _pubKeyHash;
     }
@@ -25,7 +25,7 @@ contract AnonAadhaarAFKVerifier implements IIssuerVerifier {
             uint[8] memory groth16Proof
         ) = abi.decode(proof, (uint, uint, uint, uint, uint, uint, uint, uint, uint[8]));
 
-        assert(pubKeyHash == _pubKeyHash, "Invalid pubkey hash");
+        require(pubKeyHash == _pubKeyHash, "Invalid pubkey hash");
 
         verifier.verifyProof(
             [groth16Proof[0], groth16Proof[1]],
@@ -46,7 +46,14 @@ contract AnonAadhaarAFKVerifier implements IIssuerVerifier {
             ]
         );
 
-        return (nullifier, [countryCommitment, ageAbove18Commitment, genderCommitment, stateCommitment, pinCodeCommitment]);
+        uint256[] memory commitments = new uint256[](5);
+        commitments[0] = countryCommitment;
+        commitments[1] = ageAbove18Commitment;
+        commitments[2] = genderCommitment;
+        commitments[3] = stateCommitment;
+        commitments[4] = pinCodeCommitment;
+
+        return (nullifier, commitments);
     }
  
 }

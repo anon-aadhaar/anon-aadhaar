@@ -1,9 +1,8 @@
-//SPDX-License-Identifier: Unlicense
+//SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import '../interfaces/IAnonAadhaarGroth16Verifier.sol';
-import '../interfaces/IAnonAadhaar.sol';
 import {Groth16Verifier} from './afk-groth16-verifier.sol';
+import './interfaces.sol';
 
 
 contract AFK {
@@ -13,50 +12,56 @@ contract AFK {
 
     mapping(uint256 => uint256) expiryOfClaimCommitment;
 
+    mapping(uint256 => bool) nullifiers;
+
     constructor(address _verifier) {
         verifier = _verifier;
     }
 
     function addIssuer(
         uint32 issuerId,
-        string name,
-        address verifier,
+        string memory name,
+        address verifierAddr,
         uint256 claimExpiry
-    ) {
-        issuers[issuerId] = Issuer(name, verifier, claimExpiry);
+    ) public {
+        issuers[issuerId] = Issuer(name, verifierAddr, claimExpiry);
     }
 
-    function addClaims(uint32 source, bytes proof) {
+    function addClaims(uint32 source, bytes calldata proof) public {
         Issuer memory issuer = issuers[source];
 
-        assert(issuer.verifier != address(0));
+        require(issuer.verifier != address(0));
 
-        uint256[] memory claim = IIssuerVerifier(issuer.verifier).verifyProof(
+        (uint256 nullifier, uint256[] memory claims) = IIssuerVerifier(issuer.verifier).verifyProof(
             proof
         );
 
+        require(!nullifiers[nullifier], 'Nullifier already used');
+
+        nullifiers[nullifier] = true;
+
         uint256 expiry = block.timestamp + issuer.claimExpiry;
 
-        for (uint i = 0; i < claim.length; i++) {
-            expiryOfClaimCommitment[claim[i]] = expiry;
+        for (uint i = 0; i < claims.length; i++) {
+            expiryOfClaimCommitment[claims[i]] = expiry;
         }
     }
 
     function verifyClaims(
-        uint32[] claimKeys,
-        uint256[] claimValues,
-        uint256[] claimCommitments,
+        uint32[] memory claimKeys,
+        uint256[] memory claimValues,
+        uint256[] memory claimCommitments,
         uint256 nullifier,
         uint256 scope,
         uint256 message,
         uint256[8] memory groth16Proof
-    ) view returns (bool) {
-        assert(claimKeys.length <= 5, 'Too many claims');
-        assert(
+    ) view public returns (bool) {
+        require(claimKeys.length <= 5, 'Too many claims');
+        require(
             claimKeys.length == claimValues.length,
             'Claim keys and values length mismatch'
         );
-        assert(
+        require(
             claimKeys.length == claimCommitments.length,
             'Claim keys and commitments length mismatch'
         );
@@ -68,7 +73,7 @@ contract AFK {
             );
         }
 
-        return verifier.verifyProof(
+        return Groth16Verifier(verifier).verifyProof(
             [groth16Proof[0], groth16Proof[1]],
             [
                 [groth16Proof[2], groth16Proof[3]],
