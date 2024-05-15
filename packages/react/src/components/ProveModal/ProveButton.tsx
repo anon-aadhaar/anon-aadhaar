@@ -1,36 +1,36 @@
 import styled from 'styled-components'
 import { Dispatch, useContext, SetStateAction } from 'react'
 import { AnonAadhaarContext } from '../../hooks/useAnonAadhaar'
-import { Spinner } from '../LoadingSpinner'
 import React from 'react'
 import { processAadhaarArgs } from '../../prove'
-import { AadhaarQRValidation } from '../../types'
-import { FieldsToRevealArray, ProverState } from '@anon-aadhaar/core'
+import { AadhaarQRValidation, ModalViews } from '../../types'
+import { FieldsToRevealArray } from '@anon-aadhaar/core'
 
 interface ProveButtonProps {
   qrData: string | null
   provingEnabled: boolean
   setErrorMessage: Dispatch<SetStateAction<string | null>>
   fieldsToReveal?: FieldsToRevealArray
-  nullifierSeed: number
+  nullifierSeed: string
   setQrStatus: Dispatch<SetStateAction<AadhaarQRValidation | null>>
   signal?: string
+  setCurrentView: Dispatch<SetStateAction<ModalViews>>
 }
 
 export const ProveButton: React.FC<ProveButtonProps> = ({
   qrData,
   provingEnabled,
   setErrorMessage,
-  signal,
   fieldsToReveal,
-  nullifierSeed,
   setQrStatus,
+  setCurrentView,
+  nullifierSeed,
 }) => {
-  const { startReq, useTestAadhaar, proverState } =
-    useContext(AnonAadhaarContext)
+  const { startReq, useTestAadhaar } = useContext(AnonAadhaarContext)
 
   const startProving = async () => {
     try {
+      setCurrentView('Proving')
       if (qrData === null) throw new Error('Missing QR code data.')
 
       if (fieldsToReveal === undefined) fieldsToReveal = []
@@ -39,8 +39,6 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
         qrData,
         useTestAadhaar,
         nullifierSeed,
-        fieldsToReveal,
-        signal,
       )
 
       startReq({ type: 'login', args })
@@ -51,78 +49,33 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
     }
   }
 
-  return (() => {
-    switch (proverState) {
-      case ProverState.Initializing:
-        return (
-          <Btn disabled={!provingEnabled} onClick={startProving}>
-            {' '}
-            Request Aadhaar Proof{' '}
-          </Btn>
-        )
-      case ProverState.Completed:
-        return (
-          <Btn disabled={!provingEnabled} onClick={startProving}>
-            {' '}
-            Request Aadhaar Proof{' '}
-          </Btn>
-        )
-      case ProverState.FetchingWasm:
-        return (
-          <Btn>
-            Searching for wasm file...
-            {'\u2003'}
-            <Spinner />
-          </Btn>
-        )
-      case ProverState.FetchingZkey:
-        return (
-          <Btn>
-            Searching for zkey file...
-            {'\u2003'}
-            <Spinner />
-          </Btn>
-        )
-      case ProverState.Proving:
-        return (
-          <Btn>
-            Generating proof...
-            {'\u2003'}
-            <Spinner />
-          </Btn>
-        )
-      case ProverState.Error:
-        return (
-          <Btn>
-            Oups something went wrong...
-            {'\u2003'}
-            <Spinner />
-          </Btn>
-        )
-    }
-  })()
+  return (
+    <Btn disabled={!provingEnabled} onClick={startProving}>
+      {' '}
+      GENERATE ANON AADHAAR PROOF{' '}
+    </Btn>
+  )
 }
 
 const Btn = styled.button`
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
   display: flex;
+  width: 100%;
   align-items: center;
   justify-content: center;
   padding: 0.5rem 1rem;
-  font-size: 1.15rem;
+  font-size: 16px;
   cursor: pointer;
-  color: #f8f8f8;
-  font-weight: bold;
-  box-shadow: 0px 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
+  color: white;
+  background-color: #009a08;
   border: none;
   min-width: 12rem;
   min-height: 3rem;
-  border-radius: 0.5rem;
-  background: linear-gradient(345deg, #10fe53 0%, #09d3ff 100%);
-  margin: 1rem;
+  border-radius: 6px;
 
   &:hover {
     opacity: 70%;
-    background: linear-gradient(345deg, #10fe53 0%, #09d3ff 100%);
   }
 
   &:active {
@@ -133,5 +86,6 @@ const Btn = styled.button`
     color: #a8aaaf;
     background: #e8e8e8;
     cursor: default;
+    cursor: not-allowed;
   }
 `

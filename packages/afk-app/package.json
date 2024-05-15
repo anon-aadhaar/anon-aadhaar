@@ -1,0 +1,32 @@
+{
+  "name": "afk-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "echo skip build",
+    "build-app": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "format": "echo skip format"
+  },
+  "dependencies": {
+    "@anon-aadhaar/react": "*",
+    "@semaphore-protocol/identity": "^4.0.0-beta.9",
+    "localforage": "^1.10.0",
+    "next": "14.2.3",
+    "react": "^18",
+    "react-dom": "^18",
+    "snarkjs": "^0.7.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.3",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}

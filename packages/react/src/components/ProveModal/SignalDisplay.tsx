@@ -11,31 +11,22 @@ export const SignalDisplay: FunctionComponent<SignalDisplayProps> = ({
   const isJsonObject = typeof signal === 'object' && signal !== null
   const displaySignal = isJsonObject ? JSON.stringify(signal, null, 2) : signal
 
-  return (
-    <InputFile>
-      <FileName id="file-chosen">{displaySignal}</FileName>
-    </InputFile>
-  )
+  return <Signal>{displaySignal}</Signal>
 }
 
-const FileName = styled.span`
-  margin-left: 5px;
-  white-space: pre-wrap;
-  overflow: auto;
-  max-height: 200px;
-`
-
-const InputFile = styled.div`
+const Signal = styled.div`
   display: flex;
+  flex-direction: row;
+  width: 100%;
+  border: solid;
   align-items: center;
-  border-radius: 0.5rem;
-  border: 1px solid #d1d5db;
-  padding: 0.3rem;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-  color: #111827;
-  background-color: #f9fafb;
-  margin-top: 0.8rem;
-  margin-bottom: 0.8rem;
-  max-width: 100%;
+  border-color: #b6b9c3;
+  font-size: 14px;
+  border-radius: 4px;
+  color: black;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 12px;
+  padding-right: 12px;
+  margin-top: 10px;
 `
