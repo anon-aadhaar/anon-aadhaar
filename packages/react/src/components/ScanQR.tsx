@@ -5,7 +5,7 @@ import React, {
   FunctionComponent,
   useState,
 } from 'react'
-import { AadhaarQRValidation } from '../interface'
+import { AadhaarQRValidation } from '../types'
 
 interface ScanQRProps {
   setQrData: Dispatch<SetStateAction<string | null>>

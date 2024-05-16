@@ -8,40 +8,45 @@ import React, {
 } from 'react'
 import styled from 'styled-components'
 import { ProveButton } from './ProveButton'
-import { AadhaarQRValidation } from '../../types'
-import { Logo } from '../LogInWithAnonAadhaar'
+import { AadhaarQRValidation, ModalViews } from '../../types'
 import { SignalDisplay } from './SignalDisplay'
 import { AnonAadhaarContext } from '../../hooks/useAnonAadhaar'
-import { icons } from '../ButtonLogo'
+import { icons } from '../MainIcons'
 import { FieldsToRevealArray, fieldsLabel } from '@anon-aadhaar/core'
 
 interface ProveModalProps {
   setErrorMessage: Dispatch<SetStateAction<string | null>>
-  logo: string
   qrStatus: AadhaarQRValidation | null
   qrData: string | null
   setQrStatus: Dispatch<SetStateAction<AadhaarQRValidation | null>>
   fieldsToReveal?: FieldsToRevealArray
   nullifierSeed: number
   signal?: string
+  setCurrentView: Dispatch<SetStateAction<ModalViews>>
 }
 
 export const ProveModal: React.FC<ProveModalProps> = ({
   setErrorMessage,
-  logo,
   qrStatus,
   qrData,
   setQrStatus,
   signal,
   fieldsToReveal,
   nullifierSeed,
+  setCurrentView,
 }) => {
   const [provingEnabled, setProvingEnabled] = useState<boolean>(false)
   const { appName } = useContext(AnonAadhaarContext)
-  const blob = new Blob([icons.illustration], { type: 'image/svg+xml' })
+  const eyeOffBlob = new Blob([icons.eyeOff], { type: 'image/svg+xml' })
   const noRevealillustration = useMemo(
-    () => URL.createObjectURL(blob),
-    [icons.illustration],
+    () => URL.createObjectURL(eyeOffBlob),
+    [icons.eyeOff],
+  )
+
+  const eyeBlob = new Blob([icons.eye], { type: 'image/svg+xml' })
+  const revealillustration = useMemo(
+    () => URL.createObjectURL(eyeBlob),
+    [icons.eye],
   )
 
   useEffect(() => {
@@ -53,114 +58,158 @@ export const ProveModal: React.FC<ProveModalProps> = ({
   }, [qrStatus])
 
   return (
-    <>
-      <TitleSection>
-        <Title>
-          <Logo src={logo} />
-          Prove your Identity
-        </Title>
-        <Disclaimer>
-          The signature of your document has been verified, you can now
-          genereate your Proof of Identity.
-        </Disclaimer>
-      </TitleSection>
+    <MainContainer>
+      <div>
+        <TitleSection>YOUR QR CODE IS VERIFIED!</TitleSection>
 
-      {fieldsToReveal === undefined ? (
         <Section>
-          <Label>{appName} doesn&apos;t requests you to share any data</Label>
-          <Illustration src={noRevealillustration} />
-        </Section>
-      ) : (
-        <Section>
-          <Label>{appName} requests you to share data: </Label>
+          <Label>Data you are sharing to {appName}: </Label>
           <RevealSection>
-            {fieldsLabel.map(({ key, label }) =>
-              fieldsToReveal.includes(key) ? (
-                <FieldRow key={key}>
-                  <CheckmarkIconWrapper>✅</CheckmarkIconWrapper>
-                  <FieldLabel>{label}</FieldLabel>
-                </FieldRow>
-              ) : null,
-            )}
+            {fieldsToReveal
+              ? fieldsLabel.map(({ key, label }) =>
+                  fieldsToReveal.includes(key) ? (
+                    <FieldRow key={key}>
+                      <DiscloseOn>
+                        <Icon src={revealillustration} />
+                        {label.toLocaleUpperCase()}
+                      </DiscloseOn>
+                    </FieldRow>
+                  ) : (
+                    <FieldRow key={key}>
+                      <DiscloseOff>
+                        <Icon src={noRevealillustration} />
+                        {label.toLocaleUpperCase()}
+                      </DiscloseOff>
+                    </FieldRow>
+                  ),
+                )
+              : fieldsLabel.map(({ key, label }) => (
+                  <FieldRow key={key}>
+                    <DiscloseOff>
+                      <Icon src={noRevealillustration} />
+                      {label.toLocaleUpperCase()}
+                    </DiscloseOff>
+                  </FieldRow>
+                ))}
           </RevealSection>
         </Section>
-      )}
 
-      {signal && (
-        <Section>
-          <Label>Data you are signing: </Label>
-          <SignalDisplay signal={signal} />
-        </Section>
-      )}
-
-      <ProveButton
-        qrData={qrData}
-        provingEnabled={provingEnabled}
-        setErrorMessage={setErrorMessage}
-        signal={signal}
-        setQrStatus={setQrStatus}
-        nullifierSeed={nullifierSeed}
-        fieldsToReveal={fieldsToReveal}
-      />
-    </>
+        {signal && (
+          <Section>
+            <Label>Data you are signing: </Label>
+            <SignalDisplay signal={signal} />
+          </Section>
+        )}
+      </div>
+      <div>
+        <ProveButton
+          qrData={qrData}
+          provingEnabled={provingEnabled}
+          setErrorMessage={setErrorMessage}
+          signal={signal}
+          setQrStatus={setQrStatus}
+          nullifierSeed={nullifierSeed}
+          fieldsToReveal={fieldsToReveal}
+          setCurrentView={setCurrentView}
+        />
+        <SmallDisclaimer>
+          No Aadhaar data ever leaves your device!
+        </SmallDisclaimer>
+      </div>
+    </MainContainer>
   )
 }
 
 const TitleSection = styled.div`
-  color: #111827;
-  flex-shrink: 0;
-  row-gap: 1rem;
-  margin-left: auto;
-  margin-right: auto;
-  margin: 1rem 1rem 0;
-  display: flex;
-  flex-flow: column;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600; // Regular weight
+  font-size: 16px; // Example font size
+  color: #333; // Example text color
+  line-height: 1.5;
+  text-transform: capitalize;
 `
 
-const Title = styled.h3`
-  display: flex;
-  flex-shrink: 0;
-  margin-left: auto;
-  margin-right: auto;
-  font-size: medium;
-  font-weight: bold;
+// const Disclaimer = styled.span`
+//   color: #6d6d6d;
+//   margin-top: 0.3rem;
+//   font-size: 0.9rem;
+//   font-weight: normal;
+// `
+
+export const Icon = styled.img`
+  height: 1.5rem;
+  margin-right: 5px;
 `
 
-const Disclaimer = styled.span`
-  color: #6d6d6d;
-  margin-top: 0.3rem;
-  font-size: 0.9rem;
-  font-weight: normal;
+const DiscloseOn = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  border: solid;
+  align-items: center;
+  border-color: #009a08;
+  border-radius: 4px;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  color: black;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 12px;
+  padding-right: 12px;
+`
+
+const DiscloseOff = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  border: solid;
+  align-items: center;
+  border-color: #b6b9c3;
+  border-radius: 4px;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  color: #b6b9c3;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 12px;
+  padding-right: 12px;
 `
 
 const Section = styled.div`
-  margin: 0 1rem 0;
+  margin-top: 15px;
   row-gap: 1rem;
   max-width: 100%;
 `
 
 const Label = styled.div`
-  font-size: large;
+  font-size: 14px;
   text-align: left;
-  font-weight: 600;
-  color: #111827;
-`
-const Illustration = styled.img`
-  height: 10rem;
-  margin-right: auto;
-  margin-left: auto;
+  font-weight: 400;
+  color: #6b7280;
 `
 const RevealSection = styled.div`
-  /* Add your styles here */
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+  margin-top: 10px;
 `
 
 const FieldRow = styled.div`
   display: flex;
   align-items: center;
 `
-
-const CheckmarkIconWrapper = styled.div`
-  margin-right: 8px;
+const MainContainer = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
 `
-
-const FieldLabel = styled.span``
+const SmallDisclaimer = styled.p`
+  font-size: small;
+  color: #717686;
+  text-decoration: wavy;
+  text-align: center;
+  margin-top: 10px;
+`

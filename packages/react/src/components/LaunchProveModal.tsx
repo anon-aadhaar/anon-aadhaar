@@ -3,8 +3,8 @@ import { Modal } from './ProveModal/Modal'
 import styled from 'styled-components'
 import { useEffect, useContext } from 'react'
 import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
-import { icons } from './ButtonLogo'
-import { AadhaarQRValidation } from '../types'
+import { icons } from './MainIcons'
+import { AadhaarQRValidation, ModalViews } from '../types'
 import { ProverState, FieldsToRevealArray } from '@anon-aadhaar/core'
 
 interface LogInWithAnonAadhaarProps {
@@ -33,7 +33,7 @@ export const LaunchProveModal = ({
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [qrStatus, setQrStatus] = useState<null | AadhaarQRValidation>(null)
-  const [currentView, setCurrentView] = useState<'Verify' | 'Prove'>('Verify')
+  const [currentView, setCurrentView] = useState<ModalViews>('Verify')
   const { proverState } = useContext(AnonAadhaarContext)
 
   const blob = new Blob([icons.aalogo], { type: 'image/svg+xml' })

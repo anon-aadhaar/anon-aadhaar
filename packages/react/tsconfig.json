@@ -14,6 +14,6 @@
     "noUnusedParameters": true,
     "allowSyntheticDefaultImports": true,
   },
-  "include": ["src/*"],
+  "include": ["src/*", "fonts.d.ts"],
   "exclude": ["mocha.cjs", "eslintrc.cjs"],
 }
