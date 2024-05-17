@@ -75,8 +75,8 @@ export const generateArgs = async ({
   if (!fieldsToRevealArray) fieldsToRevealArray = []
 
   const fieldsToReveal = {
-    revealGender: fieldsToRevealArray.includes('revealGender'),
     revealAgeAbove18: fieldsToRevealArray.includes('revealAgeAbove18'),
+    revealGender: fieldsToRevealArray.includes('revealGender'),
     revealPinCode: fieldsToRevealArray.includes('revealPinCode'),
     revealState: fieldsToRevealArray.includes('revealState'),
   }
@@ -113,13 +113,13 @@ export const generateArgs = async ({
       argumentType: ArgumentTypeName.String,
       value: signalHash,
     },
-    revealGender: {
-      argumentType: ArgumentTypeName.Number,
-      value: fieldsToReveal.revealGender ? '1' : '0',
-    },
     revealAgeAbove18: {
       argumentType: ArgumentTypeName.Number,
       value: fieldsToReveal.revealAgeAbove18 ? '1' : '0',
+    },
+    revealGender: {
+      argumentType: ArgumentTypeName.Number,
+      value: fieldsToReveal.revealGender ? '1' : '0',
     },
     revealPinCode: {
       argumentType: ArgumentTypeName.Number,

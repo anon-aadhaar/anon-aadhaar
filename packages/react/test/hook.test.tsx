@@ -94,11 +94,11 @@ describe('useAnonAadhaar Hook', () => {
         argumentType: ArgumentTypeName.String,
         value: '1',
       },
-      revealGender: {
+      revealAgeAbove18: {
         argumentType: ArgumentTypeName.Number,
         value: '0',
       },
-      revealAgeAbove18: {
+      revealGender: {
         argumentType: ArgumentTypeName.Number,
         value: '0',
       },

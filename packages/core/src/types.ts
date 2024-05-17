@@ -61,8 +61,8 @@ export type AnonAadhaarArgs = {
   pubKey: StringArrayArgument // public
   nullifierSeed: StringArgument // private
   signalHash: StringArgument // public
-  revealGender: NumberArgument
   revealAgeAbove18: NumberArgument
+  revealGender: NumberArgument
   revealPinCode: NumberArgument
   revealState: NumberArgument
 }
