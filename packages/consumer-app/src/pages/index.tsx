@@ -1,8 +1,10 @@
+import { verifyProof } from '@/util'
 import { useRouter } from 'next/router'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function Home() {
   const router = useRouter()
+  const [user, setUser] = useState(null)
   const { payload } = router.query
 
   const loginRequest = () => {
@@ -19,9 +21,15 @@ export default function Home() {
 
   useEffect(() => {
     if (payload) {
-      const proof = JSON.parse(decodeURIComponent(payload))
-      console.log(proof)
+      const result = JSON.parse(decodeURIComponent(payload as string))
       // Further processing of proof
+      const proof = result.proof
+
+      verifyProof(proof)
+        .then(r => {
+          if (r) setUser(proof)
+        })
+        .catch(e => console.log(e))
     }
   }, [payload])
 
@@ -36,8 +44,19 @@ export default function Home() {
           login flow.
         </div>
 
-        <div className="text-md mt-4 mb-8 text-[#717686]">Try to login ⬇️</div>
-        <button onClick={loginRequest}>LOGIN</button>
+        {user ? (
+          <>
+            <div>Hello Anon</div>
+            <div>You are now logged-in</div>
+          </>
+        ) : (
+          <>
+            <div className="text-md mt-4 mb-8 text-[#717686]">
+              Try to login ⬇️
+            </div>
+            <button onClick={loginRequest}>LOGIN</button>
+          </>
+        )}
       </div>
     </main>
   )
