@@ -124,3 +124,8 @@ export async function fetchKey(keyURL: string, maxRetries = 3) {
   }
   return keyURL
 }
+
+export const createBlobURL = (icon: string) => {
+  const blob = new Blob([icon], { type: 'image/svg+xml' })
+  return URL.createObjectURL(blob)
+}

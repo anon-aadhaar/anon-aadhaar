@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { Modal } from './ProveModal/Modal'
 import styled from 'styled-components'
 import { useEffect, useContext } from 'react'
@@ -6,6 +6,7 @@ import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
 import { icons } from './MainIcons'
 import { AadhaarQRValidation, ModalViews } from '../types'
 import { ProverState, FieldsToRevealArray } from '@anon-aadhaar/core'
+import { createBlobURL } from '../util'
 
 interface LogInWithAnonAadhaarProps {
   signal?: string
@@ -35,16 +36,10 @@ export const LogInWithAnonAadhaar = ({
   const [currentView, setCurrentView] = useState<ModalViews>('Verify')
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const { state, startReq, proverState } = useContext(AnonAadhaarContext)
-
+  const anonAadhaarLogo = createBlobURL(icons.aalogo)
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
   }
-
-  const blob = new Blob([icons.aalogo], { type: 'image/svg+xml' })
-  const anonAadhaarLogo = useMemo(
-    () => URL.createObjectURL(blob),
-    [icons.aalogo],
-  )
 
   useEffect(() => {
     if (proverState === ProverState.Completed) closeModal()

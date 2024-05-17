@@ -4,6 +4,7 @@ import { icons } from '../LoaderIcons'
 import { useFonts } from '../../hooks/useFonts'
 import { AnonAadhaarContext } from '../../hooks/useAnonAadhaar'
 import { ProverState } from '@anon-aadhaar/core'
+import { createBlobURL } from '../../util'
 
 export const LoaderView: React.FC = () => {
   useFonts()
@@ -14,11 +15,6 @@ export const LoaderView: React.FC = () => {
     bottomLeft: false,
     bottomRight: false,
   })
-
-  const createBlobURL = (icon: any) => {
-    const blob = new Blob([icon], { type: 'image/svg+xml' })
-    return URL.createObjectURL(blob)
-  }
 
   const iconsUrl = useMemo(
     () => ({
