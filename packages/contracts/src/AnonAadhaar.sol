@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: Unlicense
+//SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
 import '../interfaces/IAnonAadhaarGroth16Verifier.sol';

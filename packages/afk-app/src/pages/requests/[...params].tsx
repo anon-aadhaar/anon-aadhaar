@@ -55,7 +55,7 @@ const ParamsPage = () => {
           <p>The App x is requesting you to reveal the following items:</p>
           {params && (
             <ul>
-              {params.map((param, index) => (
+              {params.map((param: any, index: number) => (
                 <li key={index}>{param}</li>
               ))}
             </ul>
