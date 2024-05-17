@@ -2,7 +2,6 @@ import React, {
   FunctionComponent,
   ChangeEvent,
   useState,
-  useMemo,
   SetStateAction,
   Dispatch,
   useRef,
@@ -10,6 +9,7 @@ import React, {
 import styled from 'styled-components'
 import { icons } from './MainIcons'
 import { AadhaarQRValidation } from '../types'
+import { createBlobURL } from '../util'
 
 interface FileInputProps {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void
@@ -26,15 +26,8 @@ export const FileInput: FunctionComponent<FileInputProps> = ({
 }) => {
   const [fileName, setFileName] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
-
-  const uploadIconBlob = new Blob([icons.fileUpload], { type: 'image/svg+xml' })
-  const uploadIcon = useMemo(
-    () => URL.createObjectURL(uploadIconBlob),
-    [icons.fileUpload],
-  )
-
-  const xBlob = new Blob([icons.xBlack], { type: 'image/svg+xml' })
-  const xIcon = useMemo(() => URL.createObjectURL(xBlob), [icons.xBlack])
+  const uploadIcon = createBlobURL(icons.fileUpload)
+  const xIcon = createBlobURL(icons.xBlack)
 
   const clearFileInput = () => {
     if (fileInputRef.current) {

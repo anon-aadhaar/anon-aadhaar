@@ -4,7 +4,6 @@ import React, {
   Dispatch,
   SetStateAction,
   useContext,
-  useMemo,
 } from 'react'
 import styled from 'styled-components'
 import { ProveButton } from './ProveButton'
@@ -13,6 +12,7 @@ import { SignalDisplay } from './SignalDisplay'
 import { AnonAadhaarContext } from '../../hooks/useAnonAadhaar'
 import { icons } from '../MainIcons'
 import { FieldsToRevealArray, fieldsLabel } from '@anon-aadhaar/core'
+import { createBlobURL } from '../../util'
 
 interface ProveModalProps {
   setErrorMessage: Dispatch<SetStateAction<string | null>>
@@ -23,6 +23,7 @@ interface ProveModalProps {
   nullifierSeed: number
   signal?: string
   setCurrentView: Dispatch<SetStateAction<ModalViews>>
+  useTestAadhaar?: boolean
 }
 
 export const ProveModal: React.FC<ProveModalProps> = ({
@@ -34,20 +35,12 @@ export const ProveModal: React.FC<ProveModalProps> = ({
   fieldsToReveal,
   nullifierSeed,
   setCurrentView,
+  useTestAadhaar,
 }) => {
   const [provingEnabled, setProvingEnabled] = useState<boolean>(false)
   const { appName } = useContext(AnonAadhaarContext)
-  const eyeOffBlob = new Blob([icons.eyeOff], { type: 'image/svg+xml' })
-  const noRevealillustration = useMemo(
-    () => URL.createObjectURL(eyeOffBlob),
-    [icons.eyeOff],
-  )
-
-  const eyeBlob = new Blob([icons.eye], { type: 'image/svg+xml' })
-  const revealillustration = useMemo(
-    () => URL.createObjectURL(eyeBlob),
-    [icons.eye],
-  )
+  const noRevealillustration = createBlobURL(icons.eyeOff)
+  const revealillustration = createBlobURL(icons.eye)
 
   useEffect(() => {
     if (qrStatus === AadhaarQRValidation.SIGNATURE_VERIFIED) {
@@ -111,6 +104,7 @@ export const ProveModal: React.FC<ProveModalProps> = ({
           nullifierSeed={nullifierSeed}
           fieldsToReveal={fieldsToReveal}
           setCurrentView={setCurrentView}
+          useTestAadhaar={useTestAadhaar}
         />
         <SmallDisclaimer>
           No Aadhaar data ever leaves your device!

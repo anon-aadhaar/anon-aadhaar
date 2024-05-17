@@ -29,7 +29,6 @@ export function useAnonAadhaar(): [
 export interface AnonAadhaarContextVal {
   state: AnonAadhaarState
   startReq: (request: AnonAadhaarRequest) => void
-  useTestAadhaar: boolean
   proverState: ProverState
   appName: string
 }
@@ -64,7 +63,6 @@ export const AnonAadhaarContext = createContext<AnonAadhaarContextVal>({
   startReq: () => {
     // StartReq
   },
-  useTestAadhaar: true,
   appName: '',
   proverState: ProverState.Initializing,
 })

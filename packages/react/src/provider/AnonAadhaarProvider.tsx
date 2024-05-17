@@ -33,13 +33,6 @@ export type AnonAadhaarProviderProps = {
   children: ReactNode
 
   /**
-   * `_useTestAadhaar`: Flag to determine the usage of test Aadhaar data.
-   * Set this to `true` if you want to use test Aadhaar data instead of real data for development or testing purposes.
-   * Defaults to `false` if not explicitly set.
-   */
-  _useTestAadhaar?: boolean
-
-  /**
    * `_artifactslinks`: Here you can specify your own artifacts.
    * It can be either file located in your public directory by specifying the root (e.g. "./circuit_final.zkey")
    * or the url of artifacts that you stored on your own server.
@@ -72,7 +65,6 @@ export function AnonAadhaarProvider(
     useState<SerializedPCD<AnonAadhaarCore> | null>(null)
   const [anonAadhaarProof, setAnonAadhaarProof] =
     useState<AnonAadhaarCore | null>(null)
-  const [useTestAadhaar, setUseTestAadhaar] = useState<boolean>(false)
   const [appName, setAppName] = useState<string>('The current application')
   const [proverState, setProverState] = useState<ProverState>(
     ProverState.Initializing,
@@ -80,12 +72,6 @@ export function AnonAadhaarProvider(
   const [state, setState] = useState<AnonAadhaarState>({
     status: 'logged-out',
   })
-
-  useEffect(() => {
-    readFromLocalStorage().then(setAndWriteState)
-    if (anonAadhaarProviderProps._useTestAadhaar !== undefined)
-      setUseTestAadhaar(anonAadhaarProviderProps._useTestAadhaar)
-  }, [anonAadhaarProviderProps._useTestAadhaar])
 
   useEffect(() => {
     if (anonAadhaarProviderProps._appName !== undefined)
@@ -165,8 +151,8 @@ export function AnonAadhaarProvider(
 
   // Provide context
   const val = React.useMemo(
-    () => ({ state, startReq, useTestAadhaar, proverState, appName }),
-    [state, useTestAadhaar, proverState, appName],
+    () => ({ state, startReq, proverState, appName }),
+    [state, proverState, appName],
   )
 
   return (
