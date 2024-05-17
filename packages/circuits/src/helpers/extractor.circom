@@ -167,21 +167,16 @@ template AgeExtractor(maxDataLength) {
     signal ageByYear <== currentYear - year - 1;
 
     // +1 to age if month is above currentMonth, or if months are same and day is higher
-    component monthGt = GreaterThan(4);
-    monthGt.in[0] <== currentMonth;
-    monthGt.in[1] <== month;
+    signal monthGt <== GreaterThan(4)([currentMonth, month]);
 
-    component monthEq = IsEqual();
-    monthEq.in[0] <== currentMonth;
-    monthEq.in[1] <== month;
+    signal monthEq <== IsEqual()([currentMonth, month]);
 
-    component dayGt = GreaterThan(5);
-    dayGt.in[0] <== currentDay + 1;
-    dayGt.in[1] <== day;
+    signal dayGt <== GreaterThan(5)([currentDay + 1, day]);
 
-    signal isHigherDayOnSameMonth <== monthEq.out * dayGt.out;
+    signal isHigherDayOnSameMonth <== monthEq * dayGt;
 
-    age <== ageByYear + (monthGt.out + isHigherDayOnSameMonth);
+    age <== ageByYear + (monthGt + isHigherDayOnSameMonth);
+
     nDelimitedDataShiftedToDob <== shiftedBytes;
 }
 
@@ -203,6 +198,7 @@ template GenderExtractor(maxDataLength) {
     // saves around 14k constraints
     nDelimitedDataShiftedToDob[11] === genderPosition() * 255;
     nDelimitedDataShiftedToDob[13] === (genderPosition() + 1) * 255;
+
     out <== nDelimitedDataShiftedToDob[12];
 }
 
@@ -308,6 +304,7 @@ template QRDataExtractor(maxDataLength) {
     signal nDelimitedData[maxDataLength];
     signal n255Filter[maxDataLength + 1];
     n255Filter[0] <== 0;
+
     for (var i = 0; i < maxDataLength; i++) {
         is255[i] = IsEqual();
         is255[i].in[0] <== 255;

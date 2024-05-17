@@ -55,7 +55,7 @@ template AadhaarQRVerifier(n, k, maxDataLength) {
 
 
     // Assert `qrDataPaddedLength` fits in `ceil(log2(maxDataLength))`
-    component n2bHeaderLength = Num2Bits(log2Ceil(maxHeadersLength));
+    component n2bHeaderLength = Num2Bits(log2Ceil(maxDataLength));
     n2bHeaderLength.in <== qrDataPaddedLength;
 
 
