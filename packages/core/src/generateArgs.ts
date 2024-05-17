@@ -1,6 +1,7 @@
 import {
   convertBigIntToByteArray,
   decompressByteArray,
+  isOlderThanEighteen,
   splitToWords,
 } from './utils'
 import { AnonAadhaarArgs } from './types'
@@ -12,6 +13,7 @@ import { sha256Pad } from '@zk-email/helpers/dist/sha-utils'
 import { Buffer } from 'buffer'
 import { pki } from 'node-forge'
 import { ArgumentTypeName } from '@pcd/pcd-types'
+import { returnFullId } from './qrGenerator'
 
 interface GenerateArgsOptions {
   qrData: string
@@ -112,9 +114,23 @@ GenerateArgsOptions): Promise<AnonAadhaarArgs> => {
     },
     secret: {
       argumentType: ArgumentTypeName.String,
-      value: secret,
+      value: BigInt('0x' + secret).toString(),
     },
   }
 
   return anonAadhaarArgs
+}
+
+export const getFieldIDElements = (qrData: string) => {
+  const qrDataBytes = convertBigIntToByteArray(BigInt(qrData))
+  const decodedData = decompressByteArray(qrDataBytes)
+
+  const fullId = returnFullId(decodedData)
+
+  return {
+    ageAbove18: isOlderThanEighteen(fullId.DOB),
+    gender: fullId.Gender,
+    pinCode: fullId.PinCode,
+    state: fullId.State,
+  }
 }

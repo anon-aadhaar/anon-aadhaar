@@ -6,6 +6,7 @@ import { processAadhaarArgs, proveAndSerialize } from './prove'
 import { verifySignature } from './verifySignature'
 import { LaunchProveModal } from './components/LaunchProveModal'
 import { useProver } from './hooks/useProver'
+import { retrieveValuesInDB } from './util'
 
 export {
   useProver,
@@ -17,4 +18,5 @@ export {
   processAadhaarArgs,
   proveAndSerialize,
   verifySignature,
+  retrieveValuesInDB,
 }
