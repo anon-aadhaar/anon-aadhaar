@@ -80,10 +80,10 @@ jobs:
       - name: Build packages
         run: yarn build:libraries
 
-      - name: Test /react
+      - name: Test /circuits
         env:
-          NODE_OPTIONS: '--max_old_space_size=8192'
-        working-directory: packages/react
+          NODE_OPTIONS: '--max_old_space_size=4096'
+        working-directory: packages/circuits
         run: yarn test
 
       - name: Test /core
@@ -92,14 +92,14 @@ jobs:
         working-directory: packages/core
         run: yarn test
 
-      - name: Test /circuits
-        env:
-          NODE_OPTIONS: '--max_old_space_size=4096'
-        working-directory: packages/circuits
-        run: yarn test
-
       - name: Test /contracts
         env:
           NODE_OPTIONS: '--max_old_space_size=4096'
         working-directory: packages/contracts
+        run: yarn test
+
+      - name: Test /react
+        env:
+          NODE_OPTIONS: '--max_old_space_size=8192'
+        working-directory: packages/react
         run: yarn test
