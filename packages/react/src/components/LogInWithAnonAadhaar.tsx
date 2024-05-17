@@ -11,6 +11,7 @@ interface LogInWithAnonAadhaarProps {
   signal?: string
   fieldsToReveal?: FieldsToRevealArray
   nullifierSeed: number
+  useTestAadhaar?: boolean
 }
 
 /**
@@ -26,6 +27,7 @@ export const LogInWithAnonAadhaar = ({
   signal,
   fieldsToReveal,
   nullifierSeed,
+  useTestAadhaar = false,
 }: LogInWithAnonAadhaarProps) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
@@ -80,6 +82,7 @@ export const LogInWithAnonAadhaar = ({
             nullifierSeed={nullifierSeed}
             setCurrentView={setCurrentView}
             currentView={currentView}
+            useTestAadhaar={useTestAadhaar}
           ></Modal>
         </div>
       )}
@@ -104,6 +107,7 @@ export const LogInWithAnonAadhaar = ({
               nullifierSeed={nullifierSeed}
               setCurrentView={setCurrentView}
               currentView={currentView}
+              useTestAadhaar={useTestAadhaar}
             ></Modal>
             <MenuItem onClick={() => startReq({ type: 'logout' })}>
               Logout

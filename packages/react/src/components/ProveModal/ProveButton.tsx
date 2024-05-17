@@ -15,6 +15,7 @@ interface ProveButtonProps {
   setQrStatus: Dispatch<SetStateAction<AadhaarQRValidation | null>>
   signal?: string
   setCurrentView: Dispatch<SetStateAction<ModalViews>>
+  useTestAadhaar?: boolean
 }
 
 export const ProveButton: React.FC<ProveButtonProps> = ({
@@ -26,8 +27,9 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
   nullifierSeed,
   setQrStatus,
   setCurrentView,
+  useTestAadhaar = false,
 }) => {
-  const { startReq, useTestAadhaar } = useContext(AnonAadhaarContext)
+  const { startReq } = useContext(AnonAadhaarContext)
 
   const startProving = async () => {
     try {

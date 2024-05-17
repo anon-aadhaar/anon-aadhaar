@@ -13,6 +13,7 @@ interface LogInWithAnonAadhaarProps {
   buttonTitle?: string
   fieldsToReveal?: FieldsToRevealArray
   nullifierSeed: number
+  useTestAadhaar?: boolean
 }
 
 /**
@@ -28,6 +29,7 @@ export const LaunchProveModal = ({
   buttonStyle,
   fieldsToReveal,
   nullifierSeed,
+  useTestAadhaar,
   buttonTitle = 'Generate a proof',
 }: LogInWithAnonAadhaarProps) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
@@ -76,6 +78,7 @@ export const LaunchProveModal = ({
         nullifierSeed={nullifierSeed}
         setCurrentView={setCurrentView}
         currentView={currentView}
+        useTestAadhaar={useTestAadhaar}
       ></Modal>
     </div>
   )

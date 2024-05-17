@@ -23,6 +23,7 @@ interface ProveModalProps {
   nullifierSeed: number
   signal?: string
   setCurrentView: Dispatch<SetStateAction<ModalViews>>
+  useTestAadhaar?: boolean
 }
 
 export const ProveModal: React.FC<ProveModalProps> = ({
@@ -34,6 +35,7 @@ export const ProveModal: React.FC<ProveModalProps> = ({
   fieldsToReveal,
   nullifierSeed,
   setCurrentView,
+  useTestAadhaar,
 }) => {
   const [provingEnabled, setProvingEnabled] = useState<boolean>(false)
   const { appName } = useContext(AnonAadhaarContext)
@@ -111,6 +113,7 @@ export const ProveModal: React.FC<ProveModalProps> = ({
           nullifierSeed={nullifierSeed}
           fieldsToReveal={fieldsToReveal}
           setCurrentView={setCurrentView}
+          useTestAadhaar={useTestAadhaar}
         />
         <SmallDisclaimer>
           No Aadhaar data ever leaves your device!

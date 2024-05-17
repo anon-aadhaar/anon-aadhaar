@@ -1,9 +1,8 @@
-import React, { Dispatch, SetStateAction, useContext } from 'react'
+import React, { Dispatch, SetStateAction } from 'react'
 import styled from 'styled-components'
 import { FileInput } from '../FileInput'
 import { uploadQRpng } from '../../util'
 import { AadhaarQRValidation, ModalViews } from '../../types'
-import { AnonAadhaarContext } from '../../hooks/useAnonAadhaar'
 import { useFonts } from '../../hooks/useFonts'
 
 interface VerifyModalProps {
@@ -12,6 +11,7 @@ interface VerifyModalProps {
   setQrStatus: Dispatch<SetStateAction<AadhaarQRValidation | null>>
   setQrData: Dispatch<SetStateAction<string | null>>
   setCurrentView: Dispatch<SetStateAction<ModalViews>>
+  useTestAadhaar?: boolean
 }
 
 export const VerifyModal: React.FC<VerifyModalProps> = ({
@@ -20,8 +20,8 @@ export const VerifyModal: React.FC<VerifyModalProps> = ({
   setQrStatus,
   setQrData,
   setCurrentView,
+  useTestAadhaar,
 }) => {
-  const { useTestAadhaar } = useContext(AnonAadhaarContext)
   useFonts()
 
   return (

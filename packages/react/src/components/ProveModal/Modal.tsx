@@ -1,17 +1,10 @@
-import React, {
-  useEffect,
-  useState,
-  Dispatch,
-  SetStateAction,
-  useContext,
-} from 'react'
+import React, { useEffect, useState, Dispatch, SetStateAction } from 'react'
 import styled from 'styled-components'
 import { AadhaarQRValidation, ModalViews } from '../../types'
 import { ErrorToast } from './ErrorToast'
 import { BrowserView, MobileView } from 'react-device-detect'
 import { Logo } from '../LogInWithAnonAadhaar'
 import { verifySignature } from '../../verifySignature'
-import { AnonAadhaarContext } from '../../hooks/useAnonAadhaar'
 import { VerifyModal } from './VerifyModal'
 import { ProveModal } from './ProveModal'
 import { FieldsToRevealArray } from '@anon-aadhaar/core'
@@ -30,6 +23,7 @@ interface ModalProps {
   setCurrentView: Dispatch<SetStateAction<ModalViews>>
   fieldsToReveal?: FieldsToRevealArray
   signal?: string
+  useTestAadhaar?: boolean
 }
 
 export const Modal: React.FC<ModalProps> = ({
@@ -45,10 +39,10 @@ export const Modal: React.FC<ModalProps> = ({
   nullifierSeed,
   currentView,
   setCurrentView,
+  useTestAadhaar = false,
 }) => {
   const [qrData, setQrData] = useState<string | null>(null)
   const [provingEnabled, setProvingEnabled] = useState<boolean>(false)
-  const { useTestAadhaar } = useContext(AnonAadhaarContext)
 
   useEffect(() => {
     if (qrData) {
@@ -93,6 +87,7 @@ export const Modal: React.FC<ModalProps> = ({
                     setQrStatus={setQrStatus}
                     setQrData={setQrData}
                     setCurrentView={setCurrentView}
+                    useTestAadhaar={useTestAadhaar}
                   />
                 )
               case 'Prove':
@@ -106,6 +101,7 @@ export const Modal: React.FC<ModalProps> = ({
                     fieldsToReveal={fieldsToReveal}
                     nullifierSeed={nullifierSeed}
                     setCurrentView={setCurrentView}
+                    useTestAadhaar={useTestAadhaar}
                   />
                 )
               case 'Proving':
