@@ -1,7 +1,8 @@
-import { Groth16Proof, ZKArtifact, groth16 } from 'snarkjs'
+import { Groth16Proof, PublicSignals, ZKArtifact, groth16 } from 'snarkjs'
 
 export type FullProof = {
   groth16Proof: Groth16Proof
+  publicSignals: PublicSignals
   afkNullifier: string
   claimCommitments_1: string
   claimCommitments_2: string
@@ -62,7 +63,7 @@ export const verifyProof = async (fullProof: FullProof) => {
     fullProof.claimKeys_2,
     fullProof.claimKeys_3,
     fullProof.claimKeys_4,
-    fullProof.claimKeys_4,
+    fullProof.claimKeys_5,
     fullProof.claimValues_1,
     fullProof.claimValues_2,
     fullProof.claimValues_3,
@@ -75,4 +76,49 @@ export const verifyProof = async (fullProof: FullProof) => {
   const vk = await fetchKey('/afk.vkey.json')
 
   return await groth16.verify(vk, publicSignals, proof)
+}
+
+export function bigIntsToString(bigIntChunks: bigint[]) {
+  return bigIntChunksToByteArray(bigIntChunks)
+    .map(byte => String.fromCharCode(byte))
+    .join('')
+}
+
+export function bigIntChunksToByteArray(
+  bigIntChunks: bigint[],
+  bytesPerChunk = 31,
+) {
+  const bytes: number[] = []
+
+  // Remove last chunks that are 0n
+  const cleanChunks = bigIntChunks
+    .reverse()
+    .reduce(
+      (acc: bigint[], item) =>
+        acc.length || item !== BigInt(0) ? [...acc, item] : [],
+      [],
+    )
+    .reverse()
+
+  cleanChunks.forEach((bigInt, i) => {
+    let byteCount = 0
+
+    while (bigInt > BigInt(0)) {
+      bytes.unshift(Number(bigInt & BigInt(0xff)))
+      bigInt >>= BigInt(8)
+      byteCount++
+    }
+
+    // Except for the last chunk, each chunk should be of size bytesPerChunk
+    // This will add 0s that were removed during the conversion because they are LSB
+    if (i < cleanChunks.length - 1) {
+      if (byteCount < bytesPerChunk) {
+        for (let j = 0; j < bytesPerChunk - byteCount; j++) {
+          bytes.unshift(0)
+        }
+      }
+    }
+  })
+
+  return bytes.reverse() // reverse to convert little endian to big endian
 }
