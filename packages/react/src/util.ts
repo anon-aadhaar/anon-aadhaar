@@ -1,6 +1,7 @@
 import { ChangeEvent, Dispatch, SetStateAction } from 'react'
 import jsQR from 'jsqr'
 import { AadhaarQRValidation } from './types'
+import localforage from 'localforage'
 
 export function text(emoji: string, text: string) {
   const msp = '\u2003' // 1em space
@@ -123,4 +124,28 @@ export async function fetchKey(keyURL: string, maxRetries = 3) {
     }
   }
   return keyURL
+}
+
+// Function to store data in IndexedDB using localforage
+export async function storeValuesInDB(data: {
+  [key: string]: string | boolean
+}): Promise<void> {
+  try {
+    for (const key in data) {
+      await localforage.setItem(key, data[key])
+    }
+    console.log('Data successfully stored in IndexedDB')
+  } catch (error) {
+    console.error('Error storing data in IndexedDB:', error)
+  }
+}
+
+// Function to store data in IndexedDB using localforage
+export async function retrieveValuesInDB(key: string): Promise<any> {
+  try {
+    // console.log('Data successfully retrieved in IndexedDB')
+    return await localforage.getItem(key)
+  } catch (error) {
+    console.error('Error storing data in IndexedDB:', error)
+  }
 }

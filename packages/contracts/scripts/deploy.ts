@@ -17,9 +17,7 @@ async function main() {
 
   console.log(`AFK Verifier contract deployed to ${_afkVerifier}`)
 
-  const afk = await ethers.deployContract('AFK', [
-    _afkVerifier,
-  ])
+  const afk = await ethers.deployContract('AFK', [_afkVerifier])
 
   await afk.waitForDeployment()
   const _afkAddress = await afk.getAddress()
@@ -43,7 +41,12 @@ async function main() {
 
   console.log(`AnonAadhaar AFK contract deployed to ${_anonAadhaarAddress}`)
 
-  afk.addIssuer(37977685, "Anon Aadhaar", _anonAadhaarAddress, 100 * 24 * 60 * 60)
+  afk.addIssuer(
+    37977685,
+    'Anon Aadhaar',
+    _anonAadhaarAddress,
+    100 * 24 * 60 * 60,
+  )
 }
 
 // We recommend this pattern to be able to use async/await everywhere

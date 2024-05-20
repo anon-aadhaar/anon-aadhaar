@@ -9,7 +9,7 @@ export function useAFKIentity() {
   useEffect(() => {
     storageService.getItem('usersIdentity').then(identity => {
       if (identity !== null) {
-        setIdentity(identity)
+        setIdentity(new Identity(identity.privateKey))
         return
       }
       createIdentity()
