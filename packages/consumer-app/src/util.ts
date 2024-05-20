@@ -1,7 +1,8 @@
-import { Groth16Proof, ZKArtifact, groth16 } from 'snarkjs'
+import { Groth16Proof, PublicSignals, ZKArtifact, groth16 } from 'snarkjs'
 
 export type FullProof = {
   groth16Proof: Groth16Proof
+  publicSignals: PublicSignals
   afkNullifier: string
   claimCommitments_1: string
   claimCommitments_2: string
@@ -62,7 +63,7 @@ export const verifyProof = async (fullProof: FullProof) => {
     fullProof.claimKeys_2,
     fullProof.claimKeys_3,
     fullProof.claimKeys_4,
-    fullProof.claimKeys_4,
+    fullProof.claimKeys_5,
     fullProof.claimValues_1,
     fullProof.claimValues_2,
     fullProof.claimValues_3,

@@ -97,6 +97,8 @@ async function generateProof(circuitName: string, inputs: any) {
       .toString(),
   )
 
+  console.log(publicSignals)
+
   const proofVerified = await groth16.verify(vkey, publicSignals, proof)
 
   return { proof, publicSignals, proofVerified }
@@ -148,10 +150,7 @@ describe('AFK E2E test', function () {
     )
     console.log('Done ✔')
 
-    console.log('AA AFK Proof: ', aadhaarAFKProof)
-
-    // console.log(computeClaimKeyFromName("bio.country"));
-    // console.log(stringToPackedInts("India")[0]);
+    // console.log('AA AFK Proof: ', aadhaarAFKProof)
 
     const afkVerifierProof = await generateProof('afk', {
       secret: SECRET,
@@ -174,8 +173,16 @@ describe('AFK E2E test', function () {
       message: 8827718,
     })
 
-    console.log(afkVerifierProof)
+    console.log('AFK Proof: ', afkVerifierProof)
 
+    // const vk = fs.readFileSync(path.join(BUILD_DIR, `/afk.vkey.json`))
+    // assert(
+    //   (await groth16.verify(
+    //     vk.toString(),
+    //     afkVerifierProof.publicSignals,
+    //     afkVerifierProof.proof,
+    //   )) === true,
+    // )
     assert(
       afkVerifierProof.publicSignals[1] === aadhaarAFKProof.publicSignals[3],
     )

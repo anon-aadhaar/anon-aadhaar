@@ -1,4 +1,4 @@
-import { bigIntsToString, verifyProof } from '@/util'
+import { FullProof, bigIntsToString, verifyProof } from '@/util'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
@@ -42,7 +42,7 @@ const Badge = ({ label }: { label: string }) => {
 
 export default function Home() {
   const router = useRouter()
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState<FullProof | null>(null)
   const { payload } = router.query
 
   const loginRequest = () => {
@@ -62,12 +62,6 @@ export default function Home() {
       const result = JSON.parse(decodeURIComponent(payload as string))
       // Further processing of proof
       const proof = result.proof
-
-      console.log(bigIntsToString([BigInt(proof.claimValues_1)]))
-      console.log(bigIntsToString([BigInt(proof.claimValues_2)]))
-      console.log(bigIntsToString([BigInt(proof.claimValues_3)]))
-      console.log(bigIntsToString([BigInt(proof.claimValues_4)]))
-      console.log(bigIntsToString([BigInt(proof.claimValues_5)]))
 
       verifyProof(proof)
         .then(r => {
@@ -95,9 +89,20 @@ export default function Home() {
             <div>
               <LoggedIn />
             </div>
+
             <div className="flex gap-2">
-              <Badge label="> 18" />
-              <Badge label="110051" />
+              {bigIntsToString([BigInt(user.claimValues_2)]) && (
+                <Badge label="> 18" />
+              )}
+              {bigIntsToString([BigInt(user.claimValues_3)]) && (
+                <Badge label={bigIntsToString([BigInt(user.claimValues_3)])} />
+              )}
+              {bigIntsToString([BigInt(user.claimValues_4)]) && (
+                <Badge label={bigIntsToString([BigInt(user.claimValues_4)])} />
+              )}
+              {bigIntsToString([BigInt(user.claimValues_5)]) && (
+                <Badge label={bigIntsToString([BigInt(user.claimValues_5)])} />
+              )}
             </div>
           </div>
         ) : (
