@@ -1,13 +1,21 @@
 export type FieldsToReveal = {
-  ageAbove18: boolean
-  gender: boolean
-  state: boolean
-  pinCode: boolean
+  revealAgeAbove18: boolean
+  revealGender: boolean
+  revealState: boolean
+  revealPinCode: boolean
 }
 
 export const fieldsLabel: { key: keyof FieldsToReveal; label: string }[] = [
-  { key: 'ageAbove18', label: 'Age Above 18' },
-  { key: 'gender', label: 'Gender' },
-  { key: 'state', label: 'State' },
-  { key: 'pinCode', label: 'PIN Code' },
+  { key: 'revealAgeAbove18', label: 'Age Above 18' },
+  { key: 'revealGender', label: 'Gender' },
+  { key: 'revealState', label: 'State' },
+  { key: 'revealPinCode', label: 'PIN Code' },
 ]
+
+export type FieldKey =
+  | 'revealAgeAbove18'
+  | 'revealGender'
+  | 'revealState'
+  | 'revealPinCode'
+
+export type FieldsToRevealArray = FieldKey[]

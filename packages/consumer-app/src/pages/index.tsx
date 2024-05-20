@@ -1,4 +1,4 @@
-import { verifyProof } from '@/util'
+import { bigIntsToString, verifyProof } from '@/util'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
@@ -27,7 +27,15 @@ const LoggedIn = () => {
       >
         <circle cx={3} cy={3} r={3} />
       </svg>
-      Logged-out
+      Logged-in
+    </span>
+  )
+}
+
+const Badge = ({ label }: { label: string }) => {
+  return (
+    <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+      {label}
     </span>
   )
 }
@@ -41,7 +49,7 @@ export default function Home() {
     const encodedUri = encodeURIComponent(
       JSON.stringify({
         bio: 'India',
-        fieldsToReveal: ['ageAbove18', 'gender'],
+        fieldsToReveal: ['revealAgeAbove18', 'revealPinCode'],
         returnUrl: 'http://localhost:3001',
       }),
     )
@@ -54,6 +62,12 @@ export default function Home() {
       const result = JSON.parse(decodeURIComponent(payload as string))
       // Further processing of proof
       const proof = result.proof
+
+      console.log(bigIntsToString([BigInt(proof.claimValues_1)]))
+      console.log(bigIntsToString([BigInt(proof.claimValues_2)]))
+      console.log(bigIntsToString([BigInt(proof.claimValues_3)]))
+      console.log(bigIntsToString([BigInt(proof.claimValues_4)]))
+      console.log(bigIntsToString([BigInt(proof.claimValues_5)]))
 
       verifyProof(proof)
         .then(r => {
@@ -75,11 +89,17 @@ export default function Home() {
         </div>
 
         {user ? (
-          <>
+          <div className="flex flex-col gap-4">
             <div>Hello Anon</div>
             <div>You are now logged-in</div>
-            <LoggedIn />
-          </>
+            <div>
+              <LoggedIn />
+            </div>
+            <div className="flex gap-2">
+              <Badge label="> 18" />
+              <Badge label="110051" />
+            </div>
+          </div>
         ) : (
           <>
             <div className="text-md text-[#717686]">Your status:</div>
