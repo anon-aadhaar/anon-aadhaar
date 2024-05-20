@@ -36,12 +36,19 @@ const ParamsPage = () => {
 
   useEffect(() => {
     if (params) {
-      const parsedParams = JSON.parse(params)
+      const parsedParams = JSON.parse(params as string)
       if (parsedParams.fieldsToReveal) {
         setRequestedReveal(parsedParams.fieldsToReveal)
       }
     }
   }, [params])
+
+  const onCancel = (params: any) => {
+    if (!params) throw new Error('Error parsing params')
+    const { returnUrl } = JSON.parse(params)
+
+    window.location.href = returnUrl
+  }
 
   const generateProofandRedirect = async (params: any) => {
     if (!params) throw new Error('Error parsing params')
@@ -145,14 +152,14 @@ const ParamsPage = () => {
                   </div>
 
                   <div className="mt-6 grid grid-cols-2 gap-4">
-                    <a
-                      href="#"
+                    <button
                       className="flex w-full items-center justify-center gap-3 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-red-400 hover:bg-red-50 focus-visible:ring-transparent"
+                      onClick={() => onCancel(params)}
                     >
                       <span className="text-sm font-semibold leading-6">
                         Cancel
                       </span>
-                    </a>
+                    </button>
 
                     <button
                       className="flex w-full items-center justify-center gap-3 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:ring-transparent"
