@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import {Groth16Verifier} from './afk-groth16-verifier.sol';
+import {AFKGroth16Verifier} from './afk-groth16-verifier.sol';
 import './interfaces.sol';
 
 
@@ -73,7 +73,7 @@ contract AFK {
             );
         }
 
-        return Groth16Verifier(verifier).verifyProof(
+        return AFKGroth16Verifier(verifier).verifyProof(
             [groth16Proof[0], groth16Proof[1]],
             [
                 [groth16Proof[2], groth16Proof[3]],

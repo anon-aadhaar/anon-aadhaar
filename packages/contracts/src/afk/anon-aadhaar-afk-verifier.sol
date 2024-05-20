@@ -1,13 +1,13 @@
 pragma solidity >=0.7.0 <0.9.0;
 
 import './interfaces.sol';
-import {Groth16Verifier} from './anon-aadhaar-afk-groth16-verifier.sol';
+import {AnonAadhaarGroth16Verifier} from './anon-aadhaar-afk-groth16-verifier.sol';
 
 contract AnonAadhaarAFKVerifier is IIssuerVerifier {
-    Groth16Verifier public verifier;
+    AnonAadhaarGroth16Verifier public verifier;
     uint256 public pubKeyHash;
 
-    constructor(Groth16Verifier _verifier, uint256 _pubKeyHash) {
+    constructor(AnonAadhaarGroth16Verifier _verifier, uint256 _pubKeyHash) {
         verifier = _verifier;
         pubKeyHash = _pubKeyHash;
     }

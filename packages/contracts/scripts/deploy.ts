@@ -10,33 +10,42 @@ if (process.env.PRODUCTION_KEY === 'true') {
 }
 
 async function main() {
-  const verifier = await ethers.deployContract('Verifier')
-  await verifier.waitForDeployment()
+  const afkVerifier = await ethers.deployContract('AFKGroth16Verifier')
+  await afkVerifier.waitForDeployment()
 
-  const _verifierAddress = await verifier.getAddress()
+  const _afkVerifier = await afkVerifier.getAddress()
 
-  console.log(`Verifier contract deployed to ${_verifierAddress}`)
+  console.log(`AFK Verifier contract deployed to ${_afkVerifier}`)
 
-  const anonAadhaar = await ethers.deployContract('AnonAadhaar', [
-    _verifierAddress,
+  const afk = await ethers.deployContract('AFK', [_afkVerifier])
+
+  await afk.waitForDeployment()
+  const _afkAddress = await afk.getAddress()
+
+  console.log(`AFK contract deployed to ${_afkAddress}`)
+
+  const aaVerifier = await ethers.deployContract('AnonAadhaarGroth16Verifier')
+  await aaVerifier.waitForDeployment()
+
+  const _aaVerifier = await aaVerifier.getAddress()
+
+  console.log(`AFK Verifier contract deployed to ${_aaVerifier}`)
+
+  const anonAadhaar = await ethers.deployContract('AnonAadhaarAFKVerifier', [
+    _aaVerifier,
     publicKeyHash,
   ])
 
   await anonAadhaar.waitForDeployment()
   const _anonAadhaarAddress = await anonAadhaar.getAddress()
 
-  console.log(`AnonAadhaar contract deployed to ${_anonAadhaarAddress}`)
+  console.log(`AnonAadhaar AFK contract deployed to ${_anonAadhaarAddress}`)
 
-  const anonAadhaarVote = await ethers.deployContract('AnonAadhaarVote', [
-    'Do you like this app?',
-    ['0', '1', '2', '3', '4', '5'],
+  afk.addIssuer(
+    37977685,
+    'Anon Aadhaar',
     _anonAadhaarAddress,
-  ])
-
-  await anonAadhaarVote.waitForDeployment()
-
-  console.log(
-    `AnonAadhaarVote contract deployed to ${await anonAadhaarVote.getAddress()}`,
+    100 * 24 * 60 * 60,
   )
 }
 
