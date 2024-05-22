@@ -13,8 +13,10 @@
   "dependencies": {
     "@anon-aadhaar/react": "*",
     "@semaphore-protocol/identity": "^4.0.0-beta.9",
+    "ethers": "^6.12.1",
     "localforage": "^1.10.0",
     "next": "14.2.3",
+    "qrcode": "^1.5.3",
     "react": "^18",
     "react-dom": "^18",
     "snarkjs": "^0.7.4"
