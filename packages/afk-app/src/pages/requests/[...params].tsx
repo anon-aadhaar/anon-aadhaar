@@ -15,7 +15,6 @@ const ParamsPage = () => {
   const { _identity } = useAFKIentity()
   const [isConnected, setIsconnected] = useState(false)
   const [qrCodeUrl, setQrCodeUrl] = useState('')
-  const [loading, setLoading] = useState(false)
   const [requestedReveal, setRequestedReveal] =
     useState<FieldsToRevealArray | null>(null)
   const [anonAadhaar] = useAnonAadhaar()
@@ -47,13 +46,11 @@ const ParamsPage = () => {
   }, [params])
 
   const generateNewQR = async () => {
-    setLoading(true)
     const privateKeyResponse = await fetch(
       'https://nodejs-serverless-function-express-eight-iota.vercel.app/api/get-fresh-qr',
     )
 
     if (!privateKeyResponse.ok) {
-      setLoading(false)
       throw new Error('Something went wrong when fetching new QR code')
     }
 
@@ -66,12 +63,10 @@ const ParamsPage = () => {
           light: '#FFF',
         },
       })
-      setLoading(false)
       setQrCodeUrl(url)
 
       console.log('QR code generated')
     } catch (error) {
-      setLoading(false)
       console.error('Error generating QR code:', error)
     }
   }
