@@ -8,11 +8,13 @@ import { FieldsToRevealArray, fieldsLabel } from '../../utils/types'
 import { useRouter } from 'next/router'
 import { useEffect, useMemo, useState } from 'react'
 import { icons } from '../../styles/MainIcons'
+import QRCode from 'qrcode'
 
 const ParamsPage = () => {
   const router = useRouter()
   const { _identity } = useAFKIentity()
   const [isConnected, setIsconnected] = useState(false)
+  const [qrCodeUrl, setQrCodeUrl] = useState('')
   const [requestedReveal, setRequestedReveal] =
     useState<FieldsToRevealArray | null>(null)
   const [anonAadhaar] = useAnonAadhaar()
@@ -43,6 +45,46 @@ const ParamsPage = () => {
     }
   }, [params])
 
+  const generateNewQR = async () => {
+    const privateKeyResponse = await fetch(
+      'https://nodejs-serverless-function-express-eight-iota.vercel.app/api/get-fresh-qr',
+    )
+
+    if (!privateKeyResponse.ok) {
+      throw new Error('Something went wrong when fetching new QR code')
+    }
+
+    const newQrData = await privateKeyResponse.json()
+
+    try {
+      const url = await QRCode.toDataURL(newQrData.testQRData, {
+        color: {
+          dark: '#000',
+          light: '#FFF',
+        },
+      })
+      setQrCodeUrl(url)
+
+      console.log('QR code generated')
+    } catch (error) {
+      console.error('Error generating QR code:', error)
+    }
+  }
+
+  const downloadQRCode = () => {
+    const link = document.createElement('a')
+    link.href = qrCodeUrl
+    link.download = 'qrcode.png'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
+  const handleButtonClick = async () => {
+    await generateNewQR()
+    downloadQRCode()
+  }
+
   const onCancel = (params: any) => {
     if (!params) throw new Error('Error parsing params')
     const { returnUrl } = JSON.parse(params)
@@ -53,9 +95,6 @@ const ParamsPage = () => {
   const generateProofandRedirect = async (params: any) => {
     if (!params) throw new Error('Error parsing params')
     const { fieldsToReveal, returnUrl } = JSON.parse(params)
-
-    console.log('Fields to reveal: ', fieldsToReveal)
-    console.log('Return url: ', returnUrl)
 
     if (!_identity) throw new Error('An Identity must be set to log-in')
 
@@ -187,17 +226,27 @@ const ParamsPage = () => {
                 </>
               ) : (
                 <div className="space-y-6">
-                  <p>First you need to connect</p>
+                  <p>First you need to create your AFK account</p>
                   {_identity && (
-                    <LogInWithAnonAadhaar
-                      nullifierSeed={_identity.privateKey}
-                      fieldsToReveal={[
-                        'revealAgeAbove18',
-                        'revealGender',
-                        'revealPinCode',
-                        'revealState',
-                      ]}
-                    />
+                    <div className="flex flex-col items-center justify-center gap-8">
+                      <LogInWithAnonAadhaar
+                        nullifierSeed={_identity.privateKey}
+                        fieldsToReveal={[
+                          'revealAgeAbove18',
+                          'revealGender',
+                          'revealPinCode',
+                          'revealState',
+                        ]}
+                      />
+
+                      <button
+                        type="button"
+                        onClick={handleButtonClick}
+                        className="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                      >
+                        Download test QR code
+                      </button>
+                    </div>
                   )}
                 </div>
               )}

@@ -4,8 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3001",
-    "build": "echo skip build",
-    "build-app": "next build",
+    "build": "next build",
     "start": "next start -p 3001",
     "lint": "next lint",
     "format": "echo skip format"

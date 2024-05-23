@@ -1,6 +1,5 @@
 import { Inter } from 'next/font/google'
 import { LogInWithAnonAadhaar } from '@anon-aadhaar/react'
-// import { useEffect } from 'react'
 import { useAFKIentity } from '@/hooks/useAfkIdentity'
 import { createIdentity } from '@/identity/identity'
 import { useEffect } from 'react'
@@ -30,15 +29,17 @@ export default function Home() {
           Sign Up
         </button>
       ) : (
-        <LogInWithAnonAadhaar
-          nullifierSeed={_identity.privateKey}
-          fieldsToReveal={[
-            'revealAgeAbove18',
-            'revealGender',
-            'revealPinCode',
-            'revealState',
-          ]}
-        />
+        <div className="flex flex-col items-center justify-center gap-8">
+          <LogInWithAnonAadhaar
+            nullifierSeed={_identity.privateKey}
+            fieldsToReveal={[
+              'revealAgeAbove18',
+              'revealGender',
+              'revealPinCode',
+              'revealState',
+            ]}
+          />
+        </div>
       )}
 
       {_identity && (
