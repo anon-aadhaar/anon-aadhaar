@@ -1,0 +1,9 @@
+[2K[1G[1myarn run v1.22.22[22m
+[2K[1G[2m$ eslint --ext .js,.ts .[22m
+[0m[0m
+[0m[4m/Users/yanismeziane/anon-aadhaar-lite/packages/react/src/util.ts[24m[0m
+[0m  [2m144:64[22m  [33mwarning[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m[0m
+[0m[33m[1m✖ 1 problem (0 errors, 1 warning)[22m[39m[0m
+[0m[33m[1m[22m[39m[0m
+[2K[1G✨  Done in 2.13s.

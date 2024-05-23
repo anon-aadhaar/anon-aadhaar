@@ -1,0 +1,13 @@
+[2K[1G[1myarn run v1.22.22[22m
+[2K[1G[2m$ tsup src/index.ts --dts[22m
+[34mCLI[39m Building entry: src/index.ts
+[34mCLI[39m Using tsconfig: tsconfig.json
+[34mCLI[39m tsup v7.3.0
+[34mCLI[39m Target: node16
+[34mCJS[39m Build start
+[32mCJS[39m [1mdist/index.js [22m[32m163.07 KB[39m
+[32mCJS[39m ⚡️ Build success in 114ms
+[34mDTS[39m Build start
+[32mDTS[39m ⚡️ Build success in 2551ms
+[32mDTS[39m [1mdist/index.d.ts [22m[32m9.14 KB[39m
+[2K[1G✨  Done in 3.27s.

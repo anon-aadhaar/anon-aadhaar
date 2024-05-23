@@ -1,0 +1,8 @@
+[2K[1G[1myarn run v1.22.22[22m
+[2K[1G[2m$ npx ts-mocha test/**/*.test.ts --exit[22m
+
+[0m[0m
+[0m  AFK E2E test[0m
+Generating Anon Aadhaar AFK inputs...
+Done ✔
+Generating Anon Aadhaar AFK proof...

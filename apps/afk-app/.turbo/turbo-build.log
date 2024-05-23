@@ -1,0 +1,57 @@
+[2K[1G[1myarn run v1.22.22[22m
+[2K[1G[2m$ next build[22m
+  [1m[38;2;173;127;168m▲ Next.js 14.2.3[39m[22m
+  - Environments: .env.local
+
+[?25l [37m[1m [22m[39m Linting and checking validity of types  [36m.[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m..[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m...[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m.[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m..[39m[2K[1G[?25h
+[36m./src/pages/api/registerAfkId.ts[39m
+[33m64[39m:[33m21[39m  [33m[1mWarning[22m[39m: Unexpected any. Specify a different type.  [90m[1m@typescript-eslint/no-explicit-any[22m[39m
+
+[36m./src/pages/requests/[...params].tsx[39m
+[33m88[39m:[33m29[39m  [33m[1mWarning[22m[39m: Unexpected any. Specify a different type.  [90m[1m@typescript-eslint/no-explicit-any[22m[39m
+[33m95[39m:[33m51[39m  [33m[1mWarning[22m[39m: Unexpected any. Specify a different type.  [90m[1m@typescript-eslint/no-explicit-any[22m[39m
+
+[36minfo[39m  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
+[?25l [37m[1m [22m[39m Linting and checking validity of types  [36m.[39m[2K[1G[?25h [37m[1m [22m[39m Linting and checking validity of types     [32m[1m✓[22m[39m Linting and checking validity of types 
+ [37m[1m [22m[39m Creating an optimized production build ...
+ ⚠ Compiled with warnings
+
+../../packages/core/dist/index.js
+Critical dependency: the request of a dependency is an expression
+
+Import trace for requested module:
+../../packages/core/dist/index.js
+../../packages/react/dist/index.js
+
+ ⚠ Compiled with warnings
+
+../../packages/core/dist/index.js
+Critical dependency: the request of a dependency is an expression
+
+Import trace for requested module:
+../../packages/core/dist/index.js
+../../packages/react/dist/index.js
+
+ [32m[1m✓[22m[39m Compiled successfully
+[?25l [37m[1m [22m[39m Collecting page data  [36m.[39m[2K[1G [37m[1m [22m[39m Collecting page data  [36m..[39m[2K[1G[?25h [37m[1m [22m[39m Collecting page data     [32m[1m✓[22m[39m Collecting page data 
+[?25l [37m[1m [22m[39m Generating static pages (0/4)  [36m[    ][39m[2K[1G [37m[1m [22m[39m Generating static pages (1/4)  [36m[=   ][39m[2K[1G[?25h [32m[1m✓[22m[39m Generating static pages (4/4)
+[?25l [37m[1m [22m[39m Finalizing page optimization  [36m.[39m[?25l [37m[1m [22m[39m Collecting build traces  [36m.[39m[2K[1G [37m[1m [22m[39m Finalizing page optimization  [36m..[39m[2K[1G [37m[1m [22m[39m Collecting build traces  [36m..[39m[2K[1G [37m[1m [22m[39m Finalizing page optimization  [36m...[39m[2K[1G [37m[1m [22m[39m Collecting build traces  [36m...[39m[2K[1G [37m[1m [22m[39m Finalizing page optimization  [36m.[39m[2K[1G [37m[1m [22m[39m Collecting build traces  [36m.[39m[2K[1G [37m[1m [22m[39m Finalizing page optimization  [36m..[39m[2K[1G [37m[1m [22m[39m Collecting build traces  [36m..[39m[2K[1G [37m[1m [22m[39m Finalizing page optimization  [36m...[39m[2K[1G [37m[1m [22m[39m Collecting build traces  [36m...[39m[2K[1G [37m[1m [22m[39m Finalizing page optimization  [36m.[39m[2K[1G [37m[1m [22m[39m Collecting build traces  [36m.[39m[2K[1G [37m[1m [22m[39m Finalizing page optimization  [36m..[39m[2K[1G [37m[1m [22m[39m Collecting build traces  [36m..[39m[2K[1G [37m[1m [22m[39m Finalizing page optimization  [36m...[39m[2K[1G [37m[1m [22m[39m Collecting build traces  [36m...[39m[2K[1G [37m[1m [22m[39m Finalizing page optimization  [36m.[39m[2K[1G [37m[1m [22m[39m Collecting build traces  [36m.[39m[2K[1G [37m[1m [22m[39m Finalizing page optimization  [36m..[39m[2K[1G [37m[1m [22m[39m Collecting build traces  [36m..[39m[2K[1G [37m[1m [22m[39m Finalizing page optimization  [36m...[39m[2K[1G [37m[1m [22m[39m Collecting build traces  [36m...[39m[2K[1G [37m[1m [22m[39m Finalizing page optimization  [36m.[39m[2K[1G [37m[1m [22m[39m Collecting build traces  [36m.[39m[2K[1G[?25h [37m[1m [22m[39m Collecting build traces     [32m[1m✓[22m[39m Collecting build traces 
+[2K[1G[?25h [37m[1m [22m[39m Finalizing page optimization     [32m[1m✓[22m[39m Finalizing page optimization 
+
+[4mRoute (pages)[24m                              [4mSize[24m     [4mFirst Load JS[24m
+┌ ○ /                                      1.8 kB          [37m[1m665 kB[22m[39m
+├   └ css/2f71e0d51b6954c9.css             633 B
+├   /_app                                  0 B             [37m[1m619 kB[22m[39m
+├ ○ /404                                   180 B           [37m[1m619 kB[22m[39m
+├ ƒ /api/registerAfkId                     0 B             [37m[1m619 kB[22m[39m
+└ ○ /requests/[...params]                  13.2 kB         [37m[1m676 kB[22m[39m
++ First Load JS shared by all              [37m[1m622 kB[22m[39m
+  ├ chunks/framework-6dd3bf7463386647.js   45.2 kB
+  ├ chunks/main-b343639f456baca7.js        32 kB
+  ├ chunks/pages/_app-569c7201a96b06e4.js  541 kB
+  └ other shared chunks (total)            3.81 kB
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+[?25h[2K[1G✨  Done in 9.70s.

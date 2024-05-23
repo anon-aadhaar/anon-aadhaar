@@ -1,0 +1,65 @@
+[2K[1G[1myarn run v1.22.22[22m
+[2K[1G[2m$ NODE_OPTIONS=--max_old_space_size=8192 TS_NODE_COMPILER_OPTIONS={\"module\":\"commonjs\"} npx ts-mocha -p tsconfig.json test/**/*.test.{ts,tsx} --exit[22m
+(node:73380) ExperimentalWarning: `--experimental-loader` may be removed in the future; instead use `register()`:
+--import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));'
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[0m[0m
+[0m  AnonAadhaar prover react tests[0m
+TypeError: Cannot read properties of undefined (reading 'value')
+    at /Users/yanismeziane/anon-aadhaar-lite/packages/core/dist/index.js:22021:22
+    at Generator.next (<anonymous>)
+    at /Users/yanismeziane/anon-aadhaar-lite/packages/core/dist/index.js:49:61
+    at new Promise (<anonymous>)
+    at __async (/Users/yanismeziane/anon-aadhaar-lite/packages/core/dist/index.js:33:10)
+    at prove (/Users/yanismeziane/anon-aadhaar-lite/packages/core/dist/index.js:22015:10)
+    at [90m/Users/yanismeziane/anon-aadhaar-lite/packages/react/[39msrc/prove.ts:38:35
+    at step [90m(/Users/yanismeziane/anon-aadhaar-lite/packages/react/[39msrc/prove.ts:33:23[90m)[39m
+    at Object.next [90m(/Users/yanismeziane/anon-aadhaar-lite/packages/react/[39msrc/prove.ts:14:53[90m)[39m
+    at [90m/Users/yanismeziane/anon-aadhaar-lite/packages/react/[39msrc/prove.ts:8:71
+    at new Promise (<anonymous>)
+    at __awaiter [90m(/Users/yanismeziane/anon-aadhaar-lite/packages/react/[39msrc/prove.ts:4:12[90m)[39m
+    at proveAndSerialize [90m(/Users/yanismeziane/anon-aadhaar-lite/packages/react/[39msrc/prove.ts:30:57[90m)[39m
+    at Context.<anonymous> [90m(/Users/yanismeziane/anon-aadhaar-lite/packages/react/[39mtest/prove.test.ts:28:43[90m)[39m
+    at step [90m(/Users/yanismeziane/anon-aadhaar-lite/packages/react/[39mtest/prove.test.ts:33:23[90m)[39m
+    at Object.next [90m(/Users/yanismeziane/anon-aadhaar-lite/packages/react/[39mtest/prove.test.ts:14:53[90m)[39m
+    at fulfilled [90m(/Users/yanismeziane/anon-aadhaar-lite/packages/react/[39mtest/prove.test.ts:5:58[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:95:5)[39m
+  [31m  1) Generate and verify a proof from react[0m
+
+[0m  useAnonAadhaar Hook[0m
+Warning: `ReactDOMTestUtils.act` is deprecated in favor of `React.act`. Import `act` from `react` instead of `react-dom/test-utils`. See https://react.dev/warnings/react-dom-test-utils for more info.
+Warning: ReactDOM.render is no longer supported in React 18. Use createRoot instead. Until you switch to the new API, your app will behave as if it's running React 17. Learn more: https://reactjs.org/link/switch-to-createroot
+  [32m  [32m✔[39m[0m[90m returns initial state and startReq function[0m
+Warning: unmountComponentAtNode is deprecated and will be removed in the next major release. Switch to the createRoot API. Learn more: https://reactjs.org/link/switch-to-createroot
+[ANON-AADHAAR] startReq {"type":"login","args":"<object>"}
+[ANON-AADHAAR] new state {"status":"logging-in"}
+[ANON-AADHAAR] writing to local storage, status logging-in
+  [32m  [32m✔[39m[0m[90m returns updated state when request sent[0m
+[ANON-AADHAAR] read stored state: {"status":"logged-out"}
+[ANON-AADHAAR] new state {"status":"logged-out"}
+[ANON-AADHAAR] writing to local storage, status logged-out
+
+[0m  AnonAadhaarProvider[0m
+  [32m  [32m✔[39m[0m[90m Should render children[0m
+[ANON-AADHAAR] read stored state: {"status":"logged-out"}
+[ANON-AADHAAR] new state {"status":"logged-out"}
+[ANON-AADHAAR] writing to local storage, status logged-out
+
+
+[92m [0m[32m 3 passing[0m[90m (1s)[0m
+[31m  1 failing[0m
+
+[0m  1) AnonAadhaar prover react tests
+       Generate and verify a proof from react:
+[0m[31m     Error: Error while generating the proof[0m[90m
+      at /Users/yanismeziane/anon-aadhaar-lite/packages/react/src/prove.ts:42:11
+      at step (src/prove.ts:33:23)
+      at Object.throw (src/prove.ts:14:53)
+      at rejected (src/prove.ts:6:65)
+      at processTicksAndRejections (node:internal/process/task_queues:95:5)
+[0m
+
+
+[2K[1G[31merror[39m Command failed with exit code 1.
+[2K[1G[34minfo[39m Visit [1mhttps://yarnpkg.com/en/docs/cli/run[22m for documentation about this command.
