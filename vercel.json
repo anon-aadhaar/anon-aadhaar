@@ -1,0 +1,33 @@
+{
+  "version": 2,
+  "projects": [
+    {
+      "name": "afk-app",
+      "rootDirectory": "apps/afk-app"
+    },
+    {
+      "name": "consumer-app",
+      "rootDirectory": "apps/consumer-app"
+    }
+  ],
+  "builds": [
+    {
+      "src": "apps/afk-app/next.config.js",
+      "use": "@vercel/next"
+    },
+    {
+      "src": "apps/consumer-app/next.config.js",
+      "use": "@vercel/next"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/afk-app/(.*)",
+      "dest": "apps/afk-app/$1"
+    },
+    {
+      "src": "/consumer-app/(.*)",
+      "dest": "apps/consumer-app/$1"
+    }
+  ]
+}
