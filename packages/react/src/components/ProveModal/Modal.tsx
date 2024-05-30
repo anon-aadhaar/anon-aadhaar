@@ -1,20 +1,14 @@
-import React, {
-  useEffect,
-  useState,
-  Dispatch,
-  SetStateAction,
-  useContext,
-} from 'react'
+import React, { useEffect, useState, Dispatch, SetStateAction } from 'react'
 import styled from 'styled-components'
-import { AadhaarQRValidation } from '../../types'
+import { AadhaarQRValidation, ModalViews } from '../../types'
 import { ErrorToast } from './ErrorToast'
 import { BrowserView, MobileView } from 'react-device-detect'
 import { Logo } from '../LogInWithAnonAadhaar'
 import { verifySignature } from '../../verifySignature'
-import { AnonAadhaarContext } from '../../hooks/useAnonAadhaar'
 import { VerifyModal } from './VerifyModal'
 import { ProveModal } from './ProveModal'
 import { FieldsToRevealArray } from '@anon-aadhaar/core'
+import { LoaderView } from './LoaderView'
 
 interface ModalProps {
   isOpen: boolean
@@ -25,10 +19,11 @@ interface ModalProps {
   qrStatus: AadhaarQRValidation | null
   setQrStatus: Dispatch<SetStateAction<AadhaarQRValidation | null>>
   nullifierSeed: number
-  currentView: 'Verify' | 'Prove'
-  setCurrentView: Dispatch<SetStateAction<'Verify' | 'Prove'>>
+  currentView: ModalViews
+  setCurrentView: Dispatch<SetStateAction<ModalViews>>
   fieldsToReveal?: FieldsToRevealArray
   signal?: string
+  useTestAadhaar?: boolean
 }
 
 export const Modal: React.FC<ModalProps> = ({
@@ -44,10 +39,10 @@ export const Modal: React.FC<ModalProps> = ({
   nullifierSeed,
   currentView,
   setCurrentView,
+  useTestAadhaar = false,
 }) => {
   const [qrData, setQrData] = useState<string | null>(null)
   const [provingEnabled, setProvingEnabled] = useState<boolean>(false)
-  const { useTestAadhaar } = useContext(AnonAadhaarContext)
 
   useEffect(() => {
     if (qrData) {
@@ -87,27 +82,30 @@ export const Modal: React.FC<ModalProps> = ({
               case 'Verify':
                 return (
                   <VerifyModal
-                    logo={logo}
-                    qrStatus={qrStatus}
                     provingEnabled={provingEnabled}
+                    qrStatus={qrStatus}
                     setQrStatus={setQrStatus}
                     setQrData={setQrData}
                     setCurrentView={setCurrentView}
+                    useTestAadhaar={useTestAadhaar}
                   />
                 )
               case 'Prove':
                 return (
                   <ProveModal
                     setErrorMessage={setErrorMessage}
-                    logo={logo}
                     qrStatus={qrStatus}
                     qrData={qrData}
                     setQrStatus={setQrStatus}
                     signal={signal}
                     fieldsToReveal={fieldsToReveal}
                     nullifierSeed={nullifierSeed}
+                    setCurrentView={setCurrentView}
+                    useTestAadhaar={useTestAadhaar}
                   />
                 )
+              case 'Proving':
+                return <LoaderView />
             }
           })()}
         </ModalContent>
@@ -161,7 +159,7 @@ const ModalContent = styled.div`
   background-color: #ffffff;
   border-radius: 1rem;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  justify-content: space-between;
+  padding: 2rem;
 
   @media (max-width: 425px) {
     /* For screens <= 425px (e.g., mobile devices) */
@@ -173,7 +171,7 @@ const ModalContent = styled.div`
 
   @media (min-width: 426px) {
     /* For screens > 426px (e.g., desktop) */
-    min-height: 500px;
+    min-height: 600px;
     max-width: 450px;
     width: 80%;
   }
@@ -185,7 +183,6 @@ const TitleSection = styled.div`
   row-gap: 1rem;
   margin-left: auto;
   margin-right: auto;
-  margin: 1rem 1rem 0;
   display: flex;
   flex-flow: column;
 `
@@ -201,7 +198,6 @@ const Title = styled.h3`
 
 const Disclaimer = styled.span`
   color: #6d6d6d;
-  margin-top: 0.3rem;
   font-size: small;
   font-weight: normal;
 `

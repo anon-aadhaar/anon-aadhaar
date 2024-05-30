@@ -1,2 +1,2 @@
 require('global-jsdom/register')
-require('ignore-styles').default(['.svg', '.css'])
+require('ignore-styles').default(['.svg', '.css', '.ttf'])

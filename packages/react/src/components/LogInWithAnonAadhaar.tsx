@@ -1,16 +1,18 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { Modal } from './ProveModal/Modal'
 import styled from 'styled-components'
 import { useEffect, useContext } from 'react'
 import { AnonAadhaarContext } from '../hooks/useAnonAadhaar'
-import { icons } from './ButtonLogo'
-import { AadhaarQRValidation } from '../types'
+import { icons } from './MainIcons'
+import { AadhaarQRValidation, ModalViews } from '../types'
 import { ProverState, FieldsToRevealArray } from '@anon-aadhaar/core'
+import { createBlobURL } from '../util'
 
 interface LogInWithAnonAadhaarProps {
   signal?: string
   fieldsToReveal?: FieldsToRevealArray
   nullifierSeed: number
+  useTestAadhaar?: boolean
 }
 
 /**
@@ -26,23 +28,18 @@ export const LogInWithAnonAadhaar = ({
   signal,
   fieldsToReveal,
   nullifierSeed,
+  useTestAadhaar = false,
 }: LogInWithAnonAadhaarProps) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [qrStatus, setQrStatus] = useState<null | AadhaarQRValidation>(null)
-  const [currentView, setCurrentView] = useState<'Verify' | 'Prove'>('Verify')
+  const [currentView, setCurrentView] = useState<ModalViews>('Verify')
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const { state, startReq, proverState } = useContext(AnonAadhaarContext)
-
+  const anonAadhaarLogo = createBlobURL(icons.aalogo)
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
   }
-
-  const blob = new Blob([icons.aalogo], { type: 'image/svg+xml' })
-  const anonAadhaarLogo = useMemo(
-    () => URL.createObjectURL(blob),
-    [icons.aalogo],
-  )
 
   useEffect(() => {
     if (proverState === ProverState.Completed) closeModal()
@@ -80,6 +77,7 @@ export const LogInWithAnonAadhaar = ({
             nullifierSeed={nullifierSeed}
             setCurrentView={setCurrentView}
             currentView={currentView}
+            useTestAadhaar={useTestAadhaar}
           ></Modal>
         </div>
       )}
@@ -104,6 +102,7 @@ export const LogInWithAnonAadhaar = ({
               nullifierSeed={nullifierSeed}
               setCurrentView={setCurrentView}
               currentView={currentView}
+              useTestAadhaar={useTestAadhaar}
             ></Modal>
             <MenuItem onClick={() => startReq({ type: 'logout' })}>
               Logout

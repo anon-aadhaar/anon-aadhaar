@@ -12,8 +12,8 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "noUnusedParameters": true,
-    "allowSyntheticDefaultImports": true,
+    "allowSyntheticDefaultImports": true
   },
-  "include": ["src/*"],
-  "exclude": ["mocha.cjs", "eslintrc.cjs"],
+  "include": ["src/*", "fonts.d.ts"],
+  "exclude": ["mocha.cjs", "eslintrc.cjs"]
 }

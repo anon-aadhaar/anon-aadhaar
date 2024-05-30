@@ -1,3 +1,15 @@
+## 2.0.6
+
+- removed test var from context provider
+
+## 2.0.5
+
+- add new ui design of the proving modal
+
+## 2.0.4
+
+- bump @zk-email/helpers to solve pnpm and npm installing error
+
 ## 2.0.3
 
 - fix timestamp in QR code generator (UTC to IST based)
