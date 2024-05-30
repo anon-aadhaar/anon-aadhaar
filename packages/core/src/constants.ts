@@ -1,5 +1,5 @@
 enum BaseUrlArtifacts {
-  Prod = 'https://d1re67zv2jtrxt.cloudfront.net/',
+  Prod = 'https://anon-aadhaar-artifacts.s3.eu-central-1.amazonaws.com/v2.0.7/',
   // Test = 'https://d1l6t78iyuhldt.cloudfront.net/v1.0.0',
   // Staging = 'https://dhzposh38rt8g.cloudfront.net',
 }
