@@ -81,7 +81,7 @@ export const generateArgs = async ({
     revealState: fieldsToRevealArray.includes('revealState'),
   }
 
-  // Set signal to 1 by default if no signal setted up
+  // Set signal to 1 by default if no signal is set
   const signalHash = signal ? hash(signal) : hash(1)
 
   const anonAadhaarArgs: AnonAadhaarArgs = {

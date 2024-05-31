@@ -14,10 +14,10 @@ contract AnonAadhaar is IAnonAadhaar {
     }
 
     /// @dev Verifies the AnonAadhaar proof received.
-    /// @param nullifierSeed: Nullifier Seed used to compute the nulllifier.
+    /// @param nullifierSeed: Nullifier Seed used to compute the nullifier.
     /// @param nullifier: Nullifier for the Anon Aadhaar user.
     /// @param timestamp: Timestamp of when the QR code was signed.
-    /// @param signal: Signal committed while genereting the proof.
+    /// @param signal: Signal committed while generating the proof.
     /// @param revealArray: Array of the values used to reveal data, if value is 1 data is revealed, not if 0.
     /// @param groth16Proof: SNARK Groth16 proof.
     /// @return Verified bool

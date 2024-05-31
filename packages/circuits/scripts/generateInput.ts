@@ -27,7 +27,7 @@ if (process.env.REAL_DATA === 'true') {
 const main = () => {
   const nullifierSeed = 12345678
 
-  // We are using produciton public key here (v2)
+  // We are using production public key here (v2)
   // Change to uidai_prod_cdup.cer to use the test data provided by UIDAI (v1)
   const pkData = readFileSync(
     path.join(__dirname, '../assets', certificateName),

@@ -96,6 +96,6 @@ template AadhaarQRVerifier(n, k, maxDataLength) {
     nullifier <== Nullifier()(nullifierSeed, photo);
 
     
-    // Dummy square to prevent singal tampering (in rare cases where non-constrained inputs are ignored)
+    // Dummy square to prevent signal tampering (in rare cases where non-constrained inputs are ignored)
     signal signalHashSquare <== signalHash * signalHash;
 }

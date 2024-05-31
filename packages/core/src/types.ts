@@ -16,7 +16,7 @@ export enum ArtifactsOrigin {
 }
 
 /**
- * @dev all the arguments needed to initalize the Core package.
+ * @dev all the arguments needed to initialize the Core package.
  * You can find these URLs in ./constants.ts
  */
 export interface InitArgs {

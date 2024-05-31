@@ -13,8 +13,8 @@ include "../utils/pack.circom";
 Aadhaar QR code data schema (V2)
 
 V1 Docs - https://uidai.gov.in/images/resource/User_manulal_QR_Code_15032019.pdf
-There are no official spec docs for Aadhaar V2 available publically, but the difference from V1 is:
-  - "V2" is added at the beginning of the data, before the first delimitter.
+There are no official spec docs for Aadhaar V2 available publicly, but the difference from V1 is:
+  - "V2" is added at the beginning of the data, before the first delimiter.
   - Phone and email hash is no longer present.
   - Last 4 digits of mobile number is added (before the photo).
 
@@ -95,8 +95,8 @@ template ExtractAndPackAsInt(maxDataLength, extractPosition) {
 }
 
 
-/// @title TimetampExtractor
-/// @notice Extracts the timetamp when the QR was signed rounded to nearest hour
+/// @title TimestampExtractor
+/// @notice Extracts the timestamp when the QR was signed rounded to nearest hour
 /// @dev We ignore minutes and seconds to avoid identifying the user based on the precise timestamp
 /// @input nDelimitedData[maxDataLength] - QR data where each delimiter is 255 * n where n is order of the data
 /// @output timestamp - Unix timestamp on signature
@@ -146,7 +146,7 @@ template AgeExtractor(maxDataLength) {
     signal output nDelimitedDataShiftedToDob[maxDataLength];
     
     // Shift the data to the right to until the DOB index
-    // We are not usind SubArraySelector as the shifted data is an output
+    // We are not using SubArraySelector as the shifted data is an output
     component shifter = VarShiftLeft(maxDataLength, maxDataLength);
     shifter.in <== nDelimitedData;
     shifter.shift <== startDelimiterIndex; // We want delimiter to be the first byte
@@ -158,7 +158,7 @@ template AgeExtractor(maxDataLength) {
     shiftedBytes[11] === (dobPosition() + 1) * 255;
 
     // Convert DOB bytes to unix timestamp. 
-    // Get year, month, name as ints (DD-MM-YYYY format and starts from shiftedBytes[0])
+    // Get year, month, name as int (DD-MM-YYYY format and starts from shiftedBytes[0])
     signal year <== DigitBytesToInt(4)([shiftedBytes[7], shiftedBytes[8], shiftedBytes[9], shiftedBytes[10]]);
     signal month <== DigitBytesToInt(2)([shiftedBytes[4], shiftedBytes[5]]);
     signal day <== DigitBytesToInt(2)([shiftedBytes[1], shiftedBytes[2]]);
@@ -207,7 +207,7 @@ template GenderExtractor(maxDataLength) {
 /// @input nDelimitedData[maxDataLength] - QR data where each delimiter is 255 * n where n is order of the data
 /// @input startDelimiterIndex - index of the delimiter after which the pin code start
 /// @input endDelimiterIndex - index of the delimiter up to which the pin code is present
-/// @output out - pincode as integer
+/// @output out - pinCode as integer
 template PinCodeExtractor(maxDataLength) {
     signal input nDelimitedData[maxDataLength];
     signal input startDelimiterIndex;
@@ -296,7 +296,7 @@ template QRDataExtractor(maxDataLength) {
     signal output photo[photoPackSize()];
 
     // Create `nDelimitedData` - same as `data` but each delimiter is replaced with n * 255
-    // where n means the nth occurance of 255
+    // where n means the nth occurrence of 255
     // This is to verify `delimiterIndices` is correctly set for each extraction
     component is255[maxDataLength];
     component indexBeforePhoto[maxDataLength];
