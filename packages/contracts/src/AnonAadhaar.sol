@@ -6,27 +6,19 @@ import '../interfaces/IAnonAadhaar.sol';
 
 contract AnonAadhaar is IAnonAadhaar {
     address public verifier;
-    uint256 public storedPublicKeyHash;
+    uint256 public immutable storedPublicKeyHash;
 
     constructor(address _verifier, uint256 _pubkeyHash) {
         verifier = _verifier;
         storedPublicKeyHash = _pubkeyHash;
     }
 
-    /// @dev Verifies that the public key received is corresponding with the one stored in the contract.
-    /// @param _receivedpubkeyHash: Public key received.
-    /// @return Verified bool
-    function verifyPublicKeyHash(
-        uint256 _receivedpubkeyHash
-    ) private view returns (bool) {
-        return storedPublicKeyHash == _receivedpubkeyHash;
-    }
-
     /// @dev Verifies the AnonAadhaar proof received.
-    /// @param nullifier: Nullifier for the users Aadhaar.
+    /// @param nullifierSeed: Nullifier Seed used to compute the nullifier.
+    /// @param nullifier: Nullifier for the Anon Aadhaar user.
     /// @param timestamp: Timestamp of when the QR code was signed.
-    /// @param signal: Signal committed while genereting the proof.
-    /// @param revealArray: Array of the values used as input for the proof generation (equal to [0, 0, 0, 0] if no field reveal were asked).
+    /// @param signal: Signal committed while generating the proof.
+    /// @param revealArray: Array of the values used to reveal data, if value is 1 data is revealed, not if 0.
     /// @param groth16Proof: SNARK Groth16 proof.
     /// @return Verified bool
     function verifyAnonAadhaarProof(
@@ -34,8 +26,8 @@ contract AnonAadhaar is IAnonAadhaar {
         uint nullifier,
         uint timestamp,
         uint signal,
-        uint[4] memory revealArray,
-        uint[8] memory groth16Proof
+        uint[4] calldata revealArray,
+        uint[8] calldata groth16Proof
     ) public view returns (bool) {
         uint signalHash = _hash(signal);
         return
@@ -68,6 +60,6 @@ contract AnonAadhaar is IAnonAadhaar {
     /// @param message: Message to be hashed.
     /// @return Message digest.
     function _hash(uint256 message) private pure returns (uint256) {
-        return uint256(keccak256(abi.encodePacked(message))) >> 8;
+        return uint256(keccak256(abi.encodePacked(message))) >> 3;
     }
 }

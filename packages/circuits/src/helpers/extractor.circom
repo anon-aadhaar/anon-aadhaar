@@ -1,4 +1,4 @@
-pragma circom 2.1.6;
+pragma circom 2.1.9;
 
 include "circomlib/circuits/comparators.circom";
 include "circomlib/circuits/bitify.circom";
@@ -13,8 +13,8 @@ include "../utils/pack.circom";
 Aadhaar QR code data schema (V2)
 
 V1 Docs - https://uidai.gov.in/images/resource/User_manulal_QR_Code_15032019.pdf
-There are no official spec docs for Aadhaar V2 available publically, but the difference from V1 is:
-  - "V2" is added at the beginning of the data, before the first delimitter.
+There are no official spec docs for Aadhaar V2 available publicly, but the difference from V1 is:
+  - "V2" is added at the beginning of the data, before the first delimiter.
   - Phone and email hash is no longer present.
   - Last 4 digits of mobile number is added (before the photo).
 
@@ -95,8 +95,8 @@ template ExtractAndPackAsInt(maxDataLength, extractPosition) {
 }
 
 
-/// @title TimetampExtractor
-/// @notice Extracts the timetamp when the QR was signed rounded to nearest hour
+/// @title TimestampExtractor
+/// @notice Extracts the timestamp when the QR was signed rounded to nearest hour
 /// @dev We ignore minutes and seconds to avoid identifying the user based on the precise timestamp
 /// @input nDelimitedData[maxDataLength] - QR data where each delimiter is 255 * n where n is order of the data
 /// @output timestamp - Unix timestamp on signature
@@ -127,6 +127,7 @@ template TimetampExtractor(maxDataLength) {
 /// @title AgeExtractor 
 /// @notice Extract date of birth from the Aadhaar QR data and returns as Unix timestamp
 /// @notice The timestamp will correspond to 00:00 of the date in IST timezone
+/// @notice Assumes current time input is above DOB
 /// @param maxDataLength - Maximum length of the data
 /// @input nDelimitedData[maxDataLength] - QR data where each delimiter is 255 * n where n is order of the data
 /// @input startDelimiterIndex - index of the delimiter after which the date of birth start
@@ -144,11 +145,8 @@ template AgeExtractor(maxDataLength) {
     signal output age;
     signal output nDelimitedDataShiftedToDob[maxDataLength];
     
-    var dobDelimiterIndex = dobPosition();
-    var byteLength = 10 + 2; // DD-MM-YYYY + 2 delimiter
-
     // Shift the data to the right to until the DOB index
-    // We are not usind SubArraySelector as the shifted data is an output
+    // We are not using SubArraySelector as the shifted data is an output
     component shifter = VarShiftLeft(maxDataLength, maxDataLength);
     shifter.in <== nDelimitedData;
     shifter.shift <== startDelimiterIndex; // We want delimiter to be the first byte
@@ -160,7 +158,7 @@ template AgeExtractor(maxDataLength) {
     shiftedBytes[11] === (dobPosition() + 1) * 255;
 
     // Convert DOB bytes to unix timestamp. 
-    // Get year, month, name as ints (DD-MM-YYYY format and starts from shiftedBytes[0])
+    // Get year, month, name as int (DD-MM-YYYY format and starts from shiftedBytes[0])
     signal year <== DigitBytesToInt(4)([shiftedBytes[7], shiftedBytes[8], shiftedBytes[9], shiftedBytes[10]]);
     signal month <== DigitBytesToInt(2)([shiftedBytes[4], shiftedBytes[5]]);
     signal day <== DigitBytesToInt(2)([shiftedBytes[1], shiftedBytes[2]]);
@@ -168,16 +166,17 @@ template AgeExtractor(maxDataLength) {
     // Completed age based on year value
     signal ageByYear <== currentYear - year - 1;
 
-    // +1 if month and day is greater than or equal to the current month and day
-    component monthGt = GreaterThan(4);
-    monthGt.in[0] <== currentMonth + 1;
-    monthGt.in[1] <== month;
+    // +1 to age if month is above currentMonth, or if months are same and day is higher
+    signal monthGt <== GreaterThan(4)([currentMonth, month]);
 
-    component dayGt = GreaterThan(5);
-    dayGt.in[0] <== currentDay + 1;
-    dayGt.in[1] <== day;
+    signal monthEq <== IsEqual()([currentMonth, month]);
 
-    age <== ageByYear + monthGt.out + dayGt.out;
+    signal dayGt <== GreaterThan(5)([currentDay + 1, day]);
+
+    signal isHigherDayOnSameMonth <== monthEq * dayGt;
+
+    age <== ageByYear + (monthGt + isHigherDayOnSameMonth);
+
     nDelimitedDataShiftedToDob <== shiftedBytes;
 }
 
@@ -199,6 +198,7 @@ template GenderExtractor(maxDataLength) {
     // saves around 14k constraints
     nDelimitedDataShiftedToDob[11] === genderPosition() * 255;
     nDelimitedDataShiftedToDob[13] === (genderPosition() + 1) * 255;
+
     out <== nDelimitedDataShiftedToDob[12];
 }
 
@@ -207,7 +207,7 @@ template GenderExtractor(maxDataLength) {
 /// @input nDelimitedData[maxDataLength] - QR data where each delimiter is 255 * n where n is order of the data
 /// @input startDelimiterIndex - index of the delimiter after which the pin code start
 /// @input endDelimiterIndex - index of the delimiter up to which the pin code is present
-/// @output out - pincode as integer
+/// @output out - pinCode as integer
 template PinCodeExtractor(maxDataLength) {
     signal input nDelimitedData[maxDataLength];
     signal input startDelimiterIndex;
@@ -276,16 +276,15 @@ template PhotoExtractor(maxDataLength) {
 /// @title QRDataExtractor
 /// @notice Extracts the name, date, gender, photo from the Aadhaar QR data
 /// @input data[maxDataLength] - QR data without the signature padded
-/// @input dataLength - Length of the padded QR data
-/// @input nonPaddedDataLength - Length of the non-padded QR data
+/// @input qrDataPaddedLength - Length of the padded QR data
 /// @input delimiterIndices[17] - Indices of the delimiters in the QR data
 /// @output name - single field (int) element representing the name in little endian order
 /// @output age - Unix timestamp representing the date of birth
 /// @output gender - Single byte number representing gender
-/// @output photo - Photo of the user
+/// @output photo - Photo of the user along the SHA padding
 template QRDataExtractor(maxDataLength) {
     signal input data[maxDataLength];
-    signal input nonPaddedDataLength;
+    signal input qrDataPaddedLength;
     signal input delimiterIndices[18];
 
     // signal output name;
@@ -297,7 +296,7 @@ template QRDataExtractor(maxDataLength) {
     signal output photo[photoPackSize()];
 
     // Create `nDelimitedData` - same as `data` but each delimiter is replaced with n * 255
-    // where n means the nth occurance of 255
+    // where n means the nth occurrence of 255
     // This is to verify `delimiterIndices` is correctly set for each extraction
     component is255[maxDataLength];
     component indexBeforePhoto[maxDataLength];
@@ -305,6 +304,7 @@ template QRDataExtractor(maxDataLength) {
     signal nDelimitedData[maxDataLength];
     signal n255Filter[maxDataLength + 1];
     n255Filter[0] <== 0;
+
     for (var i = 0; i < maxDataLength; i++) {
         is255[i] = IsEqual();
         is255[i].in[0] <== 255;
@@ -350,12 +350,6 @@ template QRDataExtractor(maxDataLength) {
     genderExtractor.nDelimitedDataShiftedToDob <== ageExtractor.nDelimitedDataShiftedToDob;
     gender <== genderExtractor.out;
 
-    // Extract state
-    component stateExtractor = ExtractAndPackAsInt(maxDataLength, statePosition());
-    stateExtractor.nDelimitedData <== nDelimitedData;
-    stateExtractor.delimiterIndices <== delimiterIndices;
-    state <== stateExtractor.out;
-
     // Extract PIN code
     component pinCodeExtractor = PinCodeExtractor(maxDataLength);
     pinCodeExtractor.nDelimitedData <== nDelimitedData;
@@ -363,10 +357,16 @@ template QRDataExtractor(maxDataLength) {
     pinCodeExtractor.endDelimiterIndex <== delimiterIndices[pinCodePosition()];
     pinCode <== pinCodeExtractor.out;
 
+    // Extract state
+    component stateExtractor = ExtractAndPackAsInt(maxDataLength, statePosition());
+    stateExtractor.nDelimitedData <== nDelimitedData;
+    stateExtractor.delimiterIndices <== delimiterIndices;
+    state <== stateExtractor.out;
+
     // Extract photo
     component photoExtractor = PhotoExtractor(maxDataLength);
     photoExtractor.nDelimitedData <== nDelimitedData;
     photoExtractor.startDelimiterIndex <== delimiterIndices[photoPosition() - 1];
-    photoExtractor.endIndex <== nonPaddedDataLength - 1;
+    photoExtractor.endIndex <== qrDataPaddedLength - 1;
     photo <== photoExtractor.out;
 }

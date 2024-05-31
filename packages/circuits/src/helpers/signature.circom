@@ -1,4 +1,4 @@
-pragma circom 2.1.6;
+pragma circom 2.1.9;
 
 include "circomlib/circuits/poseidon.circom";
 include "@zk-email/circuits/lib/rsa.circom";
@@ -51,11 +51,8 @@ template SignatureVerifier(n, k, maxDataLength) {
       rsa.message[i] <== 0;
   }
 
-  for (var i = 0; i < k; i++) {
-      rsa.modulus[i] <== pubKey[i];
-      rsa.signature[i] <== signature[i];
-  }
-
+	rsa.modulus <== pubKey;
+	rsa.signature <== signature;
 
   // Calculate Poseidon hash of the public key (609 constraints)
   // Poseidon component can take only 16 inputs, so we convert k chunks to k/2 chunks.
@@ -68,7 +65,7 @@ template SignatureVerifier(n, k, maxDataLength) {
 
   signal pubkeyHasherInput[poseidonInputSize];
   for (var i = 0; i < poseidonInputSize; i++) {
-      if (i == poseidonInputSize - 1 && poseidonInputSize % 2 == 1) {
+      if (i == poseidonInputSize - 1 && k % 2 == 1) {
           pubkeyHasherInput[i] <== pubKey[i * 2];
       } else {
           pubkeyHasherInput[i] <== pubKey[i * 2] + (1 << n) * pubKey[i * 2 + 1];

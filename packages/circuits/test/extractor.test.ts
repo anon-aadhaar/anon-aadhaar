@@ -37,11 +37,11 @@ describe('Extractor', function () {
 
     const signedData = QRDataDecode.slice(0, QRDataDecode.length - 256)
 
-    const [paddedMsg] = sha256Pad(signedData, 512 * 3)
+    const [qrDataPadded, qrDataPaddedLen] = sha256Pad(signedData, 512 * 3)
 
     const delimiterIndices: number[] = []
-    for (let i = 0; i < paddedMsg.length; i++) {
-      if (paddedMsg[i] === 255) {
+    for (let i = 0; i < qrDataPadded.length; i++) {
+      if (qrDataPadded[i] === 255) {
         delimiterIndices.push(i)
       }
       if (delimiterIndices.length === 18) {
@@ -50,8 +50,8 @@ describe('Extractor', function () {
     }
 
     const witness: any[] = await circuit.calculateWitness({
-      data: Uint8ArrayToCharArray(paddedMsg),
-      nonPaddedDataLength: QRDataDecode.length - 256,
+      data: Uint8ArrayToCharArray(qrDataPadded),
+      qrDataPaddedLength: qrDataPaddedLen,
       delimiterIndices: delimiterIndices,
     })
 
@@ -67,15 +67,15 @@ describe('Extractor', function () {
     // Gender
     assert(bigIntsToString([witness[3]]) === 'M')
 
-    // State
-    assert(bigIntsToString([witness[4]]) === 'Delhi')
-
     // Pin code
     assert(Number(witness[5]) === 110051)
 
+    // State
+    assert(bigIntsToString([witness[4]]) === 'Delhi')
+
     // Photo
     // Reconstruction of the photo bytes from packed ints and compare each byte
-    const photo = extractPhoto(Array.from(signedData))
+    const photo = extractPhoto(Array.from(qrDataPadded), qrDataPaddedLen)
     const photoWitness = bigIntChunksToByteArray(witness.slice(6, 6 + 32))
 
     assert(photoWitness.length === photo.bytes.length)

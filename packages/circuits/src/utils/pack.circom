@@ -1,4 +1,4 @@
-pragma circom 2.1.6;
+pragma circom 2.1.9;
 
 include "circomlib/circuits/comparators.circom";
 
@@ -6,7 +6,7 @@ include "circomlib/circuits/comparators.circom";
 /// @notice Converts a date string of format YYYYMMDDHHMMSS to a unix time
 /// @notice Each byte is expected to be a ASCII character representing a digit
 /// @notice Assumes the input time is in UTC
-/// @dev Does not work for time before unix epoc (negative timestamps)
+/// @dev Does not work for time before unix epoch (negative timestamps)
 /// @dev Inputs are not sanity checked in this template (eg: month <= 12?, year >= 1970?)
 /// @param maxYears The maximum year that can be represented
 /// @param includeHours 1 to include hours, 0 to round down to day

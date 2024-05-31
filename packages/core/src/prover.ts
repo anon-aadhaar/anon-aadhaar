@@ -154,7 +154,6 @@ export class AnonAadhaarProver implements ProverInferace {
     const input = {
       qrDataPadded: witness.qrDataPadded.value!,
       qrDataPaddedLength: witness.qrDataPaddedLength.value!,
-      nonPaddedDataLength: witness.nonPaddedDataLength.value!,
       delimiterIndices: witness.delimiterIndices.value!,
       signature: witness.signature.value!,
       pubKey: witness.pubKey.value!,
@@ -192,8 +191,8 @@ export class AnonAadhaarProver implements ProverInferace {
       signalHash: witness.signalHash.value!,
       ageAbove18: publicSignals[3],
       gender: publicSignals[4],
-      state: publicSignals[5],
-      pincode: publicSignals[6],
+      pincode: publicSignals[5],
+      state: publicSignals[6],
     }
   }
 }

@@ -5,7 +5,7 @@ import pako from 'pako'
 // - Adds the version specifier at the beginning 'V2'
 // - Mocks last 4 digits of phone number '1234' after VTC
 // - Refresh timestamp data to now
-// - Optionnaly it can take parameters to change the test data fields (dob, pincode, gender, state)
+// - Optionally it can take parameters to change the test data fields (dob, pinCode, gender, state)
 export const createCustomV2TestData = (
   signedData: Uint8Array,
   dob?: string,

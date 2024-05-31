@@ -1,6 +1,6 @@
 {
   "name": "@anon-aadhaar/react",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "description": "Frontend component kit for Anon Aadhaar protocol",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

@@ -75,13 +75,13 @@ export const generateArgs = async ({
   if (!fieldsToRevealArray) fieldsToRevealArray = []
 
   const fieldsToReveal = {
-    revealGender: fieldsToRevealArray.includes('revealGender'),
     revealAgeAbove18: fieldsToRevealArray.includes('revealAgeAbove18'),
-    revealState: fieldsToRevealArray.includes('revealState'),
+    revealGender: fieldsToRevealArray.includes('revealGender'),
     revealPinCode: fieldsToRevealArray.includes('revealPinCode'),
+    revealState: fieldsToRevealArray.includes('revealState'),
   }
 
-  // Set signal to 1 by default if no signal setted up
+  // Set signal to 1 by default if no signal is set
   const signalHash = signal ? hash(signal) : hash(1)
 
   const anonAadhaarArgs: AnonAadhaarArgs = {
@@ -92,10 +92,6 @@ export const generateArgs = async ({
     qrDataPaddedLength: {
       argumentType: ArgumentTypeName.Number,
       value: messageLength.toString(),
-    },
-    nonPaddedDataLength: {
-      argumentType: ArgumentTypeName.Number,
-      value: signedData.length.toString(),
     },
     delimiterIndices: {
       argumentType: ArgumentTypeName.StringArray,
@@ -117,21 +113,21 @@ export const generateArgs = async ({
       argumentType: ArgumentTypeName.String,
       value: signalHash,
     },
-    revealGender: {
-      argumentType: ArgumentTypeName.Number,
-      value: fieldsToReveal.revealGender ? '1' : '0',
-    },
     revealAgeAbove18: {
       argumentType: ArgumentTypeName.Number,
       value: fieldsToReveal.revealAgeAbove18 ? '1' : '0',
     },
-    revealState: {
+    revealGender: {
       argumentType: ArgumentTypeName.Number,
-      value: fieldsToReveal.revealState ? '1' : '0',
+      value: fieldsToReveal.revealGender ? '1' : '0',
     },
     revealPinCode: {
       argumentType: ArgumentTypeName.Number,
       value: fieldsToReveal.revealPinCode ? '1' : '0',
+    },
+    revealState: {
+      argumentType: ArgumentTypeName.Number,
+      value: fieldsToReveal.revealState ? '1' : '0',
     },
   }
 

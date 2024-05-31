@@ -31,13 +31,13 @@ The heart of this module is the `AnonAadhaarCorePackage`, exported from `src/cor
   - **Description:** Deserializes a string back into an Anon Aadhaar core object.
   - **Usage:** `deserialize(serialized: string): Promise<AnonAadhaarCore>`
 
-The core package also provide helper methods such as:
+The core package also provides helper methods such as:
 
 - **generateArgs**
   - **Description:** Generates the arguments to generate a proof, from the scanned QR data and the corresponding certificate file.
   - **Usage:** `generateArgs(qrData: string,certificateFile: string,nullifierSeed: number,signal: string): Promise<AnonAadhaarCore>`
 - **hash**
-  - **Description:** Hash the signal and makes sure that the output is compatible with the SNARK field.
+  - **Description:** Hash the signal and make sure that the output is compatible with the SNARK field.
   - **Usage:** `hash(message: BytesLike | Hexable | number | bigint): NumericString`
 
 ## 📜 Installation and Setup

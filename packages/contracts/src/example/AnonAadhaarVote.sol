@@ -38,7 +38,7 @@ contract AnonAadhaarVote is IAnonAadhaarVote {
     /// @param timestamp: msg.sender address.
     /// @return bool
     function isLessThan3HoursAgo(uint timestamp) public view returns (bool) {
-        return timestamp > (block.timestamp - 3 * 60 * 60);
+        return timestamp > (block.timestamp - 3 hours);
     }
 
     /// @dev Register a vote in the contract.
@@ -47,7 +47,7 @@ contract AnonAadhaarVote is IAnonAadhaarVote {
     /// @param nullifier: Nullifier for the user's Aadhaar data.
     /// @param timestamp: Timestamp of when the QR code was signed.
     /// @param signal: signal used while generating the proof, should be equal to msg.sender.
-    /// @param revealArray: Array of the values used as input for the proof generation (equal to [0, 0, 0, 0] if no field reveal were asked).
+    /// @param revealArray: Array of the values used to reveal data, if value is 1 data is revealed, not if 0.
     /// @param groth16Proof: SNARK Groth16 proof.
     function voteForProposal(
         uint256 proposalIndex,
@@ -55,8 +55,8 @@ contract AnonAadhaarVote is IAnonAadhaarVote {
         uint nullifier,
         uint timestamp,
         uint signal,
-        uint[4] memory revealArray, 
-        uint[8] memory groth16Proof
+        uint[4] calldata revealArray, 
+        uint[8] calldata groth16Proof
     ) public {
         require(
             proposalIndex < proposals.length,
@@ -64,22 +64,22 @@ contract AnonAadhaarVote is IAnonAadhaarVote {
         );
         require(
             addressToUint256(msg.sender) == signal,
-            '[AnonAadhaarVote]: wrong user signal sent.'
+            '[AnonAadhaarVote]: Wrong user signal sent.'
         );
         require(
-            isLessThan3HoursAgo(timestamp) == true,
-            '[AnonAadhaarVote]: Proof must be generated with Aadhaar data generated less than 3 hours ago.'
+            isLessThan3HoursAgo(timestamp),
+            '[AnonAadhaarVote]: Proof must be generated with Aadhaar data signed less than 3 hours ago.'
         );
         require(
             IAnonAadhaar(anonAadhaarVerifierAddr).verifyAnonAadhaarProof(
-                nullifierSeed, // nulifier seed
+                nullifierSeed, // nullifier seed
                 nullifier,
                 timestamp,
                 signal,
                 revealArray,
                 groth16Proof
-            ) == true,
-            '[AnonAadhaarVote]: proof sent is not valid.'
+            ),
+            '[AnonAadhaarVote]: The proof sent is not valid.'
         );
         // Check that user hasn't already voted
         require(
@@ -114,7 +114,8 @@ contract AnonAadhaarVote is IAnonAadhaarVote {
     // Function to get the total number of votes across all proposals
     function getTotalVotes() public view returns (uint256) {
         uint256 totalVotes = 0;
-        for (uint256 i = 0; i < proposals.length; i++) {
+        uint256 proposalLength = proposals.length;
+        for (uint256 i = 0; i < proposalLength; i++) {
             totalVotes += proposals[i].voteCount;
         }
         return totalVotes;

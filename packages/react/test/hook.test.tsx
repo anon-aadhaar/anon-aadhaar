@@ -74,10 +74,6 @@ describe('useAnonAadhaar Hook', () => {
         argumentType: ArgumentTypeName.Number,
         value: messageLen.toString(),
       },
-      nonPaddedDataLength: {
-        argumentType: ArgumentTypeName.Number,
-        value: signedData.length.toString(),
-      },
       delimiterIndices: {
         argumentType: ArgumentTypeName.StringArray,
         value: [1, 2, 3, 4].map(elem => elem.toString()),
@@ -98,19 +94,19 @@ describe('useAnonAadhaar Hook', () => {
         argumentType: ArgumentTypeName.String,
         value: '1',
       },
-      revealGender: {
-        argumentType: ArgumentTypeName.Number,
-        value: '0',
-      },
       revealAgeAbove18: {
         argumentType: ArgumentTypeName.Number,
         value: '0',
       },
-      revealState: {
+      revealGender: {
         argumentType: ArgumentTypeName.Number,
         value: '0',
       },
       revealPinCode: {
+        argumentType: ArgumentTypeName.Number,
+        value: '0',
+      },
+      revealState: {
         argumentType: ArgumentTypeName.Number,
         value: '0',
       },

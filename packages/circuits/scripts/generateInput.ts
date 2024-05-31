@@ -27,7 +27,7 @@ if (process.env.REAL_DATA === 'true') {
 const main = () => {
   const nullifierSeed = 12345678
 
-  // We are using produciton public key here (v2)
+  // We are using production public key here (v2)
   // Change to uidai_prod_cdup.cer to use the test data provided by UIDAI (v1)
   const pkData = readFileSync(
     path.join(__dirname, '../assets', certificateName),
@@ -72,7 +72,6 @@ const main = () => {
   const input = {
     qrDataPadded: Uint8ArrayToCharArray(paddedMsg),
     qrDataPaddedLength: messageLen,
-    nonPaddedDataLength: signedData.length,
     delimiterIndices: delimiterIndices,
     signature: splitToWords(signature, BigInt(121), BigInt(17)),
     pubKey: splitToWords(pubKey, BigInt(121), BigInt(17)),
@@ -80,8 +79,8 @@ const main = () => {
     signalHash: hash(1),
     revealGender: '0',
     revealAgeAbove18: '0',
-    revealState: '0',
     revealPinCode: '0',
+    revealState: '0',
   }
 
   writeFileSync(
