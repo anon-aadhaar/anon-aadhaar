@@ -103,7 +103,7 @@ template ExtractAndPackAsInt(maxDataLength, extractPosition) {
 /// @output year - Year of the signature
 /// @output month - Month of the signature
 /// @output day - Day of the signature
-template TimetampExtractor(maxDataLength) {
+template TimestampExtractor(maxDataLength) {
     signal input nDelimitedData[maxDataLength];
 
     signal output timestamp;
@@ -323,7 +323,7 @@ template QRDataExtractor(maxDataLength) {
     }
 
     // Extract timestamp
-    component timestampExtractor = TimetampExtractor(maxDataLength);
+    component timestampExtractor = TimestampExtractor(maxDataLength);
     timestampExtractor.nDelimitedData <== nDelimitedData;
     timestamp <== timestampExtractor.timestamp;
    
