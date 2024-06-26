@@ -10,5 +10,17 @@
       "AnonAadhaar": "0x31c3041888bA7d27c92a61849fE24152D81b4A3e",
       "AnonAadhaarVote": "0xFF78fD5bCbBA425ee1770d1BAf473EE41a5336be"
     }
+  },
+  "v2.0.0": {
+    "testPublicKey": {
+      "VerifierTest": "0x112bA670Ac2978907a4c47E7D54661F4d860058d",
+      "AnonAadhaarTest": "0x3e8baB4BD5c0e3A4f4a40AE6888913B9ea0A17B8",
+      "AnonAadhaarVote": "0xE74B799fa0ba8756ed69b74dF98A3ca1A33C49A9"
+    },
+    "productionPublicKey": {
+      "Verifier": "0x881d3F6af2ED60c7391f637008310Ce3CCF24ca5",
+      "AnonAadhaar": "0x4Ecf70B07405bC3D2e3dc7912e2140a077A9F1e3",
+      "AnonAadhaarVote": "0x6096601EB33d636b0e21593469920d06647FA955"
+    }
   }
 }
