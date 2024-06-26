@@ -23,6 +23,7 @@
     "bump-to": "yarn version --no-commit-hooks --no-git-tag-version --new-version"
   },
   "dependencies": {
+    "@anon-aadhaar/core": "workspace:*",
     "@zk-email/circuits": "^6.1.1"
   },
   "devDependencies": {
