@@ -52,5 +52,6 @@
     "zero-knowledge-proofs",
     "proof-of-identity",
     "monorepo"
-  ]
+  ],
+  "packageManager": "yarn@4.3.1"
 }
