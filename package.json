@@ -1,6 +1,6 @@
 {
   "name": "anon-aadhaar",
-  "version": "2.0.8",
+  "version": "2.1.0",
   "description": "A set of tools to anonymously prove your identity",
   "main": "index.js",
   "private": true,
@@ -10,7 +10,7 @@
     "test-publish:libraries": "yarn workspaces foreach -A run test-publish",
     "publish:libraries": "yarn workspaces foreach -A run publishtonpm",
     "test:libraries": "yarn workspaces foreach -A run test",
-    "bump": "yarn version --no-commit-hooks --no-git-tag-version",
+    "bump": "yarn workspaces foreach -A version -i ",
     "version": "yarn workspaces foreach -A run bump-to $npm_package_version",
     "lint": "yarn workspaces foreach -A run lint",
     "prepare": "husky install",
