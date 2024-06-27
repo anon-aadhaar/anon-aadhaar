@@ -13,7 +13,7 @@
     "prepare": "cd ../.. && husky install",
     "test-publish": "yarn build && yarn lint && yarn test && npm publish --dry-run",
     "publishtonpm": "yarn build && yarn lint && npm publish",
-    "bump-to": "yarn version --no-commit-hooks --no-git-tag-version --new-version"
+    "bump-to": "yarn version -i "
   },
   "files": [
     "./src/*",
