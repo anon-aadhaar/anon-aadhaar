@@ -11,6 +11,8 @@ PARTIAL_ZKEYS_DIR="$BUILD_DIR/partial_zkeys"
 ARTIFACTS_DIR="$(pwd)/artifacts"
 CIRCOM_BIN_DIR="$HOME/.cargo/bin/circom"
 
+SNARKJS_PATH="$(pwd)/../../node_modules/snarkjs/cli.js"
+
 
 # install circom and dependencies
 function install_deps() {
@@ -69,14 +71,14 @@ function dev_trusted_setup() {
     echo "TRUSTED SETUP FOR DEVELOPMENT - PLEASE, DON'T USE IT IN PRODUCTION !!!"
 
     NODE_OPTIONS=--max-old-space-size=8192 \
-	node ./node_modules/.bin/snarkjs groth16 setup "$BUILD_DIR"/aadhaar-verifier.r1cs "$PTAU_PATH" "$PARTIAL_ZKEYS_DIR"/circuit_0000.zkey
+	node $SNARKJS_PATH groth16 setup "$BUILD_DIR"/aadhaar-verifier.r1cs "$PTAU_PATH" "$PARTIAL_ZKEYS_DIR"/circuit_0000.zkey
 
     echo "test random" | NODE_OPTIONS='--max-old-space-size=8192' \
-	node ./node_modules/.bin/snarkjs zkey contribute "$PARTIAL_ZKEYS_DIR"/circuit_0000.zkey "$PARTIAL_ZKEYS_DIR"/circuit_final.zkey --name="1st Contributor Name" -v 
-    NODE_OPTIONS='--max-old-space-size=8192' ./node_modules/.bin/snarkjs zkey export verificationkey "$PARTIAL_ZKEYS_DIR"/circuit_final.zkey "$BUILD_DIR"/vkey.json
-
+	node $SNARKJS_PATH zkey contribute "$PARTIAL_ZKEYS_DIR"/circuit_0000.zkey "$PARTIAL_ZKEYS_DIR"/circuit_final.zkey --name="1st Contributor Name" -v 
+    NODE_OPTIONS='--max-old-space-size=8192' $SNARKJS_PATH zkey export verificationkey "$PARTIAL_ZKEYS_DIR"/circuit_final.zkey "$BUILD_DIR"/vkey.json
     fi
-        if [ ! -d "$ARTIFACTS_DIR" ]; then
+    
+    if [ ! -d "$ARTIFACTS_DIR" ]; then
         mkdir -p "$ARTIFACTS_DIR"
     fi
 
@@ -112,13 +114,13 @@ function generate_proof() {
     echo "Building proof...!"
     mkdir -p "$BUILD_DIR"/proofs
 
-    NODE_OPTIONS='--max-old-space-size=8192' ./node_modules/.bin/snarkjs groth16 prove "$PARTIAL_ZKEYS_DIR"/circuit_final.zkey "$BUILD_DIR"/witness.wtns "$BUILD_DIR"/proofs/proof.json "$BUILD_DIR"/proofs/public.json
+    NODE_OPTIONS='--max-old-space-size=8192' $SNARKJS_PATH groth16 prove "$PARTIAL_ZKEYS_DIR"/circuit_final.zkey "$BUILD_DIR"/witness.wtns "$BUILD_DIR"/proofs/proof.json "$BUILD_DIR"/proofs/public.json
     echo "Generated proof...!"
 
 }
 
 function verify_proof() {
-    NODE_OPTIONS='--max-old-space-size=8192' ./node_modules/.bin/snarkjs groth16 verify "$BUILD_DIR"/vkey.json "$BUILD_DIR"/proofs/public.json "$BUILD_DIR"/proofs/proof.json
+    NODE_OPTIONS='--max-old-space-size=8192' $SNARKJS_PATH groth16 verify "$BUILD_DIR"/vkey.json "$BUILD_DIR"/proofs/public.json "$BUILD_DIR"/proofs/proof.json
     echo "Verify proof...!"
 }
 
