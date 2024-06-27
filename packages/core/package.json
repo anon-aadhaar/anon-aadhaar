@@ -11,7 +11,7 @@
     "format": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\"",
     "prepare": "cd ../.. && husky install",
     "test-publish": "yarn build && yarn lint && yarn test && npm publish --dry-run",
-    "publishtonpm": "yarn build && yarn lint && npm publish",
+    "publishtonpm": "yarn build && yarn lint && yarn npm publish",
     "bump-to": "yarn version -i "
   },
   "files": [
