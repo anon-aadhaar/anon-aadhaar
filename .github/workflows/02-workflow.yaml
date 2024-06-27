@@ -32,7 +32,7 @@ jobs:
 
       - name: Authenticate and publish to npm
         run: |
-          echo "//registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN" >> ~/.npmrc
+          echo "npmAuthToken: $NODE_AUTH_TOKEN" >> ~/.yarnrc.yml
           yarn publish:libraries
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
