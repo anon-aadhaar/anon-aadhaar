@@ -1,6 +1,6 @@
 {
   "name": "@anon-aadhaar/core",
-  "version": "2.0.8",
+  "version": "2.1.0",
   "main": "./dist/index.js",
   "types": "./src/index.ts",
   "license": "MIT",
@@ -12,7 +12,7 @@
     "prepare": "cd ../.. && husky install",
     "test-publish": "yarn build && yarn lint && yarn test && npm publish --dry-run",
     "publishtonpm": "yarn build && yarn lint && npm publish",
-    "bump-to": "yarn version --no-commit-hooks --no-git-tag-version --new-version"
+    "bump-to": "yarn version -i "
   },
   "files": [
     "./artifacts/verification_key.json",

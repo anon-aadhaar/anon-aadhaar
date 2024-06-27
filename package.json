@@ -1,18 +1,18 @@
 {
   "name": "anon-aadhaar",
-  "version": "2.0.8",
+  "version": "2.1.0",
   "description": "A set of tools to anonymously prove your identity",
   "main": "index.js",
   "private": true,
   "license": "MIT",
   "scripts": {
-    "build:libraries": "yarn workspaces run build",
-    "test-publish:libraries": "yarn workspaces run test-publish",
-    "publish:libraries": "yarn workspaces run publishtonpm",
-    "test:libraries": "yarn workspaces run test",
-    "bump": "yarn version --no-commit-hooks --no-git-tag-version",
-    "version": "yarn workspaces run bump-to $npm_package_version",
-    "lint": "yarn workspaces run lint",
+    "build:libraries": "yarn workspaces foreach -A run build",
+    "test-publish:libraries": "yarn workspaces foreach -A run test-publish",
+    "publish:libraries": "yarn workspaces foreach -A run publishtonpm",
+    "test:libraries": "yarn workspaces foreach -A run test",
+    "bump": "yarn workspaces foreach -A version -i ",
+    "version": "yarn workspaces foreach -A run bump-to $npm_package_version",
+    "lint": "yarn workspaces foreach -A run lint",
     "prepare": "husky install",
     "dev-install:circuit": "yarn workspace @anon-aadhaar/circuits run dev-install",
     "dev-setup:circuit": "yarn workspace @anon-aadhaar/circuits run dev-setup",
@@ -52,5 +52,6 @@
     "zero-knowledge-proofs",
     "proof-of-identity",
     "monorepo"
-  ]
+  ],
+  "packageManager": "yarn@4.3.1"
 }

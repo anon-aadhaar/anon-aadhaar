@@ -1,6 +1,6 @@
 {
   "name": "@anon-aadhaar/circuits",
-  "version": "2.0.8",
+  "version": "2.1.0",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
@@ -20,11 +20,11 @@
     "gen-witness": "/bin/bash ./scripts/build.sh gen-witness",
     "gen-contracts": "/bin/bash ./scripts/build.sh gen-contracts",
     "verif-proof": "/bin/bash ./scripts/build.sh verify-proof",
-    "bump-to": "yarn version --no-commit-hooks --no-git-tag-version --new-version"
+    "bump-to": "yarn version -i "
   },
   "dependencies": {
-    "@zk-email/circuits": "^6.1.1",
-    "anon-aadhaar-pcd": "*"
+    "@anon-aadhaar/core": "workspace:*",
+    "@zk-email/circuits": "^6.1.1"
   },
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.509.0",
