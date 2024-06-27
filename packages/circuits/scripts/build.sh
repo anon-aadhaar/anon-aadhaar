@@ -11,7 +11,7 @@ PARTIAL_ZKEYS_DIR="$BUILD_DIR/partial_zkeys"
 ARTIFACTS_DIR="$(pwd)/artifacts"
 CIRCOM_BIN_DIR="$HOME/.cargo/bin/circom"
 
-SNARKJS_PATH="$(pwd)/../../node_modules/snarkjs/cli.js"
+SNARKJS_PATH="$(pwd)/../../node_modules/.bin/snarkjs"
 
 
 # install circom and dependencies
