@@ -9,7 +9,7 @@
     "dev": "tsup src/index.ts --dts --watch",
     "lint": "eslint --ext .js,.ts .",
     "format": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\"",
-    "test": "NODE_OPTIONS=--max_old_space_size=8192 TS_NODE_COMPILER_OPTIONS={\\\"module\\\":\\\"commonjs\\\"} npx ts-mocha -p tsconfig.json test/**/*.test.{ts,tsx} --exit",
+    "test": "NODE_OPTIONS=--max_old_space_size=8192 TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' npx ts-mocha -p tsconfig.json test/**/*.test.{ts,tsx} --exit",
     "prepare": "cd ../.. && husky install",
     "test-publish": "yarn build && yarn lint && yarn test && npm publish --dry-run",
     "publishtonpm": "yarn build && yarn lint && npm publish",
