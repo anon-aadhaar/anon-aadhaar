@@ -70,7 +70,7 @@ export function bigIntChunksToByteArray(
     }
   })
 
-  return bytes.reverse() // reverse to convert little endian to big endian
+  return bytes.reverse() // reverse to convert big endian to little endian
 }
 
 export function bigIntsToString(bigIntChunks: bigint[]) {

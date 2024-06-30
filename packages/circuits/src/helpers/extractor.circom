@@ -56,7 +56,7 @@ There are no official spec docs for Aadhaar V2 available publicly, but the diffe
 /// @param extractPosition - Position of the data to extract (after which delimiter does the data start)
 /// @input nDelimitedData[maxDataLength] - QR data where each delimiter is 255 * n where n is order of the data
 /// @input delimiterIndices - indices of the delimiters in the QR data
-/// @output out - single field (int) element representing the data in little endian order (reverse string when decoded)
+/// @output out - single field (int) element representing the data in big endian order (reverse string when decoded)
 template ExtractAndPackAsInt(maxDataLength, extractPosition) {
     signal input nDelimitedData[maxDataLength];
     signal input delimiterIndices[18];
@@ -239,7 +239,7 @@ template PinCodeExtractor(maxDataLength) {
 /// @input nDelimitedData[maxDataLength] - QR data where each delimiter is 255 * n where n is order of the data
 /// @input startDelimiterIndex - index of the delimiter after which the photo start
 /// @input endIndex - index of the last byte of the photo
-/// @output out - int[33] representing the photo in little endian order
+/// @output out - int[33] representing the photo in big endian order
 template PhotoExtractor(maxDataLength) {
     signal input nDelimitedData[maxDataLength];
     signal input startDelimiterIndex;
@@ -278,7 +278,7 @@ template PhotoExtractor(maxDataLength) {
 /// @input data[maxDataLength] - QR data without the signature padded
 /// @input qrDataPaddedLength - Length of the padded QR data
 /// @input delimiterIndices[17] - Indices of the delimiters in the QR data
-/// @output name - single field (int) element representing the name in little endian order
+/// @output name - single field (int) element representing the name in big endian order
 /// @output age - Unix timestamp representing the date of birth
 /// @output gender - Single byte number representing gender
 /// @output photo - Photo of the user along the SHA padding
