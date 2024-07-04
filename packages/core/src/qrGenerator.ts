@@ -1,4 +1,4 @@
-import { IdFields } from './utils'
+import { IdFields, extractPhoto, getRandomBytes } from './utils'
 import pako from 'pako'
 
 // This modify the test data to make it compliant with the secure Aadhaar QR V2 2022
@@ -6,13 +6,21 @@ import pako from 'pako'
 // - Mocks last 4 digits of phone number '1234' after VTC
 // - Refresh timestamp data to now
 // - Optionally it can take parameters to change the test data fields (dob, pinCode, gender, state)
-export const createCustomV2TestData = (
-  signedData: Uint8Array,
-  dob?: string,
-  pincode?: string,
-  gender?: string,
+export const createCustomV2TestData = ({
+  signedData,
+  dob,
+  pincode,
+  gender,
+  state,
+  photo,
+}: {
+  signedData: Uint8Array
+  dob?: string
+  pincode?: string
+  gender?: string
   state?: string
-) => {
+  photo?: boolean
+}) => {
   const allDataParsed: number[][] = []
   const delimiterIndices: number[] = []
   let countDelimiter = 0
@@ -84,6 +92,21 @@ export const createCustomV2TestData = (
       delimiterIndices[IdFields.State - 1] + 1,
       delimiterIndices[IdFields.State - 1] +
         allDataParsed[IdFields.State].length
+    )
+  }
+
+  if (photo) {
+    const { begin, dataLength } = extractPhoto(
+      Array.from(modifiedSignedData),
+      modifiedSignedData.length
+    )
+    const photoLength = dataLength - begin
+
+    modifiedSignedData = replaceBytesBetween(
+      modifiedSignedData,
+      getRandomBytes(photoLength - 1),
+      begin + 1,
+      begin + photoLength - 1
     )
   }
 

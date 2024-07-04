@@ -38,26 +38,35 @@ const signNewTestData = (newSignedData: Uint8Array) => {
   return signature
 }
 
-const main = (
-  data: string,
-  dob?: string,
-  gender?: string,
-  pincode?: string,
-  state?: string,
-) => {
+const main = ({
+  data,
+  dob,
+  gender,
+  pincode,
+  state,
+  photo,
+}: {
+  data: string
+  dob?: string
+  gender?: string
+  pincode?: string
+  state?: string
+  photo?: boolean
+}) => {
   const qrDataBytes = convertBigIntToByteArray(BigInt(data))
   const decodedData = decompressByteArray(qrDataBytes)
 
   // Turning test data V1 into V2
   // Adding the version specifier prefix,
   // the last 4 digits of phone number and timestamp to now
-  const dataToSign = createCustomV2TestData(
-    decodedData.slice(0, decodedData.length - 256),
+  const dataToSign = createCustomV2TestData({
+    signedData: decodedData.slice(0, decodedData.length - 256),
     dob,
     pincode,
     gender,
     state,
-  )
+    photo,
+  })
 
   // Signing the newly generated testData
   const signature = signNewTestData(dataToSign)
@@ -80,4 +89,4 @@ const main = (
   console.log('Generated and saved a new test QR code!')
 }
 
-main(data)
+main({ data })

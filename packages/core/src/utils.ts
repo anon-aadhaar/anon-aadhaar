@@ -202,3 +202,23 @@ export const retrieveFileExtension = (str: string) => {
   )
   return fileExtension
 }
+
+export function getRandomBytes(length: number): Uint8Array {
+  if (
+    typeof window !== 'undefined' &&
+    window.crypto &&
+    window.crypto.getRandomValues
+  ) {
+    // Browser environment
+    const array = new Uint8Array(length)
+    window.crypto.getRandomValues(array)
+    return array
+  } else if (typeof require !== 'undefined') {
+    // Node.js environment
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const crypto = require('crypto')
+    return crypto.randomBytes(length)
+  } else {
+    throw new Error('No suitable crypto module found.')
+  }
+}
