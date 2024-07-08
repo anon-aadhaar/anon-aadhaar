@@ -7,11 +7,10 @@ import {
   generateArgs,
   handleError,
   ProverState,
-  testCertificateUrl,
   FieldsToRevealArray,
 } from '@anon-aadhaar/core'
 import { Dispatch, SetStateAction } from 'react'
-import { fetchCertificateFile, fetchKey } from './util'
+import { verifySignature } from './verifySignature'
 
 /**
  * `proveAndSerialize` is a function that generates proofs using the web-based proving system of Anon Aadhaar.
@@ -66,11 +65,17 @@ export const processAadhaarArgs = async (
 ): Promise<AnonAadhaarArgs> => {
   let certificateFile: string | null = null
   try {
-    certificateFile = useTestAadhaar
-      ? await fetchKey(testCertificateUrl)
-      : await fetchCertificateFile(
-          `https://www.uidai.gov.in/images/authDoc/uidai_offline_publickey_26022021.cer`,
-        )
+    const { isSignatureValid, certificate } = await verifySignature(
+      qrData,
+      useTestAadhaar,
+    )
+
+    if (!certificate)
+      throw new Error(
+        '[processAadhaarArgs]: Error while processing the arguments, no certificate retrieved',
+      )
+
+    if (isSignatureValid) certificateFile = certificate
   } catch (e) {
     handleError(e, 'Error while fetching public key.')
   }
