@@ -1,10 +1,53 @@
 import {
   convertBigIntToByteArray,
   decompressByteArray,
-  testCertificateUrl,
 } from '@anon-aadhaar/core'
-import { fetchCertificateFile, fetchKey, str2ab } from './util'
+import { str2ab } from './util'
 import { pki } from 'node-forge'
+import {
+  testCertificate,
+  uidai_offline_publickey_17022026,
+  uidai_offline_publickey_26022021,
+} from './publicKeys'
+
+const verifyRSASha256WithSubtle = async (
+  certificate: string,
+  signature: Uint8Array,
+  signedData: Uint8Array,
+): Promise<boolean> => {
+  const publicKey = pki.certificateFromPem(certificate).publicKey
+  const publicKeyPem = pki.publicKeyToPem(publicKey)
+
+  // fetch the part of the PEM string between header and footer
+  const pemHeader = '-----BEGIN PUBLIC KEY-----'
+  const pemFooter = '-----END PUBLIC KEY-----'
+  const pemContents = publicKeyPem.substring(
+    pemHeader.length,
+    publicKeyPem.length - pemFooter.length - 2,
+  )
+
+  // base64 decode the string to get the binary data
+  const binaryDerString = window.atob(pemContents)
+  // convert from a binary string to an ArrayBuffer
+  const binaryDer = str2ab(binaryDerString)
+
+  const pk = await window.crypto.subtle.importKey(
+    'spki',
+    binaryDer,
+    { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
+    true,
+    ['verify'],
+  )
+
+  const isSignatureValid = await window.crypto.subtle.verify(
+    { name: 'RSASSA-PKCS1-v1_5' },
+    pk,
+    signature.buffer,
+    signedData.buffer,
+  )
+
+  return isSignatureValid
+}
 
 /**
  * `verifySignature` verifies the digital signature of the provided data.
@@ -43,44 +86,21 @@ export const verifySignature = async (
     decompressedByteArray.length - 256,
   )
 
-  const certificate = useTestAadhaar
-    ? await fetchKey(testCertificateUrl)
-    : await fetchCertificateFile(
-        `https://www.uidai.gov.in/images/authDoc/uidai_offline_publickey_26022021.cer`,
-      )
-
-  if (!certificate) throw Error('Error while fetching public key.')
-
-  const publicKey = pki.certificateFromPem(certificate).publicKey
-  const publicKeyPem = pki.publicKeyToPem(publicKey)
-
-  // fetch the part of the PEM string between header and footer
-  const pemHeader = '-----BEGIN PUBLIC KEY-----'
-  const pemFooter = '-----END PUBLIC KEY-----'
-  const pemContents = publicKeyPem.substring(
-    pemHeader.length,
-    publicKeyPem.length - pemFooter.length - 2,
-  )
-
-  // base64 decode the string to get the binary data
-  const binaryDerString = window.atob(pemContents)
-  // convert from a binary string to an ArrayBuffer
-  const binaryDer = str2ab(binaryDerString)
-
-  const pk = await window.crypto.subtle.importKey(
-    'spki',
-    binaryDer,
-    { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
-    true,
-    ['verify'],
-  )
-
-  const isSignatureValid = await window.crypto.subtle.verify(
-    { name: 'RSASSA-PKCS1-v1_5' },
-    pk,
-    signature.buffer,
-    signedData.buffer,
-  )
-
-  return isSignatureValid
+  if (useTestAadhaar) {
+    return verifyRSASha256WithSubtle(testCertificate, signature, signedData)
+  } else {
+    const results = await Promise.all([
+      verifyRSASha256WithSubtle(
+        uidai_offline_publickey_17022026,
+        signature,
+        signedData,
+      ),
+      verifyRSASha256WithSubtle(
+        uidai_offline_publickey_26022021,
+        signature,
+        signedData,
+      ),
+    ])
+    return results.some(result => result)
+  }
 }
