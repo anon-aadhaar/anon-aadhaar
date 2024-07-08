@@ -7,31 +7,13 @@ import {
   AnonAadhaarContext,
   AnonAadhaarState,
 } from '../src/hooks/useAnonAadhaar'
-import { sha256Pad } from '@zk-email/helpers/dist/sha-utils'
-import { Uint8ArrayToCharArray } from '@zk-email/helpers/dist/binary-format'
-import { ProverState, AnonAadhaarArgs, splitToWords } from '@anon-aadhaar/core'
-import { ArgumentTypeName } from '@pcd/pcd-types'
+import { ProverState, AnonAadhaarArgs } from '@anon-aadhaar/core'
 import { AnonAadhaarProvider } from '../src/provider/AnonAadhaarProvider'
-import { genData } from '../../core/test/utils'
 import { useProver } from '../src/hooks/useProver'
+import { processAadhaarArgs } from '../src/prove'
+import { testQRData } from '../../circuits/assets/dataInput.json'
 
 describe('useAnonAadhaar Hook', () => {
-  let testData: [bigint, bigint, bigint, bigint]
-  let paddedMsg: Uint8Array
-  let messageLen: number
-  let signedData: string
-
-  before(async () => {
-    signedData = 'Hello-world'
-
-    testData = await genData(signedData, 'SHA-256')
-
-    return ([paddedMsg, messageLen] = sha256Pad(
-      Buffer.from(signedData, 'ascii'),
-      512 * 3,
-    ))
-  })
-
   afterEach(() => {
     cleanup()
   })
@@ -47,7 +29,6 @@ describe('useAnonAadhaar Hook', () => {
         value={{
           state: initialState,
           startReq: startReqFunction,
-          useTestAadhaar: true,
           proverState: ProverState.Initializing,
           appName: 'Anon Aadhaar',
         }}
@@ -64,53 +45,12 @@ describe('useAnonAadhaar Hook', () => {
     expect(startReq).to.equal(startReqFunction)
   })
 
-  it('returns updated state when request sent', () => {
-    const anonAadhaarArgs: AnonAadhaarArgs = {
-      qrDataPadded: {
-        argumentType: ArgumentTypeName.StringArray,
-        value: Uint8ArrayToCharArray(paddedMsg),
-      },
-      qrDataPaddedLength: {
-        argumentType: ArgumentTypeName.Number,
-        value: messageLen.toString(),
-      },
-      delimiterIndices: {
-        argumentType: ArgumentTypeName.StringArray,
-        value: [1, 2, 3, 4].map(elem => elem.toString()),
-      },
-      signature: {
-        argumentType: ArgumentTypeName.StringArray,
-        value: splitToWords(testData[1], BigInt(121), BigInt(17)),
-      },
-      pubKey: {
-        argumentType: ArgumentTypeName.StringArray,
-        value: splitToWords(testData[2], BigInt(121), BigInt(17)),
-      },
-      nullifierSeed: {
-        argumentType: ArgumentTypeName.String,
-        value: '1234',
-      },
-      signalHash: {
-        argumentType: ArgumentTypeName.String,
-        value: '1',
-      },
-      revealAgeAbove18: {
-        argumentType: ArgumentTypeName.Number,
-        value: '0',
-      },
-      revealGender: {
-        argumentType: ArgumentTypeName.Number,
-        value: '0',
-      },
-      revealPinCode: {
-        argumentType: ArgumentTypeName.Number,
-        value: '0',
-      },
-      revealState: {
-        argumentType: ArgumentTypeName.Number,
-        value: '0',
-      },
-    }
+  it('returns updated state when request sent', async () => {
+    const anonAadhaarArgs: AnonAadhaarArgs = await processAadhaarArgs(
+      testQRData,
+      true,
+      1234,
+    )
 
     render(
       <AnonAadhaarProvider>

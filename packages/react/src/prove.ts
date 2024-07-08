@@ -5,13 +5,12 @@ import {
   serialize,
   AnonAadhaarCore,
   generateArgs,
-  handleError,
   ProverState,
-  testCertificateUrl,
   FieldsToRevealArray,
 } from '@anon-aadhaar/core'
 import { Dispatch, SetStateAction } from 'react'
-import { fetchCertificateFile, fetchKey } from './util'
+import { verifySignature } from './verifySignature'
+import { testCertificate } from './publicKeys'
 
 /**
  * `proveAndSerialize` is a function that generates proofs using the web-based proving system of Anon Aadhaar.
@@ -66,24 +65,39 @@ export const processAadhaarArgs = async (
 ): Promise<AnonAadhaarArgs> => {
   let certificateFile: string | null = null
   try {
-    certificateFile = useTestAadhaar
-      ? await fetchKey(testCertificateUrl)
-      : await fetchCertificateFile(
-          `https://www.uidai.gov.in/images/authDoc/uidai_offline_publickey_26022021.cer`,
+    if (useTestAadhaar) {
+      return generateArgs({
+        qrData,
+        certificateFile: testCertificate,
+        nullifierSeed,
+        fieldsToRevealArray,
+        signal,
+      })
+    } else {
+      const { isSignatureValid, certificate } = await verifySignature(
+        qrData,
+        useTestAadhaar,
+      )
+
+      if (!certificate)
+        throw new Error(
+          '[processAadhaarArgs]: Error while processing the arguments, no certificate retrieved',
         )
-  } catch (e) {
-    handleError(e, 'Error while fetching public key.')
+
+      if (isSignatureValid) certificateFile = certificate
+
+      if (!certificateFile) throw Error('Error while fetching public key.')
+
+      return generateArgs({
+        qrData,
+        certificateFile,
+        nullifierSeed,
+        fieldsToRevealArray,
+        signal,
+      })
+    }
+  } catch (error) {
+    if (error instanceof Error) throw new Error(error.message)
+    throw new Error(JSON.stringify(error))
   }
-
-  if (!certificateFile) throw Error('Error while fetching public key.')
-
-  const args = await generateArgs({
-    qrData,
-    certificateFile,
-    nullifierSeed,
-    fieldsToRevealArray,
-    signal,
-  })
-
-  return args
 }

@@ -14,7 +14,7 @@ const verifyRSASha256WithSubtle = async (
   certificate: string,
   signature: Uint8Array,
   signedData: Uint8Array,
-): Promise<boolean> => {
+): Promise<{ isSignatureValid: boolean; certificate: string }> => {
   const publicKey = pki.certificateFromPem(certificate).publicKey
   const publicKeyPem = pki.publicKeyToPem(publicKey)
 
@@ -46,7 +46,7 @@ const verifyRSASha256WithSubtle = async (
     signedData.buffer,
   )
 
-  return isSignatureValid
+  return { isSignatureValid, certificate: certificate }
 }
 
 /**
@@ -68,7 +68,7 @@ const verifyRSASha256WithSubtle = async (
 export const verifySignature = async (
   qrData: string,
   useTestAadhaar: boolean,
-): Promise<boolean> => {
+): Promise<{ isSignatureValid: boolean; certificate?: string }> => {
   const bigIntData = BigInt(qrData)
 
   const byteArray = convertBigIntToByteArray(bigIntData)
@@ -87,20 +87,30 @@ export const verifySignature = async (
   )
 
   if (useTestAadhaar) {
-    return verifyRSASha256WithSubtle(testCertificate, signature, signedData)
+    const { isSignatureValid, certificate } = await verifyRSASha256WithSubtle(
+      testCertificate,
+      signature,
+      signedData,
+    )
+    return isSignatureValid
+      ? { isSignatureValid, certificate }
+      : { isSignatureValid }
   } else {
     const results = await Promise.all([
-      verifyRSASha256WithSubtle(
-        uidai_offline_publickey_17022026,
-        signature,
-        signedData,
-      ),
       verifyRSASha256WithSubtle(
         uidai_offline_publickey_26022021,
         signature,
         signedData,
       ),
+      verifyRSASha256WithSubtle(
+        uidai_offline_publickey_17022026,
+        signature,
+        signedData,
+      ),
     ])
-    return results.some(result => result)
+    const validResult = results.find(result => result.isSignatureValid)
+    return validResult
+      ? { isSignatureValid: true, certificate: validResult.certificate }
+      : { isSignatureValid: false }
   }
 }

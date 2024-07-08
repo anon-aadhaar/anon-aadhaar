@@ -1,3 +1,9 @@
+## 2.2.2
+
+- fix error in generateArgs, leading to missing public key
+- added public key retrieving from data
+- fix error component display
+
 ## 2.2.1
 
 - added PEM certificates for both test and prod

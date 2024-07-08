@@ -40,10 +40,9 @@ export const ErrorToast: FunctionComponent<ErrorToastProps> = ({
 }
 
 const Box = styled.div`
-  margin: 1rem;
   display: flex;
   position: absolute;
-  width: 90%;
+  width: 85%;
   border-radius: 5px;
   background-color: #efc8c8;
   padding: 4px;

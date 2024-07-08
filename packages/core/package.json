@@ -1,6 +1,6 @@
 {
   "name": "@anon-aadhaar/core",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "main": "./dist/index.js",
   "types": "./src/index.ts",
   "license": "MIT",
