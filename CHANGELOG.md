@@ -1,3 +1,7 @@
+## 2.2.1
+
+- added PEM certificates for both test and prod
+
 ## 2.0.6
 
 - removed test var from context provider
