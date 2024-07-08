@@ -1,3 +1,7 @@
+## 2.2.3
+
+- fix UI bug
+
 ## 2.2.2
 
 - fix error in generateArgs, leading to missing public key
