@@ -48,7 +48,7 @@ export const Modal: React.FC<ModalProps> = ({
     if (qrData) {
       verifySignature(qrData, useTestAadhaar)
         .then(verified => {
-          verified
+          verified.isSignatureValid
             ? setQrStatus(AadhaarQRValidation.SIGNATURE_VERIFIED)
             : setQrStatus(AadhaarQRValidation.ERROR_PARSING_QR)
         })
