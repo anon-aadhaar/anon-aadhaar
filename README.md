@@ -8,9 +8,9 @@ Anon Aadhaar is a protocol for proving ownership of an Aadhaar identity (Indian 
 
 Developers can use the AnonAadhaar SDK to integrate this into their applications to verify the identity of users without asking them to reveal more personal data than necessary. The proof generated can also be verified on EVM-based blockchains making Anon Aadhaar suitable for on-chain applications.
 
-Demo App: [Anon Aadhaar Example](https://anon-aadhaar-example.vercel.app/)  |  [Source](https://github.com/anon-aadhaar-private/anon-aadhaar-example)
+Demo App: [Anon Aadhaar Example](https://boilerplate.anon-aadhaar.pse.dev/)  |  [Source](https://github.com/anon-aadhaar-private/boilerplate)
 
-Documentation: [Anon Aadhaar Documentation](https://anon-aadhaar-documentation.vercel.app/docs/intro)
+Documentation: [Anon Aadhaar Documentation](https://documentation.anon-aadhaar.pse.dev/docs/intro)
 
 <br /> 
 
@@ -20,7 +20,7 @@ Aadhaar data is signed by the government. Anon Aadhaar uses [zero-knowledge](htt
 
 A "verifier" (an app or a smart contract) verifying the proof can be sure the "prover" had a valid Aadhaar containing the information (like age, state, gender) they revealed.
 
-Anon Aadhaar works on the client side (browser, mobile app) and does not require the user to send their Aadhaar details to any server. [Read more](https://anon-aadhaar-documentation.vercel.app/docs/how-does-it-work)
+Anon Aadhaar works on the client side (browser, mobile app) and does not require the user to send their Aadhaar details to any server. [Read more](https://documentation.anon-aadhaar.pse.dev/docs/how-does-it-work)
 
 <br /> 
 
@@ -35,7 +35,7 @@ The following packages are available, and published to npm:
 - [@anon-aadhaar/core](packages/core/) - JS SDK to generate and verify Anon Aadhaar proofs
 - [@anon-aadhaar/react](packages/react/) - React SDK including UI components to integrate Anon Aadhaar into React applications
 
-To build on top of Anon Aadhaar, read out documentation [here](https://anon-aadhaar-documentation.vercel.app/docs/intro) and check out the [boilerplate repo](https://github.com/anon-aadhaar/quick-setup) (Next.js)
+To build on top of Anon Aadhaar, read out documentation [here](https://documentation.anon-aadhaar.pse.dev/docs/intro) and check out the [boilerplate repo](https://github.com/anon-aadhaar/boilerplate) (Next.js)
 
 <br />
 
