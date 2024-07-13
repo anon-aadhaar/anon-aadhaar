@@ -42,7 +42,7 @@ export const VerifyModal: React.FC<VerifyModalProps> = ({
                 <p>&nbsp;</p>
                 <PhonePlatformLinks
                   href={
-                    'https://anon-aadhaar-documentation.vercel.app/docs/generate-qr'
+                    'https://documentation.anon-aadhaar.pse.dev/docs/generate-qr'
                   }
                   target="_blank"
                   rel="noreferrer"
