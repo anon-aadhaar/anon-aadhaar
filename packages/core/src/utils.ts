@@ -98,7 +98,10 @@ export function convertBigIntToByteArray(bigInt: bigint) {
   return result.reverse()
 }
 
-export function convertCircuitBigIntToString(input: bigint) {
+export function convertCircuitBigIntToString(input: bigint | string) {
+  if (typeof input === "string")
+    input = BigInt(input)
+
   let result: string;
   while (input > 0) {
     result += String.fromCharCode(Number(input % BigInt(256)))
