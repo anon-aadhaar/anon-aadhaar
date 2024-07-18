@@ -98,6 +98,15 @@ export function convertBigIntToByteArray(bigInt: bigint) {
   return result.reverse()
 }
 
+export function convertCircuitBigIntToString(input: bigint) {
+  let result: string;
+  while (input > 0) {
+    result += String.fromCharCode(Number(input % BigInt(256)))
+    input = input / BigInt(256)
+  }
+  return result
+}
+
 export function decompressByteArray(byteArray: Uint8Array) {
   const decompressedArray = pako.inflate(byteArray)
   return decompressedArray
