@@ -6,10 +6,8 @@ require('dotenv').config('./.env')
 const config: HardhatUserConfig = {
   networks: {
     hardhat: {
-      forking: {
-        url: `https://mainnet.infura.io/v3/${process.env.PROVIDER_KEY}`,
-        blockNumber: 7327025,
-      },
+      // This is date at which the test Aadhaar data was signed
+      initialDate: '2019-03-08T05:13:20.000Z',
     },
     // sepolia: {
     //   url: `https://sepolia.infura.io/v3/${process.env.PROVIDER_KEY}`,
