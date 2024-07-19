@@ -1,6 +1,9 @@
-import { loadFixture } from '@nomicfoundation/hardhat-toolbox/network-helpers'
+import {
+  loadFixture,
+  time,
+} from '@nomicfoundation/hardhat-toolbox/network-helpers'
 import { expect } from 'chai'
-import { ethers, network } from 'hardhat'
+import { ethers } from 'hardhat'
 import {
   InitArgs,
   init,
@@ -231,14 +234,8 @@ describe('VerifyProof', function () {
       it('Should revert if timestamp is more than 3hr ago', async function () {
         const { anonAadhaarVote } = await loadFixture(deployOneYearLockFixture)
 
-        const testTimestamp =
-          new Date('2019-03-08T09:00:00.000Z').getTime() / 1000
-
-        // Set the block timestamp to '2019-03-08T09:00:00.000Z' and mine a new block
-        await network.provider.send('evm_setNextBlockTimestamp', [
-          testTimestamp,
-        ])
-        await network.provider.send('evm_mine')
+        // Increase next block time to 5 hours from proof time
+        await time.increaseTo(Number(anonAadhaarProof.timestamp) + 5 * 60 * 60)
 
         await expect(
           anonAadhaarVote.voteForProposal(
