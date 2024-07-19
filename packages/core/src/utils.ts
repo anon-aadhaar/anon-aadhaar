@@ -98,6 +98,21 @@ export function convertBigIntToByteArray(bigInt: bigint) {
   return result.reverse()
 }
 
+export function convertRevealBigIntToString(input: bigint | string) {
+  if (typeof input === "string")
+    input = BigInt(input)
+
+  let result: string;
+  while (input > 0) {
+    result += String.fromCharCode(Number(input % BigInt(256)))
+    input = input / BigInt(256)
+  }
+  // The proof input is in big endian format, on each iteration appends the last char
+  // which is the first char in little-endian format
+  // reversal is not needed
+  return result
+}
+
 export function decompressByteArray(byteArray: Uint8Array) {
   const decompressedArray = pako.inflate(byteArray)
   return decompressedArray
