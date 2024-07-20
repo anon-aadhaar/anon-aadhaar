@@ -99,10 +99,9 @@ export function convertBigIntToByteArray(bigInt: bigint) {
 }
 
 export function convertRevealBigIntToString(input: bigint | string) {
-  if (typeof input === "string")
-    input = BigInt(input)
+  if (typeof input === 'string') input = BigInt(input)
 
-  let result: string;
+  let result = ''
   while (input > 0) {
     result += String.fromCharCode(Number(input % BigInt(256)))
     input = input / BigInt(256)
