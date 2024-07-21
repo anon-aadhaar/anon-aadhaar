@@ -29,9 +29,19 @@ contract AnonAadhaarVote is IAnonAadhaarVote {
 
     /// @dev Convert an address to uint256, used to check against signal.
     /// @param _addr: msg.sender address.
-    /// @return Address msg.sender's address in uint256
-    function addressToUint256(address _addr) private pure returns (uint256) {
-        return uint256(uint160(_addr));
+    /// @return Address msg.sender's hashed address in uint256
+    function signalHashVerifier(address _addr) private pure returns (uint256) {
+         // Convert address to uint256
+        uint256 addrAsUint = uint256(uint160(_addr));
+        
+        // Pad to 32 bytes (256 bits)
+        bytes32 paddedAddr = bytes32(addrAsUint);
+        
+        // Apply keccak256 hash
+        bytes32 hashed = keccak256(abi.encodePacked(paddedAddr));
+        
+        // Shift right by 3 bits and return
+        return uint256(hashed) >> 3;
     }
 
     /// @dev Check if the timestamp is more recent than (current time - 3 hours)
@@ -63,7 +73,7 @@ contract AnonAadhaarVote is IAnonAadhaarVote {
             '[AnonAadhaarVote]: Invalid proposal index'
         );
         require(
-            addressToUint256(msg.sender) == signal,
+            signalHashVerifier(msg.sender) == signal,
             '[AnonAadhaarVote]: Wrong user signal sent.'
         );
         require(
