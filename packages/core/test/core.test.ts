@@ -44,7 +44,7 @@ describe('Core tests', function () {
       artifactsOrigin: ArtifactsOrigin.local,
     }
 
-    await init(anonAadhaarInitArgs)
+    init(anonAadhaarInitArgs)
 
     const args = await generateArgs({
       qrData: QRData,
@@ -66,7 +66,7 @@ describe('Core tests', function () {
       artifactsOrigin: ArtifactsOrigin.server,
     }
 
-    await init(anonAadhaarInitArgs)
+    init(anonAadhaarInitArgs)
 
     const args = await generateArgs({
       qrData: QRData,
@@ -89,7 +89,7 @@ describe('Core tests', function () {
       artifactsOrigin: ArtifactsOrigin.chunked,
     }
 
-    await init(anonAadhaarInitArgs)
+    init(anonAadhaarInitArgs)
 
     const args = await generateArgs({
       qrData: QRData,
