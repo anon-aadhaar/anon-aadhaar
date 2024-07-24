@@ -11,7 +11,7 @@ interface ProveButtonProps {
   provingEnabled: boolean
   setErrorMessage: Dispatch<SetStateAction<string | null>>
   fieldsToReveal?: FieldsToRevealArray
-  nullifierSeed: number
+  nullifierSeed: number | bigint
   setQrStatus: Dispatch<SetStateAction<AadhaarQRValidation | null>>
   signal?: string
   setCurrentView: Dispatch<SetStateAction<ModalViews>>

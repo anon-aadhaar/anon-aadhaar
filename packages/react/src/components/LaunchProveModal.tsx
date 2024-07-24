@@ -13,7 +13,7 @@ interface LogInWithAnonAadhaarProps {
   buttonStyle?: CSSProperties
   buttonTitle?: string
   fieldsToReveal?: FieldsToRevealArray
-  nullifierSeed: number
+  nullifierSeed: number | bigint
   useTestAadhaar?: boolean
 }
 

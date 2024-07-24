@@ -97,10 +97,6 @@ export function AnonAadhaarProvider(
     }
 
     init(anonAadhaarInitArgs)
-      .then()
-      .catch(e => {
-        throw Error(e)
-      })
   }, [anonAadhaarProviderProps._artifactslinks])
 
   // Write state to local storage whenever a login starts, succeeds, or fails

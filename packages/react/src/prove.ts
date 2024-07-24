@@ -59,7 +59,7 @@ export const proveAndSerialize = async (
 export const processAadhaarArgs = async (
   qrData: string,
   useTestAadhaar: boolean,
-  nullifierSeed: number,
+  nullifierSeed: number | bigint,
   fieldsToRevealArray?: FieldsToRevealArray,
   signal?: string,
 ): Promise<AnonAadhaarArgs> => {

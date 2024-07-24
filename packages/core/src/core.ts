@@ -35,7 +35,7 @@ export class AnonAadhaarCore
 
 // initial function
 let initArgs: InitArgs | undefined = undefined
-export async function init(args: InitArgs): Promise<void> {
+export function init(args: InitArgs) {
   initArgs = args
 }
 

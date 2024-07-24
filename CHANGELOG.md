@@ -1,5 +1,7 @@
 ## 2.3.1
 
+- update nullifier type to support bigint
+- remove async for init()
 - fix versionning bug
 
 ## 2.3.0

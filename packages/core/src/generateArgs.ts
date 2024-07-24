@@ -13,11 +13,12 @@ import { Buffer } from 'buffer'
 import { pki } from 'node-forge'
 import { ArgumentTypeName } from '@pcd/pcd-types'
 import { hash } from './hash'
+import { CIRCOM_FIELD_P } from './constants'
 
 interface GenerateArgsOptions {
   qrData: string
   certificateFile: string
-  nullifierSeed: number
+  nullifierSeed: number | bigint
   fieldsToRevealArray?: FieldsToRevealArray
   signal?: string
 }
@@ -81,6 +82,12 @@ export const generateArgs = async ({
     revealState: fieldsToRevealArray.includes('revealState'),
   }
 
+  const nullifierSeedBigInt = BigInt(nullifierSeed)
+
+  if (nullifierSeedBigInt > CIRCOM_FIELD_P) {
+    throw new Error('Nullifier seed is larger than the max field size')
+  }
+
   // Set signal to 1 by default if no signal is set
   const signalHash = signal ? hash(signal) : hash(1)
 
@@ -107,7 +114,7 @@ export const generateArgs = async ({
     },
     nullifierSeed: {
       argumentType: ArgumentTypeName.String,
-      value: nullifierSeed.toString(),
+      value: nullifierSeedBigInt.toString(),
     },
     signalHash: {
       argumentType: ArgumentTypeName.String,

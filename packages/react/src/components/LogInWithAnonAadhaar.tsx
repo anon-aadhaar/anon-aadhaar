@@ -11,7 +11,7 @@ import { createBlobURL } from '../util'
 interface LogInWithAnonAadhaarProps {
   signal?: string
   fieldsToReveal?: FieldsToRevealArray
-  nullifierSeed: number
+  nullifierSeed: number | bigint
   useTestAadhaar?: boolean
 }
 
