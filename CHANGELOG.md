@@ -1,3 +1,13 @@
+## 2.3.1
+
+- fix versionning bug
+
+## 2.3.0
+
+- custom test photo
+- update contract tests to use mock time
+- decode Reveal to UTF-8 Utility
+
 ## 2.2.3
 
 - fix UI bug
