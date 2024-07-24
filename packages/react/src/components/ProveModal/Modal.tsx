@@ -18,7 +18,7 @@ interface ModalProps {
   logo: string
   qrStatus: AadhaarQRValidation | null
   setQrStatus: Dispatch<SetStateAction<AadhaarQRValidation | null>>
-  nullifierSeed: number
+  nullifierSeed: number | bigint
   currentView: ModalViews
   setCurrentView: Dispatch<SetStateAction<ModalViews>>
   fieldsToReveal?: FieldsToRevealArray
