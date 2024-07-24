@@ -1,4 +1,4 @@
-## 2.2.3
+## 2.3.1
 
 - fix versionning bug
 
