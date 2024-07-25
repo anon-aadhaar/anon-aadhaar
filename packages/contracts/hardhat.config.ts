@@ -10,7 +10,7 @@ const config: HardhatUserConfig = {
       initialDate: '2019-03-08T05:13:20.000Z',
     },
     // sepolia: {
-    //   url: `https://sepolia.infura.io/v3/${process.env.PROVIDER_KEY}`,
+    //   url: `https://ethereum-sepolia.blockpi.network/v1/rpc/public	`,
     //   accounts: [process.env.PRIVATE_KEY_SEPOLIA || ''],
     // },
     // scrollSepolia: {
