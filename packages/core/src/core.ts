@@ -13,6 +13,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { groth16 } from 'snarkjs'
 import JSONBig from 'json-bigint'
 import { AnonAadhaarProver, ProverInferace } from './prover'
+import { productionPublicKeyHash } from './constants'
 
 export class AnonAadhaarCore
   implements PCD<AnonAadhaarClaim, AnonAadhaarProof>
@@ -96,7 +97,18 @@ async function getVerifyKey() {
   return vk
 }
 
-export async function verify(pcd: AnonAadhaarCore): Promise<boolean> {
+export async function verify(
+  pcd: AnonAadhaarCore,
+  pubkeyHash?: string
+): Promise<boolean> {
+  if (!pubkeyHash) {
+    pubkeyHash = productionPublicKeyHash
+  }
+
+  if (pcd.proof.pubkeyHash !== pubkeyHash) {
+    throw new Error('VerificationError: public key mismatch.')
+  }
+
   const vk = await getVerifyKey()
 
   return groth16.verify(
