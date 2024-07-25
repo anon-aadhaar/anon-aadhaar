@@ -4,7 +4,6 @@ import {
   InitArgs,
   artifactUrls,
   init,
-  testPublicKeyHash,
   verify,
 } from '@anon-aadhaar/core'
 import { assert } from 'chai'
