@@ -130,36 +130,6 @@ export async function verify(
   )
 }
 
-export async function verifyLocal(pcd: AnonAadhaarCore): Promise<boolean> {
-  if (!initArgs) {
-    throw new Error(
-      'cannot make Anon Aadhaar proof: init has not been called yet'
-    )
-  }
-
-  const response = await fetch(initArgs?.vkeyURL)
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch the verify key from server`)
-  }
-
-  const vk = await response.json()
-
-  return groth16.verify(
-    vk,
-    [
-      pcd.proof.pubkeyHash,
-      pcd.proof.nullifier,
-      pcd.proof.timestamp,
-      pcd.proof.ageAbove18,
-      pcd.proof.gender,
-      pcd.proof.pincode,
-      pcd.proof.state,
-    ],
-    pcd.proof.groth16Proof
-  )
-}
-
 export function serialize(
   pcd: AnonAadhaarCore
 ): Promise<SerializedPCD<AnonAadhaarCore>> {
