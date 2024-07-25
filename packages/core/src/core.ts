@@ -13,6 +13,8 @@ import { v4 as uuidv4 } from 'uuid'
 import { groth16 } from 'snarkjs'
 import JSONBig from 'json-bigint'
 import { AnonAadhaarProver, ProverInferace } from './prover'
+import { productionPublicKeyHash, testPublicKeyHash } from './constants'
+import { convertRevealBigIntToString } from './utils'
 
 export class AnonAadhaarCore
   implements PCD<AnonAadhaarClaim, AnonAadhaarProof>
@@ -35,7 +37,7 @@ export class AnonAadhaarCore
 
 // initial function
 let initArgs: InitArgs | undefined = undefined
-export function init(args: InitArgs) {
+export async function init(args: InitArgs): Promise<void> {
   initArgs = args
 }
 
@@ -57,12 +59,11 @@ export async function prove(
     throw new Error('Invalid signalHash argument')
   }
 
-  const id = uuidv4()
-
-  const anonAadhaarClaim: AnonAadhaarClaim = {
-    pubKey: args.pubKey.value,
-    signalHash: args.signalHash.value,
+  if (!args.revealAgeAbove18.value) {
+    throw new Error('Invalid revealAgeAbove18 argument')
   }
+
+  const id = uuidv4()
 
   const prover: ProverInferace = new AnonAadhaarProver(
     initArgs.wasmURL,
@@ -71,6 +72,18 @@ export async function prove(
   )
 
   const anonAadhaarProof = await prover.proving(args, updateState)
+
+  const anonAadhaarClaim: AnonAadhaarClaim = {
+    pubKey: args.pubKey.value,
+    signalHash: args.signalHash.value,
+    ageAbove18:
+      args.revealAgeAbove18.value === '1'
+        ? anonAadhaarProof.ageAbove18 === '1'
+        : null,
+    gender: convertRevealBigIntToString(anonAadhaarProof.gender) || null,
+    pincode: anonAadhaarProof.pincode === '0' ? null : anonAadhaarProof.pincode,
+    state: convertRevealBigIntToString(anonAadhaarProof.state) || null,
+  }
 
   return new AnonAadhaarCore(id, anonAadhaarClaim, anonAadhaarProof)
 }
@@ -96,7 +109,20 @@ async function getVerifyKey() {
   return vk
 }
 
-export async function verify(pcd: AnonAadhaarCore): Promise<boolean> {
+export async function verify(
+  pcd: AnonAadhaarCore,
+  useTestAadhaar?: boolean
+): Promise<boolean> {
+  let pubkeyHash = productionPublicKeyHash
+
+  if (useTestAadhaar) {
+    pubkeyHash = testPublicKeyHash
+  }
+
+  if (pcd.proof.pubkeyHash !== pubkeyHash) {
+    throw new Error('VerificationError: public key mismatch.')
+  }
+
   const vk = await getVerifyKey()
 
   return groth16.verify(
@@ -111,36 +137,6 @@ export async function verify(pcd: AnonAadhaarCore): Promise<boolean> {
       pcd.proof.state,
       pcd.proof.nullifierSeed,
       pcd.proof.signalHash,
-    ],
-    pcd.proof.groth16Proof
-  )
-}
-
-export async function verifyLocal(pcd: AnonAadhaarCore): Promise<boolean> {
-  if (!initArgs) {
-    throw new Error(
-      'cannot make Anon Aadhaar proof: init has not been called yet'
-    )
-  }
-
-  const response = await fetch(initArgs?.vkeyURL)
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch the verify key from server`)
-  }
-
-  const vk = await response.json()
-
-  return groth16.verify(
-    vk,
-    [
-      pcd.proof.pubkeyHash,
-      pcd.proof.nullifier,
-      pcd.proof.timestamp,
-      pcd.proof.ageAbove18,
-      pcd.proof.gender,
-      pcd.proof.pincode,
-      pcd.proof.state,
     ],
     pcd.proof.groth16Proof
   )

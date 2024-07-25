@@ -44,7 +44,7 @@ describe('Core tests', function () {
       artifactsOrigin: ArtifactsOrigin.local,
     }
 
-    init(anonAadhaarInitArgs)
+    await init(anonAadhaarInitArgs)
 
     const args = await generateArgs({
       qrData: QRData,
@@ -54,7 +54,7 @@ describe('Core tests', function () {
 
     const anonAadhaarProof = await prove(args)
 
-    const verified = await verify(anonAadhaarProof)
+    const verified = await verify(anonAadhaarProof, true)
     assert(verified == true, 'Should be verified')
   })
 
@@ -66,7 +66,7 @@ describe('Core tests', function () {
       artifactsOrigin: ArtifactsOrigin.server,
     }
 
-    init(anonAadhaarInitArgs)
+    await init(anonAadhaarInitArgs)
 
     const args = await generateArgs({
       qrData: QRData,
@@ -76,7 +76,7 @@ describe('Core tests', function () {
 
     const anonAadhaarProof = await prove(args)
 
-    const verified = await verify(anonAadhaarProof)
+    const verified = await verify(anonAadhaarProof, true)
 
     assert(verified == true, 'Should be verified')
   })
@@ -89,7 +89,7 @@ describe('Core tests', function () {
       artifactsOrigin: ArtifactsOrigin.chunked,
     }
 
-    init(anonAadhaarInitArgs)
+    await init(anonAadhaarInitArgs)
 
     const args = await generateArgs({
       qrData: QRData,
@@ -99,7 +99,7 @@ describe('Core tests', function () {
 
     const anonAadhaarProof = await prove(args)
 
-    const verified = await verify(anonAadhaarProof)
+    const verified = await verify(anonAadhaarProof, true)
 
     assert(verified == true, 'Should be verified')
   })

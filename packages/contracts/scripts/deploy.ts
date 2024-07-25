@@ -1,6 +1,6 @@
 import '@nomiclabs/hardhat-ethers'
 import { ethers } from 'hardhat'
-import { productionPublicKeyHash, testPublicKeyHash } from '../test/const'
+import { productionPublicKeyHash, testPublicKeyHash } from '@anon-aadhaar/core'
 
 let publicKeyHash = testPublicKeyHash
 // To deploy contract with production UIDAI public key, will verify real Aadhaar

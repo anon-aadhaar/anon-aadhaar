@@ -21,7 +21,7 @@ describe('AnonAadhaar prover react tests', function () {
       artifactsOrigin: ArtifactsOrigin.server,
     }
 
-    init(anonAadhaarInitArgs)
+    await init(anonAadhaarInitArgs)
 
     const args = await processAadhaarArgs(testQRData, true, 1234, [
       'revealPinCode',
@@ -30,7 +30,7 @@ describe('AnonAadhaar prover react tests', function () {
 
     const result = await proveAndSerialize(args)
 
-    const verified = await verify(result.anonAadhaarProof)
+    const verified = await verify(result.anonAadhaarProof, true)
 
     assert(verified == true, 'Should verifiable')
     assert(result.anonAadhaarProof.proof.ageAbove18 === '0')

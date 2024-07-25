@@ -115,7 +115,7 @@ __metadata:
   resolution: "@anon-aadhaar/react@workspace:packages/react"
   dependencies:
     "@anon-aadhaar/core": "workspace:*"
-    "@pcd/pcd-types": "npm:^0.6.0"
+    "@pcd/pcd-types": "npm:^0.10.0"
     "@testing-library/dom": "npm:^9.3.1"
     "@testing-library/react": "npm:^14.0.0"
     "@testing-library/react-hooks": "npm:^8.0.1"
@@ -2077,13 +2077,6 @@ __metadata:
   version: 0.10.0
   resolution: "@pcd/pcd-types@npm:0.10.0"
   checksum: 10c0/becee0dcb12dbe7f8363bca76b4355bbc2be9f99ae9a3a32842f7ea2de9700e646c63dd9b277014db972e6b3d70a4b3bb0fd4a2a4e5aefd6c9c7421dfb9c972c
-  languageName: node
-  linkType: hard
-
-"@pcd/pcd-types@npm:^0.6.0":
-  version: 0.6.3
-  resolution: "@pcd/pcd-types@npm:0.6.3"
-  checksum: 10c0/3c3808fa8977e496d672316b31cef40c4c73f4f069ee64203d687e44dd066551001d2b590a86eadb1ca6caf1bbfda525ad3b8a24b58b117c42b7261651da9eb2
   languageName: node
   linkType: hard
 

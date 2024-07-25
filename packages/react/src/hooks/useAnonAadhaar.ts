@@ -31,6 +31,7 @@ export interface AnonAadhaarContextVal {
   startReq: (request: AnonAadhaarRequest) => void
   proverState: ProverState
   appName: string
+  useTestAadhaar: boolean
 }
 
 export type AnonAadhaarRequest =
@@ -65,4 +66,5 @@ export const AnonAadhaarContext = createContext<AnonAadhaarContextVal>({
   },
   appName: '',
   proverState: ProverState.Initializing,
+  useTestAadhaar: false,
 })
