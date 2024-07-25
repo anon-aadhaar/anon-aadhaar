@@ -14,7 +14,6 @@ interface LogInWithAnonAadhaarProps {
   buttonTitle?: string
   fieldsToReveal?: FieldsToRevealArray
   nullifierSeed: number | bigint
-  useTestAadhaar?: boolean
 }
 
 /**
@@ -30,14 +29,13 @@ export const LaunchProveModal = ({
   buttonStyle,
   fieldsToReveal,
   nullifierSeed,
-  useTestAadhaar,
   buttonTitle = 'Generate a proof',
 }: LogInWithAnonAadhaarProps) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [qrStatus, setQrStatus] = useState<null | AadhaarQRValidation>(null)
   const [currentView, setCurrentView] = useState<ModalViews>('Verify')
-  const { proverState } = useContext(AnonAadhaarContext)
+  const { proverState, useTestAadhaar } = useContext(AnonAadhaarContext)
   const anonAadhaarLogo = createBlobURL(icons.aalogo)
 
   useEffect(() => {
