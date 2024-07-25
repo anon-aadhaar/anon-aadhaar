@@ -80,15 +80,9 @@ export async function prove(
       args.revealAgeAbove18.value === '1'
         ? anonAadhaarProof.ageAbove18 === '1'
         : null,
-    gender:
-      convertRevealBigIntToString(anonAadhaarProof.gender) === ''
-        ? null
-        : convertRevealBigIntToString(anonAadhaarProof.gender),
+    gender: convertRevealBigIntToString(anonAadhaarProof.gender) || null,
     pincode: anonAadhaarProof.pincode === '0' ? null : anonAadhaarProof.pincode,
-    state:
-      convertRevealBigIntToString(anonAadhaarProof.state) === ''
-        ? null
-        : convertRevealBigIntToString(anonAadhaarProof.state),
+    state: convertRevealBigIntToString(anonAadhaarProof.state) || null,
   }
 
   return new AnonAadhaarCore(id, anonAadhaarClaim, anonAadhaarProof)
