@@ -17,7 +17,7 @@ import {
 } from '../../core/src'
 import { testQRData } from '../../circuits/assets/dataInput.json'
 import fs from 'fs'
-import { testPublicKeyHash } from './const'
+import { testPublicKeyHash } from '@anon-aadhaar/core'
 
 describe('VerifyProof', function () {
   this.timeout(0)
