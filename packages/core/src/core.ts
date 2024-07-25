@@ -14,6 +14,7 @@ import { groth16 } from 'snarkjs'
 import JSONBig from 'json-bigint'
 import { AnonAadhaarProver, ProverInferace } from './prover'
 import { productionPublicKeyHash, testPublicKeyHash } from './constants'
+import { convertRevealBigIntToString } from './utils'
 
 export class AnonAadhaarCore
   implements PCD<AnonAadhaarClaim, AnonAadhaarProof>
@@ -60,11 +61,6 @@ export async function prove(
 
   const id = uuidv4()
 
-  const anonAadhaarClaim: AnonAadhaarClaim = {
-    pubKey: args.pubKey.value,
-    signalHash: args.signalHash.value,
-  }
-
   const prover: ProverInferace = new AnonAadhaarProver(
     initArgs.wasmURL,
     initArgs.zkeyURL,
@@ -72,6 +68,15 @@ export async function prove(
   )
 
   const anonAadhaarProof = await prover.proving(args, updateState)
+
+  const anonAadhaarClaim: AnonAadhaarClaim = {
+    pubKey: args.pubKey.value,
+    signalHash: args.signalHash.value,
+    ageAbove18: anonAadhaarProof.ageAbove18 === '1',
+    gender: anonAadhaarProof.gender,
+    pincode: anonAadhaarProof.pincode,
+    state: convertRevealBigIntToString(anonAadhaarProof.state),
+  }
 
   return new AnonAadhaarCore(id, anonAadhaarClaim, anonAadhaarProof)
 }

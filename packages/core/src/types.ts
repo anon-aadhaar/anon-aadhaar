@@ -32,6 +32,10 @@ export interface InitArgs {
 export type AnonAadhaarClaim = {
   pubKey: string[]
   signalHash: string
+  ageAbove18: boolean
+  gender: string
+  pincode: string
+  state: string
 }
 
 /**
