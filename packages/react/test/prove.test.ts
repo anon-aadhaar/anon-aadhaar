@@ -22,7 +22,7 @@ describe('AnonAadhaar prover react tests', function () {
       artifactsOrigin: ArtifactsOrigin.server,
     }
 
-    init(anonAadhaarInitArgs)
+    await init(anonAadhaarInitArgs)
 
     const args = await processAadhaarArgs(testQRData, true, 1234, [
       'revealPinCode',

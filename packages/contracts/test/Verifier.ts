@@ -75,7 +75,7 @@ describe('VerifyProof', function () {
       const [user1] = await ethers.getSigners()
       user1addres = user1.address
 
-      init(anonAadhaarInitArgs)
+      await init(anonAadhaarInitArgs)
 
       const args = await generateArgs({
         qrData: testQRData,
@@ -168,7 +168,7 @@ describe('VerifyProof', function () {
       const [user1] = await ethers.getSigners()
       user1addres = user1.address
 
-      init(anonAadhaarInitArgs)
+      await init(anonAadhaarInitArgs)
 
       const args = await generateArgs({
         qrData: testQRData,
