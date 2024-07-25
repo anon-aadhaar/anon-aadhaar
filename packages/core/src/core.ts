@@ -59,6 +59,10 @@ export async function prove(
     throw new Error('Invalid signalHash argument')
   }
 
+  if (!args.revealAgeAbove18.value) {
+    throw new Error('Invalid revealAgeAbove18 argument')
+  }
+
   const id = uuidv4()
 
   const prover: ProverInferace = new AnonAadhaarProver(
@@ -72,10 +76,19 @@ export async function prove(
   const anonAadhaarClaim: AnonAadhaarClaim = {
     pubKey: args.pubKey.value,
     signalHash: args.signalHash.value,
-    ageAbove18: anonAadhaarProof.ageAbove18 === '1',
-    gender: anonAadhaarProof.gender,
-    pincode: anonAadhaarProof.pincode,
-    state: convertRevealBigIntToString(anonAadhaarProof.state),
+    ageAbove18:
+      args.revealAgeAbove18.value === '1'
+        ? anonAadhaarProof.ageAbove18 === '1'
+        : null,
+    gender:
+      convertRevealBigIntToString(anonAadhaarProof.gender) === ''
+        ? null
+        : convertRevealBigIntToString(anonAadhaarProof.gender),
+    pincode: anonAadhaarProof.pincode === '0' ? null : anonAadhaarProof.pincode,
+    state:
+      convertRevealBigIntToString(anonAadhaarProof.state) === ''
+        ? null
+        : convertRevealBigIntToString(anonAadhaarProof.state),
   }
 
   return new AnonAadhaarCore(id, anonAadhaarClaim, anonAadhaarProof)
