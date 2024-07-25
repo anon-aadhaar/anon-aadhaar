@@ -31,10 +31,11 @@ export interface AnonAadhaarContextVal {
   startReq: (request: AnonAadhaarRequest) => void
   proverState: ProverState
   appName: string
+  useTestAadhaar: boolean
 }
 
 export type AnonAadhaarRequest =
-  | { type: 'login'; useTestAadhaar: boolean; args: AnonAadhaarArgs }
+  | { type: 'login'; args: AnonAadhaarArgs }
   | { type: 'logout' }
 
 export type AnonAadhaarState = {
@@ -49,14 +50,12 @@ export type AnonAadhaarState = {
       anonAadhaarProofs?: {
         [key: number]: SerializedPCD<AnonAadhaarCore>
       }
-      useTestAadhaar?: boolean
     }
   | {
       status: 'logged-in'
       anonAadhaarProofs: {
         [key: number]: SerializedPCD<AnonAadhaarCore>
       }
-      useTestAadhaar: boolean
     }
 )
 
@@ -67,4 +66,5 @@ export const AnonAadhaarContext = createContext<AnonAadhaarContextVal>({
   },
   appName: '',
   proverState: ProverState.Initializing,
+  useTestAadhaar: false,
 })

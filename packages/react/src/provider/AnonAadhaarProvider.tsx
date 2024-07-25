@@ -43,6 +43,11 @@ export type AnonAadhaarProviderProps = {
    * `_appName`: Name of your app
    */
   _appName?: string
+
+  /**
+   * `_useTestAadhaar`: Set the SDK to be in test mode
+   */
+  _useTestAadhaar?: boolean
 }
 
 /**
@@ -69,6 +74,7 @@ export function AnonAadhaarProvider(
   const [proverState, setProverState] = useState<ProverState>(
     ProverState.Initializing,
   )
+  const [useTestAadhaar, setUseTestAadhaar] = useState<boolean>(false)
   const [state, setState] = useState<AnonAadhaarState>({
     status: 'logged-out',
   })
@@ -76,7 +82,12 @@ export function AnonAadhaarProvider(
   useEffect(() => {
     if (anonAadhaarProviderProps._appName !== undefined)
       setAppName(anonAadhaarProviderProps._appName)
-  }, [anonAadhaarProviderProps._appName])
+
+    if (anonAadhaarProviderProps._useTestAadhaar) setUseTestAadhaar(true)
+  }, [
+    anonAadhaarProviderProps._appName,
+    anonAadhaarProviderProps._useTestAadhaar,
+  ])
 
   useEffect(() => {
     let anonAadhaarInitArgs: InitArgs
@@ -132,7 +143,7 @@ export function AnonAadhaarProvider(
   React.useEffect(() => {
     if (anonAadhaarProofStr === null || anonAadhaarProof === null) return
     console.log(`[ANON-AADHAAR] trying to log in with ${anonAadhaarProofStr}`)
-    handleLogin(state, anonAadhaarProofStr, anonAadhaarProof)
+    handleLogin(state, anonAadhaarProofStr, anonAadhaarProof, useTestAadhaar)
       .then(newState => {
         if (newState) setAndWriteState(newState)
         else
@@ -151,8 +162,8 @@ export function AnonAadhaarProvider(
 
   // Provide context
   const val = React.useMemo(
-    () => ({ state, startReq, proverState, appName }),
-    [state, proverState, appName],
+    () => ({ state, startReq, proverState, appName, useTestAadhaar }),
+    [state, proverState, appName, useTestAadhaar],
   )
 
   return (
@@ -276,7 +287,6 @@ function handleLoginReq(
         ...(state.status !== 'logged-out'
           ? {
               anonAadhaarProofs: state.anonAadhaarProofs,
-              useTestAadhaar: request.useTestAadhaar,
             }
           : {}),
       }
@@ -294,6 +304,7 @@ async function handleLogin(
   state: AnonAadhaarState,
   _anonAadhaarProofStr: SerializedPCD<AnonAadhaarCore>,
   _anonAadhaarProof: AnonAadhaarCore,
+  useTestAadhaar: boolean,
 ): Promise<AnonAadhaarState | null> {
   if (state.status !== 'logging-in') {
     console.log(
@@ -302,7 +313,7 @@ async function handleLogin(
     return null
   }
 
-  if (!(await verify(_anonAadhaarProof, state.useTestAadhaar))) {
+  if (!(await verify(_anonAadhaarProof, useTestAadhaar))) {
     throw new Error('Invalid proof')
   }
 
@@ -313,7 +324,6 @@ async function handleLogin(
 
   return {
     status: 'logged-in',
-    useTestAadhaar: state.useTestAadhaar as boolean,
     anonAadhaarProofs: {
       ...state.anonAadhaarProofs,
       [index]: _anonAadhaarProofStr,
