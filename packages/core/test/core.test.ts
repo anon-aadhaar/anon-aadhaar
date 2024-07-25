@@ -2,7 +2,7 @@ import { describe } from 'mocha'
 import { ArtifactsOrigin, InitArgs } from '../src/types'
 import { init, prove, verify } from '../src/core'
 import { assert } from 'chai'
-import { artifactUrls, generateArgs, testPublicKeyHash } from '../src'
+import { artifactUrls, generateArgs } from '../src'
 import fs from 'fs'
 import { testQRData as QRData } from '../../circuits/assets/dataInput.json'
 import { MockLocalForage } from './__mocks__/localforage'
@@ -54,7 +54,7 @@ describe('Core tests', function () {
 
     const anonAadhaarProof = await prove(args)
 
-    const verified = await verify(anonAadhaarProof, testPublicKeyHash)
+    const verified = await verify(anonAadhaarProof, true)
     assert(verified == true, 'Should be verified')
   })
 
@@ -76,7 +76,7 @@ describe('Core tests', function () {
 
     const anonAadhaarProof = await prove(args)
 
-    const verified = await verify(anonAadhaarProof, testPublicKeyHash)
+    const verified = await verify(anonAadhaarProof, true)
 
     assert(verified == true, 'Should be verified')
   })
@@ -99,7 +99,7 @@ describe('Core tests', function () {
 
     const anonAadhaarProof = await prove(args)
 
-    const verified = await verify(anonAadhaarProof, testPublicKeyHash)
+    const verified = await verify(anonAadhaarProof, true)
 
     assert(verified == true, 'Should be verified')
   })

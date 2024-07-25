@@ -13,7 +13,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { groth16 } from 'snarkjs'
 import JSONBig from 'json-bigint'
 import { AnonAadhaarProver, ProverInferace } from './prover'
-import { productionPublicKeyHash } from './constants'
+import { productionPublicKeyHash, testPublicKeyHash } from './constants'
 
 export class AnonAadhaarCore
   implements PCD<AnonAadhaarClaim, AnonAadhaarProof>
@@ -99,10 +99,12 @@ async function getVerifyKey() {
 
 export async function verify(
   pcd: AnonAadhaarCore,
-  pubkeyHash?: string
+  useTestAadhaar?: boolean
 ): Promise<boolean> {
-  if (!pubkeyHash) {
-    pubkeyHash = productionPublicKeyHash
+  let pubkeyHash = productionPublicKeyHash
+
+  if (useTestAadhaar) {
+    pubkeyHash = testPublicKeyHash
   }
 
   if (pcd.proof.pubkeyHash !== pubkeyHash) {
