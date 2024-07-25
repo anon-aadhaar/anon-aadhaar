@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@anon-aadhaar/core": "workspace:*",
-    "@pcd/pcd-types": "^0.6.0",
+    "@pcd/pcd-types": "^0.10.0",
     "@types/json-bigint": "^1.0.1",
     "@types/pako": "^2.0.0",
     "@types/qr-image": "^3.2.6",
