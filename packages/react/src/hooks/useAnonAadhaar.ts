@@ -34,7 +34,7 @@ export interface AnonAadhaarContextVal {
 }
 
 export type AnonAadhaarRequest =
-  | { type: 'login'; args: AnonAadhaarArgs }
+  | { type: 'login'; useTestAadhaar: boolean; args: AnonAadhaarArgs }
   | { type: 'logout' }
 
 export type AnonAadhaarState = {
@@ -49,12 +49,14 @@ export type AnonAadhaarState = {
       anonAadhaarProofs?: {
         [key: number]: SerializedPCD<AnonAadhaarCore>
       }
+      useTestAadhaar?: boolean
     }
   | {
       status: 'logged-in'
       anonAadhaarProofs: {
         [key: number]: SerializedPCD<AnonAadhaarCore>
       }
+      useTestAadhaar: boolean
     }
 )
 

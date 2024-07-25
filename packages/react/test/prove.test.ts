@@ -31,7 +31,7 @@ describe('AnonAadhaar prover react tests', function () {
 
     const result = await proveAndSerialize(args)
 
-    const verified = await verify(result.anonAadhaarProof, testPublicKeyHash)
+    const verified = await verify(result.anonAadhaarProof, true)
 
     assert(verified == true, 'Should verifiable')
     assert(result.anonAadhaarProof.proof.ageAbove18 === '0')

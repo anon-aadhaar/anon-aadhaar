@@ -266,10 +266,14 @@ function handleLoginReq(
       } catch (error) {
         console.log(error)
       }
+
       return {
         status: 'logging-in',
         ...(state.status !== 'logged-out'
-          ? { anonAadhaarProofs: state.anonAadhaarProofs }
+          ? {
+              anonAadhaarProofs: state.anonAadhaarProofs,
+              useTestAadhaar: request.useTestAadhaar,
+            }
           : {}),
       }
 
@@ -294,7 +298,7 @@ async function handleLogin(
     return null
   }
 
-  if (!(await verify(_anonAadhaarProof))) {
+  if (!(await verify(_anonAadhaarProof, state.useTestAadhaar))) {
     throw new Error('Invalid proof')
   }
 
@@ -305,6 +309,7 @@ async function handleLogin(
 
   return {
     status: 'logged-in',
+    useTestAadhaar: state.useTestAadhaar as boolean,
     anonAadhaarProofs: {
       ...state.anonAadhaarProofs,
       [index]: _anonAadhaarProofStr,

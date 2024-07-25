@@ -46,7 +46,7 @@ export const ProveButton: React.FC<ProveButtonProps> = ({
         signal,
       )
 
-      startReq({ type: 'login', args })
+      startReq({ type: 'login', args, useTestAadhaar })
       setQrStatus(null)
     } catch (error) {
       console.log(error)
