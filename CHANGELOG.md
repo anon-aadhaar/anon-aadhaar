@@ -1,3 +1,9 @@
+## 2.4.0
+
+- fix publickey hash values
+- added pubkeyHash check as default in SDK
+- switched useTestAadhaar to context based var
+
 ## 2.3.1
 
 - update nullifier type to support bigint
