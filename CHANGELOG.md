@@ -1,7 +1,8 @@
-## 2.3.2
+## 2.4.0
 
-- fix publickey hash
+- fix publickey hash values
 - added pubkeyHash check as default in SDK
+- switched useTestAadhaar to context based var
 
 ## 2.3.1
 

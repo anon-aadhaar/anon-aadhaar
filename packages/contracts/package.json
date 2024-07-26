@@ -1,6 +1,6 @@
 {
   "name": "@anon-aadhaar/contracts",
-  "version": "2.3.2",
+  "version": "2.4.0",
   "description": "Verifier smart contract for Anon Aadhaar protocol",
   "license": "MIT",
   "scripts": {
