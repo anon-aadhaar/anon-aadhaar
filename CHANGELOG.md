@@ -1,3 +1,8 @@
+## 2.3.2
+
+- fix publickey hash
+- added pubkeyHash check as default in SDK
+
 ## 2.3.1
 
 - update nullifier type to support bigint
