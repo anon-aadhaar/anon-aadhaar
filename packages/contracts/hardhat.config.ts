@@ -17,11 +17,10 @@ const config: HardhatUserConfig = {
     //   url: `https://sepolia-rpc.scroll.io/`,
     //   accounts: [process.env.PRIVATE_KEY_SCROLL_SEPOLIA || ''],
     // },
-    polygonZkEVMCardona: {
-      url: `https://rpc.cardona.zkevm-rpc.com`,
-      accounts: [process.env.PRIVATE_KEY_POLYGONZKEVM_CARDONA || '']
-    }
-    
+    // polygonZkEVMCardona: {
+    //   url: `https://rpc.cardona.zkevm-rpc.com`,
+    //   accounts: [process.env.PRIVATE_KEY_POLYGONZKEVM_CARDONA || '']
+    // }
   },
   solidity: '0.8.19',
   paths: {
