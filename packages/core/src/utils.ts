@@ -154,14 +154,14 @@ export function readData(data: number[], index: number) {
 // Extract photo from startIndex (18th delimiter) to end including the padding
 export function extractPhoto(qrDataPadded: number[], dataLength: number) {
   let begin = 0
-  for (let i = 0; i < 18; ++i) {
+  for (let i = 0; i < 16; ++i) {
     begin = qrDataPadded.indexOf(255, begin + 1)
   }
 
   return {
     begin,
     dataLength,
-    bytes: qrDataPadded.slice(begin + 1, dataLength),
+    bytes: qrDataPadded.slice(begin + 1, dataLength).slice(0, 31 * 32),
   }
 }
 
