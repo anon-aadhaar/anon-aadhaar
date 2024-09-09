@@ -32,7 +32,11 @@ describe('Extractor', function () {
   })
 
   it('should extract data', async () => {
-    const QRDataBytes = convertBigIntToByteArray(BigInt(QRData))
+    const QRDataBytes = convertBigIntToByteArray(
+      BigInt(
+        QRData, // replace with v1 data for testing
+      ),
+    )
     const QRDataDecode = decompressByteArray(QRDataBytes)
 
     const signedData = QRDataDecode.slice(0, QRDataDecode.length - 256)
@@ -76,11 +80,11 @@ describe('Extractor', function () {
     // Photo
     // Reconstruction of the photo bytes from packed ints and compare each byte
     const photo = extractPhoto(Array.from(qrDataPadded), qrDataPaddedLen)
-    const photoWitness = bigIntChunksToByteArray(witness.slice(6, 6 + 32))
+    const photoWitness = bigIntChunksToByteArray(witness.slice(6, 6 + 32), 31)
 
     assert(photoWitness.length === photo.bytes.length)
     for (let i = 0; i < photoWitness.length; i++) {
-      assert(photoWitness[i] === photo.bytes[i])
+      assert(photoWitness[i] === photo.bytes[i], `Photo mismatch at index ${i}`)
     }
   })
 })

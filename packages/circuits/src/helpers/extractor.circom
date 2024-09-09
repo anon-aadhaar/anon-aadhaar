@@ -106,11 +106,13 @@ template ExtractAndPackAsInt(maxDataLength, extractPosition) {
 template TimestampExtractor(maxDataLength) {
     signal input nDelimitedData[maxDataLength];
 
+    var i = 6; // timestamp start index
+
     signal output timestamp;
-    signal output year <== DigitBytesToInt(4)([nDelimitedData[9], nDelimitedData[10], nDelimitedData[11], nDelimitedData[12]]);
-    signal output month <== DigitBytesToInt(2)([nDelimitedData[13], nDelimitedData[14]]);
-    signal output day <== DigitBytesToInt(2)([nDelimitedData[15], nDelimitedData[16]]);
-    signal hour <== DigitBytesToInt(2)([nDelimitedData[17], nDelimitedData[18]]);
+    signal output year <== DigitBytesToInt(4)([nDelimitedData[i], nDelimitedData[i + 1], nDelimitedData[i + 2], nDelimitedData[i + 3]]);
+    signal output month <== DigitBytesToInt(2)([nDelimitedData[i + 4], nDelimitedData[i + 5]]);
+    signal output day <== DigitBytesToInt(2)([nDelimitedData[i + 6], nDelimitedData[i + 7]]);
+    signal hour <== DigitBytesToInt(2)([nDelimitedData[i + 8], nDelimitedData[i + 9]]);
 
     component dateToUnixTime = DigitBytesToTimestamp(2032);
     dateToUnixTime.year <== year;
