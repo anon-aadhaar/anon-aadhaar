@@ -54,7 +54,7 @@ function build_circuit() {
 function dev_trusted_setup() {
     echo "Starting setup...!"
 
-    HASH=$(pwd)/scripts/utils.sh
+    HASH=$(shasum -a 256 scripts/utils.sh | awk '{print $1}')
 
     if [ -f "$BUILD_DIR"/hash.txt ]; then 
         OLD_HASH=`cat "$BUILD_DIR"/hash.txt`
