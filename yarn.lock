@@ -148,7 +148,6 @@ __metadata:
     mocha: "npm:^10.2.0"
     node-forge: "npm:^1.3.1"
     prettier: "npm:^3.0.1"
-    react-device-detect: "npm:^2.2.3"
     react-dom: "npm:^18.2.0"
     react-icons: "npm:^5.0.1"
     react-qr-reader: "npm:^3.0.0-beta-1"
@@ -9150,18 +9149,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-device-detect@npm:^2.2.3":
-  version: 2.2.3
-  resolution: "react-device-detect@npm:2.2.3"
-  dependencies:
-    ua-parser-js: "npm:^1.0.33"
-  peerDependencies:
-    react: ">= 0.14.0"
-    react-dom: ">= 0.14.0"
-  checksum: 10c0/396bbeeab0cb21da084c67434d204c9cf502fad6c683903313084d3f6487950a36a34f9bf67ccf5c1772a1bb5b79a2a4403fcfe6b51d93877db4c2d9f3a3a925
-  languageName: node
-  linkType: hard
-
 "react-dom@npm:^18.2.0":
   version: 18.3.1
   resolution: "react-dom@npm:18.3.1"
@@ -10940,13 +10927,6 @@ __metadata:
   version: 5.2.0
   resolution: "typical@npm:5.2.0"
   checksum: 10c0/1cceaa20d4b77a02ab8eccfe4a20500729431aecc1e1b7dc70c0e726e7966efdca3bf0b4bee285555b751647e37818fd99154ea73f74b5c29adc95d3c13f5973
-  languageName: node
-  linkType: hard
-
-"ua-parser-js@npm:^1.0.33":
-  version: 1.0.38
-  resolution: "ua-parser-js@npm:1.0.38"
-  checksum: 10c0/b1dd11b87e1784c79f7129e9aec679753fccf8a9b22f5202b79b19492635b5b46b779607a3cfae0270999a0d48da223bf94015642d2abee69d83c9069ab37bd0
   languageName: node
   linkType: hard
 

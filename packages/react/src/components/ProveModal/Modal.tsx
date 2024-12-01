@@ -2,8 +2,6 @@ import React, { useEffect, useState, Dispatch, SetStateAction } from 'react'
 import styled from 'styled-components'
 import { AadhaarQRValidation, ModalViews } from '../../types'
 import { ErrorToast } from './ErrorToast'
-import { BrowserView, MobileView } from 'react-device-detect'
-import { Logo } from '../LogInWithAnonAadhaar'
 import { verifySignature } from '../../verifySignature'
 import { VerifyModal } from './VerifyModal'
 import { ProveModal } from './ProveModal'
@@ -31,7 +29,6 @@ export const Modal: React.FC<ModalProps> = ({
   onClose,
   errorMessage,
   setErrorMessage,
-  logo,
   qrStatus,
   setQrStatus,
   signal,
@@ -69,69 +66,45 @@ export const Modal: React.FC<ModalProps> = ({
 
   return isOpen ? (
     <ModalOverlay onClick={onClose}>
-      <BrowserView>
-        <ModalContent onClick={e => e.stopPropagation()}>
-          {errorMessage !== null && (
-            <ErrorToast
-              message={errorMessage}
-              setErrorMessage={setErrorMessage}
-            />
-          )}
-          {(() => {
-            switch (currentView) {
-              case 'Verify':
-                return (
-                  <VerifyModal
-                    provingEnabled={provingEnabled}
-                    qrStatus={qrStatus}
-                    setQrStatus={setQrStatus}
-                    setQrData={setQrData}
-                    setCurrentView={setCurrentView}
-                    useTestAadhaar={useTestAadhaar}
-                  />
-                )
-              case 'Prove':
-                return (
-                  <ProveModal
-                    setErrorMessage={setErrorMessage}
-                    qrStatus={qrStatus}
-                    qrData={qrData}
-                    setQrStatus={setQrStatus}
-                    signal={signal}
-                    fieldsToReveal={fieldsToReveal}
-                    nullifierSeed={nullifierSeed}
-                    setCurrentView={setCurrentView}
-                    useTestAadhaar={useTestAadhaar}
-                  />
-                )
-              case 'Proving':
-                return <LoaderView />
-            }
-          })()}
-        </ModalContent>
-      </BrowserView>
-      <MobileView>
-        <ModalContent onClick={e => e.stopPropagation()}>
-          {errorMessage !== null && (
-            <ErrorToast
-              message={errorMessage}
-              setErrorMessage={setErrorMessage}
-            />
-          )}
-          <TitleSection>
-            <Title>
-              <Logo src={logo} />
-              Prove your Identity
-            </Title>
-            <Disclaimer>
-              <b>Notice: </b> Currently, Anon Aadhaar Identity verification is
-              not available on mobile devices. To complete this process, please
-              visit this website using a desktop browser. We apologize for any
-              inconvenience and thank you for your understanding.
-            </Disclaimer>
-          </TitleSection>
-        </ModalContent>
-      </MobileView>
+      <ModalContent onClick={e => e.stopPropagation()}>
+        {errorMessage !== null && (
+          <ErrorToast
+            message={errorMessage}
+            setErrorMessage={setErrorMessage}
+          />
+        )}
+        {(() => {
+          switch (currentView) {
+            case 'Verify':
+              return (
+                <VerifyModal
+                  provingEnabled={provingEnabled}
+                  qrStatus={qrStatus}
+                  setQrStatus={setQrStatus}
+                  setQrData={setQrData}
+                  setCurrentView={setCurrentView}
+                  useTestAadhaar={useTestAadhaar}
+                />
+              )
+            case 'Prove':
+              return (
+                <ProveModal
+                  setErrorMessage={setErrorMessage}
+                  qrStatus={qrStatus}
+                  qrData={qrData}
+                  setQrStatus={setQrStatus}
+                  signal={signal}
+                  fieldsToReveal={fieldsToReveal}
+                  nullifierSeed={nullifierSeed}
+                  setCurrentView={setCurrentView}
+                  useTestAadhaar={useTestAadhaar}
+                />
+              )
+            case 'Proving':
+              return <LoaderView />
+          }
+        })()}
+      </ModalContent>
     </ModalOverlay>
   ) : null
 }
@@ -148,7 +121,6 @@ const ModalOverlay = styled.div`
   justify-content: center;
   z-index: 9999;
 `
-
 const ModalContent = styled.div`
   position: fixed;
   display: flex;
@@ -161,43 +133,22 @@ const ModalContent = styled.div`
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   padding: 2rem;
 
-  @media (max-width: 425px) {
-    /* For screens <= 425px (e.g., mobile devices) */
-    width: 100%;
-    height: 30%;
-    max-width: 100%;
-    max-height: 100%;
+  /* Mobile devices */
+  @media screen and (max-width: 480px) {
+    width: 90%;
+    min-height: 450px;
+    padding: 1.5rem;
   }
 
-  @media (min-width: 426px) {
-    /* For screens > 426px (e.g., desktop) */
-    min-height: 600px;
-    max-width: 450px;
-    width: 80%;
+  /* Tablets and Desktop */
+  @media screen and (min-width: 481px) {
+    width: 450px;
+    height: 600px;
   }
-`
 
-const TitleSection = styled.div`
-  color: #111827;
-  flex-shrink: 0;
-  row-gap: 1rem;
-  margin-left: auto;
-  margin-right: auto;
-  display: flex;
-  flex-flow: column;
-`
-
-const Title = styled.h3`
-  display: flex;
-  flex-shrink: 0;
-  margin-left: auto;
-  margin-right: auto;
-  font-size: medium;
-  font-weight: bold;
-`
-
-const Disclaimer = styled.span`
-  color: #6d6d6d;
-  font-size: small;
-  font-weight: normal;
+  /* Very small screens */
+  @media screen and (max-height: 550px) {
+    min-height: 400px;
+    padding: 1rem;
+  }
 `
