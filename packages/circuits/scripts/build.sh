@@ -3,7 +3,7 @@
 
 # default dir
 BUILD_DIR="$(pwd)/build"
-PTAU="powersOfTau28_hez_final_20.ptau"
+PTAU="powersOfTau28_hez_final_21.ptau"
 PTAU_PATH="$BUILD_DIR/$PTAU"
 CONTRACTS_DIR="$(pwd)/../contracts/src"
 JS_BUILD_DIR="$BUILD_DIR/aadhaar-verifier_js"
@@ -54,7 +54,7 @@ function build_circuit() {
 function dev_trusted_setup() {
     echo "Starting setup...!"
 
-    HASH=$(pwd)/scripts/utils.sh
+    HASH=$(./scripts/utils.sh)
 
     if [ -f "$BUILD_DIR"/hash.txt ]; then 
         OLD_HASH=`cat "$BUILD_DIR"/hash.txt`
