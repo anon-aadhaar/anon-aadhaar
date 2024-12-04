@@ -1,3 +1,8 @@
+## 2.4.1
+
+- Enable mobile browser proving
+- Responsive UI for mobile devices
+
 ## 2.4.0
 
 - fix publickey hash values

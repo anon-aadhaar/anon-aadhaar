@@ -31,6 +31,7 @@ describe('useAnonAadhaar Hook', () => {
           startReq: startReqFunction,
           proverState: ProverState.Initializing,
           appName: 'Anon Aadhaar',
+          useTestAadhaar: false,
         }}
       >
         {children}
