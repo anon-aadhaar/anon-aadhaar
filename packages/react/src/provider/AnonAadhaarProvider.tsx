@@ -114,6 +114,10 @@ export function AnonAadhaarProvider(
       })
   }, [anonAadhaarProviderProps._artifactslinks])
 
+  useEffect(() => {
+    readFromLocalStorage().then(setAndWriteState)
+  }, [])
+
   // Write state to local storage whenever a login starts, succeeds, or fails
   const setAndWriteState = (newState: AnonAadhaarState) => {
     console.log(`[ANON-AADHAAR] new state ${shallowToString(newState)}`)
