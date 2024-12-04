@@ -1,3 +1,7 @@
+## 2.4.2
+
+- Fiw issue in react lib making the login state non persistent
+
 ## 2.4.1
 
 - Enable mobile browser proving
