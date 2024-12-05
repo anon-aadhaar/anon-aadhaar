@@ -184,5 +184,5 @@ function YourComponent() {
 
 | Return Value      | Description                                                                                                                                |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `ProverState`     | The current state of the proof generation processwith relevant state details.                                                              |
+| `ProverState`     | The current state of the proof generation process with relevant state details.                                                              |
 | `AnonAadhaarCore` | Represents the deserialized proof of authentication, if available, indicating a successful proof generation. Otherwise, it is `undefined`. |
