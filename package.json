@@ -1,6 +1,6 @@
 {
   "name": "anon-aadhaar",
-  "version": "2.4.2",
+  "version": "2.4.3",
   "description": "A set of tools to anonymously prove your identity",
   "main": "index.js",
   "private": true,

@@ -169,7 +169,7 @@ export const searchZkeyChunks = async (
   zkeyPath: string,
   storageService = defaultStorageService
 ) => {
-  const filePromises = []
+  const filePromises: Promise<void>[] = []
   for (let i = 0; i < 10; i++) {
     const fileName = `circuit_final_${i}.zkey`
     const item = await storageService.getItem(fileName)
