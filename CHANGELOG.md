@@ -1,6 +1,10 @@
+## 2.4.3
+
+- Fix type error in utils function `searchZkeyChunks`
+
 ## 2.4.2
 
-- Fiw issue in react lib making the login state non persistent
+- Fix issue in react lib making the login state non persistent
 
 ## 2.4.1
 
