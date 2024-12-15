@@ -35,7 +35,7 @@ The following packages are available, and published to npm:
 - [@anon-aadhaar/core](packages/core/) - JS SDK to generate and verify Anon Aadhaar proofs
 - [@anon-aadhaar/react](packages/react/) - React SDK including UI components to integrate Anon Aadhaar into React applications
 
-To build on top of Anon Aadhaar, read out documentation [here](https://documentation.anon-aadhaar.pse.dev/docs/intro) and check out the [boilerplate repo](https://github.com/anon-aadhaar/boilerplate) (Next.js)
+To build on top of Anon Aadhaar, read our documentation [here](https://documentation.anon-aadhaar.pse.dev/docs/intro) and check out the [boilerplate repo](https://github.com/anon-aadhaar/boilerplate) (Next.js)
 
 <br />
 
