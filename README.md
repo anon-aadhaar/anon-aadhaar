@@ -8,7 +8,7 @@ Anon Aadhaar is a protocol for proving ownership of an Aadhaar identity (Indian 
 
 Developers can use the AnonAadhaar SDK to integrate this into their applications to verify the identity of users without asking them to reveal more personal data than necessary. The proof generated can also be verified on EVM-based blockchains making Anon Aadhaar suitable for on-chain applications.
 
-Demo App: [Anon Aadhaar Example](https://boilerplate.anon-aadhaar.pse.dev/)  |  [Source](https://github.com/anon-aadhaar-private/boilerplate)
+Demo App: [Anon Aadhaar Example](https://boilerplate.anon-aadhaar.pse.dev/)  |  [Source](https://github.com/anon-aadhaar/boilerplate)
 
 Documentation: [Anon Aadhaar Documentation](https://documentation.anon-aadhaar.pse.dev/docs/intro)
 
