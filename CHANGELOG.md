@@ -1,7 +1,3 @@
-## 2.4.4
-
-- Fix invalid demo app resource link in README
-
 ## 2.4.3
 
 - Fix type error in utils function `searchZkeyChunks`
