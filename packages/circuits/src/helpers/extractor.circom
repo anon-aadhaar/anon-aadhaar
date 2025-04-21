@@ -28,7 +28,7 @@ There are no official spec docs for Aadhaar V2 available publicly, but the diffe
       3: indicates both mobile and email present in secure qr code.
   2. Reference ID (Last 4 digits of Aadhaar number and timestamp)
   3. Name
-  4. Date of Birth
+  4. Date of Birth   
   5. Gender
   6. Address > Care of
   7. Address > District
@@ -92,6 +92,17 @@ template ExtractAndPackAsInt(maxDataLength, extractPosition) {
     }
 
     out <== outInt.out[0];
+}
+
+
+/// @title RefIdExtractor
+/// @notice Extracts the 4 digits of the aadhar number inside RefID
+/// @input nDelimitedData[maxDataLength]
+/// @output RedId the 4 digit refid
+template RefIdExtractor(maxDataLength){
+    signal input nDelimitedData[maxDataLength];
+    signal output RefId;
+    RedId <== DigitBytesToInt([nDelimitedData[5],nDelimitedData[6],nDelimitedData[7],nDelimitedData[8]]);
 }
 
 
@@ -232,6 +243,56 @@ template PinCodeExtractor(maxDataLength) {
     out <== DigitBytesToInt(6)([shiftedBytes[1], shiftedBytes[2], shiftedBytes[3], shiftedBytes[4], shiftedBytes[5], shiftedBytes[6]]);
 }
 
+/// @title  NameExtractor
+/// @notice Extracts the name and packages it into a hash to be used later
+/// @param  maxDataLength   – total length of qrDataPadded
+/// @param  nameMaxBytes    – upper bound for the number of bytes in the name
+/// @input  nDelimitedData[maxDataLength] - QR data where each delimiter is 255 * n where n is order of the data
+/// @input  startDelimiterIndex - index of the delimiter after which the name start
+/// @input  endIndex - Index of the last byte that belongs to the name field
+/// @output namepacked - name packed into field elements
+/// @output namehash - poseidon hash namepacked
+
+template NameExtractor(maxDataLength,nameMaxBytes){
+
+    signal input nDelimitedData[maxDataLength];
+    signal input startDelimiterIndex;
+    signal input endIndex;
+
+    var packedLength  = computeIntChunkLength(nameMaxBytes); // limbs count
+    var bytesLength   = nameMaxBytes + 1;                    // +1 for delimiter
+
+    signal output namepacked[packedLength];
+    signal output namehash;
+
+    signal shiftedBytes[bytesLength];
+    signal out[packedLength];
+
+    component selector = SelectSubArray(maxDataLength, bytesLength);
+    selector.in         <== nDelimitedData;
+    selector.startIndex <== startDelimiterIndex;
+    selector.length     <== (endIndex - startDelimiterIndex + 1);
+
+    for (var i = 0; i < bytesLength; i++)
+        shiftedBytes[i] <== selector.out[i];
+
+
+    // leading delimiter (position index · 255) must match first byte
+    shiftedBytes[0] === namePosition() * 255;
+
+
+    component packer = PackBytes(nameMaxBytes);
+    for (var i = 0; i < nameMaxBytes; i++) {
+        packer.in[i] <== shiftedBytes[i + 1];       // drop the delimiter
+    }
+
+    for (var i = 0; i < packedLength; i++)
+        namepacked[i] <== packer.out[i];
+    // todo :we dont have this in aa so a similar fix 
+    namehash <== PackBytesAndPoseidon(packedLength)(namepacked);
+
+}
+
 
 /// @title PhotoExtractor
 /// @notice Extracts the photo from the Aadhaar QR data
@@ -287,7 +348,7 @@ template QRDataExtractor(maxDataLength) {
     signal input qrDataPaddedLength;
     signal input delimiterIndices[18];
 
-    // signal output name;
+    signal output namehash;
     signal output timestamp;
     signal output ageAbove18;
     signal output gender;
