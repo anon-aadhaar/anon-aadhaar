@@ -110,8 +110,10 @@ template TimestampExtractor(maxDataLength) {
     signal output year <== DigitBytesToInt(4)([nDelimitedData[9], nDelimitedData[10], nDelimitedData[11], nDelimitedData[12]]);
     signal output month <== DigitBytesToInt(2)([nDelimitedData[13], nDelimitedData[14]]);
     signal output day <== DigitBytesToInt(2)([nDelimitedData[15], nDelimitedData[16]]);
-    signal hour <== DigitBytesToInt(2)([nDelimitedData[17], nDelimitedData[18]]);
+    signal output last_digits <== DigitBytesToInt(4)([nDelimitedData[5],nDelimitedData[6],nDelimitedData[7],nDelimitedData[8]]);
 
+    signal hour <== DigitBytesToInt(2)([nDelimitedData[17], nDelimitedData[18]]);
+    
     component dateToUnixTime = DigitBytesToTimestamp(2032);
     dateToUnixTime.year <== year;
     dateToUnixTime.month <== month;
@@ -287,7 +289,7 @@ template QRDataExtractor(maxDataLength) {
     signal input qrDataPaddedLength;
     signal input delimiterIndices[18];
 
-    // signal output name;
+    signal output name;
     signal output timestamp;
     signal output ageAbove18;
     signal output gender;
@@ -369,4 +371,11 @@ template QRDataExtractor(maxDataLength) {
     photoExtractor.startDelimiterIndex <== delimiterIndices[photoPosition() - 1];
     photoExtractor.endIndex <== qrDataPaddedLength - 1;
     photo <== photoExtractor.out;
+
+
+    // Extract Name
+    component nameExtractor = ExtractAndPackAsInt(maxDataLength, namePosition());
+    nameExtractor.nDelimitedData   <== nDelimitedData;
+    nameExtractor.delimiterIndices <== delimiterIndices;
+    name <== nameExtractor.out;
 }
