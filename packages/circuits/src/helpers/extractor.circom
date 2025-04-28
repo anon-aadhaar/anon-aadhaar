@@ -69,7 +69,7 @@ template ExtractAndPackAsInt(maxDataLength, extractPosition) {
     var extractMaxLength = maxFieldByteSize(); // Packing data only as a single int
     var byteLength = extractMaxLength + 1;
     
-    // Shift the data to the right till the the delimiter start
+    // Shift the data to the right till the delimiter start
     component subArraySelector = SelectSubArray(maxDataLength, byteLength);
     subArraySelector.in <== nDelimitedData;
     subArraySelector.startIndex <== startDelimiterIndex; // We want delimiter to be the first byte
