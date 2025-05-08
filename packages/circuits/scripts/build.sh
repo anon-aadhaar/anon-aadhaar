@@ -75,7 +75,7 @@ function dev_trusted_setup() {
 
     echo "test random" | NODE_OPTIONS='--max-old-space-size=8192' \
 	node $SNARKJS_PATH zkey contribute "$PARTIAL_ZKEYS_DIR"/circuit_0000.zkey "$PARTIAL_ZKEYS_DIR"/circuit_final.zkey --name="1st Contributor Name" -v 
-    NODE_OPTIONS='--max-old-space-size=8192' $SNARKJS_PATH zkey export verificationkey "$PARTIAL_ZKEYS_DIR"/circuit_final.zkey "$BUILD_DIR"/vkey.json
+    NODE_OPTIONS='--max-old-space-size=8192' node $SNARKJS_PATH zkey export verificationkey "$PARTIAL_ZKEYS_DIR"/circuit_final.zkey "$BUILD_DIR"/vkey.json
     fi
     
     if [ ! -d "$ARTIFACTS_DIR" ]; then
